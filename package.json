@@ -1,0 +1,39 @@
+{
+  "name": "r3bl-vscode-extensions",
+  "version": "1.0.0",
+  "description": "A monorepo containing all R3BL VSCode extensions",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git"
+  },
+  "author": "R3BL",
+  "license": "MIT",
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "build:theme": "npm run build --workspace=packages/r3bl-theme",
+    "build:copyright": "npm run build --workspace=packages/r3bl-auto-insert-copyright",
+    "package": "npm run package --workspaces",
+    "package:theme": "npm run package --workspace=packages/r3bl-theme",
+    "package:copyright": "npm run package --workspace=packages/r3bl-auto-insert-copyright",
+    "lint": "npm run lint --workspaces",
+    "test": "npm run test --workspaces",
+    "clean": "npm run clean --workspaces && rm -rf node_modules",
+    "install-all": "npm install"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.95.0",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "eslint": "^9.13.0",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

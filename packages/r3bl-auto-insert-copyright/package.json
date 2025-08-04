@@ -1,0 +1,116 @@
+{
+  "name": "r3bl-auto-insert-copyright",
+  "displayName": "R3BL Auto Insert Copyright",
+  "description": "Automatically inserts copyright message to the top of a file that is opened in a VSCode editor",
+  "license": "MIT",
+  "keywords": [
+    "copyright",
+    "license"
+  ],
+  "icon": "r3bl-auto-insert-copyright-icon.png",
+  "galleryBanner": {
+    "color": "#3C3B6E",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
+    "directory": "packages/r3bl-auto-insert-copyright"
+  },
+  "publisher": "R3BL",
+  "preview": true,
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:c",
+    "onLanguage:cpp",
+    "onLanguage:csharp",
+    "onLanguage:css",
+    "onLanguage:go",
+    "onLanguage:java",
+    "onLanguage:javascript",
+    "onLanguage:objective-c",
+    "onLanguage:rust",
+    "onLanguage:scss",
+    "onLanguage:swift",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:vue"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "r3bl-auto-insert-copyright.prepend_copyright",
+        "title": "Prepend Copyright"
+      }
+    ],
+    "configuration": {
+      "title": "Copyrighter",
+      "properties": {
+        "copyrighter.author": {
+          "type": "string",
+          "default": "",
+          "description": "The author that holds the copyright."
+        },
+        "copyrighter.license": {
+          "type": "string",
+          "description": "Select a license header to include with your copyright. If no license is selected, then only the copyright will be added to files.",
+          "enumDescriptions": [
+            "Copyright without a license header",
+            "Apache 2.0 License",
+            "MIT License",
+            "GPL 3.0 License"
+          ],
+          "enum": [
+            "none",
+            "Apache2",
+            "MIT",
+            "GPL3"
+          ]
+        },
+        "copyrighter.note": {
+          "type": "string",
+          "default": "",
+          "description": "An optional note that can appear at the end of the default copyright notice."
+        },
+        "copyrighter.newFilesOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Inject Copyright notice in new files only"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "build": "webpack --mode production --devtool hidden-source-map",
+    "package": "vsce package --no-dependencies",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.95.0",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "eslint": "^9.13.0",
+    "typescript": "^5.6.3",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}

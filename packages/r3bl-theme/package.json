@@ -1,0 +1,31 @@
+{
+  "name": "r3bl-theme",
+  "displayName": "R3BL Theme",
+  "description": "Custom theme for Rust",
+  "version": "1.0.0",
+  "publisher": "R3BL",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "icon": "r3bl-cube-logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
+    "directory": "packages/r3bl-theme"
+  },
+  "scripts": {
+    "package": "vsce package --no-dependencies"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "label": "R3BL Theme",
+        "uiTheme": "vs-dark",
+        "path": "./themes/r3bl-theme-color-theme.json"
+      }
+    ]
+  }
+}
