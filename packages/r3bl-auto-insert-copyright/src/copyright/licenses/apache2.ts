@@ -21,8 +21,6 @@
  *   SOFTWARE.
  */
 
-
-
 'use strict';
 
 import { Copyright } from '../copyright';

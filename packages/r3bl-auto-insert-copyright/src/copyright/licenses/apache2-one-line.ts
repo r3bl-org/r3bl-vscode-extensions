@@ -21,26 +21,18 @@
  *   SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
-import { Copyright } from '../copyright'
+import { Copyright } from '../copyright';
 
-export class Proprietary extends Copyright {
+export class Apache2OneLine extends Copyright {
   constructor() {
-    super()
+    super();
   }
 
   public header(): string {
-    let template = `/*
- * Copyright (c) ${this.year} ${this.author}
- * All rights reserved.
- *
- * This file is proprietary and confidential.
- * Unauthorized copying of this file, via any medium is strictly prohibited.
- *
- * Proprietary and confidential.
- */
-\n`
-    return template
+    let template = `// Copyright (c) ${this.year} ${this.author}. Licensed under Apache License, Version 2.0.
+`;
+    return template;
   }
 }

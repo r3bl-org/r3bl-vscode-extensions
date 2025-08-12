@@ -1,15 +1,16 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Change Log](#change-log)
-  - [[1.1.0] - 2025-01-12](#110---2025-01-12)
+  - [[1.2.0] - 2025-08-12](#120---2025-08-12)
     - [Added](#added)
-    - [Changed](#changed)
-    - [Infrastructure](#infrastructure)
-  - [[1.0.0] - 2024-12-04](#100---2024-12-04)
+  - [[1.1.0] - 2025-01-12](#110---2025-01-12)
     - [Added](#added-1)
+    - [Changed](#changed-1)
     - [Infrastructure](#infrastructure-1)
+  - [[1.0.0] - 2024-12-04](#100---2024-12-04)
+    - [Added](#added-2)
+    - [Infrastructure](#infrastructure-2)
   - [Initial Releases](#initial-releases)
     - [R3BL Theme 1.0.0](#r3bl-theme-100)
     - [R3BL Auto Insert Copyright 1.0.0](#r3bl-auto-insert-copyright-100)
@@ -22,6 +23,23 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [1.2.0] - 2025-08-12
+
+### Added
+
+- **R3BL Auto Insert Copyright 1.2.0**: New Apache 2.0 one-line license template
+  - Added `Apache2OneLine` license option for concise copyright headers
+  - Generates single-line format: `// Copyright (c) {year} {author}. Licensed under Apache License, Version 2.0.`
+  - Alternative to the traditional multi-line Apache 2.0 license block
+  - Available in VS Code settings under "Apache 2.0 License (One Line)"
+
+### Fixed
+
+- **R3BL Auto Insert Copyright 1.2.0**: Improved copyright detection for all license formats
+  - Fixed `hasCopyright` function to properly detect both single-line and multi-line copyright headers
+  - Now checks both line 0 (for single-line formats like Apache2OneLine) and line 1 (for multi-line formats like MIT/Apache2/GPL3)
+  - Prevents duplicate copyright insertion when using different license formats
 
 ## [1.1.0] - 2025-01-12
 
@@ -46,7 +64,7 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 ### Infrastructure
 
-- **New Build System**: 
+- **New Build System**:
   - Added `build.sh` script to build all .vsix files without installing
   - Updated `install.sh` to call `build.sh` then install extensions
   - Separated build and install processes for better CI/CD support

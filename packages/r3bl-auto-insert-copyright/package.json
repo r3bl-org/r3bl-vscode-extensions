@@ -19,7 +19,7 @@
   },
   "publisher": "R3BL",
   "preview": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -64,12 +64,14 @@
           "enumDescriptions": [
             "Copyright without a license header",
             "Apache 2.0 License",
+            "Apache 2.0 License (One Line)",
             "MIT License",
             "GPL 3.0 License"
           ],
           "enum": [
             "none",
             "Apache2",
+            "Apache2OneLine",
             "MIT",
             "GPL3"
           ]

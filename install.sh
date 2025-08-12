@@ -5,12 +5,14 @@ set -e
 echo "🚀 Installing R3BL Extension Pack..."
 echo "======================================"
 
-# Colors for output
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-BLUE='\033[1;34m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+# Source shared script library
+source ./script_lib.sh
+
+# Check requirements
+check_requirements
+
+# Get all extension versions
+get_all_versions
 
 # Build all extensions first
 echo -e "${BLUE}Building all extensions...${NC}"
@@ -22,26 +24,26 @@ echo -e "${BLUE}Installing individual extensions...${NC}"
 
 # Install R3BL Theme
 if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-theme/r3bl-theme-1.0.0.vsix
+    code --install-extension packages/r3bl-theme/r3bl-theme-${THEME_VERSION}.vsix
 fi
 if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-theme/r3bl-theme-1.0.0.vsix
+    code-insiders --install-extension packages/r3bl-theme/r3bl-theme-${THEME_VERSION}.vsix
 fi
 
 # Install R3BL Auto Insert Copyright
 if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-1.1.0.vsix
+    code --install-extension packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-${COPYRIGHT_VERSION}.vsix
 fi
 if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-1.1.0.vsix
+    code-insiders --install-extension packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-${COPYRIGHT_VERSION}.vsix
 fi
 
 # Install R3BL Semantic Configuration
 if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-1.0.0.vsix
+    code --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-${SEMANTIC_VERSION}.vsix
 fi
 if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-1.0.0.vsix
+    code-insiders --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-${SEMANTIC_VERSION}.vsix
 fi
 
 # Install the extension pack
@@ -51,7 +53,7 @@ echo -e "${BLUE}Installing R3BL Extension Pack...${NC}"
 # Install for regular VSCode
 if command -v code &> /dev/null; then
     echo -e "${BLUE}Installing R3BL Extension Pack for VSCode...${NC}"
-    if code --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-1.0.0.vsix; then
+    if code --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix; then
         echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCode!${NC}"
     else
         echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCode${NC}"
@@ -63,7 +65,7 @@ fi
 # Install for VSCode Insiders
 if command -v code-insiders &> /dev/null; then
     echo -e "${BLUE}Installing R3BL Extension Pack for VSCode Insiders...${NC}"
-    if code-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-1.0.0.vsix; then
+    if code-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix; then
         echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCode Insiders!${NC}"
     else
         echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCode Insiders${NC}"
