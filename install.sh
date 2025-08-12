@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🚀 Installing R3BL VSCode Extensions..."
+echo "🚀 Installing R3BL Extension Pack..."
 echo "======================================"
 
 # Colors for output
@@ -12,84 +12,78 @@ BLUE='\033[1;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Check if vsce is installed
-if ! command -v vsce &> /dev/null; then
-    echo -e "${RED}Error: vsce is not installed. Please install it with: npm install -g @vscode/vsce${NC}"
-    exit 1
-fi
+# Build all extensions first
+echo -e "${BLUE}Building all extensions...${NC}"
+./build.sh
 
-# Install dependencies for the monorepo
-echo -e "${BLUE}Installing dependencies...${NC}"
-npm install
-
-# Function to build and install an extension
-install_extension() {
-    local package_dir="$1"
-    local extension_name="$2"
-    local vsix_file="$3"
-    
-    echo ""
-    echo -e "${BLUE}Building ${extension_name}...${NC}"
-    cd "packages/${package_dir}"
-    
-    # Build the extension if it has a build script
-    if grep -q '"compile"' package.json 2>/dev/null; then
-        echo -e "${BLUE}Compiling ${extension_name}...${NC}"
-        npm run compile
-    fi
-    
-    # Package the extension
-    echo -e "${BLUE}Packaging ${extension_name}...${NC}"
-    vsce package --no-dependencies
-    
-    # Check if VSIX file was created
-    if [ ! -f "$vsix_file" ]; then
-        echo -e "${RED}Error: Failed to create $vsix_file${NC}"
-        cd ../..
-        return 1
-    fi
-    
-    echo -e "${GREEN}✓ VSIX file created: $vsix_file${NC}"
-    
-    # Install for regular VSCode
-    if command -v code &> /dev/null; then
-        echo -e "${BLUE}Installing ${extension_name} for VSCode...${NC}"
-        if code --install-extension "$vsix_file"; then
-            echo -e "${GREEN}✓ ${extension_name} installed successfully for VSCode!${NC}"
-        else
-            echo -e "${RED}✗ Failed to install ${extension_name} for VSCode${NC}"
-        fi
-    else
-        echo -e "${YELLOW}VSCode not found, skipping installation for VSCode${NC}"
-    fi
-    
-    # Install for VSCode Insiders
-    if command -v code-insiders &> /dev/null; then
-        echo -e "${BLUE}Installing ${extension_name} for VSCode Insiders...${NC}"
-        if code-insiders --install-extension "$vsix_file"; then
-            echo -e "${GREEN}✓ ${extension_name} installed successfully for VSCode Insiders!${NC}"
-        else
-            echo -e "${RED}✗ Failed to install ${extension_name} for VSCode Insiders${NC}"
-        fi
-    else
-        echo -e "${YELLOW}VSCode Insiders not found, skipping installation for VSCode Insiders${NC}"
-    fi
-    
-    cd ../..
-}
+# Install all individual extensions first (required for extension pack to work)
+echo ""
+echo -e "${BLUE}Installing individual extensions...${NC}"
 
 # Install R3BL Theme
-install_extension "r3bl-theme" "R3BL Theme" "r3bl-theme-1.0.0.vsix"
+if command -v code &> /dev/null; then
+    code --install-extension packages/r3bl-theme/r3bl-theme-1.0.0.vsix
+fi
+if command -v code-insiders &> /dev/null; then
+    code-insiders --install-extension packages/r3bl-theme/r3bl-theme-1.0.0.vsix
+fi
 
 # Install R3BL Auto Insert Copyright
-install_extension "r3bl-auto-insert-copyright" "R3BL Auto Insert Copyright" "r3bl-auto-insert-copyright-1.0.0.vsix"
+if command -v code &> /dev/null; then
+    code --install-extension packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-1.1.0.vsix
+fi
+if command -v code-insiders &> /dev/null; then
+    code-insiders --install-extension packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-1.1.0.vsix
+fi
+
+# Install R3BL Semantic Configuration
+if command -v code &> /dev/null; then
+    code --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-1.0.0.vsix
+fi
+if command -v code-insiders &> /dev/null; then
+    code-insiders --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-1.0.0.vsix
+fi
+
+# Install the extension pack
+echo ""
+echo -e "${BLUE}Installing R3BL Extension Pack...${NC}"
+
+# Install for regular VSCode
+if command -v code &> /dev/null; then
+    echo -e "${BLUE}Installing R3BL Extension Pack for VSCode...${NC}"
+    if code --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-1.0.0.vsix; then
+        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCode!${NC}"
+    else
+        echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCode${NC}"
+    fi
+else
+    echo -e "${YELLOW}VSCode not found, skipping installation for VSCode${NC}"
+fi
+
+# Install for VSCode Insiders
+if command -v code-insiders &> /dev/null; then
+    echo -e "${BLUE}Installing R3BL Extension Pack for VSCode Insiders...${NC}"
+    if code-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-1.0.0.vsix; then
+        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCode Insiders!${NC}"
+    else
+        echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCode Insiders${NC}"
+    fi
+else
+    echo -e "${YELLOW}VSCode Insiders not found, skipping installation for VSCode Insiders${NC}"
+fi
 
 echo ""
 echo -e "${GREEN}🎉 Installation complete!${NC}"
 echo ""
+echo -e "${BLUE}The R3BL Extension Pack includes:${NC}"
+echo "  • R3BL Theme - Custom dark theme optimized for Rust and Markdown"
+echo "  • R3BL Auto Insert Copyright - Automatic copyright header insertion"
+echo "  • R3BL Semantic Configuration - Enhanced Rust syntax highlighting"
+echo "  • rust-analyzer - Official Rust language server"
+echo ""
 echo -e "${BLUE}Next steps:${NC}"
 echo "1. Restart VSCode/Insiders"
-echo "2. For R3BL Theme: Select 'R3BL Theme' from Color Theme picker (Ctrl+K Ctrl+T)"
-echo "3. For R3BL Auto Insert Copyright: Configure settings in VSCode preferences"
+echo "2. Select 'R3BL Theme' from Color Theme picker (Ctrl+K Ctrl+T)"
+echo "3. Configure copyright settings in VSCode preferences if needed"
 echo ""
-echo -e "${GREEN}All R3BL extensions are now installed and ready to use!${NC}"
+echo -e "${GREEN}Enjoy your R3BL development experience!${NC}"

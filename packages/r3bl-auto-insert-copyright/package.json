@@ -7,7 +7,7 @@
     "copyright",
     "license"
   ],
-  "icon": "r3bl-auto-insert-copyright-icon.png",
+  "icon": "r3bl-cube-logo.png",
   "galleryBanner": {
     "color": "#3C3B6E",
     "theme": "dark"
@@ -19,7 +19,7 @@
   },
   "publisher": "R3BL",
   "preview": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.95.0"
   },

@@ -1,0 +1,29 @@
+{
+  "name": "r3bl-extension-pack",
+  "displayName": "R3BL Extension Pack",
+  "description": "Complete R3BL development experience with theme and semantic highlighting",
+  "version": "1.0.0",
+  "publisher": "R3BL",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Extension Packs"
+  ],
+  "icon": "r3bl-cube-logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
+    "directory": "packages/r3bl-extension-pack"
+  },
+  "extensionPack": [
+    "R3BL.r3bl-theme",
+    "R3BL.r3bl-auto-insert-copyright",
+    "R3BL.r3bl-semantic-config",
+    "rust-lang.rust-analyzer"
+  ],
+  "contributes": {},
+  "scripts": {
+    "package": "vsce package --no-dependencies"
+  }
+}

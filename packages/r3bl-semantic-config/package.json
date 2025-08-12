@@ -1,0 +1,47 @@
+{
+  "name": "r3bl-semantic-config",
+  "displayName": "R3BL Semantic Configuration",
+  "description": "Automatically applies R3BL semantic highlighting settings",
+  "version": "1.0.0",
+  "publisher": "R3BL",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "icon": "r3bl-cube-logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
+    "directory": "packages/r3bl-semantic-config"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "r3bl-semantic-config.enable",
+        "title": "Enable R3BL Semantic Highlighting",
+        "category": "R3BL"
+      },
+      {
+        "command": "r3bl-semantic-config.disable",
+        "title": "Disable R3BL Semantic Highlighting",
+        "category": "R3BL"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0",
+    "@types/node": "14.x",
+    "typescript": "^4.4.4"
+  }
+}
