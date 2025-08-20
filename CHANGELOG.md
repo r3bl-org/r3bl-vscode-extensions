@@ -24,7 +24,7 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.2.0] - 2025-08-12
+## [1.2.0] - 2025-08-20
 
 ### Added
 
@@ -40,6 +40,15 @@ adheres to [Semantic Versioning](http://semver.org/).
   - Fixed `hasCopyright` function to properly detect both single-line and multi-line copyright headers
   - Now checks both line 0 (for single-line formats like Apache2OneLine) and line 1 (for multi-line formats like MIT/Apache2/GPL3)
   - Prevents duplicate copyright insertion when using different license formats
+
+- **R3BL Theme 1.0.1**: Significantly improved comment visibility and readability
+  - Updated comment colors from dull `#6272A4`/`#9C8CB2` to bright `#D4C4E8` for better contrast
+  - Fixed all comment color definitions including:
+    - General comments (`comment`, `punctuation.definition.comment`)
+    - GraphQL line comments (`comment.line.graphql`)
+    - GraphQL documentation strings (`string.block.description.graphql.DOCSTRING`)
+    - Unused and wildcard comments
+  - Enhanced readability for Rust code comments and all supported languages
 
 ## [1.1.0] - 2025-01-12
 

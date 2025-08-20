@@ -25,20 +25,6 @@ import * as vscode from 'vscode';
 
 const SEMANTIC_CONFIG = {
     "editor.semanticHighlighting.enabled": true,
-    "editor.tokenColorCustomizations": {
-        "comments": "#9c8cb2",
-        "textMateRules": [
-            {
-                "scope": [
-                    "comment",
-                    "punctuation.definition.comment"
-                ],
-                "settings": {
-                    "fontStyle": ""
-                }
-            }
-        ]
-    },
     "editor.semanticTokenColorCustomizations": {
         "rules": {
             "function": {
@@ -60,7 +46,6 @@ const SEMANTIC_CONFIG = {
             "method.static": "#4B8CDC",
             "function.static": "#4B8CDC",
             "macro": "#4B8CDC",
-            "comment": "#8B81A7",
             "struct": "#DDE86E",
             "enum": "#FCB141",
             "enumMember": {
@@ -116,7 +101,7 @@ const SEMANTIC_CONFIG = {
             "*.trait": "#d1de73"
         }
     }
-};
+};;;
 
 export function activate(context: vscode.ExtensionContext) {
     // Check if R3BL theme is active and auto-apply settings
@@ -162,6 +147,11 @@ async function applySemanticConfig() {
     const config = vscode.workspace.getConfiguration();
 
     try {
+        // First clean existing token customizations to avoid pollution
+        await config.update('editor.tokenColorCustomizations', undefined, vscode.ConfigurationTarget.Global);
+        await config.update('editor.semanticTokenColorCustomizations', undefined, vscode.ConfigurationTarget.Global);
+        
+        // Then apply fresh configuration
         for (const [key, value] of Object.entries(SEMANTIC_CONFIG)) {
             await config.update(key, value, vscode.ConfigurationTarget.Global);
         }
