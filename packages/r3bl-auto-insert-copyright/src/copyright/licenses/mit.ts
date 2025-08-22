@@ -1,7 +1,5 @@
-/*
- *   Copyright (c) 2022
- *   All rights reserved.
- */
+// Copyright (c) 2025 R3BL LLC. Licensed under MIT License.
+
 'use strict'
 
 import { Copyright } from '../copyright'

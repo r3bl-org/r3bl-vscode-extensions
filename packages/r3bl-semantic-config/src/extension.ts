@@ -1,25 +1,4 @@
-/*
- *   Copyright (c) 2024 R3BL LLC
- *   All rights reserved.
- *
- *   Permission is hereby granted, free of charge, to any person obtaining a copy
- *   of this software and associated documentation files (the "Software"), to deal
- *   in the Software without restriction, including without limitation the rights
- *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *   copies of the Software, and to permit persons to whom the Software is
- *   furnished to do so, subject to the following conditions:
- *
- *   The above copyright notice and this permission notice shall be included in all
- *   copies or substantial portions of the Software.
- *
- *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *   SOFTWARE.
- */
+// Copyright (c) 2025 R3BL LLC. Licensed under MIT License.
 
 import * as vscode from 'vscode';
 
@@ -101,7 +80,7 @@ const SEMANTIC_CONFIG = {
             "*.trait": "#d1de73"
         }
     }
-};;;
+};
 
 export function activate(context: vscode.ExtensionContext) {
     // Check if R3BL theme is active and auto-apply settings
@@ -150,7 +129,7 @@ async function applySemanticConfig() {
         // First clean existing token customizations to avoid pollution
         await config.update('editor.tokenColorCustomizations', undefined, vscode.ConfigurationTarget.Global);
         await config.update('editor.semanticTokenColorCustomizations', undefined, vscode.ConfigurationTarget.Global);
-        
+
         // Then apply fresh configuration
         for (const [key, value] of Object.entries(SEMANTIC_CONFIG)) {
             await config.update(key, value, vscode.ConfigurationTarget.Global);
