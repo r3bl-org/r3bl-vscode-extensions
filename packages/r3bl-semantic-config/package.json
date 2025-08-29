@@ -2,7 +2,7 @@
   "name": "r3bl-semantic-config",
   "displayName": "R3BL Semantic Configuration",
   "description": "Automatically applies R3BL semantic highlighting settings",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "R3BL",
   "engines": {
     "vscode": "^1.60.0"

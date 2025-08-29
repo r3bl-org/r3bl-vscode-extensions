@@ -2,7 +2,7 @@
   "name": "r3bl-extension-pack",
   "displayName": "R3BL Extension Pack",
   "description": "Complete R3BL development experience with theme and semantic highlighting",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "R3BL",
   "engines": {
     "vscode": "^1.60.0"

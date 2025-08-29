@@ -1,6 +1,7 @@
 // Copyright (c) 2025 R3BL LLC. Licensed under MIT License.
 
 import * as vscode from 'vscode';
+import * as fs from 'fs/promises';
 
 const SEMANTIC_CONFIG = {
     "editor.semanticHighlighting.enabled": true,
@@ -134,6 +135,10 @@ async function applySemanticConfig() {
         for (const [key, value] of Object.entries(SEMANTIC_CONFIG)) {
             await config.update(key, value, vscode.ConfigurationTarget.Global);
         }
+        
+        // Check for duplicate settings after successful application
+        await checkForDuplicateSettings();
+        
         vscode.window.showInformationMessage('R3BL semantic highlighting applied successfully!');
     } catch (error) {
         vscode.window.showErrorMessage(`Failed to apply semantic config: ${error}`);
@@ -151,6 +156,52 @@ async function removeSemanticConfig() {
         vscode.window.showInformationMessage('R3BL semantic highlighting removed successfully!');
     } catch (error) {
         vscode.window.showErrorMessage(`Failed to remove semantic config: ${error}`);
+    }
+}
+
+async function checkForDuplicateSettings() {
+    try {
+        const settingsPath = getSettingsPath();
+        const settingsContent = await fs.readFile(settingsPath, 'utf8');
+        
+        // Count occurrences of "editor.semanticHighlighting.enabled"
+        const matches = settingsContent.match(/"editor\.semanticHighlighting\.enabled"/g);
+        const count = matches ? matches.length : 0;
+        
+        if (count > 1) {
+            const message = `Multiple 'editor.semanticHighlighting.enabled' entries detected in settings.json (${count} found). This can happen with language-specific overrides and may cause conflicts. Please consolidate to a single entry.`;
+            
+            const action = await vscode.window.showWarningMessage(
+                message,
+                'Open Settings',
+                'Ignore'
+            );
+            
+            if (action === 'Open Settings') {
+                await vscode.commands.executeCommand('workbench.action.openSettingsJson');
+            }
+        }
+    } catch (error) {
+        // Show error in VS Code dialog to understand what's failing
+        vscode.window.showErrorMessage(`Failed to check for duplicate settings: ${error}`);
+        console.warn('Failed to check for duplicate settings:', error);
+    }
+}
+
+function getSettingsPath(): string {
+    const isWindows = process.platform === 'win32';
+    const isMac = process.platform === 'darwin';
+    const isInsiders = vscode.env.appName.includes('Insiders');
+    
+    if (isWindows) {
+        const appFolder = isInsiders ? 'Code - Insiders' : 'Code';
+        return `${process.env.APPDATA}/${appFolder}/User/settings.json`;
+    } else if (isMac) {
+        const appFolder = isInsiders ? 'Code - Insiders' : 'Code';
+        return `${process.env.HOME}/Library/Application Support/${appFolder}/User/settings.json`;
+    } else {
+        const appFolder = isInsiders ? 'Code - Insiders' : 'Code';
+        return `${process.env.HOME}/.config/${appFolder}/User/settings.json`;
     }
 }
 
