@@ -2,6 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
+  - [[2025-09-08] - Theme Color Refinements](#2025-09-08---theme-color-refinements)
+    - [Package Versions](#package-versions)
+    - [Changes](#changes)
   - [[2025-01-29] - Semantic Configuration Enhancement](#2025-01-29---semantic-configuration-enhancement)
     - [Package Versions](#package-versions)
     - [Changes](#changes)
@@ -23,6 +26,24 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2025-09-08] - Theme Color Refinements
+
+### Package Versions
+- **R3BL Theme**: 1.0.1 → 1.0.2
+- **R3BL Extension Pack**: 1.0.1 → 1.0.2
+
+### Changes
+
+- **R3BL Theme 1.0.2**: Enhanced UI color refinements for better visual hierarchy
+  - Updated tab border and inactive tab background from `#253340` to darker `#202530` for improved contrast
+  - Changed title bar colors from `#253340` to darker `#1a1f26` for better visual separation
+  - These subtle color adjustments create a more refined and cohesive dark theme experience
+  - Improved overall visual hierarchy while maintaining the signature R3BL aesthetic
+
+- **R3BL Extension Pack 1.0.2**: Updated to include latest theme refinements
+  - Updated to include R3BL Theme 1.0.2 with improved UI colors
+  - Maintains complete development experience with latest visual enhancements
 
 ## [2025-01-29] - Semantic Configuration Enhancement
 

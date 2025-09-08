@@ -188,19 +188,18 @@ If you want to build the extensions from source:
 
    **Option A: Build and Install (Recommended)**
    ```bash
+   ./build.sh
    ./install.sh
    ```
-   This script will:
-   - Build all extensions (.vsix files)
-   - Install individual extensions to VSCode/Insiders
-   - Install the extension pack
+   - `build.sh`: Generates all extension .vsix artifacts
+   - `install.sh`: Installs the pre-built .vsix files to VSCode/Insiders
 
    **Option B: Build Only**
    ```bash
    ./build.sh
    ```
    This script will:
-   - Build all extensions (.vsix files) without installing
+   - Generate all extension .vsix artifacts without installing
    - Useful for CI/CD or creating distribution packages
 
 3. **Restart VSCode** and enjoy your new extensions!
@@ -277,7 +276,7 @@ npm install
 ### Building
 
 ```bash
-# Build all extensions (.vsix files)
+# Generate all extension .vsix artifacts
 ./build.sh
 
 # Or build specific extensions manually:
@@ -289,7 +288,7 @@ npm run build:semantic-config
 ### Packaging
 
 ```bash
-# Package all extensions (same as build.sh)
+# Generate all extension .vsix artifacts (same as build.sh)
 ./build.sh
 
 # Or package specific extensions:
@@ -307,15 +306,16 @@ npm run package:extension-pack
 ./build.sh
 ```
 
-This ensures all .vsix files in the repository are up-to-date with your changes. The build script:
+This generates all .vsix files with your latest changes. The build script:
 - Compiles TypeScript extensions (r3bl-auto-insert-copyright, r3bl-semantic-config)
 - Packages all individual extensions
 - Builds the extension pack
-- Updates all .vsix files in their respective directories
+- Creates all .vsix artifacts in their respective directories
 
-This is crucial for:
-- Keeping distributed .vsix files current
-- Ensuring the install.sh script works with latest code
+After building, run `./install.sh` to install the generated .vsix files. This separation is crucial for:
+- Clean separation between building and installing
+- Enabling CI/CD workflows that only build artifacts
+- Allowing install.sh to work with pre-built .vsix files
 - Maintaining consistency across the monorepo
 
 ### Testing

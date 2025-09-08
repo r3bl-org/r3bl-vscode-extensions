@@ -14,10 +14,6 @@ check_requirements
 # Get all extension versions
 get_all_versions
 
-# Build all extensions first
-echo -e "${BLUE}Building all extensions...${NC}"
-./build.sh
-
 # Install all individual extensions first (required for extension pack to work)
 echo ""
 echo -e "${BLUE}Installing individual extensions...${NC}"
