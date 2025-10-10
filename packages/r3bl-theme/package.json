@@ -2,7 +2,7 @@
   "name": "r3bl-theme",
   "displayName": "R3BL Theme",
   "description": "Custom theme for Rust",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "R3BL",
   "engines": {
     "vscode": "^1.60.0"
