@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "taskSpaces": [
+    {
+      "name": "default-task-space",
+      "id": "ff401187-253b-4ca3-9259-e8c51a788fc1",
+      "tabs": [
+        "task/done/task_create_extension_task_management.md",
+        "install.sh",
+        "build.sh",
+        "script_lib.sh",
+        "README.md"
+      ],
+      "taskFile": "task/task_create_extension_task_management.md",
+      "createdAt": 1762441436813,
+      "lastAccessed": 1762446183683,
+      "activeTab": "README.md"
+    }
+  ],
+  "activeTaskSpaceId": "ff401187-253b-4ca3-9259-e8c51a788fc1"
+}

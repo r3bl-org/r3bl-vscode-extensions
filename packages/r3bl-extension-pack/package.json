@@ -1,8 +1,8 @@
 {
   "name": "r3bl-extension-pack",
   "displayName": "R3BL Extension Pack",
-  "description": "Complete R3BL development experience with theme and semantic highlighting",
-  "version": "1.0.3",
+  "description": "Complete R3BL development experience with theme, semantic highlighting, and task management",
+  "version": "1.0.4",
   "publisher": "R3BL",
   "engines": {
     "vscode": "^1.60.0"
@@ -20,6 +20,7 @@
     "R3BL.r3bl-theme",
     "R3BL.r3bl-auto-insert-copyright",
     "R3BL.r3bl-semantic-config",
+    "R3BL.r3bl-task-management",
     "rust-lang.rust-analyzer"
   ],
   "contributes": {},

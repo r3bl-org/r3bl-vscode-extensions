@@ -26,6 +26,7 @@ echo -e "${BLUE}Building individual extensions...${NC}"
 echo -e "${BLUE}Building R3BL Theme...${NC}"
 cd packages/r3bl-theme
 vsce package --no-dependencies
+cleanup_old_versions "r3bl-theme" "$THEME_VERSION" "."
 cd ../..
 
 # Build R3BL Auto Insert Copyright
@@ -34,6 +35,7 @@ cd packages/r3bl-auto-insert-copyright
 npm install
 npm run compile
 vsce package --no-dependencies
+cleanup_old_versions "r3bl-auto-insert-copyright" "$COPYRIGHT_VERSION" "."
 cd ../..
 
 # Build R3BL Semantic Configuration
@@ -42,6 +44,16 @@ cd packages/r3bl-semantic-config
 npm install
 npm run compile
 vsce package --no-dependencies
+cleanup_old_versions "r3bl-semantic-config" "$SEMANTIC_VERSION" "."
+cd ../..
+
+# Build R3BL Task Management
+echo -e "${BLUE}Building R3BL Task Management...${NC}"
+cd packages/r3bl-task-management
+npm install
+npm run compile
+vsce package --no-dependencies
+cleanup_old_versions "r3bl-task-management" "$TASK_MANAGEMENT_VERSION" "."
 cd ../..
 
 # Build the extension pack
@@ -49,14 +61,14 @@ echo ""
 echo -e "${BLUE}Building R3BL Extension Pack...${NC}"
 cd packages/r3bl-extension-pack
 
-# Get extension pack version before building
-CURRENT_EXTENSION_PACK_VERSION=$(node -p "require('./package.json').version")
-
 vsce package --no-dependencies
 
+# Clean up old versions of the extension pack
+cleanup_old_versions "r3bl-extension-pack" "$EXTENSION_PACK_VERSION" "."
+
 # Check if VSIX file was created
-if [ ! -f "r3bl-extension-pack-${CURRENT_EXTENSION_PACK_VERSION}.vsix" ]; then
-    echo -e "${RED}Error: Failed to create r3bl-extension-pack-${CURRENT_EXTENSION_PACK_VERSION}.vsix${NC}"
+if [ ! -f "r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix" ]; then
+    echo -e "${RED}Error: Failed to create r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix${NC}"
     exit 1
 fi
 

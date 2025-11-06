@@ -42,6 +42,14 @@ if command -v code-insiders &> /dev/null; then
     code-insiders --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-${SEMANTIC_VERSION}.vsix
 fi
 
+# Install R3BL Task Management
+if command -v code &> /dev/null; then
+    code --install-extension packages/r3bl-task-management/r3bl-task-management-${TASK_MANAGEMENT_VERSION}.vsix
+fi
+if command -v code-insiders &> /dev/null; then
+    code-insiders --install-extension packages/r3bl-task-management/r3bl-task-management-${TASK_MANAGEMENT_VERSION}.vsix
+fi
+
 # Install the extension pack
 echo ""
 echo -e "${BLUE}Installing R3BL Extension Pack...${NC}"
@@ -77,6 +85,7 @@ echo -e "${BLUE}The R3BL Extension Pack includes:${NC}"
 echo "  • R3BL Theme - Custom dark theme optimized for Rust and Markdown"
 echo "  • R3BL Auto Insert Copyright - Automatic copyright header insertion"
 echo "  • R3BL Semantic Configuration - Enhanced Rust syntax highlighting"
+echo "  • R3BL Task Management - Manage task spaces and organize open tabs"
 echo "  • rust-analyzer - Official Rust language server"
 echo ""
 echo -e "${BLUE}Next steps:${NC}"

@@ -26,19 +26,21 @@ get_version() {
 }
 
 # Function to get all extension versions
-# Sets global variables: THEME_VERSION, COPYRIGHT_VERSION, SEMANTIC_VERSION, EXTENSION_PACK_VERSION
+# Sets global variables: THEME_VERSION, COPYRIGHT_VERSION, SEMANTIC_VERSION, TASK_MANAGEMENT_VERSION, EXTENSION_PACK_VERSION
 get_all_versions() {
     echo -e "${BLUE}Reading extension versions...${NC}"
 
     THEME_VERSION=$(get_version "./packages/r3bl-theme/package.json")
     COPYRIGHT_VERSION=$(get_version "./packages/r3bl-auto-insert-copyright/package.json")
     SEMANTIC_VERSION=$(get_version "./packages/r3bl-semantic-config/package.json")
+    TASK_MANAGEMENT_VERSION=$(get_version "./packages/r3bl-task-management/package.json")
     EXTENSION_PACK_VERSION=$(get_version "./packages/r3bl-extension-pack/package.json")
 
     echo -e "${BLUE}Detected versions:${NC}"
     echo "  • R3BL Theme: ${THEME_VERSION}"
     echo "  • R3BL Auto Insert Copyright: ${COPYRIGHT_VERSION}"
     echo "  • R3BL Semantic Configuration: ${SEMANTIC_VERSION}"
+    echo "  • R3BL Task Management: ${TASK_MANAGEMENT_VERSION}"
     echo "  • R3BL Extension Pack: ${EXTENSION_PACK_VERSION}"
     echo ""
 }
@@ -70,6 +72,39 @@ check_requirements() {
     fi
 }
 
+# Function to remove outdated VSIX files for an extension
+# Usage: cleanup_old_versions "extension-name" "current-version" "packages/extension-folder"
+cleanup_old_versions() {
+    local extension_name="$1"
+    local current_version="$2"
+    local extension_path="$3"
+
+    if [ ! -d "$extension_path" ]; then
+        return
+    fi
+
+    # Find all VSIX files for this extension and remove outdated ones
+    local count=0
+    for vsix_file in "$extension_path"/${extension_name}-*.vsix; do
+        # Check if file exists (glob might not expand to anything)
+        if [ -f "$vsix_file" ]; then
+            # Extract version from filename
+            local file_version=$(basename "$vsix_file" | sed "s/${extension_name}-//;s/.vsix//")
+
+            # If version doesn't match current version, remove it
+            if [ "$file_version" != "$current_version" ]; then
+                rm -f "$vsix_file"
+                echo -e "${YELLOW}Removed outdated: ${vsix_file}${NC}"
+                ((count++))
+            fi
+        fi
+    done
+
+    if [ $count -gt 0 ]; then
+        echo -e "${BLUE}Cleaned up $count outdated version(s) of $extension_name${NC}"
+    fi
+}
+
 # Function to print extension list with dynamic versions
 print_built_extensions() {
     echo ""
@@ -79,6 +114,7 @@ print_built_extensions() {
     echo "  • packages/r3bl-theme/r3bl-theme-${THEME_VERSION}.vsix"
     echo "  • packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-${COPYRIGHT_VERSION}.vsix"
     echo "  • packages/r3bl-semantic-config/r3bl-semantic-config-${SEMANTIC_VERSION}.vsix"
+    echo "  • packages/r3bl-task-management/r3bl-task-management-${TASK_MANAGEMENT_VERSION}.vsix"
     echo "  • packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix"
     echo ""
     echo -e "${BLUE}To install the extensions, run: ./install.sh${NC}"
