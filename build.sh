@@ -56,6 +56,15 @@ vsce package --no-dependencies
 cleanup_old_versions "r3bl-task-management" "$TASK_MANAGEMENT_VERSION" "."
 cd ../..
 
+# Build R3BL Copy Selection Path and Range
+echo -e "${BLUE}Building R3BL Copy Selection Path and Range...${NC}"
+cd packages/r3bl-copy-selection-path-and-range
+npm install
+npm run build
+vsce package --no-dependencies
+cleanup_old_versions "r3bl-copy-selection-path-and-range" "$COPY_SELECTION_VERSION" "."
+cd ../..
+
 # Build the extension pack
 echo ""
 echo -e "${BLUE}Building R3BL Extension Pack...${NC}"

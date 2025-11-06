@@ -1,0 +1,67 @@
+{
+  "name": "r3bl-copy-selection-path-and-range",
+  "displayName": "R3BL Copy Selection Path and Range",
+  "description": "Copy file path with selected line ranges in Claude Code format (@path#L<start>-<end>)",
+  "license": "MIT",
+  "keywords": [
+    "copy",
+    "selection",
+    "path",
+    "range",
+    "claude"
+  ],
+  "icon": "r3bl-cube-logo.png",
+  "galleryBanner": {
+    "color": "#3C3B6E",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
+    "directory": "packages/r3bl-copy-selection-path-and-range"
+  },
+  "publisher": "R3BL",
+  "preview": false,
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:r3bl-copy-selection-path-and-range.copyPathAndRange"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "r3bl-copy-selection-path-and-range.copyPathAndRange",
+        "title": "Copy File Path with Selection Range",
+        "category": "R3BL"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "r3bl-copy-selection-path-and-range.copyPathAndRange",
+        "key": "alt+o",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "build": "webpack --mode production --devtool hidden-source-map",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.95.0",
+    "@types/node": "20.x",
+    "typescript": "^5.6.3",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

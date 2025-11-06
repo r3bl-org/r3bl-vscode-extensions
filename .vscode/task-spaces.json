@@ -15,7 +15,20 @@
       "createdAt": 1762441436813,
       "lastAccessed": 1762446183683,
       "activeTab": "README.md"
+    },
+    {
+      "name": "task-create-copy-selection-ext",
+      "id": "5e246a81-7538-41e5-ad33-432909ff9273",
+      "tabs": [
+        "README.md",
+        "packages/r3bl-copy-selection-path-and-range/package.json",
+        "packages/r3bl-copy-selection-path-and-range/src/extension.ts"
+      ],
+      "taskFile": "task/task_create_extension_to_copy_selection.md",
+      "createdAt": 1762455930859,
+      "lastAccessed": 1762455930876,
+      "activeTab": "packages/r3bl-copy-selection-path-and-range/src/extension.ts"
     }
   ],
-  "activeTaskSpaceId": "ff401187-253b-4ca3-9259-e8c51a788fc1"
+  "activeTaskSpaceId": "5e246a81-7538-41e5-ad33-432909ff9273"
 }

@@ -12,6 +12,7 @@ A monorepo containing all R3BL VSCode extensions.
     - [R3BL Auto Insert Copyright](#r3bl-auto-insert-copyright)
     - [R3BL Semantic Configuration](#r3bl-semantic-configuration)
     - [R3BL Task Management](#r3bl-task-management)
+    - [R3BL Copy Selection Path and Range](#r3bl-copy-selection-path-and-range)
 - [Installation](#installation)
   - [Quick Start (Recommended)](#quick-start-recommended)
   - [Using Prebuilt Extensions](#using-prebuilt-extensions)
@@ -47,6 +48,7 @@ A monorepo containing all R3BL VSCode extensions.
 - **R3BL Auto Insert Copyright** - Automatic copyright header insertion
 - **R3BL Semantic Configuration** - Enhanced Rust syntax highlighting (automatic)
 - **R3BL Task Management** - Manage task spaces and organize open tabs
+- **R3BL Copy Selection Path and Range** - Copy file paths with line ranges (Claude Code compatible)
 - **rust-analyzer** - Official Rust language server
 
 **What you get:**
@@ -55,6 +57,7 @@ A monorepo containing all R3BL VSCode extensions.
 - ✅ Automatic copyright headers for new files
 - ✅ Enhanced semantic highlighting for Rust (applied automatically)
 - ✅ Task space management for context switching (keyboard shortcut: Alt+Shift+T)
+- ✅ Quick file path copying with selection ranges (keyboard shortcut: Alt+o)
 - ✅ Full Rust language support via rust-analyzer
 - ✅ Zero manual configuration required
 
@@ -154,6 +157,32 @@ Example VSCode settings:
   "r3bl-task-management.showStatusBar": true
 }
 ```
+
+#### R3BL Copy Selection Path and Range
+
+Quickly copy file paths with selected line ranges in multiple formats suitable for sharing with Claude Code and other tools.
+
+**Features:**
+
+- **Three output formats** depending on selection:
+  - No selection: `path/to/file.ts` (just file path)
+  - Single-line selection: `path/to/file.ts:42` (IDE-compatible, with line number)
+  - Multi-line selection: `@path/to/file.ts#L10-20` (Claude Code format with @ prefix)
+- **Quick shortcut**: Press `Alt+o` to copy
+- **Relative paths**: Always relative to workspace root for easy sharing
+- **Instant feedback**: Information message shows what was copied
+
+**Usage:**
+
+- Select text or position cursor in a file
+- Press `Alt+o`
+- Paste the copied path anywhere using `Ctrl+V`
+
+**Output Format Details:**
+
+- **No selection (cursor only)**: Returns just the file path for opening files
+- **Single-line selection**: Includes line number in IDE-compatible format (works in VSCode, RustRover, Claude Code)
+- **Multi-line selection**: Includes range in Claude Code format (perfect for referencing code sections)
 
 ## Installation
 
@@ -523,11 +552,12 @@ npm run lint
 
 ```
 packages/
-├── r3bl-extension-pack/        # Extension pack (installs all R3BL extensions)
-├── r3bl-theme/                 # Theme extension
-├── r3bl-auto-insert-copyright/ # Copyright insertion extension
-├── r3bl-semantic-config/       # Semantic highlighting configuration
-└── r3bl-task-management/       # Task space management extension
+├── r3bl-extension-pack/              # Extension pack (installs all R3BL extensions)
+├── r3bl-theme/                       # Theme extension
+├── r3bl-auto-insert-copyright/       # Copyright insertion extension
+├── r3bl-semantic-config/             # Semantic highlighting configuration
+├── r3bl-task-management/             # Task space management extension
+└── r3bl-copy-selection-path-and-range/ # Copy file paths with selection ranges extension
 ```
 
 Each extension maintains its own package.json and can be developed independently while

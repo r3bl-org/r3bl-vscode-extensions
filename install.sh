@@ -50,6 +50,14 @@ if command -v code-insiders &> /dev/null; then
     code-insiders --install-extension packages/r3bl-task-management/r3bl-task-management-${TASK_MANAGEMENT_VERSION}.vsix
 fi
 
+# Install R3BL Copy Selection Path and Range
+if command -v code &> /dev/null; then
+    code --install-extension packages/r3bl-copy-selection-path-and-range/r3bl-copy-selection-path-and-range-${COPY_SELECTION_VERSION}.vsix
+fi
+if command -v code-insiders &> /dev/null; then
+    code-insiders --install-extension packages/r3bl-copy-selection-path-and-range/r3bl-copy-selection-path-and-range-${COPY_SELECTION_VERSION}.vsix
+fi
+
 # Install the extension pack
 echo ""
 echo -e "${BLUE}Installing R3BL Extension Pack...${NC}"
@@ -86,6 +94,7 @@ echo "  • R3BL Theme - Custom dark theme optimized for Rust and Markdown"
 echo "  • R3BL Auto Insert Copyright - Automatic copyright header insertion"
 echo "  • R3BL Semantic Configuration - Enhanced Rust syntax highlighting"
 echo "  • R3BL Task Management - Manage task spaces and organize open tabs"
+echo "  • R3BL Copy Selection Path and Range - Copy file paths with line ranges"
 echo "  • rust-analyzer - Official Rust language server"
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
