@@ -18,8 +18,8 @@
     "directory": "packages/r3bl-auto-insert-copyright"
   },
   "publisher": "R3BL",
-  "preview": true,
-  "version": "1.2.0",
+  "preview": false,
+  "version": "1.2.1",
   "engines": {
     "vscode": "^1.95.0"
   },

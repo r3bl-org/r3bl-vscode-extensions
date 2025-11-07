@@ -1,7 +1,7 @@
 {
   "name": "r3bl-copy-selection-path-and-range",
   "displayName": "R3BL Copy Selection Path and Range",
-  "description": "Copy file path with selected line ranges in Claude Code format (@path#L<start>-<end>)",
+  "description": "Copy file path with selection ranges in Claude Code format (@path#L<start>-<end>) or IDE format (path:<line>) for single/no selection",
   "license": "MIT",
   "keywords": [
     "copy",
@@ -22,7 +22,7 @@
   },
   "publisher": "R3BL",
   "preview": false,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.95.0"
   },

@@ -5,6 +5,8 @@ The complete R3BL development experience in one package! This extension pack inc
 - **R3BL Theme** - Custom dark theme optimized for Rust and Markdown
 - **R3BL Auto Insert Copyright** - Automatic copyright header insertion
 - **R3BL Semantic Configuration** - Enhanced Rust syntax highlighting (automatic)
+- **R3BL Copy Selection Path and Range** - Copy file path with selected line ranges in Claude Code format
+- **R3BL Task Management** - Task management and tracking for VS Code
 - **rust-analyzer** - Official Rust language server
 
 ## What you get:
