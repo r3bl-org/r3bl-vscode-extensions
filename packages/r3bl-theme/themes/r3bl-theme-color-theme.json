@@ -235,6 +235,9 @@
 
 		// Contrast color for selected items (subtle)
 		"contrastActiveBorder": "#ff6edb55",
+
+		// Tree indent guide colors
+		"tree.indentGuidesStroke": "#b58fa399",
 	},
 	"tokenColors": [
 		{

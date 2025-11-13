@@ -46,8 +46,17 @@ async function handleCopyPathAndRange() {
     // Copy to clipboard
     await vscode.env.clipboard.writeText(output);
 
-    // Show confirmation message
-    vscode.window.showInformationMessage(`Copied: ${output}`);
+    // Show confirmation message with "Open" button
+    const action = await vscode.window.showInformationMessage(`Copied: ${output}`, "Open");
+
+    // If user clicked "Open", navigate to the file and range
+    if (action === "Open") {
+        await vscode.window.showTextDocument(document.uri, {
+            selection: selection,
+            viewColumn: vscode.ViewColumn.Active,
+            preserveFocus: false
+        });
+    }
 }
 
 function calculateLineRange(selection: vscode.Selection): { lineRange: string; isMultiLine: boolean } {

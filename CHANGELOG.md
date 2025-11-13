@@ -27,6 +27,24 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-13] - Copy Selection Enhancement and Theme Refinement
+
+### Package Versions
+- **R3BL Copy Selection Path and Range**: 1.0.2 → 1.0.3
+- **R3BL Theme**: 1.0.4 → 1.0.5
+- **R3BL Extension Pack**: 1.0.7 → 1.0.8
+
+### Changes
+
+- **R3BL Copy Selection Path and Range 1.0.3**: Clickable notification feature
+  - Added "Open" button to notification when copying file path and range
+  - Click button to navigate directly to the copied file and selection in editor
+  - Improves workflow by allowing quick navigation back to copied locations
+
+- **R3BL Theme 1.0.5**: Improved tree structure visibility
+  - Updated `tree.indentGuidesStroke` color to `#b58fa399` for better visibility
+  - Enhances file explorer tree navigation experience
+
 ## [2025-09-08] - Theme Color Refinements
 
 ### Package Versions
