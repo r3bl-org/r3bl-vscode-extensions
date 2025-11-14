@@ -27,6 +27,23 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-14] - Sublime Merge Color Integration
+
+### Package Versions
+- **R3BL Theme**: 1.0.5 → 1.0.6
+- **R3BL Extension Pack**: 1.0.8 → 1.0.9
+
+### Changes
+
+- **R3BL Theme 1.0.6**: Sublime Merge color scheme integration
+  - Updated sidebar background to `#121c26` (exact color from Sublime Merge theme)
+  - Changed explorer selection color from blue (`#094771`) to magenta-purple (`#563044`)
+  - Updated hover state to `#634a54` for better visual feedback
+  - Changed inactive selection to `#46273a` for clearer state differentiation
+  - Updated text colors: foreground to `#aaa`, headings to `#ddd`
+  - Integrated color palette from custom Sublime Merge theme for consistent aesthetic
+  - Enhances overall sidebar visibility and provides a more cohesive color experience
+
 ## [2025-11-13] - Copy Selection Enhancement and Theme Refinement
 
 ### Package Versions
