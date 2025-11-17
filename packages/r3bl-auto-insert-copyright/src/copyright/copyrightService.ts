@@ -33,6 +33,10 @@ export function handleManualCopyrightCheck(editor: vscode.TextEditor | undefined
  * - Single-line: Apache2OneLine (// Copyright...)
  * - Multi-line: MIT, Apache2, GPL3 (/* ... * Copyright...)
  *
+ * Uses a hybrid detection approach:
+ * 1. Checks for single-line format in first line
+ * 2. For block comments, scans first 30 lines for copyright/license keywords
+ *
  * @param document The VSCode text document to check
  * @returns true if a copyright header is detected, false otherwise
  */
@@ -41,19 +45,31 @@ function hasCopyright(document: vscode.TextDocument): Boolean {
     return false;
   }
 
-  // Check first line (single-line copyright like Apache2OneLine: "// Copyright...")
   const firstLine = document.lineAt(0);
-  if (!firstLine.isEmptyOrWhitespace && firstLine.text.includes('Copyright')) {
+
+  // Check for single-line copyright (Apache2OneLine: "// Copyright...")
+  if (!firstLine.isEmptyOrWhitespace &&
+      firstLine.text.trim().startsWith('//') &&
+      firstLine.text.includes('Copyright')) {
     return true;
   }
 
-  // Check second line (multi-line copyright like MIT/Apache2/GPL3: "/* ... * Copyright...")
-  // Note: Multi-line licenses have "Copyright" on line 3-4, but we check line 1 which
-  // contains the block comment structure indicating a copyright header is present
-  if (document.lineCount > 1) {
-    const secondLine = document.lineAt(1);
-    if (!secondLine.isEmptyOrWhitespace && secondLine.text.includes('Copyright')) {
-      return true;
+  // Check for multi-line copyright block (MIT, Apache2, GPL3)
+  if (!firstLine.isEmptyOrWhitespace &&
+      firstLine.text.trim().startsWith('/*')) {
+    // Scan first 30 lines for copyright/license keywords
+    const linesToCheck = Math.min(30, document.lineCount);
+    for (let i = 0; i < linesToCheck; i++) {
+      const line = document.lineAt(i).text.toLowerCase();
+      if (line.includes('copyright') ||
+          line.includes('license') ||
+          line.includes('licensed')) {
+        return true;
+      }
+      // Stop at end of comment block
+      if (line.includes('*/')) {
+        break;
+      }
     }
   }
 

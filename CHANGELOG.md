@@ -27,6 +27,22 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-16] - Auto Insert Copyright Bug Fix
+
+### Package Versions
+- **R3BL Auto Insert Copyright**: 1.2.2 → 1.2.3
+- **R3BL Extension Pack**: 1.0.10 → 1.0.11
+
+### Changes
+
+- **R3BL Auto Insert Copyright 1.2.3**: Fixed duplicate license insertion bug
+  - Fixed critical bug where MIT licenses were repeatedly inserted on every tab switch
+  - Improved copyright detection to scan first 30 lines for copyright/license keywords
+  - Now properly detects MIT license format where "Copyright" appears on line 3
+  - Prevents duplicate license headers from being added to files that already have them
+  - Enhanced detection logic with hybrid approach: checks single-line formats and scans multi-line comment blocks
+  - All license formats now properly detected: MIT, Apache2, Apache2OneLine, GPL3
+
 ## [2025-11-16] - New Extension: R3BL Fuzzy Search
 
 ### Package Versions
