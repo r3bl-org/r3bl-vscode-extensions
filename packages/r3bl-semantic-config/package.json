@@ -2,13 +2,20 @@
   "name": "r3bl-semantic-config",
   "displayName": "R3BL Semantic Configuration",
   "description": "Automatically applies R3BL semantic highlighting settings",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "publisher": "R3BL",
   "engines": {
     "vscode": "^1.60.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
+  ],
+  "keywords": [
+    "semantic highlighting",
+    "syntax highlighting",
+    "configuration",
+    "rust",
+    "settings"
   ],
   "icon": "r3bl-cube-logo.png",
   "repository": {

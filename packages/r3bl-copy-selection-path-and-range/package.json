@@ -8,7 +8,11 @@
     "selection",
     "path",
     "range",
-    "claude"
+    "claude",
+    "claude code",
+    "file reference",
+    "line numbers",
+    "clipboard"
   ],
   "icon": "r3bl-cube-logo.png",
   "galleryBanner": {
@@ -22,12 +26,12 @@
   },
   "publisher": "R3BL",
   "preview": false,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
-    "Other"
+    "Productivity"
   ],
   "activationEvents": [
     "onCommand:r3bl-copy-selection-path-and-range.copyPathAndRange"

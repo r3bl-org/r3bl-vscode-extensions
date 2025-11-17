@@ -5,7 +5,13 @@
   "license": "MIT",
   "keywords": [
     "copyright",
-    "license"
+    "license",
+    "header",
+    "automatic",
+    "mit",
+    "apache",
+    "gpl",
+    "legal"
   ],
   "icon": "r3bl-cube-logo.png",
   "galleryBanner": {
@@ -19,12 +25,12 @@
   },
   "publisher": "R3BL",
   "preview": false,
-  "version": "1.2.3",
+  "version": "1.2.4",
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
-    "Other"
+    "Formatters"
   ],
   "activationEvents": [
     "onLanguage:c",

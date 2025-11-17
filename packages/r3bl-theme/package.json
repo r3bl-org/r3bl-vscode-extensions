@@ -2,13 +2,24 @@
   "name": "r3bl-theme",
   "displayName": "R3BL Theme",
   "description": "Custom theme for Rust",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "publisher": "R3BL",
+  "extensionDependencies": [
+    "R3BL.r3bl-semantic-config"
+  ],
   "engines": {
     "vscode": "^1.60.0"
   },
   "categories": [
     "Themes"
+  ],
+  "keywords": [
+    "theme",
+    "color theme",
+    "dark theme",
+    "rust",
+    "syntax highlighting",
+    "r3bl"
   ],
   "icon": "r3bl-cube-logo.png",
   "repository": {

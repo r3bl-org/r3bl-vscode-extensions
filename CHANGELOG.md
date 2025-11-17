@@ -27,6 +27,61 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-17] - Extension Pack Documentation Update
+
+### Package Versions
+- **R3BL Extension Pack**: 1.0.16 → 1.0.17
+
+### Changes
+
+- **R3BL Extension Pack 1.0.17**: Updated README with complete extension list
+  - Added missing R3BL Fuzzy Search to README
+  - Improved "What you get" section with all features
+  - Enhanced descriptions for task management and fuzzy search
+  - Complete and accurate documentation of all included extensions
+
+## [2025-11-17] - Theme and Semantic Configuration Integration
+
+### Package Versions
+- **R3BL Theme**: 1.0.7 → 1.0.8
+- **R3BL Semantic Configuration**: 1.0.3 → 1.0.4
+- **R3BL Extension Pack**: 1.0.15 → 1.0.16
+
+### Changes
+
+- **R3BL Theme 1.0.8**: Formalized dependency on semantic configuration
+  - Added `extensionDependencies` to automatically install R3BL Semantic Configuration
+  - Updated README to explain the relationship between theme and semantic config
+  - Users installing the theme now automatically get optimized semantic highlighting
+
+- **R3BL Semantic Configuration 1.0.4**: Clarified relationship with R3BL Theme
+  - Updated README to clearly indicate this extension is a companion to R3BL Theme
+  - Documented automatic installation when theme is installed
+  - Improved documentation on how the extensions work together
+
+## [2025-11-17] - Marketplace Metadata Improvements
+
+### Package Versions
+- **R3BL Task Management**: 1.0.3 → 1.0.4
+- **R3BL Theme**: 1.0.6 → 1.0.7
+- **R3BL Auto Insert Copyright**: 1.2.3 → 1.2.4
+- **R3BL Semantic Configuration**: 1.0.2 → 1.0.3
+- **R3BL Copy Selection Path and Range**: 1.0.3 → 1.0.4
+- **R3BL Fuzzy Search**: 1.0.1 → 1.0.2
+- **R3BL Extension Pack**: 1.0.14 → 1.0.15
+
+### Changes
+
+- **All Extensions**: Improved marketplace discoverability
+  - Fixed categories: 5 extensions moved from "Other" to appropriate categories (Productivity, Formatters, Programming Languages, Themes)
+  - Added comprehensive keywords to all extensions for better search results
+  - **R3BL Task Management**: Added 9 keywords (task management, workspace, tabs, context switching, workflow, task spaces, claude code, productivity, organization)
+  - **R3BL Theme**: Added 6 keywords (theme, color theme, dark theme, rust, syntax highlighting, r3bl)
+  - **R3BL Auto Insert Copyright**: Expanded keywords from 2 to 8 (copyright, license, header, automatic, mit, apache, gpl, legal)
+  - **R3BL Semantic Configuration**: Added 5 keywords (semantic highlighting, syntax highlighting, configuration, rust, settings)
+  - **R3BL Copy Selection Path and Range**: Expanded keywords from 5 to 9 (copy, selection, path, range, claude, claude code, file reference, line numbers, clipboard)
+  - **R3BL Fuzzy Search**: Expanded keywords from 5 to 8 (search, fzf, fuzzy, ripgrep, find, file search, fuzzy finder, grep)
+
 ## [2025-11-17] - Claude Code Integration for Task Management
 
 ### Package Versions

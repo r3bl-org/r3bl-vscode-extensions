@@ -2,21 +2,24 @@
   "name": "r3bl-fuzzy-search",
   "displayName": "R3BL Fuzzy Search",
   "description": "Fuzzy search in files using fzf - fast and smart search with Search Editor results",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "R3BL",
   "license": "MIT",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
-    "Other"
+    "Productivity"
   ],
   "keywords": [
     "search",
     "fzf",
     "fuzzy",
     "ripgrep",
-    "find"
+    "find",
+    "file search",
+    "fuzzy finder",
+    "grep"
   ],
   "icon": "r3bl-cube-logo.png",
   "repository": {
