@@ -568,6 +568,10 @@ sharing common tooling and configuration.
 Each extension can be published individually to the VSCode marketplace using their
 respective package.json configurations.
 
+## Changelog
+
+We maintain a detailed changelog to track all notable changes to the extensions. See [CHANGELOG.md](CHANGELOG.md) for the complete version history and release notes.
+
 ## License
 
 MIT - See individual extension LICENSE files for details.

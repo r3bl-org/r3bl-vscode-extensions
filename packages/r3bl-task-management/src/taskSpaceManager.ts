@@ -87,6 +87,13 @@ export class TaskSpaceManager {
       throw new Error('Task space not found');
     }
 
+    const taskSpace = this.data.taskSpaces[index];
+
+    // Move associated task file if it exists
+    if (taskSpace.taskFile) {
+      await this.moveTaskFileToDone(taskSpace.taskFile);
+    }
+
     this.data.taskSpaces.splice(index, 1);
 
     // Clear active if we deleted the active task space
@@ -95,6 +102,76 @@ export class TaskSpaceManager {
     }
 
     await this.save();
+  }
+
+  /**
+   * Move task file from task/ to task/done/
+   * If a file with the same name exists, add numeric suffix (_2, _3, etc.)
+   */
+  private async moveTaskFileToDone(taskFile: string): Promise<void> {
+    const workspaceFolder = this.getWorkspaceFolder();
+    if (!workspaceFolder) {
+      // No workspace, can't move files
+      return;
+    }
+
+    try {
+      // Construct paths
+      // taskFile format: "task/task_name.md"
+      const fileName = path.basename(taskFile); // "task_name.md"
+      const fileExt = path.extname(fileName); // ".md"
+      const fileBase = path.basename(fileName, fileExt); // "task_name"
+
+      const sourceUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile);
+      const doneDir = vscode.Uri.joinPath(workspaceFolder.uri, 'task', 'done');
+
+      // Check if source file exists
+      try {
+        await vscode.workspace.fs.stat(sourceUri);
+      } catch {
+        // Source file doesn't exist, nothing to move (this is OK)
+        return;
+      }
+
+      // Ensure task/done/ directory exists
+      try {
+        await vscode.workspace.fs.createDirectory(doneDir);
+      } catch {
+        // Directory might already exist, ignore error
+      }
+
+      // Find a unique filename in task/done/
+      let targetFileName = fileName;
+      let targetUri = vscode.Uri.joinPath(doneDir, targetFileName);
+      let counter = 2;
+
+      while (true) {
+        try {
+          await vscode.workspace.fs.stat(targetUri);
+          // File exists, try next number
+          targetFileName = `${fileBase}_${counter}${fileExt}`;
+          targetUri = vscode.Uri.joinPath(doneDir, targetFileName);
+          counter++;
+        } catch {
+          // File doesn't exist, we can use this name
+          break;
+        }
+      }
+
+      // Move file
+      await vscode.workspace.fs.rename(sourceUri, targetUri, {
+        overwrite: false
+      });
+
+    } catch (error) {
+      // Log error but don't throw - we still want to delete the task space
+      console.error(`Failed to move task file ${taskFile} to done/:`, error);
+
+      // Show warning to user
+      vscode.window.showWarningMessage(
+        `Task space deleted but could not move file "${path.basename(taskFile)}" to task/done/`
+      );
+    }
   }
 
   /**

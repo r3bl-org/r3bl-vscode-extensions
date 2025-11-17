@@ -100,17 +100,7 @@ This extension contributes the following settings:
 
 ## Release Notes
 
-### 1.0.0
-
-Initial release of R3BL Fuzzy Search:
-- Fuzzy search using fzf
-- Integration with ripgrep for fast content search
-- Search Editor results display
-- Configurable exclude patterns and result limits
-- Gitignore support with toggle on/off
-- Results automatically saved to `/tmp/`
-- Custom keybinding: `Alt+Shift+D`
-- macOS and Linux support
+See [CHANGELOG.md](../../CHANGELOG.md) for detailed release notes and version history.
 
 ## License
 

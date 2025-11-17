@@ -1,6 +1,7 @@
 // Copyright (c) 2025 R3BL LLC. Licensed under MIT License.
 
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { TaskSpace } from './types';
 import { TaskSpaceManager } from './taskSpaceManager';
 
@@ -274,8 +275,12 @@ async function handleDeleteTaskSpace(
   statusBar: vscode.StatusBarItem
 ): Promise<void> {
   // Confirm deletion
+  const message = taskSpace.taskFile
+    ? `Delete task space "${taskSpace.name}"?\n\nThe associated file "${path.basename(taskSpace.taskFile)}" will be moved to task/done/.\n\nThis cannot be undone.`
+    : `Delete task space "${taskSpace.name}"? This cannot be undone.`;
+
   const confirm = await vscode.window.showWarningMessage(
-    `Delete task space "${taskSpace.name}"? This cannot be undone.`,
+    message,
     { modal: true },
     'Delete'
   );

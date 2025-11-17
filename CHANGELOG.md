@@ -27,6 +27,22 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-17] - Task Management Enhancement
+
+### Package Versions
+- **R3BL Task Management**: 1.0.1 → 1.0.2
+- **R3BL Extension Pack**: 1.0.12 → 1.0.13
+
+### Changes
+
+- **R3BL Task Management 1.0.2**: Move task files to done folder on deletion
+  - When deleting a task space with an associated task file, the file is automatically moved from `task/` to `task/done/`
+  - Creates `task/done/` directory if it doesn't exist
+  - Handles filename collisions by adding numeric suffixes (e.g., `task_foo_2.md`, `task_foo_3.md`)
+  - Shows warning if file cannot be moved but continues with task space deletion
+  - Updated deletion confirmation dialog to inform users about file relocation
+  - Task files are optional - if no file is associated with a task space, deletion works normally without any file operations
+
 ## [2025-11-16] - Auto Insert Copyright Bug Fix
 
 ### Package Versions
