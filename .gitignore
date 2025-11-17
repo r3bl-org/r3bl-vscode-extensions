@@ -30,3 +30,7 @@ coverage/
 # Temporary files
 .tmp/
 temp/
+
+# Serena memories
+.serena/memories/
+.serena/cache/

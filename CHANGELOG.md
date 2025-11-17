@@ -27,6 +27,33 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-16] - New Extension: R3BL Fuzzy Search
+
+### Package Versions
+- **R3BL Fuzzy Search**: NEW → 1.0.0
+- **R3BL Extension Pack**: 1.0.9 → 1.0.10
+
+### Changes
+
+- **R3BL Fuzzy Search 1.0.0**: Initial release of fuzzy search extension
+  - Fuzzy search across file contents using fzf and ripgrep
+  - Smart search with typo tolerance (e.g., "exprt" finds "export")
+  - Results displayed in VS Code's Search Editor format with clickable navigation
+  - Results automatically saved to `/tmp/` with query-based filename (spaces → underscores)
+  - Configurable exclude patterns for files and directories (default: node_modules, .git, .vscode, target)
+  - Configurable result limit (default: 100, range: 1-10000)
+  - Toggle .gitignore respect on/off (enabled by default)
+  - Automatically respects .gitignore, .ignore, and .rgignore files
+  - Custom keybinding: `Alt+Shift+D` (same for macOS and Linux)
+  - Clean UI with visual indicators (■/.□ for gitignore status)
+  - Icon buttons for toggling settings and modifying exclude patterns
+  - Platform support: macOS and Linux only (Windows not supported)
+  - Requires ripgrep (rg) and fzf to be installed on the system
+
+- **R3BL Extension Pack 1.0.10**: Updated to include R3BL Fuzzy Search
+  - Added R3BL Fuzzy Search 1.0.0 to extension pack
+  - Now provides complete development experience including fuzzy file content search
+
 ## [2025-11-14] - Sublime Merge Color Integration
 
 ### Package Versions

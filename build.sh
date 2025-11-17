@@ -65,6 +65,15 @@ vsce package --no-dependencies
 cleanup_old_versions "r3bl-copy-selection-path-and-range" "$COPY_SELECTION_VERSION" "."
 cd ../..
 
+# Build R3BL Fuzzy Search
+echo -e "${BLUE}Building R3BL Fuzzy Search...${NC}"
+cd packages/r3bl-fuzzy-search
+npm install
+npm run compile
+vsce package --no-dependencies
+cleanup_old_versions "r3bl-fuzzy-search" "$FUZZY_SEARCH_VERSION" "."
+cd ../..
+
 # Build the extension pack
 echo ""
 echo -e "${BLUE}Building R3BL Extension Pack...${NC}"

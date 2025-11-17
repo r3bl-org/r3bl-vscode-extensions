@@ -33,12 +33,11 @@
       "id": "a1be23d3-7f0a-4330-ae95-e9250c3777dd",
       "tabs": [
         "task/task_build_r3bl_fuzzy_search.md",
-        "README.md",
-        "packages/r3bl-copy-selection-path-and-range/package.json",
-        "packages/r3bl-copy-selection-path-and-range/src/extension.ts"
+        "packages/r3bl-fuzzy-search/package.json",
+        "packages/r3bl-fuzzy-search/src/extension.ts",
+        "README.md"
       ],
       "taskFile": "task/task_build_r3bl_fuzzy_search.md",
-      "activeTab": "task/task_build_r3bl_fuzzy_search.md",
       "createdAt": 1763320678207,
       "lastAccessed": 1763320678221
     }

@@ -26,7 +26,7 @@ get_version() {
 }
 
 # Function to get all extension versions
-# Sets global variables: THEME_VERSION, COPYRIGHT_VERSION, SEMANTIC_VERSION, TASK_MANAGEMENT_VERSION, COPY_SELECTION_VERSION, EXTENSION_PACK_VERSION
+# Sets global variables: THEME_VERSION, COPYRIGHT_VERSION, SEMANTIC_VERSION, TASK_MANAGEMENT_VERSION, COPY_SELECTION_VERSION, FUZZY_SEARCH_VERSION, EXTENSION_PACK_VERSION
 get_all_versions() {
     echo -e "${BLUE}Reading extension versions...${NC}"
 
@@ -35,6 +35,7 @@ get_all_versions() {
     SEMANTIC_VERSION=$(get_version "./packages/r3bl-semantic-config/package.json")
     TASK_MANAGEMENT_VERSION=$(get_version "./packages/r3bl-task-management/package.json")
     COPY_SELECTION_VERSION=$(get_version "./packages/r3bl-copy-selection-path-and-range/package.json")
+    FUZZY_SEARCH_VERSION=$(get_version "./packages/r3bl-fuzzy-search/package.json")
     EXTENSION_PACK_VERSION=$(get_version "./packages/r3bl-extension-pack/package.json")
 
     echo -e "${BLUE}Detected versions:${NC}"
@@ -43,6 +44,7 @@ get_all_versions() {
     echo "  • R3BL Semantic Configuration: ${SEMANTIC_VERSION}"
     echo "  • R3BL Task Management: ${TASK_MANAGEMENT_VERSION}"
     echo "  • R3BL Copy Selection Path and Range: ${COPY_SELECTION_VERSION}"
+    echo "  • R3BL Fuzzy Search: ${FUZZY_SEARCH_VERSION}"
     echo "  • R3BL Extension Pack: ${EXTENSION_PACK_VERSION}"
     echo ""
 }
@@ -118,6 +120,7 @@ print_built_extensions() {
     echo "  • packages/r3bl-semantic-config/r3bl-semantic-config-${SEMANTIC_VERSION}.vsix"
     echo "  • packages/r3bl-task-management/r3bl-task-management-${TASK_MANAGEMENT_VERSION}.vsix"
     echo "  • packages/r3bl-copy-selection-path-and-range/r3bl-copy-selection-path-and-range-${COPY_SELECTION_VERSION}.vsix"
+    echo "  • packages/r3bl-fuzzy-search/r3bl-fuzzy-search-${FUZZY_SEARCH_VERSION}.vsix"
     echo "  • packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix"
     echo ""
     echo -e "${BLUE}To install the extensions, run: ./install.sh${NC}"
