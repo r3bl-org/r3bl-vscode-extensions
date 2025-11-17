@@ -1,8 +1,8 @@
 {
   "name": "r3bl-theme",
   "displayName": "R3BL Theme",
-  "description": "Custom theme for Rust",
-  "version": "1.0.8",
+  "description": "Dark theme optimized for Rust and Markdown with enhanced semantic highlighting and eye comfort",
+  "version": "1.0.9",
   "publisher": "R3BL",
   "extensionDependencies": [
     "R3BL.r3bl-semantic-config"
@@ -18,7 +18,12 @@
     "color theme",
     "dark theme",
     "rust",
+    "rust theme",
+    "markdown",
     "syntax highlighting",
+    "semantic highlighting",
+    "code theme",
+    "programming theme",
     "r3bl"
   ],
   "icon": "r3bl-cube-logo.png",
