@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { TaskSpace } from './types';
 import { TaskSpaceManager } from './taskSpaceManager';
+import { promptToInstallClaudeCodeIntegration } from './claudeCodeIntegration';
 
 interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
   taskSpace?: TaskSpace;
@@ -15,7 +16,8 @@ interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
  */
 export async function showTaskSpacesDialog(
   manager: TaskSpaceManager,
-  statusBar: vscode.StatusBarItem
+  statusBar: vscode.StatusBarItem,
+  context?: vscode.ExtensionContext
 ): Promise<void> {
   const quickPick = vscode.window.createQuickPick<TaskSpaceQuickPickItem>();
   quickPick.placeholder = 'Select a task space or create a new one';
@@ -78,7 +80,7 @@ export async function showTaskSpacesDialog(
     quickPick.hide();
 
     if (selected.action === 'create') {
-      await handleCreateTaskSpace(manager, statusBar);
+      await handleCreateTaskSpace(manager, statusBar, context);
     } else if (selected.action === 'switch' && selected.taskSpace) {
       await handleSwitchTaskSpace(manager, selected.taskSpace, statusBar);
     }
@@ -115,7 +117,8 @@ export async function showTaskSpacesDialog(
  */
 async function handleCreateTaskSpace(
   manager: TaskSpaceManager,
-  statusBar: vscode.StatusBarItem
+  statusBar: vscode.StatusBarItem,
+  context?: vscode.ExtensionContext
 ): Promise<void> {
   // Step 1: Get task space name
   const name = await vscode.window.showInputBox({
@@ -199,6 +202,11 @@ async function handleCreateTaskSpace(
     vscode.window.showInformationMessage(
       `Task space "${name}" created with ${taskSpace.tabs.length} tab(s)`
     );
+
+    // Prompt to install Claude Code integration if task file is linked
+    if (taskFile && context) {
+      await promptToInstallClaudeCodeIntegration(context);
+    }
   } catch (error) {
     vscode.window.showErrorMessage(`Failed to create task space: ${error}`);
   }

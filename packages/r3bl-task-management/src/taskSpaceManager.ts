@@ -23,6 +23,21 @@ export class TaskSpaceManager {
   }
 
   /**
+   * Reload task spaces from disk (e.g., after git branch switch)
+   * Returns true if active task space changed
+   */
+  async reloadFromDisk(): Promise<boolean> {
+    const oldActiveId = this.data.activeTaskSpaceId;
+
+    // Reload from storage
+    this.data = await this.storage.loadTaskSpaces();
+
+    // Check if active task space changed
+    const newActiveId = this.data.activeTaskSpaceId;
+    return oldActiveId !== newActiveId;
+  }
+
+  /**
    * Save current state to storage
    */
   private async save(): Promise<void> {
@@ -52,8 +67,9 @@ export class TaskSpaceManager {
 
   /**
    * Create a new task space with current open tabs
+   * @param setAsActive - If true, sets this as the active task space immediately
    */
-  async createTaskSpace(name: string, taskFile?: string): Promise<TaskSpace> {
+  async createTaskSpace(name: string, taskFile?: string, setAsActive: boolean = false): Promise<TaskSpace> {
     // Validate name is unique
     if (this.data.taskSpaces.some(ts => ts.name === name)) {
       throw new Error(`Task space "${name}" already exists`);
@@ -73,6 +89,12 @@ export class TaskSpaceManager {
     };
 
     this.data.taskSpaces.push(taskSpace);
+
+    // Set as active if requested (atomically with creation)
+    if (setAsActive) {
+      this.data.activeTaskSpaceId = taskSpace.id;
+    }
+
     await this.save();
 
     return taskSpace;
@@ -403,11 +425,9 @@ export class TaskSpaceManager {
       }
     }
 
-    // Show notification if any files failed to open
+    // Log errors for debugging (silently ignore missing files)
     if (errors.length > 0) {
-      vscode.window.showWarningMessage(
-        `Failed to open ${errors.length} file(s): ${errors.slice(0, 3).join(', ')}${errors.length > 3 ? '...' : ''}`
-      );
+      console.log(`Skipped ${errors.length} missing file(s):`, errors);
     }
   }
 
@@ -417,5 +437,68 @@ export class TaskSpaceManager {
   private getWorkspaceFolder(): vscode.WorkspaceFolder | undefined {
     const folders = vscode.workspace.workspaceFolders;
     return folders && folders.length > 0 ? folders[0] : undefined;
+  }
+
+  /**
+   * Get all task files from task/ directory (task_*.md pattern)
+   * Returns relative paths like "task/task_foo.md"
+   */
+  async getTaskFiles(): Promise<string[]> {
+    const workspaceFolder = this.getWorkspaceFolder();
+    if (!workspaceFolder) {
+      return [];
+    }
+
+    try {
+      const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, 'task');
+
+      // Check if task directory exists
+      try {
+        await vscode.workspace.fs.stat(taskDir);
+      } catch {
+        // task/ directory doesn't exist
+        return [];
+      }
+
+      // Read directory contents
+      const files = await vscode.workspace.fs.readDirectory(taskDir);
+
+      // Filter for task_*.md files
+      const taskFiles = files
+        .filter(([name, type]) => {
+          return type === vscode.FileType.File &&
+                 name.startsWith('task_') &&
+                 name.endsWith('.md');
+        })
+        .map(([name]) => `task/${name}`)
+        .sort(); // Sort alphabetically
+
+      return taskFiles;
+    } catch (error) {
+      console.error('Failed to get task files:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get task files that don't have linked task spaces
+   * Returns array of relative paths like "task/task_foo.md"
+   */
+  async getUnlinkedTaskFiles(): Promise<string[]> {
+    const allTaskFiles = await this.getTaskFiles();
+    const linkedFiles = new Set(
+      this.data.taskSpaces
+        .filter(ts => ts.taskFile)
+        .map(ts => ts.taskFile!)
+    );
+
+    return allTaskFiles.filter(file => !linkedFiles.has(file));
+  }
+
+  /**
+   * Check if a task file has a linked task space
+   */
+  hasLinkedTaskSpace(taskFile: string): boolean {
+    return this.data.taskSpaces.some(ts => ts.taskFile === taskFile);
   }
 }

@@ -1,127 +1,227 @@
 # R3BL Task Management
 
-Manage task spaces - collections of open tabs for different work contexts. Inspired by IntelliJ IDEA's Task Management plugin, this extension adds powerful features for working with Claude Code: track design and implementation docs in `task/*.md` files, then automatically archive them to `task/done/` when work is complete. See [Basic Workflow](#basic-workflow) and [Claude Code Workflow](#task-file-integration--claude-code-workflow).
+Manage task spaces - collections of open tabs for different work contexts **within a single git branch**. Inspired by IntelliJ IDEA's Task Management plugin, this extension helps you organize multiple concurrent workflows (feature development, bug fixing, code review, research) while working on the same branch. Integrates with Claude Code to track implementation plans in `task/*.md` files.
 
-## Features
+## Use Cases
 
-- **Task Spaces**: Organize your work into distinct task spaces, each with its own set of open tabs
-- **Quick Switching**: Instantly switch between task spaces with keyboard shortcut (Alt+Shift+T)
-- **Claude Code Integration**: Link task spaces to markdown files in your `task/` directory to track design docs, implementation plans, and instructions for Claude Code
-- **Automatic Archival**: When you close a task space, the linked file is automatically moved to `task/done/`, keeping your workspace organized
-- **Status Bar**: See your active task space and tab count at a glance
-- **Auto-Save**: Automatically saves your current tabs when switching task spaces
-- **Smart Collision Handling**: Prevents data loss by adding numeric suffixes when moving files with duplicate names
-- **Workspace Persistence**: Task spaces are saved in `.vscode/task-spaces.json` per workspace
+### Multiple Concurrent Workflows (Same Branch)
+Working on a feature but need to quickly review a PR? Or switch between implementation and research? Create separate task spaces for each workflow **on your current branch**:
+- **"Feature: Auth"** - Implementation files (src/auth.ts, src/login.ts)
+- **"Research: OAuth"** - Documentation tabs and examples
+- **"Code Review: PR #123"** - All changed files
+- **"Bug Fix: Login Error"** - Debugging context
+
+Switch between them instantly with **Alt+Shift+T** without losing your place.
+
+### Claude Code Collaboration
+Run multiple Claude Code instances in parallel (different terminal tabs or tmux panes), each working on different aspects of your work. Create task spaces for each to organize files and switch contexts seamlessly.
+
+### Context Preservation
+Stop losing your carefully arranged tabs! Each task space remembers exactly which files were open, so you can switch contexts without mental overhead.
+
+## ⚠️ Important: How It Works
+
+### Task Spaces Are WITHIN One Branch
+**This extension helps you manage multiple workflows WITHIN a single git branch.** It does NOT help you manage different feature branches. When you switch git branches, your task spaces are tied to what's in `.vscode/task-spaces.json` on that branch.
+
+### Filesystem-Based Memory
+Task spaces are stored in `.vscode/task-spaces.json` in your workspace. **The extension's memory is tied to the filesystem, not global VS Code state.**
+
+This means:
+- Task spaces are **per-workspace** (different projects have separate task spaces)
+- Task spaces are **per-branch** if you commit the file to git
+- Branch switching can change which task spaces you see
+
+### Should You Commit `.vscode/task-spaces.json`?
+
+#### ✅ Recommended: Add to `.gitignore`
+
+```bash
+echo ".vscode/task-spaces.json" >> .gitignore
+```
+
+**This extension is designed for personal workflow management.** Task spaces help YOU organize YOUR work - which files are open for implementation vs research vs code review. This is personal context, not project configuration.
+
+**With gitignore:**
+- ✅ Task spaces are yours alone
+- ✅ Branch switching doesn't affect your spaces
+- ✅ No merge conflicts
+- ✅ Your workflow stays consistent across branches
+
+**Example:** You're on `feature/auth` with task spaces "Implementation", "Research", "Testing". You `git checkout main` to check something - your task spaces stay exactly the same. Switch back to `feature/auth` - everything's still there.
+
+#### Alternative: Commit It (Team Collaboration)
+
+**Only do this if** you want to share task spaces with your team (e.g., "here are the relevant files for this feature").
+
+**Note:** The extension automatically detects when the file changes (e.g., branch switch) and reloads task spaces accordingly. This makes committing it *possible*, but it's still not the recommended workflow for most users.
+
+**Be aware:**
+- ⚠️ Different branches will have different task spaces
+- ⚠️ **Merge conflicts are inevitable** - Each team member has their own task space data in the JSON file. When multiple people commit changes to the same file, git will constantly show merge conflicts
+- ⚠️ Team members' personal workflows differ (your "Implementation" space has different files than theirs)
+
+## What It Does
+
+- **Task Spaces**: Collections of open tabs you can switch between instantly
+- **Quick Switching**: Keyboard shortcut (Alt+Shift+T) to switch contexts
+- **Claude Code Integration**: Link task spaces to `task/*.md` files for tracking implementation plans
+- **Automatic Archival**: Completed task files move to `task/done/` automatically
+- **Status Bar**: See your active task space at a glance
+- **Auto-Save**: Current tabs are saved automatically when you switch or modify
+- **Smart Collision Handling**: No data loss - files get numeric suffixes if duplicates exist
 
 ## Screenshots
 
 ![Task Spaces Dialog](images/task-spaces-dialog.png)
-*Main dialog showing all your task spaces with tab counts and last accessed times*
+*Main dialog showing all your task spaces*
 
 ![Create Task Space](images/create-task-space.png)
-*Enter a name for your new task space*
+*Create a new workflow context*
 
 ![Link Task File](images/link-task-file.png)
-*Optionally link a markdown file from your task/ directory*
+*Link to Claude Code task files*
 
 ![Delete Confirmation](images/delete-confirmation.png)
-*When you're done with a task, you can delete it. Delete confirmation shows that the linked file will be moved to task/done/*
+*Automatic archival to task/done/*
 
 ![Status Bar](images/status-bar-active.png)
-*Status bar showing active task space with name and tab count*
+*Status bar shows active context*
 
-## Requirements
+## Getting Started
 
+### Requirements
 - VS Code 1.70.0 or higher
-- No external dependencies required
+- No external dependencies
 
-## Usage
+### Quick Start
 
-### Keyboard Shortcut
+**Press Alt+Shift+T** to open the Task Spaces dialog.
 
-Press **Alt+Shift+T** to open the Task Spaces dialog (works on all platforms).
+1. **Create your first task space:**
+   - Click "Create New Task Space"
+   - Name it (e.g., "Feature: User Auth")
+   - Optionally link a task/*.md file
+   - All your currently open tabs are saved to this space
+
+2. **Switch between spaces:**
+   - Press Alt+Shift+T
+   - Select a different task space
+   - Your tabs switch automatically
+
+3. **Manage spaces:**
+   - Click ✏️ to rename
+   - Click 🗑️ to delete (archives linked files to task/done/)
+
+## Workflows
 
 ### Basic Workflow
 
-1. **Create a task space**:
-   - Press `Alt+Shift+T`
-   - Click "Create New Task Space"
-   - Enter a name (e.g., "Feature: User Authentication")
-   - Optionally link a task file from your `task/` directory
-   - The task space captures all currently open tabs
+Create separate task spaces for different aspects of your work **on the same branch**:
 
-2. **Switch between task spaces**:
-   - Press `Alt+Shift+T`
-   - Select a task space from the list
-   - All current tabs will close
-   - Tabs from the selected task space will open
-   - Your previous task space is automatically saved
+1. Open files for "Feature Implementation"
+2. Press Alt+Shift+T → Create "Feature: Auth Implementation"
+3. Now switch to research - open documentation tabs
+4. Press Alt+Shift+T → Create "Research: OAuth Patterns"
+5. Switch back and forth without losing context
 
-3. **Manage task spaces**:
-   - **Rename**: Click the edit icon (✏️) next to a task space
-   - **Delete**: Click the delete icon (🗑️) next to a task space
-   - Deleting a task space with a linked file automatically moves it to `task/done/`
+Your previous tabs are auto-saved when you switch.
 
-### Task File Integration & Claude Code Workflow
+### Claude Code Workflow
 
-Task spaces can be linked to markdown files in your `task/` directory. This creates a powerful workflow for working with Claude Code:
+Task spaces integrate with Claude Code for implementation tracking:
 
-**Planning Phase** (`task/` directory):
-- Create a detailed design and implementation doc in `task/task_feature_name.md`
-- Include specifications, requirements, and step-by-step plans
-- Give this plan to Claude Code to work on
-- Create a task space linked to this file to organize all related tabs
+**Planning Phase:**
+- Create `task/task_auth_feature.md` with detailed implementation plan
+- Create task space "Feature: Auth" linked to this file
+- Give plan to Claude Code to work on
 
-**Implementation Phase**:
-- Work on the feature with Claude Code
-- Keep the task file updated with progress and notes
+**Implementation Phase:**
+- Work with Claude Code
+- Update task file with progress notes
 - All relevant files stay organized in your task space
 
-**Completion Phase** (`task/done/` directory):
-- When work is complete, delete the task space
-- The linked file is **automatically moved** from `task/` to `task/done/`
-- If a file with the same name exists in `task/done/`, a numeric suffix is added (e.g., `task_foo_2.md`)
-- This keeps your workspace organized and creates an archive of completed work
+**Completion Phase:**
+- Delete task space when done
+- Linked file **automatically moves** to `task/done/` (archival)
+- Numeric suffix added if file already exists (e.g., `task_auth_2.md`)
 
-This workflow is inspired by IntelliJ IDEA's Task Management plugin but enhanced specifically for Claude Code collaboration and markdown-based planning.
+### Claude Code Integration Commands
+
+#### Install Claude Code Integration
+
+![Install Command](images/install-claude-integration-command.png)
+*Command palette → "R3BL Task Management: Install Claude Code Integration"*
+
+![Installation Prompt](images/install-claude-integration-prompt.png)
+*Creates .claude/commands if needed*
+
+![Installation Success](images/install-claude-integration-success.png)
+*Installs `/r3bl-task` slash command*
+
+This installs the `/r3bl-task` command for Claude Code CLI:
+- `/r3bl-task create [name]` - Create task file from your todo list
+- `/r3bl-task update [name]` - Update progress
+- `/r3bl-task load [name]` - Resume work on a task
+
+#### Create Task Space from Task File
+
+![Create from File Command](images/create-from-file-command.png)
+*Command palette → "Create Task Space from Task File"*
+
+![Select Task File](images/create-from-file-select.png)
+*Shows all task/*.md files (⚠️ = not linked)*
+
+![Name Task Space](images/create-from-file-name.png)
+*Pre-fills name from filename*
+
+![Task Space Created](images/create-from-file-success.png)
+*Ready to use!*
+
+#### Smart Prompting
+
+![Create with Linked File](images/smart-prompt-create-with-file.png)
+*Creating task space with linked file...*
+
+![Integration Prompt](images/smart-prompt-notification.png)
+*...prompts to install Claude Code integration (with "Don't Ask Again" option)*
+
+### Power User: Multiple Claude Code Instances
+
+Run **multiple Claude Code CLI instances in parallel** (terminal tabs or tmux panes), each working on different tasks, coordinated through one VS Code instance:
+
+1. **Terminal 1**: `claude` → `/r3bl-task create feature_a` → Creates `task/task_feature_a.md`
+2. **Terminal 2**: `claude` → `/r3bl-task create feature_b` → Creates `task/task_feature_b.md`
+3. **VS Code**: "Create Task Space from Task File" for each
+4. **Switch**: Alt+Shift+T to switch between contexts as you work
+
+True parallel development on the same branch!
+
+## Reference
+
+### Commands
+
+- `R3BL Task Management: Manage Task Spaces` - Open dialog (Alt+Shift+T)
+- `R3BL Task Management: Install Claude Code Integration` - Install /r3bl-task command
+- `R3BL Task Management: Create Task Space from Task File` - Create from existing task file
+
+### Extension Settings
+
+- `r3bl-task-management.autoSaveCurrentTaskSpace` - Auto-save on tab changes (default: `true`)
+- `r3bl-task-management.confirmBeforeSwitch` - Confirm before switching (default: `false`)
+- `r3bl-task-management.showStatusBar` - Show status bar item (default: `true`)
 
 ### Status Bar
 
-The status bar (bottom-left) shows your current task space:
-- **Active task space**: Shows task space name and tab count
-- **No task space**: Shows "No Task Space" with warning background
+Bottom-left corner shows:
+- **Active task space**: Name + tab count (e.g., "Feature: Auth (5)")
+- **No task space**: "No Task Space" with warning background
 
-Click the status bar item to open the Task Spaces dialog.
+Click to open Task Spaces dialog.
 
-## Extension Settings
+### File Format
 
-This extension contributes the following settings:
-
-- `r3bl-task-management.autoSaveCurrentTaskSpace`: Automatically save the current task space when tabs change (default: `true`)
-- `r3bl-task-management.confirmBeforeSwitch`: Show confirmation dialog before switching task spaces (default: `false`)
-- `r3bl-task-management.showStatusBar`: Show current task space in status bar (default: `true`)
-
-## Commands
-
-- `R3BL Task Management: Manage Task Spaces` - Open the task spaces management dialog
-
-## Use Cases
-
-### Multi-Feature Development
-Working on multiple features simultaneously? Create a task space for each feature with all relevant files open.
-
-### Context Switching
-Need to switch from feature development to bug fixing? Save your current work in a task space and switch to your bug-fixing task space.
-
-### Code Review
-Create a task space for reviewing pull requests with all the changed files open.
-
-### Research vs Implementation
-Keep your research tabs (documentation, Stack Overflow) separate from your implementation tabs.
-
-## File Storage
-
-Task spaces are stored in `.vscode/task-spaces.json` in your workspace root:
+Task spaces are stored in `.vscode/task-spaces.json`:
 
 ```json
 {
@@ -141,7 +241,17 @@ Task spaces are stored in `.vscode/task-spaces.json` in your workspace root:
 }
 ```
 
-This file is workspace-specific, so different projects maintain separate task spaces.
+### When Does the File Get Saved?
+
+The JSON file is automatically saved to disk in these situations:
+
+1. **Create task space** - Saves the new task space with current tabs
+2. **Delete task space** - Saves after removing the space (and archives task file)
+3. **Switch to task space** - Saves to update `lastAccessed` timestamp
+4. **Rename task space** - Saves with the new name
+5. **Auto-save tabs** - Saves current open tabs (500ms after tab changes, if `autoSaveCurrentTaskSpace` is enabled)
+
+**Note on missing files:** When auto-save runs, it saves only the tabs that are currently open. If a file was in your task space but failed to open (e.g., missing on current branch), it won't be in the "currently open tabs" list and will be automatically removed from the task space on the next save. This keeps task spaces clean and accurate to your actual workspace.
 
 ## Release Notes
 

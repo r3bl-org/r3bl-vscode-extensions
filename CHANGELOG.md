@@ -27,6 +27,34 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-17] - Claude Code Integration for Task Management
+
+### Package Versions
+- **R3BL Task Management**: 1.0.2 → 1.0.3
+- **R3BL Extension Pack**: 1.0.13 → 1.0.14
+
+### Changes
+
+- **R3BL Task Management 1.0.3**: Claude Code integration and UX improvements
+  - **Install Claude Code Integration** command installs `/r3bl-task` slash command
+    - Creates `.claude/commands/r3bl-task.md` with task management commands
+    - Supports `/r3bl-task create|update|load [task_name]` workflow
+    - Enables managing task files from Claude Code CLI
+  - **Create Task Space from Task File** command for easy task space creation
+    - Quick pick shows ONLY unlinked task files (no longer shows already-linked files)
+    - Clear messaging when all files are linked or no files exist
+    - Pre-fills task space name from filename
+    - Creates task space and switches to it in one action
+    - **Fixed race condition bug**: Task space now properly activates when created from file
+  - **Smart prompting** when creating task spaces with linked files
+    - Non-intrusive notification offers to install Claude Code integration
+    - "Don't Ask Again" option respects user preference
+    - Only shows if `.claude/commands/r3bl-task.md` doesn't exist
+  - **Silent missing file handling**: Files that can't be opened (e.g., on different branch) are silently skipped with console logging instead of showing error notifications
+  - **Save lifecycle documentation**: Added comprehensive section to README explaining when task-spaces.json is saved
+  - **Power-user workflow**: Run multiple Claude Code instances in parallel (terminal tabs/tmux panes), each working on different tasks, coordinated through a single VS Code instance with task spaces
+  - New helper methods for task file management in `TaskSpaceManager`
+
 ## [2025-11-17] - Task Management Enhancement
 
 ### Package Versions

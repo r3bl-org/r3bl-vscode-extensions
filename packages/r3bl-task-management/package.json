@@ -2,7 +2,7 @@
   "name": "r3bl-task-management",
   "displayName": "R3BL Task Management",
   "description": "Manage task spaces - collections of open tabs for different work contexts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "R3BL",
   "license": "MIT",
   "engines": {
@@ -26,6 +26,16 @@
       {
         "command": "r3bl-task-management.showTaskSpaces",
         "title": "Manage Task Spaces",
+        "category": "R3BL"
+      },
+      {
+        "command": "r3bl-task-management.installClaudeCodeIntegration",
+        "title": "Task Management: Install Claude Code Integration",
+        "category": "R3BL"
+      },
+      {
+        "command": "r3bl-task-management.createTaskSpaceFromFile",
+        "title": "Task Management: Create Task Space from Task File",
         "category": "R3BL"
       }
     ],
