@@ -1,3 +1,5 @@
+// Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
+
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
 

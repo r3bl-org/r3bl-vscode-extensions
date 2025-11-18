@@ -1,4 +1,4 @@
-// Copyright (c) 2025 R3BL LLC. Licensed under MIT License.
+// Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
 export interface TaskSpace {
   name: string;

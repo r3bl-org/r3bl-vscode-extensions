@@ -1,3 +1,5 @@
+// Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
+
 // Type definitions for r3bl-fuzzy-search extension
 
 export interface SearchInput {

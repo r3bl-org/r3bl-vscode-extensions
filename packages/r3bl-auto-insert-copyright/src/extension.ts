@@ -1,4 +1,4 @@
-// Copyright (c) 2025 R3BL LLC. Licensed under MIT License.
+// Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
