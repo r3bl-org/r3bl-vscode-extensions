@@ -14,19 +14,19 @@ Fuzzy search across file contents using fzf, displaying results in VS Code's Sea
 
 ## Screenshots
 
-![Fuzzy Search Dialog](images/1.png)
+![Fuzzy Search Dialog](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/1.png)
 *QuickPick interface with search query input and settings display*
 
-![Gitignore Toggle](images/2.png)
+![Gitignore Toggle](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/2.png)
 *Toggle .gitignore respect on/off with icon button*
 
-![Search Results](images/3.png)
+![Search Results](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/3.png)
 *Results displayed in Search Editor format with clickable line numbers*
 
-![Exclude Patterns](images/4.png)
+![Exclude Patterns](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/4.png)
 *Configure exclude patterns with the gear icon*
 
-![Settings Overview](images/5.png)
+![Settings Overview](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/5.png)
 *Complete settings view showing all configuration options*
 
 ## Requirements

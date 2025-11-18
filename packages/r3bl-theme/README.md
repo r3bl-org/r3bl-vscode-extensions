@@ -15,31 +15,31 @@ A carefully crafted dark theme for VS Code, optimized for Rust and Markdown deve
 
 ## Screenshots
 
-![Editor Overview](images/editor-overview.png)
+![Editor Overview](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/editor-overview.png)
 *Full editor view with sidebar, tabs, and Rust code highlighting*
 
-![Rust Syntax Highlighting](images/rust-syntax-highlighting.png)
+![Rust Syntax Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/rust-syntax-highlighting.png)
 *Rust-specific syntax highlighting with distinct keyword, type, and function colors*
 
-![Documentation Comments](images/documentation-comments.png)
+![Documentation Comments](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/documentation-comments.png)
 *Beautiful rendering of documentation comments with code examples*
 
-![Markdown Tables](images/markdown-tables.png)
+![Markdown Tables](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/markdown-tables.png)
 *Markdown-style tables in comments with clear formatting*
 
-![Test Functions](images/test-functions.png)
+![Test Functions](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/test-functions.png)
 *Test functions highlighted in purple for easy identification*
 
-![Variable Highlighting](images/variable-highlighting.png)
+![Variable Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/variable-highlighting.png)
 *Clear variable and parameter highlighting in test code*
 
-![Async Functions](images/async-functions.png)
+![Async Functions](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/async-functions.png)
 *Async function highlighting with type parameters and trait bounds*
 
-![Type Annotations](images/type-annotations.png)
+![Type Annotations](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/type-annotations.png)
 *Complex type annotations with clear visual hierarchy*
 
-![Selection Highlighting](images/selection-highlighting.png)
+![Selection Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/selection-highlighting.png)
 *Selection highlighting with bracket pair colorization*
 
 ## Installation

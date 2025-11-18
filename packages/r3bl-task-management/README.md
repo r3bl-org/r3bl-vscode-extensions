@@ -88,19 +88,19 @@ echo ".vscode/task-spaces.json" >> .gitignore
 
 ## Screenshots
 
-![Task Spaces Dialog](images/task-spaces-dialog.png)
+![Task Spaces Dialog](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/task-spaces-dialog.png)
 *Main dialog showing all your task spaces*
 
-![Create Task Space](images/create-task-space.png)
+![Create Task Space](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/create-task-space.png)
 *Create a new workflow context*
 
-![Link Task File](images/link-task-file.png)
+![Link Task File](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/link-task-file.png)
 *Link to Claude Code task files*
 
-![Delete Confirmation](images/delete-confirmation.png)
+![Delete Confirmation](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/delete-confirmation.png)
 *Automatic archival to task/done/*
 
-![Status Bar](images/status-bar-active.png)
+![Status Bar](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/status-bar-active.png)
 *Status bar shows active context*
 
 ## Getting Started
@@ -165,13 +165,13 @@ Task spaces integrate with Claude Code for implementation tracking:
 
 #### Install Claude Code Integration
 
-![Install Command](images/install-claude-integration-command.png)
+![Install Command](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-command.png)
 *Command palette → "R3BL Task Management: Install Claude Code Integration"*
 
-![Installation Prompt](images/install-claude-integration-prompt.png)
+![Installation Prompt](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-prompt.png)
 *Creates .claude/commands if needed*
 
-![Installation Success](images/install-claude-integration-success.png)
+![Installation Success](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-success.png)
 *Installs `/r3bl-task` slash command*
 
 This installs the `/r3bl-task` command for Claude Code CLI:
@@ -181,24 +181,24 @@ This installs the `/r3bl-task` command for Claude Code CLI:
 
 #### Create Task Space from Task File
 
-![Create from File Command](images/create-from-file-command.png)
+![Create from File Command](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/create-from-file-command.png)
 *Command palette → "Create Task Space from Task File"*
 
-![Select Task File](images/create-from-file-select.png)
+![Select Task File](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/create-from-file-select.png)
 *Shows all task/*.md files (⚠️ = not linked)*
 
-![Name Task Space](images/create-from-file-name.png)
+![Name Task Space](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/create-from-file-name.png)
 *Pre-fills name from filename*
 
-![Task Space Created](images/create-from-file-success.png)
+![Task Space Created](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/create-from-file-success.png)
 *Ready to use!*
 
 #### Smart Prompting
 
-![Create with Linked File](images/smart-prompt-create-with-file.png)
+![Create with Linked File](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/smart-prompt-create-with-file.png)
 *Creating task space with linked file...*
 
-![Integration Prompt](images/smart-prompt-notification.png)
+![Integration Prompt](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/smart-prompt-notification.png)
 *...prompts to install Claude Code integration (with "Don't Ask Again" option)*
 
 ### Power User: Multiple Claude Code Instances

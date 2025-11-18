@@ -14,10 +14,10 @@ Automatically add copyright and license headers to your source code files. Save 
 
 ## Screenshots
 
-![Copyright Header Example](images/copyright-header-example.png)
+![Copyright Header Example](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-auto-insert-copyright/images/copyright-header-example.png)
 *MIT License copyright header automatically inserted at the top of a TypeScript file*
 
-![Prepend Copyright Command](images/prepend-copyright-command.png)
+![Prepend Copyright Command](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-auto-insert-copyright/images/prepend-copyright-command.png)
 *Use the "Prepend Copyright" command to add headers to existing files*
 
 ## Requirements

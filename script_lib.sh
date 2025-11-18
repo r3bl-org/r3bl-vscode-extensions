@@ -99,7 +99,7 @@ cleanup_old_versions() {
             if [ "$file_version" != "$current_version" ]; then
                 rm -f "$vsix_file"
                 echo -e "${YELLOW}Removed outdated: ${vsix_file}${NC}"
-                ((count++))
+                count=$((count + 1))
             fi
         fi
     done

@@ -13,10 +13,10 @@ Quickly copy file paths with selected line ranges in formats optimized for Claud
 
 ## Screenshots
 
-![Single Line Format](images/single-line-format.png)
+![Single Line Format](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/single-line-format.png)
 *Single-line selection copies in IDE-compatible format: `path:line`*
 
-![Multi-Line Format](images/multi-line-format.png)
+![Multi-Line Format](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/multi-line-format.png)
 *Multi-line selection copies in Claude Code format: `@path#Lstart-end`*
 
 ## Output Formats

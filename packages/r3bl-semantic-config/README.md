@@ -13,13 +13,13 @@ Automatically applies enhanced semantic highlighting settings optimized for Rust
 
 ## Screenshots
 
-![Commands Palette](images/commands-palette.png)
+![Commands Palette](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/commands-palette.png)
 *Manual enable/disable commands available in the Command Palette*
 
-![Success Notification](images/success-notification.png)
+![Success Notification](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/success-notification.png)
 *Confirmation message when semantic highlighting is successfully applied*
 
-![Rust Syntax Highlighting](images/rust-syntax-highlighting.png)
+![Rust Syntax Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/rust-syntax-highlighting.png)
 *Example of semantic highlighting in action. See the [R3BL Theme README](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme#screenshots) for more visual examples*
 
 ## Relationship with R3BL Theme
