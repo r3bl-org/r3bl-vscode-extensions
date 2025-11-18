@@ -17,7 +17,18 @@ Switch between them instantly with **Alt+Shift+T** without losing your place.
 Run multiple Claude Code instances in parallel (different terminal tabs or tmux panes), each working on different aspects of your work. Create task spaces for each to organize files and switch contexts seamlessly.
 
 ### Context Preservation
-Stop losing your carefully arranged tabs! Each task space remembers exactly which files were open, so you can switch contexts without mental overhead.
+Stop losing your carefully arranged tabs! Each task space remembers exactly which files were open, their order, and pinned state - so you can switch contexts without mental overhead.
+
+### Cross-IDE Sync (VS Code + VS Code Insiders)
+Run both VS Code and VS Code Insiders on the same project simultaneously. Changes made in one instance are **automatically synced** to the other:
+- Reorder tabs in VS Code → they slide into position in VS Code Insiders
+- Pin a tab in one → it gets pinned in the other
+- Close/open tabs → reflected seamlessly
+
+This enables workflows like:
+- **Side-by-side comparison** of different task space configurations
+- **Testing extensions** in Insiders while working in stable VS Code
+- **Pair programming** where each person controls different aspects
 
 ## ⚠️ Important: How It Works
 
@@ -65,6 +76,10 @@ echo ".vscode/task-spaces.json" >> .gitignore
 
 - **Task Spaces**: Collections of open tabs you can switch between instantly
 - **Quick Switching**: Keyboard shortcut (Alt+Shift+T) to switch contexts
+- **Tab State Preservation**: Remembers tab order and pinned state across switches and restarts
+- **Diff-Based Sync**: Only applies minimal changes (close/open/move/pin) for smooth transitions
+- **Cross-IDE Sync**: Changes in one VS Code instance reflect in another via file watcher
+- **Smart Startup**: Skips restore if current tabs already match saved state
 - **Claude Code Integration**: Link task spaces to `task/*.md` files for tracking implementation plans
 - **Automatic Archival**: Completed task files move to `task/done/` automatically
 - **Status Bar**: See your active task space at a glance
@@ -218,6 +233,7 @@ You can customize this shortcut in VS Code's Keyboard Shortcuts settings by sear
 - `r3bl-task-management.autoSaveCurrentTaskSpace` - Auto-save on tab changes (default: `true`)
 - `r3bl-task-management.confirmBeforeSwitch` - Confirm before switching (default: `false`)
 - `r3bl-task-management.showStatusBar` - Show status bar item (default: `true`)
+- `r3bl-task-management.restoreTabsOnStartup` - Restore tabs from active task space when VS Code starts (default: `true`)
 
 ### Status Bar
 
@@ -233,12 +249,15 @@ Task spaces are stored in `.vscode/task-spaces.json`:
 
 ```json
 {
-  "version": "1.0",
+  "version": "2.0",
   "taskSpaces": [
     {
       "name": "Feature: Authentication",
       "id": "uuid",
-      "tabs": ["src/auth.ts", "src/login.ts"],
+      "tabs": [
+        { "path": "src/auth.ts", "isPinned": true },
+        { "path": "src/login.ts", "isPinned": false }
+      ],
       "taskFile": "task/task_authentication.md",
       "activeTab": "src/auth.ts",
       "createdAt": 1234567890,
@@ -248,6 +267,8 @@ Task spaces are stored in `.vscode/task-spaces.json`:
   "activeTaskSpaceId": "uuid"
 }
 ```
+
+**Note:** The extension automatically migrates from v1.0 (string array) to v2.0 (TabInfo array) format.
 
 ### When Does the File Get Saved?
 
