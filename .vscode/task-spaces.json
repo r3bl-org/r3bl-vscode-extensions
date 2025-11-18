@@ -1,48 +1,4 @@
 {
   "version": "1.0",
-  "taskSpaces": [
-    {
-      "name": "default-task-space",
-      "id": "ff401187-253b-4ca3-9259-e8c51a788fc1",
-      "tabs": [
-        "task/done/task_create_extension_task_management.md",
-        "install.sh",
-        "build.sh",
-        "script_lib.sh",
-        "README.md"
-      ],
-      "taskFile": "task/task_create_extension_task_management.md",
-      "createdAt": 1762441436813,
-      "lastAccessed": 1763395107814,
-      "activeTab": "README.md"
-    },
-    {
-      "name": "task-create-copy-selection-ext",
-      "id": "5e246a81-7538-41e5-ad33-432909ff9273",
-      "tabs": [
-        "README.md",
-        "packages/r3bl-copy-selection-path-and-range/package.json",
-        "packages/r3bl-copy-selection-path-and-range/src/extension.ts"
-      ],
-      "taskFile": "task/task_create_extension_to_copy_selection.md",
-      "createdAt": 1762455930859,
-      "lastAccessed": 1762455930876
-    },
-    {
-      "name": "task_build_r3bl_fuzzy_search",
-      "id": "a1be23d3-7f0a-4330-ae95-e9250c3777dd",
-      "tabs": [
-        "README.md",
-        "task/task_build_r3bl_fuzzy_search.md",
-        "packages/r3bl-fuzzy-search/package.json",
-        "packages/r3bl-fuzzy-search/README.md",
-        "packages/r3bl-task-management/README.md",
-        "packages/r3bl-fuzzy-search/src/extension.ts"
-      ],
-      "taskFile": "task/task_build_r3bl_fuzzy_search.md",
-      "createdAt": 1763320678207,
-      "lastAccessed": 1763396726682,
-      "activeTab": "packages/r3bl-task-management/README.md"
-    }
-  ]
+  "taskSpaces": []
 }
