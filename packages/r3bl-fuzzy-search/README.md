@@ -82,6 +82,14 @@ This extension contributes the following settings:
 
 - `R3BL Fuzzy Search: Search in Files` - Start a fuzzy search in the current workspace
 
+## Keyboard Shortcuts
+
+| Shortcut | Command ID | When |
+|----------|------------|------|
+| `Alt+Shift+D` | `r3bl-fuzzy-search.searchInFiles` | Always |
+
+You can customize this shortcut in VS Code's Keyboard Shortcuts settings by searching for the command ID above.
+
 ## Advantages Over Built-in Search
 
 | Feature | Built-in Search | R3BL Fuzzy Search |

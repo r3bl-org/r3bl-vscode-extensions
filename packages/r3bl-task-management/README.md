@@ -205,6 +205,14 @@ True parallel development on the same branch!
 - `R3BL Task Management: Install Claude Code Integration` - Install /r3bl-task command
 - `R3BL Task Management: Create Task Space from Task File` - Create from existing task file
 
+### Keyboard Shortcuts
+
+| Shortcut | Command ID | When |
+|----------|------------|------|
+| `Alt+Shift+T` | `r3bl-task-management.showTaskSpaces` | Not in terminal |
+
+You can customize this shortcut in VS Code's Keyboard Shortcuts settings by searching for the command ID above.
+
 ### Extension Settings
 
 - `r3bl-task-management.autoSaveCurrentTaskSpace` - Auto-save on tab changes (default: `true`)

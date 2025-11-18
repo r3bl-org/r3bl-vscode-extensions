@@ -26,12 +26,12 @@
   },
   "publisher": "R3BL",
   "preview": false,
-  "version": "1.0.4",
+  "version": "1.0.5",
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
-    "Productivity"
+    "Other"
   ],
   "activationEvents": [
     "onCommand:r3bl-copy-selection-path-and-range.copyPathAndRange"

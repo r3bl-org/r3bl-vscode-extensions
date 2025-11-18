@@ -2,14 +2,14 @@
   "name": "r3bl-task-management",
   "displayName": "R3BL Task Management",
   "description": "Manage task spaces - collections of open tabs for different work contexts",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "R3BL",
   "license": "MIT",
   "engines": {
     "vscode": "^1.70.0"
   },
   "categories": [
-    "Productivity"
+    "Other"
   ],
   "keywords": [
     "task management",

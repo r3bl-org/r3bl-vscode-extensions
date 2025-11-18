@@ -27,6 +27,26 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-18] - Documentation and Screenshot Updates
+
+### Package Versions
+- **R3BL Copy Selection Path and Range**: 1.0.4 → 1.0.5
+- **R3BL Fuzzy Search**: 1.0.2 → 1.0.3
+- **R3BL Task Management**: 1.0.4 → 1.0.5
+- **R3BL Extension Pack**: 1.0.20 → 1.0.21
+
+### Changes
+
+- **R3BL Copy Selection Path and Range 1.0.5**: Enhanced README with comprehensive documentation
+  - Added screenshots demonstrating single-line and multi-line selection formats
+  - Improved documentation clarity for Claude Code integration
+
+- **R3BL Fuzzy Search 1.0.3**: Updated README documentation
+  - Improved usage instructions and examples
+
+- **R3BL Task Management 1.0.5**: Updated README documentation
+  - Enhanced documentation for task space features
+
 ## [2025-11-17] - Extension Pack Documentation Update
 
 ### Package Versions
