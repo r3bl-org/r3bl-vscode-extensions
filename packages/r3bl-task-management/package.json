@@ -2,7 +2,7 @@
   "name": "r3bl-task-management",
   "displayName": "R3BL Task Management",
   "description": "Manage task spaces - collections of open tabs for different work contexts",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "publisher": "R3BL",
   "license": "MIT",
   "engines": {
@@ -74,6 +74,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show current task space in status bar"
+        },
+        "r3bl-task-management.restoreTabsOnStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Restore tabs from the active task space when VS Code starts"
         }
       }
     }

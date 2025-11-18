@@ -110,6 +110,19 @@ export async function activate(context: vscode.ExtensionContext) {
   manager = new TaskSpaceManager(context);
   await manager.initialize();
 
+  // Restore tabs for active task space on startup
+  const activeTaskSpace = manager.getActiveTaskSpace();
+  if (activeTaskSpace) {
+    // Check if restoreTabsOnStartup is enabled (default: true)
+    const config = vscode.workspace.getConfiguration('r3bl-task-management');
+    const restoreOnStartup = config.get<boolean>('restoreTabsOnStartup', true);
+
+    if (restoreOnStartup) {
+      // Smart switch only restores if tabs differ (avoids jarring close/reopen)
+      await manager.smartSwitchToTaskSpace(activeTaskSpace.id);
+    }
+  }
+
   // Create status bar item
   statusBarItem = createStatusBarItem();
   updateStatusBar(statusBarItem, manager);
@@ -193,16 +206,14 @@ export async function activate(context: vscode.ExtensionContext) {
     const fileWatcher = vscode.workspace.createFileSystemWatcher(taskSpacesPattern);
 
     fileWatcher.onDidChange(async () => {
-      // File changed externally (e.g., git checkout)
-      const activeChanged = await manager.reloadFromDisk();
+      // File changed externally (e.g., git checkout, another IDE instance)
+      await manager.reloadFromDisk();
 
-      if (activeChanged) {
-        // Active task space changed - switch to it
-        const activeTaskSpace = manager.getActiveTaskSpace();
-        if (activeTaskSpace) {
-          // Close current tabs and open tabs from new active space
-          await manager.switchToTaskSpace(activeTaskSpace.id);
-        }
+      // Always try smart switch - it will only apply changes if tabs differ
+      const activeTaskSpace = manager.getActiveTaskSpace();
+      if (activeTaskSpace) {
+        // Smart switch only restores if tabs differ (avoids jarring close/reopen)
+        await manager.smartSwitchToTaskSpace(activeTaskSpace.id);
       }
 
       // Update status bar to reflect new state

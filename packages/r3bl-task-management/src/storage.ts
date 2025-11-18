@@ -1,10 +1,10 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
 import * as vscode from 'vscode';
-import { TaskSpaceStorage } from './types';
+import { TabInfo, TaskSpaceStorage } from './types';
 
 const STORAGE_FILE = '.vscode/task-spaces.json';
-const CURRENT_VERSION = '1.0';
+const CURRENT_VERSION = '2.0';
 
 export class Storage {
   constructor(private context: vscode.ExtensionContext) {}
@@ -85,10 +85,30 @@ export class Storage {
    * Migrate storage to current version if needed
    */
   private migrateIfNeeded(data: TaskSpaceStorage): TaskSpaceStorage {
-    // Future-proofing: handle schema migrations here
+    // Handle missing version (very old files)
     if (!data.version) {
-      data.version = CURRENT_VERSION;
+      data.version = '1.0';
     }
+
+    // Migrate from 1.0 to 2.0: Convert tabs from string[] to TabInfo[]
+    if (data.version === '1.0') {
+      for (const taskSpace of data.taskSpaces) {
+        // Check if tabs are in old format (string[])
+        if (taskSpace.tabs.length > 0 && typeof taskSpace.tabs[0] === 'string') {
+          // Cast to unknown first to handle the type mismatch during migration
+          const oldTabs = taskSpace.tabs as unknown as string[];
+          const newTabs: TabInfo[] = oldTabs.map(path => ({
+            path,
+            isPinned: false  // Default to not pinned for migrated tabs
+          }));
+          taskSpace.tabs = newTabs;
+        }
+      }
+      data.version = '2.0';
+    }
+
+    // Future migrations go here: if (data.version === '2.0') { ... }
+
     return data;
   }
 }

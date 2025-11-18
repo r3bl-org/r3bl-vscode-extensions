@@ -27,6 +27,24 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-18] - Task Management: Pinned Tabs, Tab Ordering, and Diff-Based Sync
+
+### Package Versions
+- **R3BL Task Management**: 1.0.5 → 1.0.7
+- **R3BL Extension Pack**: 1.0.22 → 1.0.24
+
+### Changes
+
+- **R3BL Task Management 1.0.7**: Major improvements to tab state management
+  - **Pinned tabs preserved**: When switching task spaces or restarting VS Code, pinned tabs maintain their pinned state
+  - **Tab ordering preserved**: Tabs maintain their exact order when switching or restarting
+  - **Smart startup restore**: Skips restore if current tabs already match saved state (no jarring close/reopen)
+  - **Diff-based sync**: Only applies minimal changes (close/open/move/pin) instead of full restore
+  - **Cross-IDE sync**: Changes in one VS Code instance reflect in another via file watcher
+  - **Data format upgrade**: Storage format upgraded from v1.0 to v2.0 with automatic migration
+  - **New TabInfo structure**: Tabs now store both path and pinned state
+  - **New configuration option**: `r3bl-task-management.restoreTabsOnStartup` (default: true)
+
 ## [2025-11-18] - Documentation and Screenshot Updates
 
 ### Package Versions

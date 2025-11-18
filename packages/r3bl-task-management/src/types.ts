@@ -1,9 +1,14 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
+export interface TabInfo {
+  path: string;                    // Relative path from workspace root
+  isPinned: boolean;               // Whether the tab is pinned
+}
+
 export interface TaskSpace {
   name: string;
   id: string;
-  tabs: string[];                  // Relative paths from workspace root
+  tabs: TabInfo[];                 // Tab information including path and pinned state
   taskFile?: string;               // Optional relative path to task/*.md
   activeTab?: string;              // Optional relative path to the active tab
   createdAt: number;
