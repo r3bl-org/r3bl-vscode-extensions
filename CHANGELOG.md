@@ -27,6 +27,18 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-18] - Copy Selection Path and Range: Republish
+
+### Package Versions
+- **R3BL Copy Selection Path and Range**: 1.0.8 → 1.0.9
+- **R3BL Extension Pack**: 1.0.27 → 1.0.28
+
+### Changes
+
+- **R3BL Copy Selection Path and Range 1.0.9**: Version bump to resolve marketplace verification
+  - Republished to push through stuck verification status
+  - No functional changes from 1.0.8
+
 ## [2025-11-18] - Task Management: Pinned Tabs, Tab Ordering, and Diff-Based Sync
 
 ### Package Versions

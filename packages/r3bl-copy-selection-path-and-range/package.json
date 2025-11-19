@@ -26,7 +26,7 @@
   },
   "publisher": "R3BL",
   "preview": false,
-  "version": "1.0.7",
+  "version": "1.0.9",
   "engines": {
     "vscode": "^1.95.0"
   },
