@@ -1,108 +1,70 @@
 # R3BL Semantic Configuration
 
-Automatically applies enhanced semantic highlighting settings optimized for Rust development. This extension is designed as a companion to the [R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme) and provides semantic token color rules that perfectly complement the theme's color palette.
+This extension provides two powerful features for Rust development in VS Code:
 
-## Features
+1. **Enhanced Semantic Highlighting** - Automatically applies optimized color rules for Rust semantic tokens
+2. **Debounced rust-analyzer Flycheck** - Keeps your IDE responsive by intelligently timing `cargo check` runs
 
-- **Auto-Activation**: Automatically detects when R3BL Theme is active and applies semantic highlighting
-- **Theme Watcher**: Monitors theme changes and prompts to enable settings when switching to R3BL Theme
-- **Manual Control**: Use commands to enable or disable semantic highlighting on demand
-- **Smart Detection**: Warns about duplicate settings that can cause conflicts
-- **Rust-Optimized**: Color rules specifically designed for Rust semantic tokens (functions, methods, structs, enums, lifetimes, etc.)
-- **One-Click Setup**: No manual configuration needed - settings are applied automatically
+## Table of Contents
 
-## Screenshots
+- [Feature 1: Semantic Highlighting](#feature-1-semantic-highlighting)
+- [Feature 2: Debounced rust-analyzer Flycheck](#feature-2-debounced-rust-analyzer-flycheck)
+- [Requirements](#requirements)
+- [Commands](#commands)
+- [Release Notes](#release-notes)
 
-![Commands Palette](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/commands-palette.png)
-*Manual enable/disable commands available in the Command Palette*
+---
 
-![Success Notification](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/success-notification.png)
-*Confirmation message when semantic highlighting is successfully applied*
+## Feature 1: Semantic Highlighting
 
-![Rust Syntax Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/rust-syntax-highlighting.png)
-*Example of semantic highlighting in action. See the [R3BL Theme README](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme#screenshots) for more visual examples*
+### What It Does
 
-## Relationship with R3BL Theme
+Automatically applies enhanced semantic token color customizations optimized for Rust development. This extension is designed as a companion to the [R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme) and provides color rules that perfectly complement the theme's palette.
 
-This extension is **automatically installed** when you install the R3BL Theme or the R3BL Extension Pack. It enhances the theme by:
+### Why This Feature Exists
 
-- Providing optimized semantic highlighting for Rust (functions, methods, structs, enums, lifetimes, etc.)
-- Auto-detecting and configuring when R3BL Theme is active
-- Applying color rules specifically designed to work with the R3BL Theme's palette
-
-**Note:** While this extension can be used independently, it is designed to work best with the R3BL Theme.
-
-## Why This Extension Exists
-
-### The Two-Layer Highlighting System
-
-VS Code uses two separate highlighting systems that work together:
+VS Code uses two separate highlighting systems:
 
 | Layer | Provided By | Customizable Via | Capabilities |
 |-------|-------------|------------------|--------------|
-| **TextMate Tokens** | Theme files | `.tmTheme` or `colors` in theme package | Basic syntax: keywords, strings, comments, operators |
-| **Semantic Tokens** | Language servers (rust-analyzer) | `settings.json` **only** | Context-aware: mutability, lifetimes, trait bounds, self types |
+| **TextMate Tokens** | Theme files | Theme package | Basic syntax: keywords, strings, comments |
+| **Semantic Tokens** | Language servers (rust-analyzer) | `settings.json` **only** | Context-aware: mutability, lifetimes, traits |
 
-### VS Code Architectural Limitation
+**The key constraint**: VS Code themes cannot include semantic token customizations. These rules must be defined in your `settings.json` - they cannot be bundled with a theme package.
 
-Here's the key constraint: **VS Code themes cannot include semantic token customizations**. Semantic token color rules must be defined in your `settings.json` file - they cannot be bundled with a theme package. This is a VS Code architectural limitation, not a design choice.
+**This is why we need a separate extension** - to automatically manage semantic token settings for you, rather than requiring manual configuration.
 
-**This is why we need a separate extension** - to automatically manage those semantic token settings for you, rather than requiring you to manually copy-paste configuration into your settings.
+### Screenshots
 
-### The rust-analyzer Dependency
+![Commands Palette](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/commands-palette.png)
+*Manual enable/disable commands in the Command Palette*
 
-Semantic highlighting requires **rust-analyzer** to be installed and running:
+![Rust Syntax Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/rust-syntax-highlighting.png)
+*Semantic highlighting in action*
 
-1. **rust-analyzer** analyzes your Rust code and provides semantic token information (e.g., "this variable is mutable", "this is a lifetime annotation", "this implements a trait")
-2. **This extension** defines what colors to apply to those semantic tokens
-3. **R3BL Theme** provides the base TextMate syntax highlighting
+### How It Works
 
-All three components work together to create the complete enhanced highlighting experience.
+#### Auto-Activation
 
-**Without rust-analyzer:** You'll only see basic TextMate syntax highlighting from the theme.
-
-**With rust-analyzer:** You get the full enhanced highlighting with mutable variables in bold italic, distinct colors for lifetimes, trait highlighting, and more.
-
-## Requirements
-
-- VS Code 1.60.0 or higher
-- Works best with [R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)
-
-## How It Works
-
-### Auto-Activation
-
-When you first install the extension or activate R3BL Theme, the extension automatically:
-
-1. Detects that R3BL Theme is active
-2. Applies semantic highlighting settings to your global configuration
+When installed with R3BL Theme active, the extension automatically:
+1. Detects R3BL Theme is active
+2. Applies semantic highlighting to global configuration
 3. Shows a success notification
 
-### Theme Watcher
+#### Theme Watcher
 
-The extension continuously monitors your theme settings. When you switch to R3BL Theme, it:
+Monitors theme changes. When you switch to R3BL Theme:
+1. Detects the change
+2. Prompts: "R3BL Theme detected! Apply enhanced semantic highlighting?"
+3. Applies settings on confirmation
 
-1. Detects the theme change
-2. Prompts you with: "R3BL Theme detected! Apply enhanced semantic highlighting?"
-3. Applies settings when you click "Yes"
+#### Manual Control
 
-### Manual Control
+Use commands in Command Palette (`Ctrl+Shift+P`):
+- `R3BL: Enable R3BL Semantic Highlighting`
+- `R3BL: Disable R3BL Semantic Highlighting`
 
-You can manually enable or disable semantic highlighting using commands:
-
-1. Open Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
-2. Type "R3BL"
-3. Select either:
-   - `R3BL: Enable R3BL Semantic Highlighting`
-   - `R3BL: Disable R3BL Semantic Highlighting`
-
-### Duplicate Settings Detection
-
-After applying settings, the extension checks for duplicate entries in your `settings.json`. If found, it warns you and offers to open your settings file to consolidate them.
-
-## Semantic Token Rules
-
-This extension applies the following semantic token color customizations optimized for Rust:
+### Semantic Token Rules
 
 | Token Type | Color | Style | Description |
 |------------|-------|-------|-------------|
@@ -125,48 +87,115 @@ This extension applies the following semantic token color customizations optimiz
 | **Deprecated** | - | Strikethrough | Deprecated items |
 | **Unresolved Reference** | `#ff6edb` | Strikethrough | Unresolved references |
 
-The extension also enables `editor.semanticHighlighting.enabled` globally.
+---
 
-## Commands
+## Feature 2: Debounced rust-analyzer Flycheck
 
-- **`R3BL: Enable R3BL Semantic Highlighting`** - Manually apply semantic highlighting settings
-- **`R3BL: Disable R3BL Semantic Highlighting`** - Remove semantic highlighting settings
+### The Problem: IDE Lag During Typing
 
-## Settings Modified
+When you're coding intensely - typing fast, thinking through logic, refactoring - you need your IDE to be **instantly responsive**. Every keystroke should feel immediate.
 
-When enabled, this extension modifies the following VS Code settings in your **global configuration**:
+**rust-analyzer's `checkOnSave`** runs `cargo check` every time you save a file. While useful, this creates problems:
+
+- **Heavy CPU usage** during compilation blocks the IDE
+- **Lag and stuttering** interrupt your coding flow
+- **Constant interruptions** when you're rapidly saving while experimenting
+- On large projects, each check can take **several seconds**
+
+The result: your IDE becomes sluggish exactly when you need it most - during active development.
+
+### The Solution: Intelligent Debouncing
+
+Debounced flycheck solves this by **waiting for you to stop typing** before running `cargo check`:
+
+```
+You type → Timer starts (1 second)
+You type again → Timer resets
+You stop typing → Timer expires → Flycheck runs
+```
+
+**Why this works:**
+- While you're actively typing, **no heavy computation** - IDE stays responsive
+- After you pause (finished a thought, reviewing code), flycheck runs
+- You get compile feedback **exactly when you need it** - during natural pauses
+- Your coding flow is never interrupted by background compilation
+
+### Configuration
+
+The feature is **enabled by default**. Customize in `settings.json`:
 
 ```json
 {
-  "editor.semanticHighlighting.enabled": true,
-  "editor.semanticTokenColorCustomizations": {
-    "rules": {
-      // ... extensive semantic token rules (see table above)
-    }
-  }
+    "r3bl-semantic-config.debouncedFlycheck.enabled": true,
+    "r3bl-semantic-config.debouncedFlycheck.delayMs": 1000,
+    "r3bl-semantic-config.debouncedFlycheck.languages": ["rust"],
+    "r3bl-semantic-config.debouncedFlycheck.autoDisableCheckOnSave": true
 }
 ```
 
-When disabled, these settings are removed from your global configuration.
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `enabled` | boolean | `true` | Enable debounced flycheck |
+| `delayMs` | number | `1000` | Milliseconds to wait after last keystroke (100-10000) |
+| `languages` | string[] | `["rust"]` | Language IDs to monitor |
+| `autoDisableCheckOnSave` | boolean | `true` | Auto-disable `rust-analyzer.checkOnSave` |
 
-## Use Cases
+### How It Works
 
-### Automatic Setup (Recommended)
+1. **Text change detected** → Timer starts (or restarts)
+2. **Status bar shows countdown** → "⏱️ Flycheck in 0.8s..."
+3. **Timer expires** → "🚀 Running flycheck..."
+4. **Flycheck completes** → Status bar hides
 
-Most users will never need to interact with this extension directly:
+The timer is **global** - all Rust file changes share one timer since `runFlycheck` checks the entire workspace.
 
-1. Install R3BL Theme or R3BL Extension Pack
-2. Semantic highlighting is automatically applied
-3. Start coding with optimized colors
+### Keybinding for Manual Trigger
 
-### Manual Control
+**Default keybinding:** `Ctrl+R` (when editing a Rust file)
 
-Use manual commands when you:
+This command:
+- Cancels any pending debounced flycheck
+- Runs flycheck immediately
+- Hides the status bar countdown
 
-- Want to temporarily disable semantic highlighting
-- Need to reapply settings after modifying your configuration
-- Want to use semantic highlighting with a different theme
-- Are troubleshooting color issues
+To customize the keybinding, add to your `keybindings.json`:
+
+```json
+{
+    "key": "ctrl+shift+r", // <- Or your preferred shortcut
+    "command": "r3bl-semantic-config.runFlycheck",
+    "when": "editorTextFocus && !editorReadonly && editorLangId == rust"
+}
+```
+
+### Auto-Disable checkOnSave
+
+When `autoDisableCheckOnSave` is `true` (default), the extension automatically sets `rust-analyzer.checkOnSave` to `false`. This prevents redundant checks - debounced flycheck replaces save-triggered checks.
+
+You'll see: "Disabled rust-analyzer.checkOnSave (debounced flycheck is now handling this)"
+
+---
+
+## Requirements
+
+- VS Code 1.60.0 or higher
+- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) extension
+- Works best with [R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)
+
+### Why rust-analyzer is Required
+
+Both features in this extension depend on **rust-analyzer**:
+
+- **Semantic Highlighting** - rust-analyzer provides token information (e.g., "this variable is mutable", "this is a lifetime")
+- **Debounced Flycheck** - rust-analyzer's `runFlycheck` command executes `cargo check`
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `R3BL: Enable R3BL Semantic Highlighting` | Apply semantic highlighting settings |
+| `R3BL: Disable R3BL Semantic Highlighting` | Remove semantic highlighting settings |
+| `R3BL: Run Flycheck (Debounced)` | Manually trigger flycheck, cancels pending |
 
 ## Release Notes
 
@@ -178,9 +207,9 @@ MIT
 
 ## Contributing
 
-Found a bug or have a suggestion for new semantic token rules? Please open an issue at:
+Found a bug or have a suggestion? Please open an issue at:
 https://github.com/r3bl-org/r3bl-vscode-extensions/issues
 
 ---
 
-**Enhanced highlighting for enhanced productivity!**
+**Responsive IDE + Beautiful Highlighting = Enhanced Productivity!**

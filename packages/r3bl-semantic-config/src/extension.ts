@@ -3,6 +3,14 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs/promises';
 
+// Debounced Flycheck state
+let debounceTimeout: NodeJS.Timeout | undefined;
+let countdownInterval: NodeJS.Timeout | undefined;
+let statusBarItem: vscode.StatusBarItem | undefined;
+
+// Constants
+const ROCKET_DISPLAY_DURATION_MS = 700;
+
 const SEMANTIC_CONFIG = {
     "editor.semanticHighlighting.enabled": true,
     "editor.semanticTokenColorCustomizations": {
@@ -120,7 +128,155 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
+    // Initialize debounced flycheck feature
+    initializeDebouncedFlycheck(context);
+
     context.subscriptions.push(enableCommand, disableCommand, themeWatcher);
+}
+
+// Debounced Flycheck Implementation
+function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
+    const config = vscode.workspace.getConfiguration('r3bl-semantic-config.debouncedFlycheck');
+    const enabled = config.get<boolean>('enabled', true);
+
+    if (!enabled) {
+        return;
+    }
+
+    // Create status bar item (high priority to ensure visibility)
+    statusBarItem = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Left,
+        10000
+    );
+    statusBarItem.name = "Debounced Flycheck";
+    statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+    context.subscriptions.push(statusBarItem);
+
+    // Auto-disable rust-analyzer.checkOnSave if configured
+    const autoDisable = config.get<boolean>('autoDisableCheckOnSave', true);
+    if (autoDisable) {
+        disableCheckOnSave();
+    }
+
+    // Get configured languages
+    const languages = config.get<string[]>('languages', ['rust']);
+
+    // Watch for text document changes
+    const documentWatcher = vscode.workspace.onDidChangeTextDocument((event) => {
+        if (!languages.includes(event.document.languageId)) {
+            return;
+        }
+
+        const delayMs = config.get<number>('delayMs', 1000);
+        startDebounce(delayMs);
+    });
+
+    // Register manual flycheck command that cancels pending debounce
+    const flycheckCommand = vscode.commands.registerCommand('r3bl-semantic-config.runFlycheck', () => {
+        // Cancel pending debounced flycheck
+        cancelDebounce();
+
+        // Run flycheck immediately
+        vscode.commands.executeCommand('rust-analyzer.runFlycheck');
+    });
+
+    // Watch for configuration changes
+    const configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
+        if (e.affectsConfiguration('r3bl-semantic-config.debouncedFlycheck')) {
+            // Reload configuration
+            const newConfig = vscode.workspace.getConfiguration('r3bl-semantic-config.debouncedFlycheck');
+            const newEnabled = newConfig.get<boolean>('enabled', true);
+
+            if (!newEnabled) {
+                cancelDebounce();
+                if (statusBarItem) {
+                    statusBarItem.hide();
+                }
+            }
+        }
+    });
+
+    context.subscriptions.push(documentWatcher, flycheckCommand, configWatcher);
+}
+
+async function disableCheckOnSave() {
+    const rustAnalyzerConfig = vscode.workspace.getConfiguration('rust-analyzer');
+    const currentValue = rustAnalyzerConfig.get('checkOnSave');
+
+    if (currentValue !== false) {
+        try {
+            await rustAnalyzerConfig.update('checkOnSave', false, vscode.ConfigurationTarget.Global);
+            vscode.window.showInformationMessage(
+                'Disabled rust-analyzer.checkOnSave (debounced flycheck is now handling this)'
+            );
+        } catch (error) {
+            vscode.window.showErrorMessage(`Failed to disable rust-analyzer.checkOnSave: ${error}`);
+        }
+    }
+}
+
+function startDebounce(delayMs: number) {
+    // Cancel existing timers
+    if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+    }
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
+
+    const startTime = Date.now();
+
+    // Update status bar with countdown
+    const updateStatusBar = () => {
+        if (!statusBarItem) return;
+
+        const remaining = Math.max(0, delayMs - (Date.now() - startTime));
+        statusBarItem.text = `$(watch) Flycheck in ${(remaining / 1000).toFixed(1)}s`;
+        statusBarItem.tooltip = "Debounced flycheck pending - will run after typing stops";
+    };
+
+    updateStatusBar();
+    if (statusBarItem) {
+        statusBarItem.show();
+    }
+
+    countdownInterval = setInterval(updateStatusBar, 100);
+
+    debounceTimeout = setTimeout(() => {
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = undefined;
+        }
+
+        if (statusBarItem) {
+            statusBarItem.text = "$(rocket) Running flycheck...";
+        }
+
+        vscode.commands.executeCommand('rust-analyzer.runFlycheck');
+
+        // Keep the rocket visible so user can see it
+        setTimeout(() => {
+            if (statusBarItem) {
+                statusBarItem.hide();
+            }
+        }, ROCKET_DISPLAY_DURATION_MS);
+
+        debounceTimeout = undefined;
+    }, delayMs);
+}
+
+function cancelDebounce() {
+    if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = undefined;
+    }
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = undefined;
+    }
+    if (statusBarItem) {
+        statusBarItem.hide();
+    }
 }
 
 async function applySemanticConfig() {
@@ -205,4 +361,12 @@ function getSettingsPath(): string {
     }
 }
 
-export function deactivate() {}
+export function deactivate() {
+    // Clean up debounce timers
+    if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+    }
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
+}

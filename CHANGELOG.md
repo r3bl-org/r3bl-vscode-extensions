@@ -27,6 +27,35 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-19] - Theme Warning Colors and Debounced Flycheck Feature
+
+### Package Versions
+- **R3BL Theme**: 1.0.11 → 1.0.12
+- **R3BL Semantic Configuration**: 1.0.6 → 1.0.7
+- **R3BL Extension Pack**: 1.0.28 → 1.0.30
+
+### Changes
+
+- **R3BL Theme 1.0.12**: Added status bar warning colors
+  - Added `statusBarItem.warningBackground` (`#b58900` - amber/gold)
+  - Added `statusBarItem.warningForeground` (`#f8f8f2` - white)
+  - Fixes contrast issues with status bar warning indicators
+
+- **R3BL Semantic Configuration 1.0.7**: New debounced flycheck feature
+  - **Intelligent flycheck timing**: Automatically runs `rust-analyzer.runFlycheck` after a configurable period of typing inactivity
+  - **Replaces checkOnSave**: Provides continuous feedback without save-triggered interruptions
+  - **Live status bar countdown**: Shows "Flycheck in 0.8s..." with real-time countdown
+  - **Status bar spinner**: Shows "Running flycheck..." during execution
+  - **Global debounce timer**: All Rust file changes share one timer (workspace-wide check)
+  - **Manual trigger command**: `R3BL: Run Flycheck (Debounced)` cancels pending and runs immediately
+  - **Auto-disable checkOnSave**: Automatically sets `rust-analyzer.checkOnSave` to `false` with notification
+  - **Configurable settings**:
+    - `enabled`: Enable/disable feature (default: true)
+    - `delayMs`: Delay before flycheck (default: 1000ms, range: 100-10000)
+    - `languages`: Languages to monitor (default: ["rust"])
+    - `autoDisableCheckOnSave`: Auto-disable rust-analyzer checkOnSave (default: true)
+  - **Recommended keybinding**: `Ctrl+R` for manual flycheck trigger
+
 ## [2025-11-18] - Copy Selection Path and Range: Republish
 
 ### Package Versions

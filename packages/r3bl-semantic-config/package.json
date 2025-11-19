@@ -2,7 +2,7 @@
   "name": "r3bl-semantic-config",
   "displayName": "R3BL Semantic Configuration",
   "description": "Companion to R3BL Theme - automatically applies enhanced semantic highlighting for Rust development",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "publisher": "R3BL",
   "engines": {
     "vscode": "^1.60.0"
@@ -41,8 +41,50 @@
         "command": "r3bl-semantic-config.disable",
         "title": "Disable R3BL Semantic Highlighting",
         "category": "R3BL"
+      },
+      {
+        "command": "r3bl-semantic-config.runFlycheck",
+        "title": "Run Flycheck (Debounced)",
+        "category": "R3BL"
       }
-    ]
+    ],
+    "keybindings": [
+      {
+        "command": "r3bl-semantic-config.runFlycheck",
+        "key": "ctrl+r",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == rust"
+      }
+    ],
+    "configuration": {
+      "title": "R3BL Semantic Configuration",
+      "properties": {
+        "r3bl-semantic-config.debouncedFlycheck.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable debounced flycheck for Rust files. Automatically runs rust-analyzer flycheck after a period of inactivity."
+        },
+        "r3bl-semantic-config.debouncedFlycheck.delayMs": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 100,
+          "maximum": 10000,
+          "description": "Delay in milliseconds before running flycheck after the last keystroke."
+        },
+        "r3bl-semantic-config.debouncedFlycheck.languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": ["rust"],
+          "description": "List of language IDs to enable debounced flycheck for."
+        },
+        "r3bl-semantic-config.debouncedFlycheck.autoDisableCheckOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically disable rust-analyzer.checkOnSave when debounced flycheck is enabled."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
