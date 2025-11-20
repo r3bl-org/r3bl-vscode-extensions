@@ -72,9 +72,16 @@ This installs the newly built extensions to your local VSCode/Insiders.
 
 ### 6. Commit Your Changes
 
+When making a commit, make sure you do not include the following in the commit message:
+```
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
 ```bash
 git add packages/extension-name/src/ packages/extension-name/package.json packages/r3bl-extension-pack/package.json
-git commit -m "feat: [extension-name] description of changes"
+git commit -m "[extension-name] Description of changes"
 ```
 
 ### Key Points for Modifications
@@ -185,9 +192,16 @@ fi
 
 ### 11. Commit All Changes
 
+When making a commit, make sure you do not include the following in the commit message:
+```
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
 ```bash
 git add packages/r3bl-new-extension/ packages/r3bl-extension-pack/package.json README.md script_lib.sh build.sh install.sh
-git commit -m "feat: add r3bl-new-extension"
+git commit -m "[extension-name] Add r3bl-new-extension"
 ```
 
 ### Key Points for Creating New Extensions

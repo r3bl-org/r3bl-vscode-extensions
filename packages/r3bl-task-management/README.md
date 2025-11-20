@@ -9,9 +9,9 @@ implementation plans in `task/*.md` files.
 ## Table of Contents
 
 - [Use Cases](#use-cases)
-  - [Multiple Concurrent Workflows (Same Branch)](#multiple-concurrent-workflows-same-branch)
-  - [Claude Code Collaboration](#claude-code-collaboration)
   - [Context Preservation](#context-preservation)
+  - [Claude Code Collaboration](#claude-code-collaboration)
+  - [Multiple Concurrent Workflows (Same Branch)](#multiple-concurrent-workflows-same-branch)
   - [Cross-IDE Sync (VS Code + VS Code Insiders)](#cross-ide-sync-vs-code--vs-code-insiders)
 - [What It Does](#what-it-does)
 - [Getting Started](#getting-started)
