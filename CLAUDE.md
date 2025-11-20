@@ -84,6 +84,29 @@ git add packages/extension-name/src/ packages/extension-name/package.json packag
 git commit -m "[extension-name] Description of changes"
 ```
 
+### 7. Publish to VSCode Marketplace (Optional)
+
+If you want to publish the extension to the VSCode Marketplace:
+
+```bash
+# Navigate to the extension directory
+cd packages/extension-name
+
+# Publish using vsce (requires PAT configured)
+vsce publish
+
+# Or publish the extension pack
+cd packages/r3bl-extension-pack
+vsce publish
+```
+
+**Prerequisites:**
+- Personal Access Token (PAT) from Azure DevOps must be configured
+- Publisher account must be set up
+- Run `vsce login R3BL` if not already authenticated
+
+**Note:** Publishing makes the extension publicly available on the VSCode Marketplace. Only do this after thorough testing.
+
 ### Key Points for Modifications
 
 - ✅ Version numbers must match between `package.json` and generated `.vsix` filenames

@@ -10,8 +10,7 @@ suite('Types Test Suite', () => {
       id: 'test-id-123',
       tabs: ['file1.ts', 'file2.ts'],
       taskFile: 'task/test.md',
-      createdAt: Date.now(),
-      lastAccessed: Date.now()
+      createdAt: Date.now()
     };
 
     assert.strictEqual(taskSpace.name, 'Test Space');
@@ -19,7 +18,6 @@ suite('Types Test Suite', () => {
     assert.strictEqual(taskSpace.tabs.length, 2);
     assert.strictEqual(taskSpace.taskFile, 'task/test.md');
     assert.ok(taskSpace.createdAt > 0);
-    assert.ok(taskSpace.lastAccessed > 0);
   });
 
   test('TaskSpace without optional taskFile', () => {
@@ -27,8 +25,7 @@ suite('Types Test Suite', () => {
       name: 'Test Space',
       id: 'test-id-123',
       tabs: [],
-      createdAt: Date.now(),
-      lastAccessed: Date.now()
+      createdAt: Date.now()
     };
 
     assert.strictEqual(taskSpace.taskFile, undefined);
@@ -51,8 +48,7 @@ suite('Types Test Suite', () => {
       name: 'Test',
       id: 'id-1',
       tabs: [],
-      createdAt: Date.now(),
-      lastAccessed: Date.now()
+      createdAt: Date.now()
     };
 
     const storage: TaskSpaceStorage = {
@@ -71,8 +67,7 @@ suite('Types Test Suite', () => {
       name: 'Empty Space',
       id: 'empty-id',
       tabs: [],
-      createdAt: Date.now(),
-      lastAccessed: Date.now()
+      createdAt: Date.now()
     };
 
     assert.strictEqual(taskSpace.tabs.length, 0);

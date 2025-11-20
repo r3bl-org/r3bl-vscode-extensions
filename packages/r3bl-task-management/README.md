@@ -333,7 +333,9 @@ Click to open Task Spaces dialog.
 
 ### File Format
 
-Task spaces are stored in `.vscode/task-spaces.json`:
+Task spaces are stored in **two separate locations** to avoid git noise:
+
+#### `.vscode/task-spaces.json` (Version Controlled)
 
 ```json
 {
@@ -348,13 +350,44 @@ Task spaces are stored in `.vscode/task-spaces.json`:
       ],
       "taskFile": "task/task_authentication.md",
       "activeTab": "src/auth.ts",
-      "createdAt": 1234567890,
-      "lastAccessed": 1234567890
+      "createdAt": 1234567890
     }
   ],
   "activeTaskSpaceId": "uuid"
 }
 ```
+
+#### VSCode Workspace State (NOT Version Controlled)
+
+Access timestamps are stored separately in VSCode's workspace state to avoid polluting git
+history. Each task space switch updates the `lastAccessed` timestamp, but these changes
+never touch your workspace files.
+
+**Storage Location:**
+- Linux: `~/.config/Code/User/workspaceStorage/<workspace-id>/state.vscode.*`
+- macOS: `~/Library/Application Support/Code/User/workspaceStorage/<workspace-id>/state.vscode.*`
+- Windows: `%APPDATA%\Code\User\workspaceStorage\<workspace-id>\state.vscode.*`
+
+**Data Format:**
+```json
+{
+  "taskSpaceMetadata": {
+    "uuid-1": { "lastAccessed": 1234567890 },
+    "uuid-2": { "lastAccessed": 1234555555 }
+  }
+}
+```
+
+**Note:** This metadata is automatically cleaned up when task spaces are deleted, preventing
+any memory leaks or storage bloat.
+
+**Storage Benefits:**
+
+- ✅ Task space definitions remain clean and git-friendly
+- ✅ No git noise from frequent timestamp updates
+- ✅ "Last accessed" sorting still works perfectly
+- ✅ Timestamps persist across VSCode sessions
+- ✅ Automatic cleanup when task spaces are deleted (no memory leaks)
 
 **Note:** The extension automatically migrates from v1.0 (string array) to v2.0 (TabInfo
 array) format.
@@ -365,10 +398,13 @@ The JSON file is automatically saved to disk in these situations:
 
 1. **Create task space** - Saves the new task space with current tabs
 2. **Delete task space** - Saves after removing the space (and archives task file)
-3. **Switch to task space** - Saves to update `lastAccessed` timestamp
+3. **Switch to task space** - Saves to update active task space ID
 4. **Rename task space** - Saves with the new name
 5. **Auto-save tabs** - Saves current open tabs (500ms after tab changes, if
    `autoSaveCurrentTaskSpace` is enabled)
+
+**Note:** The `lastAccessed` timestamp is updated separately in VSCode workspace state and
+does NOT trigger file saves, keeping git history clean.
 
 **Note on missing files:** When auto-save runs, it saves only the tabs that are currently
 open. If a file was in your task space but failed to open (e.g., missing on current

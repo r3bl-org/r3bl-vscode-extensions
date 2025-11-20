@@ -6,6 +6,23 @@ import { TabInfo, TaskSpaceStorage } from './types';
 const STORAGE_FILE = '.vscode/task-spaces.json';
 const CURRENT_VERSION = '2.0';
 
+/**
+ * Manages task space storage using a split architecture:
+ *
+ * 1. Task Space Definitions (.vscode/task-spaces.json):
+ *    - Stored in workspace files (can be version controlled)
+ *    - Contains: name, id, tabs, taskFile, activeTab, createdAt
+ *    - Only changes when spaces are created/deleted/renamed
+ *
+ * 2. Access Timestamps (VSCode Workspace State):
+ *    - Stored in VSCode's internal database (NOT version controlled)
+ *    - Contains: lastAccessed timestamps for each task space
+ *    - Updated frequently (every task space switch)
+ *    - Location: ~/.config/Code/User/workspaceStorage/<workspace-id>/state.vscode.*
+ *
+ * This split prevents git noise from frequent timestamp updates while keeping
+ * task space definitions clean and shareable.
+ */
 export class Storage {
   constructor(private context: vscode.ExtensionContext) {}
 
@@ -59,6 +76,66 @@ export class Storage {
       // No workspace, use globalState
       await this.context.globalState.update('taskSpaces', data);
     }
+  }
+
+  /**
+   * Get lastAccessed timestamp for a task space from workspace state
+   * This is stored separately from the task-spaces.json file to avoid git noise
+   * @param taskSpaceId The task space ID
+   * @returns The lastAccessed timestamp, or undefined if not found
+   */
+  async getLastAccessed(taskSpaceId: string): Promise<number | undefined> {
+    const metadata = this.context.workspaceState.get<Record<string, { lastAccessed: number }>>(
+      'taskSpaceMetadata',
+      {}
+    );
+    return metadata[taskSpaceId]?.lastAccessed;
+  }
+
+  /**
+   * Set lastAccessed timestamp for a task space in workspace state
+   * This is stored separately from the task-spaces.json file to avoid git noise
+   * @param taskSpaceId The task space ID
+   * @param timestamp The timestamp to set
+   */
+  async setLastAccessed(taskSpaceId: string, timestamp: number): Promise<void> {
+    const metadata = this.context.workspaceState.get<Record<string, { lastAccessed: number }>>(
+      'taskSpaceMetadata',
+      {}
+    );
+    metadata[taskSpaceId] = { lastAccessed: timestamp };
+    await this.context.workspaceState.update('taskSpaceMetadata', metadata);
+  }
+
+  /**
+   * Get all lastAccessed timestamps for all task spaces
+   * Used for sorting and displaying in the UI
+   * @returns A map of task space IDs to lastAccessed timestamps
+   */
+  async getAllLastAccessed(): Promise<Record<string, number>> {
+    const metadata = this.context.workspaceState.get<Record<string, { lastAccessed: number }>>(
+      'taskSpaceMetadata',
+      {}
+    );
+    const result: Record<string, number> = {};
+    for (const [id, meta] of Object.entries(metadata)) {
+      result[id] = meta.lastAccessed;
+    }
+    return result;
+  }
+
+  /**
+   * Remove lastAccessed metadata for a deleted task space
+   * This prevents orphaned metadata from accumulating in workspace state
+   * @param taskSpaceId The task space ID to remove
+   */
+  async removeLastAccessed(taskSpaceId: string): Promise<void> {
+    const metadata = this.context.workspaceState.get<Record<string, { lastAccessed: number }>>(
+      'taskSpaceMetadata',
+      {}
+    );
+    delete metadata[taskSpaceId];
+    await this.context.workspaceState.update('taskSpaceMetadata', metadata);
   }
 
   /**

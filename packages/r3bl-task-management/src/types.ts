@@ -12,7 +12,7 @@ export interface TaskSpace {
   taskFile?: string;               // Optional relative path to task/*.md
   activeTab?: string;              // Optional relative path to the active tab
   createdAt: number;
-  lastAccessed: number;
+  // NOTE: lastAccessed is stored separately in VSCode workspace state to avoid git noise
 }
 
 export interface TaskSpaceStorage {

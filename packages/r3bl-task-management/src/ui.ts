@@ -44,15 +44,23 @@ export async function showTaskSpacesDialog(
   const taskSpaces = manager.getTaskSpaces();
   const activeId = manager.getActiveTaskSpaceId();
 
+  // Fetch lastAccessed timestamps from workspace state (stored separately to avoid git noise)
+  const lastAccessedMap = await manager.getAllLastAccessed();
+
   // Sort by last accessed (most recent first)
-  const sortedSpaces = [...taskSpaces].sort((a, b) => b.lastAccessed - a.lastAccessed);
+  const sortedSpaces = [...taskSpaces].sort((a, b) => {
+    const aTime = lastAccessedMap[a.id] || 0;
+    const bTime = lastAccessedMap[b.id] || 0;
+    return bTime - aTime;
+  });
 
   for (const ts of sortedSpaces) {
     const isActive = ts.id === activeId;
+    const lastAccessed = lastAccessedMap[ts.id] || ts.createdAt;
     items.push({
       label: `${isActive ? '$(arrow-right) ' : '$(book) '}${ts.name}`,
       description: `${ts.tabs.length} tabs${ts.taskFile ? ' 📄' : ''}`,
-      detail: `Last accessed: ${formatRelativeTime(ts.lastAccessed)}`,
+      detail: `Last accessed: ${formatRelativeTime(lastAccessed)}`,
       taskSpace: ts,
       action: 'switch',
       buttons: [

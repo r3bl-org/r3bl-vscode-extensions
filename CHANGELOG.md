@@ -27,6 +27,22 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-20] - Task Management Storage Architecture Improvement
+
+### Package Versions
+- **R3BL Task Management**: 1.0.12 → 1.0.13
+- **R3BL Extension Pack**: 1.0.34 → 1.0.35
+
+### Changes
+
+- **R3BL Task Management 1.0.13**: Split storage architecture to eliminate git noise
+  - **Eliminated git noise**: `lastAccessed` timestamps now stored in VSCode workspace state instead of `.vscode/task-spaces.json`
+  - **Clean git history**: Task space definitions remain in version control, but frequent timestamp updates no longer pollute commits
+  - **Preserved functionality**: "Last accessed" sorting and display still work perfectly
+  - **Persistent timestamps**: Access times still persist across VSCode sessions
+  - **Split storage**: Task space definitions in `.vscode/task-spaces.json` (git-friendly), metadata in VSCode workspace state (not version controlled)
+  - **Developer benefit**: Task space files only change when you actually modify spaces (create/delete/rename), not on every switch
+
 ## [2025-11-20] - Fuzzy Search Improvements and Notification Auto-Dismiss
 
 ### Package Versions

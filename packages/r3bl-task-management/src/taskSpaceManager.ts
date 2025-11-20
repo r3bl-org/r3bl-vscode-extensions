@@ -84,8 +84,7 @@ export class TaskSpaceManager {
       tabs: currentTabs,
       taskFile,
       activeTab,
-      createdAt: Date.now(),
-      lastAccessed: Date.now()
+      createdAt: Date.now()
     };
 
     this.data.taskSpaces.push(taskSpace);
@@ -94,6 +93,9 @@ export class TaskSpaceManager {
     if (setAsActive) {
       this.data.activeTaskSpaceId = taskSpace.id;
     }
+
+    // Set lastAccessed in workspace state (stored separately to avoid git noise)
+    await this.storage.setLastAccessed(taskSpace.id, Date.now());
 
     await this.save();
 
@@ -122,6 +124,9 @@ export class TaskSpaceManager {
     if (this.data.activeTaskSpaceId === id) {
       this.data.activeTaskSpaceId = undefined;
     }
+
+    // Clean up lastAccessed metadata from workspace state to prevent memory leaks
+    await this.storage.removeLastAccessed(id);
 
     await this.save();
   }
@@ -208,7 +213,9 @@ export class TaskSpaceManager {
     // Update active task space FIRST, before opening tabs
     // This ensures auto-save listener saves to the correct space
     this.data.activeTaskSpaceId = id;
-    taskSpace.lastAccessed = Date.now();
+
+    // Update lastAccessed in workspace state (stored separately to avoid git noise)
+    await this.storage.setLastAccessed(id, Date.now());
 
     // Close all current tabs
     await this.closeAllTabs();
@@ -601,7 +608,10 @@ export class TaskSpaceManager {
 
     // Update metadata
     this.data.activeTaskSpaceId = id;
-    taskSpace.lastAccessed = Date.now();
+
+    // Update lastAccessed in workspace state (stored separately to avoid git noise)
+    await this.storage.setLastAccessed(id, Date.now());
+
     await this.save();
   }
 
@@ -757,5 +767,21 @@ export class TaskSpaceManager {
       return path.join(workspaceFolder.uri.fsPath, relativePath);
     }
     return relativePath;
+  }
+
+  /**
+   * Get lastAccessed timestamp for a task space
+   * This is stored in workspace state separately from task-spaces.json to avoid git noise
+   */
+  async getLastAccessed(taskSpaceId: string): Promise<number | undefined> {
+    return await this.storage.getLastAccessed(taskSpaceId);
+  }
+
+  /**
+   * Get all lastAccessed timestamps for all task spaces
+   * This is stored in workspace state separately from task-spaces.json to avoid git noise
+   */
+  async getAllLastAccessed(): Promise<Record<string, number>> {
+    return await this.storage.getAllLastAccessed();
   }
 }
