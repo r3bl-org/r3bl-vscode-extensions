@@ -6,7 +6,6 @@ A carefully crafted dark theme for VS Code, optimized for Rust and Markdown deve
 
 - **Rust-Optimized Colors**: Specially designed syntax highlighting for Rust code with distinct colors for keywords, types, functions, and macros
 - **Dark Theme Excellence**: Professional dark color scheme that reduces eye strain during long coding sessions
-- **Enhanced Test Visibility**: Test functions highlighted in purple for easy identification
 - **Rich Markdown Support**: Beautiful rendering of documentation comments and markdown tables
 - **Semantic Highlighting**: Automatically installs [R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config) for enhanced Rust highlighting
 - **Consistent UI**: Carefully selected colors for sidebar, tabs, status bar, and terminals
@@ -28,10 +27,10 @@ A carefully crafted dark theme for VS Code, optimized for Rust and Markdown deve
 *Markdown-style tables in comments with clear formatting*
 
 ![Test Functions](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/test-functions.png)
-*Test functions highlighted in purple for easy identification*
+*Rust-specific syntax highlighting with distinct keyword, type, and function colors*
 
 ![Variable Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/variable-highlighting.png)
-*Clear variable and parameter highlighting in test code*
+*Clear variable and parameter highlighting*
 
 ![Async Functions](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/async-functions.png)
 *Async function highlighting with type parameters and trait bounds*
@@ -98,7 +97,6 @@ The theme uses a carefully selected color palette:
 | **Numbers** | Green (`#b5cea8`) | Numeric literals |
 | **Comments** | Gray (`#6a9955`) | Single and multi-line comments |
 | **Macros** | Cyan (`#4fc1ff`) | Rust macros like `println!` |
-| **Test Functions** | Purple (background) | Test function highlighting |
 
 ### Recommended Settings
 
@@ -150,7 +148,6 @@ Works with VS Code's semantic highlighting to provide context-aware colors based
 | Feature | R3BL Theme | Generic Dark Themes |
 |---------|-----------|---------------------|
 | Rust Optimization | ✅ Purpose-built | ❌ Generic patterns |
-| Test Highlighting | ✅ Purple backgrounds | ❌ No distinction |
 | Semantic Support | ✅ Full support | ⚠️ Varies |
 | Markdown in Comments | ✅ Rendered | ⚠️ Basic |
 | Eye Comfort | ✅ Optimized | ⚠️ Varies |
