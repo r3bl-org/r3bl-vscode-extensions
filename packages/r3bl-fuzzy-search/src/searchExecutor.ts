@@ -59,6 +59,7 @@ async function executePipeline(
       }
     });
 
+    let limitWasReached = false;
     let rgErrorOutput = '';
     let fzfErrorOutput = '';
 
@@ -83,11 +84,7 @@ async function executePipeline(
       cleanup();
       // fzf exit codes: 0 = match, 1 = no match, 2 = error, 130 = interrupted
       if (code === 0 || code === 1 || code === null) {
-        if (limitReached) {
-          vscode.window.showWarningMessage(
-            `Search limited to ${resultLimit} results. Consider narrowing your query.`
-          );
-        }
+        limitWasReached = limitReached;
         resolve(output);
       } else {
         const errorMsg = fzfErrorOutput || rgErrorOutput || `fzf exited with code ${code}`;
@@ -149,8 +146,9 @@ export async function executeSearch(
   const fzfArgs = [
     '--ansi',
     '--filter', input.query,
-    '--no-sort',
     '--delimiter', ':',
+    '-i', // Case-insensitive matching
+    // Removed --no-sort to allow fzf to rank results by match quality
   ];
 
   // Log the commands for debugging

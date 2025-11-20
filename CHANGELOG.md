@@ -27,6 +27,29 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-20] - Fuzzy Search Improvements and Notification Auto-Dismiss
+
+### Package Versions
+- **R3BL Fuzzy Search**: 1.0.5 → 1.0.6
+- **R3BL Copy Selection Path and Range**: 1.0.9 → 1.1.0
+- **R3BL Extension Pack**: 1.0.33 → 1.0.34
+
+### Changes
+
+- **R3BL Fuzzy Search 1.0.6**: Critical bug fix and interactive search with live preview
+  - **Fixed critical bug**: Search results now use absolute file paths instead of relative paths, enabling navigation from `/tmp/` saved results
+  - **New interactive search with live preview**: Type query and see real-time results (Alt+Shift+D)
+  - Press Enter to save all results to a .code-search file and open in editor
+  - Debounced search (300ms) for smooth typing experience
+  - Toggle gitignore respect and modify exclude patterns on the fly during search
+  - Simplified to single search mode - removed separate static/interactive modes
+
+- **R3BL Copy Selection Path and Range 1.1.0**: Auto-dismiss notifications
+  - **Configurable auto-dismiss**: Notifications now automatically dismiss after a configurable timeout (default: 60 seconds)
+  - Set timeout via `r3blCopySelectionPathAndRange.notificationTimeoutMs` setting
+  - Set to 0 to disable auto-dismiss and keep original behavior
+  - Prevents screen clutter when using the extension frequently
+
 ## [2025-11-19] - Theme Warning Colors and Debounced Flycheck Feature
 
 ### Package Versions

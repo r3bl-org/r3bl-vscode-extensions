@@ -46,8 +46,25 @@ async function handleCopyPathAndRange() {
     // Copy to clipboard
     await vscode.env.clipboard.writeText(output);
 
+    // Get notification timeout from configuration
+    const config = vscode.workspace.getConfiguration('r3blCopySelectionPathAndRange');
+    const timeoutMs = config.get<number>('notificationTimeoutMs', 60000);
+
     // Show confirmation message with "Open" button
-    const action = await vscode.window.showInformationMessage(`Copied: ${output}`, "Open");
+    const notificationPromise = vscode.window.showInformationMessage(`Copied: ${output}`, "Open");
+
+    // Handle auto-dismiss if timeout is configured
+    let action: string | undefined;
+    if (timeoutMs > 0) {
+        // Race between user action and timeout
+        action = await Promise.race([
+            notificationPromise,
+            new Promise<undefined>(resolve => setTimeout(() => resolve(undefined), timeoutMs))
+        ]);
+    } else {
+        // No timeout - wait for user action
+        action = await notificationPromise;
+    }
 
     // If user clicked "Open", navigate to the file and range
     if (action === "Open") {

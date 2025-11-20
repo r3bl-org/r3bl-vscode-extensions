@@ -1,33 +1,38 @@
 # R3BL Fuzzy Search
 
-Fuzzy search across file contents using fzf, displaying results in VS Code's Search Editor format.
+Interactive fuzzy search across file contents using fzf, with live preview and instant results.
 
 ## Features
 
-- **Fuzzy Search**: Smart search using [fzf](https://github.com/junegunn/fzf) that tolerates typos
+- **Interactive Search Panel**: Always-editable search box with live preview as you type
+- **Fuzzy Search**: Smart search using [fzf](https://github.com/junegunn/fzf) that tolerates typos and is case-insensitive
 - **Fast Results**: Powered by [ripgrep](https://github.com/BurntSushi/ripgrep) for lightning-fast file content search
-- **Search Editor Format**: Results displayed in VS Code's native Search Editor with clickable navigation
-- **Customizable Excludes**: Configure which files and directories to exclude from search
-- **Gitignore Support**: Automatically respects `.gitignore` files, with toggle to enable/disable
-- **Result Limit**: Configurable maximum number of results (default: 100)
-- **Saved Results**: Search results automatically saved to `/tmp/` for easy access
+- **Live Preview**: See results update in real-time as you type (250ms debounce)
+- **Dual View Modes**:
+  - Preview results in interactive panel with clickable navigation
+  - Press Enter to open full results in a code editor tab
+- **Customizable Excludes**: Configure which files and directories to exclude from search on-the-fly
+- **Gitignore Support**: Toggle `.gitignore` respect on/off during search
+- **Result Limit**: Configurable maximum number of results (default: 100) with visual warning
+- **Respects VS Code Settings**: Font size, line height, and editor settings automatically applied
+- **Smart Result Ranking**: Best matches appear first, sorted by relevance
 
 ## Screenshots
 
-![Fuzzy Search Dialog](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/1.png)
-*QuickPick interface with search query input and settings display*
+![Interactive Search Panel](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/1.png)
+*Interactive search panel with live preview and always-editable search box*
 
-![Gitignore Toggle](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/2.png)
-*Toggle .gitignore respect on/off with icon button*
+![Live Results](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/2.png)
+*Live preview shows results as you type with 250ms debounce*
 
-![Search Results](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/3.png)
-*Results displayed in Search Editor format with clickable line numbers*
+![Clickable Navigation](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/3.png)
+*Click any result to jump directly to that location in your code*
 
-![Exclude Patterns](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/4.png)
-*Configure exclude patterns with the gear icon*
+![Results in Editor Tab](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/4.png)
+*Press Enter to open full results in a Search Editor tab with clickable line numbers*
 
-![Settings Overview](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/5.png)
-*Complete settings view showing all configuration options*
+![Configure Settings](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/5.png)
+*Configure exclude patterns and .gitignore respect with interactive buttons*
 
 ## Requirements
 
@@ -53,20 +58,24 @@ Press `Alt+Shift+D` to start a fuzzy search (same shortcut for both macOS and Li
 
 ### Search Workflow
 
-1. **Enter search query**: Type your fuzzy search pattern (e.g., `exprt` will find `export`)
-2. **Toggle settings** (optional): Use icon buttons to toggle .gitignore respect or modify exclude patterns
-   - Click gear icon (⚙️) to modify exclude patterns
-   - Click search-stop icon (🔍) to toggle .gitignore respect
-3. **View results**: Results open in a Search Editor with clickable line numbers for easy navigation
-4. **Access saved results**: Results are automatically saved to `/tmp/` with query-based filename
+1. **Open search panel**: Press `Alt+Shift+D` to open the interactive search panel
+2. **Type your query**: Start typing your fuzzy search pattern (e.g., `exprt` will find `export`)
+3. **See live results**: Results appear in real-time as you type (250ms debounce)
+4. **Navigate instantly**: Click any result in the panel to jump directly to that location
+5. **Modify and re-search**: Edit your query anytime to refine results
+6. **Open full results** (optional): Press Enter to save results to `/tmp/` and open in a Search Editor tab
+7. **Configure settings**: Use icon buttons to toggle .gitignore respect or modify exclude patterns
+   - Gear icon: Modify exclude patterns
+   - Search-stop icon: Toggle .gitignore respect on/off
 
 ### Example
 
 Search for `exprt activate` (with a typo):
-- Finds: `export function activate`, `export const activate`, etc.
-- Results grouped by file
-- Click any result to jump to that location
-- Saved to: `/tmp/exprt_activate.code-search`
+- Type in the interactive panel
+- Live results show: `export function activate`, `export const activate`, etc.
+- Click any result to navigate instantly
+- Press Enter to open full results in editor tab
+- Results saved to: `/tmp/exprt_activate.code-search`
 
 ## Extension Settings
 
@@ -80,7 +89,7 @@ This extension contributes the following settings:
 
 ## Commands
 
-- `R3BL Fuzzy Search: Search in Files` - Start a fuzzy search in the current workspace
+- `R3BL Fuzzy Search: Interactive Search` - Open interactive search panel with live preview
 
 ## Keyboard Shortcuts
 
@@ -97,9 +106,13 @@ You can customize this shortcut in VS Code's Keyboard Shortcuts settings by sear
 | Matching | Exact/Regex | Fuzzy (FZF) |
 | Typo Tolerance | No | Yes |
 | Speed | Fast | Fast (rg+fzf) |
-| Result Display | Sidebar or Editor | Search Editor |
+| Live Preview | No | Yes (250ms debounce) |
+| Result Display | Sidebar or Editor | Interactive Panel + Editor |
+| Instant Navigation | No | Click to jump |
+| Re-query | Must start over | Edit anytime |
 | Keybinding | `Ctrl+Shift+F` | `Alt+Shift+D` |
 | Gitignore | Always respected | Toggleable |
+| Result Ranking | Basic | Smart (by relevance) |
 
 ## Known Issues
 

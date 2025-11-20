@@ -9,7 +9,7 @@ export interface SearchInput {
 }
 
 export interface SearchResult {
-  file: string;      // Relative path
+  file: string;      // Absolute path
   line: number;      // 1-based line number
   content: string;   // Line content
 }

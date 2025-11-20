@@ -24,11 +24,13 @@ export function parseResults(
 
     const [, filePath, lineNum, content] = match;
 
-    // Make path relative to workspace
-    const relativePath = path.relative(workspaceRoot, filePath);
+    // Convert to absolute path if it's relative
+    const absolutePath = path.isAbsolute(filePath)
+      ? filePath
+      : path.join(workspaceRoot, filePath);
 
     results.push({
-      file: relativePath,
+      file: absolutePath,
       line: parseInt(lineNum, 10),
       content: content
     });
