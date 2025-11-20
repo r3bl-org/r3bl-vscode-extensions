@@ -26,7 +26,7 @@
   },
   "publisher": "R3BL",
   "preview": false,
-  "version": "1.1.0",
+  "version": "1.2.2",
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -34,7 +34,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:r3bl-copy-selection-path-and-range.copyPathAndRange"
+    "onCommand:r3bl-copy-selection-path-and-range.copyPathAndRange",
+    "onCommand:r3bl-copy-selection-path-and-range.showCopyHistory"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -43,6 +44,11 @@
         "command": "r3bl-copy-selection-path-and-range.copyPathAndRange",
         "title": "Copy File Path with Selection Range",
         "category": "R3BL"
+      },
+      {
+        "command": "r3bl-copy-selection-path-and-range.showCopyHistory",
+        "title": "Show Copy History",
+        "category": "R3BL"
       }
     ],
     "keybindings": [
@@ -50,19 +56,12 @@
         "command": "r3bl-copy-selection-path-and-range.copyPathAndRange",
         "key": "alt+o",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "r3bl-copy-selection-path-and-range.showCopyHistory",
+        "key": "alt+shift+o"
       }
-    ],
-    "configuration": {
-      "title": "R3BL Copy Selection Path and Range",
-      "properties": {
-        "r3blCopySelectionPathAndRange.notificationTimeoutMs": {
-          "type": "number",
-          "default": 60000,
-          "description": "Time in milliseconds before the notification auto-dismisses (default: 60000ms = 1 minute). Set to 0 to disable auto-dismiss.",
-          "minimum": 0
-        }
-      }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run build",

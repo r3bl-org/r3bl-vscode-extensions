@@ -3,13 +3,29 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+// In-memory history of copied items (session only)
+interface CopyHistoryItem {
+    output: string;
+    uri: vscode.Uri;
+    selection: vscode.Selection;
+    timestamp: Date;
+}
+
+const copyHistory: CopyHistoryItem[] = [];
+const MAX_HISTORY_SIZE = 20;
+
 export function activate(context: vscode.ExtensionContext) {
     const copyCommand = vscode.commands.registerCommand(
         'r3bl-copy-selection-path-and-range.copyPathAndRange',
         handleCopyPathAndRange
     );
 
-    context.subscriptions.push(copyCommand);
+    const historyCommand = vscode.commands.registerCommand(
+        'r3bl-copy-selection-path-and-range.showCopyHistory',
+        showCopyHistory
+    );
+
+    context.subscriptions.push(copyCommand, historyCommand);
 }
 
 export function deactivate() {}
@@ -46,34 +62,67 @@ async function handleCopyPathAndRange() {
     // Copy to clipboard
     await vscode.env.clipboard.writeText(output);
 
-    // Get notification timeout from configuration
-    const config = vscode.workspace.getConfiguration('r3blCopySelectionPathAndRange');
-    const timeoutMs = config.get<number>('notificationTimeoutMs', 60000);
+    // Add to history
+    copyHistory.unshift({
+        output,
+        uri: document.uri,
+        selection,
+        timestamp: new Date()
+    });
 
-    // Show confirmation message with "Open" button
-    const notificationPromise = vscode.window.showInformationMessage(`Copied: ${output}`, "Open");
-
-    // Handle auto-dismiss if timeout is configured
-    let action: string | undefined;
-    if (timeoutMs > 0) {
-        // Race between user action and timeout
-        action = await Promise.race([
-            notificationPromise,
-            new Promise<undefined>(resolve => setTimeout(() => resolve(undefined), timeoutMs))
-        ]);
-    } else {
-        // No timeout - wait for user action
-        action = await notificationPromise;
+    // Keep history size limited
+    if (copyHistory.length > MAX_HISTORY_SIZE) {
+        copyHistory.pop();
     }
 
-    // If user clicked "Open", navigate to the file and range
-    if (action === "Open") {
-        await vscode.window.showTextDocument(document.uri, {
-            selection: selection,
+    // Show self-dismissing notification (no buttons = auto-dismiss)
+    vscode.window.showInformationMessage(`Copied: ${output}`);
+}
+
+async function showCopyHistory() {
+    if (copyHistory.length === 0) {
+        vscode.window.showInformationMessage('No copy history available');
+        return;
+    }
+
+    // Create quick pick items with timestamps
+    const items = copyHistory.map((item, index) => ({
+        label: item.output,
+        description: item.timestamp.toLocaleTimeString(),
+        detail: `Copied ${getRelativeTime(item.timestamp)}`,
+        item
+    }));
+
+    const selected = await vscode.window.showQuickPick(items, {
+        placeHolder: 'Select a copied path to open',
+        matchOnDescription: true,
+        matchOnDetail: true
+    });
+
+    if (selected) {
+        // Open the file and navigate to the selection
+        await vscode.window.showTextDocument(selected.item.uri, {
+            selection: selected.item.selection,
             viewColumn: vscode.ViewColumn.Active,
             preserveFocus: false
         });
     }
+}
+
+function getRelativeTime(date: Date): string {
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+
+    if (seconds < 60) {
+        return 'just now';
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+        return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    return `${hours} hour${hours === 1 ? '' : 's'} ago`;
 }
 
 function calculateLineRange(selection: vscode.Selection): { lineRange: string; isMultiLine: boolean } {

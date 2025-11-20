@@ -23,7 +23,7 @@ implementation plans in `task/*.md` files.
   - [Claude Code Workflow](#claude-code-workflow)
   - [Claude Code Integration Commands](#claude-code-integration-commands)
   - [Power User: Multiple Claude Code Instances](#power-user-multiple-claude-code-instances)
-- [⚠️ Important: How It Works](#️-important-how-it-works)
+- [Important: How It Works](#important-how-it-works)
   - [Task Spaces Are WITHIN One Branch](#task-spaces-are-within-one-branch)
   - [Filesystem-Based Memory](#filesystem-based-memory)
   - [Should You Commit `.vscode/task-spaces.json`?](#should-you-commit-vscodetask-spacesjson)
@@ -235,7 +235,7 @@ working on different tasks, coordinated through one VS Code instance:
 
 True parallel development on the same branch!
 
-## ⚠️ Important: How It Works
+## Important: How It Works
 
 ### Task Spaces Are WITHIN One Branch
 

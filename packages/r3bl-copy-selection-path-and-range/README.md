@@ -6,18 +6,22 @@ Quickly copy file paths with selected line ranges in formats optimized for Claud
 
 - **Claude Code Format**: Multi-line selections use `@path#L<start>-<end>` format
 - **IDE Format**: Single-line selections use `path:<line>` format for IDE compatibility
-- **Keyboard Shortcut**: Quick access with `Alt+O`
+- **Keyboard Shortcuts**: Quick copy with `Alt+O`, view history with `Alt+Shift+O`
+- **Copy History**: Session-based history of recent copies (last 20 items)
+- **Quick Navigation**: Select from history to jump to any previously copied location
 - **Relative Paths**: Automatically uses workspace-relative paths
-- **Open Button**: Click to navigate back to the copied location
 - **Cross-Platform**: Normalizes path separators for consistency
 
 ## Screenshots
 
-![Single Line Format](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/single-line-format.png)
-*Single-line selection copies in IDE-compatible format: `path:line`*
+![Single Line Copy](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-notification-single-line.png)
+*Single-line selection with auto-dismissing notification*
 
-![Multi-Line Format](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/multi-line-format.png)
-*Multi-line selection copies in Claude Code format: `@path#Lstart-end`*
+![Multi-Line Copy](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-notification-multi-line.png)
+*Multi-line selection in Claude Code format with @ prefix*
+
+![Copy History](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-history.png)
+*Copy history (Alt+Shift+O) showing recent copies with timestamps*
 
 ## Output Formats
 
@@ -50,19 +54,25 @@ This format is compatible with most IDEs and terminals that support `file:line` 
 
 ## Usage
 
-### Keyboard Shortcut (Recommended)
+### Copy Path (Alt+O)
 
 1. Select lines in your editor (or just place cursor on a line)
 2. Press `Alt+O`
 3. Path with line range is copied to clipboard
-4. Optional: Click "Open" in notification to navigate back
+4. Notification shows what was copied (auto-dismisses)
+
+### View Copy History (Alt+Shift+O)
+
+1. Press `Alt+Shift+O` to open copy history
+2. Browse your recent copies (up to 20 items)
+3. Select any item to jump to that file and line range
+4. History shows relative timestamps ("just now", "5 minutes ago", etc.)
 
 ### Command Palette
 
-1. Select lines in your editor
-2. Open Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
-3. Type "Copy File Path with Selection Range"
-4. Press Enter
+1. Open Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
+2. Type "Copy File Path with Selection Range" or "Show Copy History"
+3. Press Enter
 
 ## Use Cases
 
@@ -103,14 +113,16 @@ The bug occurs in src/components/Form.tsx:89
 ## Commands
 
 - **`R3BL: Copy File Path with Selection Range`** - Copy the current file path with selection range to clipboard
+- **`R3BL: Show Copy History`** - Show history of recently copied paths and navigate to any location
 
 ## Keyboard Shortcuts
 
-| Shortcut | Command ID | When |
-|----------|------------|------|
-| `Alt+O` | `r3bl-copy-selection-path-and-range.copyPathAndRange` | Editor has focus |
+| Shortcut | Command | When |
+|----------|---------|------|
+| `Alt+O` | Copy File Path with Selection Range | Editor has focus |
+| `Alt+Shift+O` | Show Copy History | Always |
 
-You can customize this shortcut in VS Code's Keyboard Shortcuts settings by searching for the command ID above.
+You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
 
 ## How It Works
 
@@ -120,7 +132,16 @@ You can customize this shortcut in VS Code's Keyboard Shortcuts settings by sear
    - Multi-line → Claude Code format with `@` prefix
    - Single-line → IDE format
 4. **Clipboard**: Copies formatted string
-5. **Notification**: Shows confirmation with "Open" button
+5. **History Storage**: Adds to in-memory session history (last 20 items)
+6. **Notification**: Shows confirmation (auto-dismisses)
+
+### Copy History
+
+- Stored in memory (session-only, cleared on reload)
+- Keeps last 20 copied items
+- Shows file path, line range, and relative timestamp
+- Quick pick interface for easy navigation
+- Press `Alt+Shift+O` to access anytime
 
 ## Release Notes
 
