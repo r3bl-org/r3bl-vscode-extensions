@@ -3,21 +3,21 @@
   "taskSpaces": [
     {
       "name": "remove_notifications",
-      "id": "1e36403b-6239-4cfd-9d9c-da8035450279",
+      "id": "7a610d40-b97f-4591-a595-6d7ba6f5b337",
       "tabs": [
         {
-          "path": "packages/r3bl-fuzzy-search/package.json",
-          "isPinned": false
+          "path": "task/task_remove_notifications.md",
+          "isPinned": true
         },
         {
-          "path": "task/task_remove_notifications.md",
+          "path": "packages/r3bl-fuzzy-search/package.json",
           "isPinned": false
         }
       ],
       "taskFile": "task/task_remove_notifications.md",
       "activeTab": "task/task_remove_notifications.md",
-      "createdAt": 1763734076771
+      "createdAt": 1763735694305
     }
   ],
-  "activeTaskSpaceId": "1e36403b-6239-4cfd-9d9c-da8035450279"
+  "activeTaskSpaceId": "7a610d40-b97f-4591-a595-6d7ba6f5b337"
 }

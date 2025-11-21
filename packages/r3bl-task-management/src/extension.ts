@@ -85,12 +85,23 @@ async function createTaskSpaceFromFile(
       return; // User cancelled
     }
 
-    // Create task space with current open tabs + selected task file
-    // Set as active immediately to avoid race condition
-    const taskSpace = await manager.createTaskSpace(name, selected.taskFile, true);
+    // Open the task file FIRST, then create the task space
+    // This ensures the task file is in the current tabs when createTaskSpace captures them
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (workspaceFolder) {
+      const taskFilePath = path.isAbsolute(selected.taskFile)
+        ? selected.taskFile
+        : path.join(workspaceFolder.uri.fsPath, selected.taskFile);
+      const taskFileUri = vscode.Uri.file(taskFilePath);
 
-    // Switch to the new task space (this will close all tabs and open the task file)
-    await manager.switchToTaskSpace(taskSpace.id);
+      // Open and pin the task file
+      await vscode.window.showTextDocument(taskFileUri, { preview: false });
+      await vscode.commands.executeCommand('workbench.action.pinEditor');
+    }
+
+    // Now create task space - it will capture the task file in the tabs
+    // Set as active immediately to avoid race condition
+    await manager.createTaskSpace(name, selected.taskFile, true);
 
     // Update status bar
     updateStatusBar(statusBarItem, manager);

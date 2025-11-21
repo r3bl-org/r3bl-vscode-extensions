@@ -27,6 +27,20 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-21] - Task Management Bug Fix
+
+### Package Versions
+- **R3BL Task Management**: 1.0.14 → 1.0.15
+- **R3BL Extension Pack**: 1.0.40 → 1.0.41
+
+### Changes
+
+- **R3BL Task Management 1.0.15**: Fixed task file not opening when creating task space from file
+  - Task file now opens as a pinned tab when creating a task space from an existing task file
+  - Task file appears as the leftmost tab in the editor
+  - Task file automatically receives focus if no other active tab is specified
+  - Improves workflow by immediately showing the task file associated with the new task space
+
 ## [2025-11-20] - Task Management Storage Architecture Improvement
 
 ### Package Versions
