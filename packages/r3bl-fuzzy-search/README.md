@@ -124,7 +124,7 @@ You can customize this shortcut in VS Code's Keyboard Shortcuts settings by sear
 
 This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
 
-See the [R3BL Shared documentation](../r3bl-shared/README.md#public-api) for available services, API usage, and configuration options.
+See the [R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared) for available services, API usage, and configuration options.
 
 ## Release Notes
 

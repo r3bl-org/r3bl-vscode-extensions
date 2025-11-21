@@ -34,6 +34,7 @@ implementation plans in `task/*.md` files.
     - [Status Bar](#status-bar)
     - [File Format](#file-format)
     - [When Does the File Get Saved?](#when-does-the-file-get-saved)
+- [Shared Infrastructure](#shared-infrastructure)
 - [Release Notes](#release-notes)
 - [License](#license)
 - [Contributing](#contributing)
@@ -418,7 +419,7 @@ actual workspace.
 
 This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
 
-See the [R3BL Shared documentation](../r3bl-shared/README.md#public-api) for available services, API usage, and configuration options.
+See the [R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared) for available services, API usage, and configuration options.
 
 ## Release Notes
 

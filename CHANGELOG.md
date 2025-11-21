@@ -27,6 +27,35 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-21] - Documentation Updates and Branding Improvements
+
+### Package Versions
+
+- **R3BL Task Management**: 1.1.1 → 1.1.2
+- **R3BL Auto Insert Copyright**: 1.3.1 → 1.3.2
+- **R3BL Copy Selection Path and Range**: 1.3.1 → 1.3.2
+- **R3BL Fuzzy Search**: 1.1.1 → 1.1.2
+- **R3BL Semantic Config**: 1.1.2 → 1.1.3
+- **R3BL Shared Services Infrastructure**: 1.0.0 → 1.0.1
+- **R3BL Extension Pack**: 1.0.49 → 1.0.50
+
+### Changes
+
+- **All Extensions**: Fixed documentation links and improved marketplace presentation
+    - Updated "Shared Infrastructure" section links to point to marketplace instead of GitHub
+    - All R3BL Shared documentation links now direct users to the published extension page
+    - Improved consistency across all extension README files
+
+- **R3BL Task Management 1.1.2**: Table of Contents updated
+    - Added "Shared Infrastructure" entry to README table of contents
+    - Ensures all sections are discoverable in the marketplace listing
+
+- **R3BL Shared Services Infrastructure 1.0.1**: Branding and visual improvements
+    - Renamed from "R3BL Shared Utilities" to "R3BL Shared Services Infrastructure"
+    - Added R3BL cube logo for better visual consistency in the marketplace
+    - Enhanced professional presentation alongside other R3BL extensions
+    - README title updated to match new display name
+
 ## [2025-11-21] - Task Management Bug Fix
 
 ### Package Versions

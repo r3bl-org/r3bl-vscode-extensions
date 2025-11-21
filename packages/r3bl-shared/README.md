@@ -1,4 +1,4 @@
-# R3BL Shared Utilities
+# R3BL Shared Services Infrastructure
 
 **Internal infrastructure extension** that provides centralized services for all R3BL extensions.
 
