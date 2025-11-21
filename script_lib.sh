@@ -30,6 +30,7 @@ get_version() {
 get_all_versions() {
     echo -e "${BLUE}Reading extension versions...${NC}"
 
+    SHARED_VERSION=$(get_version "./packages/r3bl-shared/package.json")
     THEME_VERSION=$(get_version "./packages/r3bl-theme/package.json")
     COPYRIGHT_VERSION=$(get_version "./packages/r3bl-auto-insert-copyright/package.json")
     SEMANTIC_VERSION=$(get_version "./packages/r3bl-semantic-config/package.json")
@@ -39,6 +40,7 @@ get_all_versions() {
     EXTENSION_PACK_VERSION=$(get_version "./packages/r3bl-extension-pack/package.json")
 
     echo -e "${BLUE}Detected versions:${NC}"
+    echo "  • R3BL Shared: ${SHARED_VERSION}"
     echo "  • R3BL Theme: ${THEME_VERSION}"
     echo "  • R3BL Auto Insert Copyright: ${COPYRIGHT_VERSION}"
     echo "  • R3BL Semantic Configuration: ${SEMANTIC_VERSION}"

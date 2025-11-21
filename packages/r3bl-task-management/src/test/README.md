@@ -28,9 +28,9 @@ npm run watch-tests
 
 - `types.test.ts` - Tests for TypeScript interfaces and data structures
 - More tests can be added for:
-  - Storage layer (mocking VSCode APIs)
-  - TaskSpaceManager logic
-  - UI helper functions
+    - Storage layer (mocking VSCode APIs)
+    - TaskSpaceManager logic
+    - UI helper functions
 
 ## Writing Tests
 
@@ -42,9 +42,9 @@ Example:
 import * as assert from 'assert';
 
 suite('My Test Suite', () => {
-  test('My test case', () => {
-    assert.strictEqual(1 + 1, 2);
-  });
+    test('My test case', () => {
+        assert.strictEqual(1 + 1, 2);
+    });
 });
 ```
 

@@ -15,10 +15,10 @@ Automatically add copyright and license headers to your source code files. Save 
 ## Screenshots
 
 ![Copyright Header Example](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-auto-insert-copyright/images/copyright-header-example.png)
-*MIT License copyright header automatically inserted at the top of a TypeScript file*
+_MIT License copyright header automatically inserted at the top of a TypeScript file_
 
 ![Prepend Copyright Command](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-auto-insert-copyright/images/prepend-copyright-command.png)
-*Use the "Prepend Copyright" command to add headers to existing files*
+_Use the "Prepend Copyright" command to add headers to existing files_
 
 ## Requirements
 
@@ -51,14 +51,15 @@ Configure the extension in your `.vscode/settings.json`:
 
 ```json
 {
-  "copyrighter.author": "Your name or Organization",
-  "copyrighter.license": "MIT"
+    "copyrighter.author": "Your name or Organization",
+    "copyrighter.license": "MIT"
 }
 ```
 
 ### Available Settings
 
 #### `copyrighter.author`
+
 **Type**: `string`
 **Default**: `"Your Name"`
 **Description**: The copyright holder name that appears in the header
@@ -68,6 +69,7 @@ Configure the extension in your `.vscode/settings.json`:
 ```
 
 #### `copyrighter.license`
+
 **Type**: `string`
 **Default**: `"MIT"`
 **Options**: `"none"`, `"MIT"`, `"Apache2"`, `"Apache2OneLine"`, `"GPL3"`
@@ -78,6 +80,7 @@ Configure the extension in your `.vscode/settings.json`:
 ```
 
 #### `copyrighter.note` (Optional)
+
 **Type**: `string`
 **Default**: `""`
 **Description**: Additional note to include in the copyright header
@@ -87,6 +90,7 @@ Configure the extension in your `.vscode/settings.json`:
 ```
 
 #### `copyrighter.newFilesOnly`
+
 **Type**: `boolean`
 **Default**: `true`
 **Description**: Only inject copyright in new files (not existing files when opened)
@@ -99,21 +103,21 @@ Configure the extension in your `.vscode/settings.json`:
 
 The extension automatically detects the appropriate comment syntax for these languages:
 
-| Language | File Extensions | Comment Style |
-|----------|----------------|---------------|
-| **C** | `.c`, `.h` | `//` or `/* */` |
-| **C++** | `.cpp`, `.hpp`, `.cc` | `//` or `/* */` |
-| **C#** | `.cs` | `//` |
-| **CSS** | `.css` | `/* */` |
-| **Go** | `.go` | `//` |
-| **Java** | `.java` | `//` or `/* */` |
-| **JavaScript** | `.js`, `.jsx` | `//` |
-| **Objective-C** | `.m`, `.mm` | `//` or `/* */` |
-| **Rust** | `.rs` | `//` |
-| **SCSS** | `.scss` | `//` or `/* */` |
-| **Swift** | `.swift` | `//` |
-| **TypeScript** | `.ts`, `.tsx` | `//` |
-| **Vue** | `.vue` | `<!-- -->` |
+| Language        | File Extensions       | Comment Style   |
+| --------------- | --------------------- | --------------- |
+| **C**           | `.c`, `.h`            | `//` or `/* */` |
+| **C++**         | `.cpp`, `.hpp`, `.cc` | `//` or `/* */` |
+| **C#**          | `.cs`                 | `//`            |
+| **CSS**         | `.css`                | `/* */`         |
+| **Go**          | `.go`                 | `//`            |
+| **Java**        | `.java`               | `//` or `/* */` |
+| **JavaScript**  | `.js`, `.jsx`         | `//`            |
+| **Objective-C** | `.m`, `.mm`           | `//` or `/* */` |
+| **Rust**        | `.rs`                 | `//`            |
+| **SCSS**        | `.scss`               | `//` or `/* */` |
+| **Swift**       | `.swift`              | `//`            |
+| **TypeScript**  | `.ts`, `.tsx`         | `//`            |
+| **Vue**         | `.vue`                | `<!-- -->`      |
 
 ## License Templates
 
@@ -176,15 +180,19 @@ The extension automatically detects the appropriate comment syntax for these lan
 ## Use Cases
 
 ### Open Source Projects
+
 Automatically add open source license headers (MIT, Apache, GPL) to all your project files to ensure proper licensing.
 
 ### Commercial Software
+
 Add proprietary copyright notices to protect your intellectual property.
 
 ### Multi-Developer Teams
+
 Ensure consistent copyright headers across all team members' contributions.
 
 ### Compliance Requirements
+
 Meet legal or organizational requirements for copyright notices in source code.
 
 ## Configuration Examples
@@ -193,9 +201,9 @@ Meet legal or organizational requirements for copyright notices in source code.
 
 ```json
 {
-  "copyrighter.author": "John Doe",
-  "copyrighter.license": "MIT",
-  "copyrighter.newFilesOnly": true
+    "copyrighter.author": "John Doe",
+    "copyrighter.license": "MIT",
+    "copyrighter.newFilesOnly": true
 }
 ```
 
@@ -203,10 +211,10 @@ Meet legal or organizational requirements for copyright notices in source code.
 
 ```json
 {
-  "copyrighter.author": "Acme Corporation",
-  "copyrighter.license": "Apache2",
-  "copyrighter.note": "Internal use only",
-  "copyrighter.newFilesOnly": false
+    "copyrighter.author": "Acme Corporation",
+    "copyrighter.license": "Apache2",
+    "copyrighter.note": "Internal use only",
+    "copyrighter.newFilesOnly": false
 }
 ```
 
@@ -214,9 +222,9 @@ Meet legal or organizational requirements for copyright notices in source code.
 
 ```json
 {
-  "copyrighter.author": "Your Company",
-  "copyrighter.license": "none",
-  "copyrighter.note": "Proprietary and confidential"
+    "copyrighter.author": "Your Company",
+    "copyrighter.license": "none",
+    "copyrighter.note": "Proprietary and confidential"
 }
 ```
 
@@ -234,15 +242,11 @@ Meet legal or organizational requirements for copyright notices in source code.
 - Header detection is based on simple pattern matching
 - Year is automatically set to current year
 
-## Global R3BL Configuration
+## Shared Infrastructure
 
-This extension uses global R3BL settings for feedback and notifications. You can customize how R3BL extensions display messages, including:
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
 
-- Feedback mechanism (status bar, notifications, or none)
-- Status bar message duration for each message type
-- Message length and display settings
-
-For detailed configuration options, see the [R3BL Extension Pack Configuration](../r3bl-extension-pack/README.md#configuration) section.
+See the [R3BL Shared documentation](../r3bl-shared/README.md#public-api) for available services, API usage, and configuration options.
 
 ## Release Notes
 

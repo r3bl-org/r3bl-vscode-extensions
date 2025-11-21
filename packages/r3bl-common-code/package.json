@@ -1,0 +1,22 @@
+{
+    "name": "r3bl-common-code",
+    "version": "1.0.0",
+    "description": "Common utilities for R3BL VSCode extensions",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "compile": "tsc",
+        "watch": "tsc --watch"
+    },
+    "keywords": [
+        "r3bl",
+        "utilities",
+        "vscode"
+    ],
+    "author": "R3BL LLC",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/vscode": "^1.60.0",
+        "typescript": "^5.0.0"
+    }
+}

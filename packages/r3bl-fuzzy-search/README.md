@@ -9,8 +9,8 @@ Interactive fuzzy search across file contents using fzf, with live preview and i
 - **Fast Results**: Powered by [ripgrep](https://github.com/BurntSushi/ripgrep) for lightning-fast file content search
 - **Live Preview**: See results update in real-time as you type (250ms debounce)
 - **Dual View Modes**:
-  - Preview results in interactive panel with clickable navigation
-  - Press Enter to open full results in a code editor tab
+    - Preview results in interactive panel with clickable navigation
+    - Press Enter to open full results in a code editor tab
 - **Customizable Excludes**: Configure which files and directories to exclude from search on-the-fly
 - **Gitignore Support**: Toggle `.gitignore` respect on/off during search
 - **Result Limit**: Configurable maximum number of results (default: 100) with visual warning
@@ -20,33 +20,33 @@ Interactive fuzzy search across file contents using fzf, with live preview and i
 ## Screenshots
 
 ![Interactive Search Panel](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/1.png)
-*Interactive search panel with live preview and always-editable search box*
+_Interactive search panel with live preview and always-editable search box_
 
 ![Live Results](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/2.png)
-*Live preview shows results as you type with 250ms debounce*
+_Live preview shows results as you type with 250ms debounce_
 
 ![Clickable Navigation](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/3.png)
-*Click any result to jump directly to that location in your code*
+_Click any result to jump directly to that location in your code_
 
 ![Results in Editor Tab](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/4.png)
-*Press Enter to open full results in a Search Editor tab with clickable line numbers*
+_Press Enter to open full results in a Search Editor tab with clickable line numbers_
 
 ![Configure Settings](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-fuzzy-search/images/5.png)
-*Configure exclude patterns and .gitignore respect with interactive buttons*
+_Configure exclude patterns and .gitignore respect with interactive buttons_
 
 ## Requirements
 
 This extension requires the following command-line tools to be installed:
 
 - **ripgrep (rg)**: Fast file content search
-  - macOS: `brew install ripgrep`
-  - Linux: `sudo apt install ripgrep` (Debian/Ubuntu) or `sudo dnf install ripgrep` (Fedora)
-  - More: https://github.com/BurntSushi/ripgrep#installation
+    - macOS: `brew install ripgrep`
+    - Linux: `sudo apt install ripgrep` (Debian/Ubuntu) or `sudo dnf install ripgrep` (Fedora)
+    - More: https://github.com/BurntSushi/ripgrep#installation
 
 - **fzf**: Fuzzy finder
-  - macOS: `brew install fzf`
-  - Linux: `sudo apt install fzf` (Debian/Ubuntu) or `sudo dnf install fzf` (Fedora)
-  - More: https://github.com/junegunn/fzf#installation
+    - macOS: `brew install fzf`
+    - Linux: `sudo apt install fzf` (Debian/Ubuntu) or `sudo dnf install fzf` (Fedora)
+    - More: https://github.com/junegunn/fzf#installation
 
 **Platform Support**: macOS and Linux only (Windows is not supported)
 
@@ -65,12 +65,13 @@ Press `Alt+Shift+D` to start a fuzzy search (same shortcut for both macOS and Li
 5. **Modify and re-search**: Edit your query anytime to refine results
 6. **Open full results** (optional): Press Enter to save results to `/tmp/` and open in a Search Editor tab
 7. **Configure settings**: Use icon buttons to toggle .gitignore respect or modify exclude patterns
-   - Gear icon: Modify exclude patterns
-   - Search-stop icon: Toggle .gitignore respect on/off
+    - Gear icon: Modify exclude patterns
+    - Search-stop icon: Toggle .gitignore respect on/off
 
 ### Example
 
 Search for `exprt activate` (with a typo):
+
 - Type in the interactive panel
 - Live results show: `export function activate`, `export const activate`, etc.
 - Click any result to navigate instantly
@@ -93,41 +94,37 @@ This extension contributes the following settings:
 
 ## Keyboard Shortcuts
 
-| Shortcut | Command ID | When |
-|----------|------------|------|
+| Shortcut      | Command ID                        | When   |
+| ------------- | --------------------------------- | ------ |
 | `Alt+Shift+D` | `r3bl-fuzzy-search.searchInFiles` | Always |
 
 You can customize this shortcut in VS Code's Keyboard Shortcuts settings by searching for the command ID above.
 
 ## Advantages Over Built-in Search
 
-| Feature | Built-in Search | R3BL Fuzzy Search |
-|---------|----------------|-------------------|
-| Matching | Exact/Regex | Fuzzy (FZF) |
-| Typo Tolerance | No | Yes |
-| Speed | Fast | Fast (rg+fzf) |
-| Live Preview | No | Yes (250ms debounce) |
-| Result Display | Sidebar or Editor | Interactive Panel + Editor |
-| Instant Navigation | No | Click to jump |
-| Re-query | Must start over | Edit anytime |
-| Keybinding | `Ctrl+Shift+F` | `Alt+Shift+D` |
-| Gitignore | Always respected | Toggleable |
-| Result Ranking | Basic | Smart (by relevance) |
+| Feature            | Built-in Search   | R3BL Fuzzy Search          |
+| ------------------ | ----------------- | -------------------------- |
+| Matching           | Exact/Regex       | Fuzzy (FZF)                |
+| Typo Tolerance     | No                | Yes                        |
+| Speed              | Fast              | Fast (rg+fzf)              |
+| Live Preview       | No                | Yes (250ms debounce)       |
+| Result Display     | Sidebar or Editor | Interactive Panel + Editor |
+| Instant Navigation | No                | Click to jump              |
+| Re-query           | Must start over   | Edit anytime               |
+| Keybinding         | `Ctrl+Shift+F`    | `Alt+Shift+D`              |
+| Gitignore          | Always respected  | Toggleable                 |
+| Result Ranking     | Basic             | Smart (by relevance)       |
 
 ## Known Issues
 
 - Results are limited to the configured maximum (default 100). If you hit this limit, consider narrowing your search query.
 - Windows is not supported due to simplified path handling for Unix-like systems.
 
-## Global R3BL Configuration
+## Shared Infrastructure
 
-This extension uses global R3BL settings for feedback and notifications. You can customize how R3BL extensions display messages, including:
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
 
-- Feedback mechanism (status bar, notifications, or none)
-- Status bar message duration for each message type
-- Message length and display settings
-
-For detailed configuration options, see the [R3BL Extension Pack Configuration](../r3bl-extension-pack/README.md#configuration) section.
+See the [R3BL Shared documentation](../r3bl-shared/README.md#public-api) for available services, API usage, and configuration options.
 
 ## Release Notes
 

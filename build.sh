@@ -22,6 +22,15 @@ npm install
 echo ""
 echo -e "${BLUE}Building individual extensions...${NC}"
 
+# Build R3BL Shared (infrastructure - must be first since other extensions depend on it)
+echo -e "${BLUE}Building R3BL Shared...${NC}"
+cd packages/r3bl-shared
+npm install
+npm run build
+vsce package --no-dependencies
+cleanup_old_versions "r3bl-shared" "$SHARED_VERSION" "."
+cd ../..
+
 # Build R3BL Theme
 echo -e "${BLUE}Building R3BL Theme...${NC}"
 cd packages/r3bl-theme

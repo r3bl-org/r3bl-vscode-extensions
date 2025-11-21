@@ -1,230 +1,271 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
 import * as vscode from 'vscode';
+import { showStatusBarMessage } from 'r3bl-common-code';
 import { executeSearch } from './searchExecutor';
 import { SearchInput, SearchResult } from './types';
-import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 export class SearchPanel {
-  public static currentPanel: SearchPanel | undefined;
-  private readonly _panel: vscode.WebviewPanel;
-  private readonly _extensionUri: vscode.Uri;
-  private readonly _workspaceRoot: string;
-  private _disposables: vscode.Disposable[] = [];
-  private _lastSearchInput: SearchInput | undefined;
+    public static currentPanel: SearchPanel | undefined;
+    private readonly _panel: vscode.WebviewPanel;
+    private readonly _extensionUri: vscode.Uri;
+    private readonly _workspaceRoot: string;
+    private _disposables: vscode.Disposable[] = [];
+    private _lastSearchInput: SearchInput | undefined;
 
-  private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, workspaceRoot: string) {
-    this._panel = panel;
-    this._extensionUri = extensionUri;
-    this._workspaceRoot = workspaceRoot;
+    private constructor(
+        panel: vscode.WebviewPanel,
+        extensionUri: vscode.Uri,
+        workspaceRoot: string,
+    ) {
+        this._panel = panel;
+        this._extensionUri = extensionUri;
+        this._workspaceRoot = workspaceRoot;
 
-    // Set the webview's initial html content
-    this._update();
+        // Set the webview's initial html content
+        this._update();
 
-    // Listen for when the panel is disposed
-    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+        // Listen for when the panel is disposed
+        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
-    // Handle messages from the webview
-    this._panel.webview.onDidReceiveMessage(
-      async message => {
-        switch (message.command) {
-          case 'search':
-            await this._handleSearch(message.query, message.excludePatterns, message.respectGitignore);
-            return;
-          case 'openFile':
-            await this._handleOpenFile(message.file, message.line);
-            return;
-          case 'openInTab':
-            await this._handleOpenInTab(message.query, message.excludePatterns, message.respectGitignore);
+        // Handle messages from the webview
+        this._panel.webview.onDidReceiveMessage(
+            async message => {
+                switch (message.command) {
+                    case 'search':
+                        await this._handleSearch(
+                            message.query,
+                            message.excludePatterns,
+                            message.respectGitignore,
+                        );
+                        return;
+                    case 'openFile':
+                        await this._handleOpenFile(message.file, message.line);
+                        return;
+                    case 'openInTab':
+                        await this._handleOpenInTab(
+                            message.query,
+                            message.excludePatterns,
+                            message.respectGitignore,
+                        );
+                        return;
+                }
+            },
+            null,
+            this._disposables,
+        );
+    }
+
+    public static createOrShow(extensionUri: vscode.Uri, workspaceRoot: string) {
+        // If we already have a panel, show it and focus the input
+        if (SearchPanel.currentPanel) {
+            SearchPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
+            // Tell webview to focus the input
+            SearchPanel.currentPanel._panel.webview.postMessage({
+                command: 'focusInput',
+            });
             return;
         }
-      },
-      null,
-      this._disposables
-    );
-  }
 
-  public static createOrShow(extensionUri: vscode.Uri, workspaceRoot: string) {
-    // If we already have a panel, show it and focus the input
-    if (SearchPanel.currentPanel) {
-      SearchPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
-      // Tell webview to focus the input
-      SearchPanel.currentPanel._panel.webview.postMessage({ command: 'focusInput' });
-      return;
+        // Otherwise, create a new panel
+        const panel = vscode.window.createWebviewPanel(
+            'r3blFuzzySearch',
+            'R3BL Fuzzy Search',
+            vscode.ViewColumn.One,
+            {
+                enableScripts: true,
+                retainContextWhenHidden: true,
+                localResourceRoots: [extensionUri],
+            },
+        );
+
+        // Set the webview icon to match the extension
+        panel.iconPath = vscode.Uri.joinPath(extensionUri, 'r3bl-cube-logo.png');
+
+        // Explicitly set the title (might help with window title bar)
+        panel.title = 'R3BL Fuzzy Search';
+
+        SearchPanel.currentPanel = new SearchPanel(panel, extensionUri, workspaceRoot);
     }
 
-    // Otherwise, create a new panel
-    const panel = vscode.window.createWebviewPanel(
-      'r3blFuzzySearch',
-      'R3BL Fuzzy Search',
-      vscode.ViewColumn.One,
-      {
-        enableScripts: true,
-        retainContextWhenHidden: true,
-        localResourceRoots: [extensionUri]
-      }
-    );
+    private async _handleSearch(
+        query: string,
+        excludePatterns: string,
+        respectGitignore: boolean,
+    ) {
+        if (!query.trim()) {
+            this._panel.webview.postMessage({
+                command: 'searchResults',
+                results: [],
+                error: null,
+            });
+            return;
+        }
 
-    // Set the webview icon to match the extension
-    panel.iconPath = vscode.Uri.joinPath(extensionUri, 'r3bl-cube-logo.png');
+        try {
+            const input: SearchInput = {
+                query: query.trim(),
+                excludePatterns,
+                respectGitignore,
+            };
 
-    // Explicitly set the title (might help with window title bar)
-    panel.title = 'R3BL Fuzzy Search';
+            this._lastSearchInput = input;
 
-    SearchPanel.currentPanel = new SearchPanel(panel, extensionUri, workspaceRoot);
-  }
+            // Show searching status
+            this._panel.webview.postMessage({
+                command: 'searchStatus',
+                status: 'searching',
+            });
 
-  private async _handleSearch(query: string, excludePatterns: string, respectGitignore: boolean) {
-    if (!query.trim()) {
-      this._panel.webview.postMessage({
-        command: 'searchResults',
-        results: [],
-        error: null
-      });
-      return;
+            const results = await executeSearch(input, this._workspaceRoot);
+
+            // Check if limit was reached
+            const config = vscode.workspace.getConfiguration('r3blFuzzySearch');
+            const resultLimit = config.get<number>('resultLimit', 100);
+            const limitReached = results.length >= resultLimit;
+
+            // Send results back to webview
+            this._panel.webview.postMessage({
+                command: 'searchResults',
+                results: results.map(r => ({
+                    file: r.file,
+                    line: r.line,
+                    content: r.content.replace(/\x1b\[[0-9;]*m/g, ''), // Remove ANSI codes
+                })),
+                error: null,
+                limitReached: limitReached,
+            });
+
+            this._panel.webview.postMessage({
+                command: 'searchStatus',
+                status: 'complete',
+            });
+        } catch (error) {
+            this._panel.webview.postMessage({
+                command: 'searchResults',
+                results: [],
+                error: error instanceof Error ? error.message : String(error),
+            });
+
+            this._panel.webview.postMessage({
+                command: 'searchStatus',
+                status: 'error',
+            });
+        }
     }
 
-    try {
-      const input: SearchInput = {
-        query: query.trim(),
-        excludePatterns,
-        respectGitignore
-      };
+    private async _handleOpenFile(file: string, line: number) {
+        try {
+            const uri = vscode.Uri.file(file);
+            const doc = await vscode.workspace.openTextDocument(uri);
+            const lineIndex = line - 1; // Convert to 0-based
+            const range = new vscode.Range(lineIndex, 0, lineIndex, 0);
 
-      this._lastSearchInput = input;
-
-      // Show searching status
-      this._panel.webview.postMessage({
-        command: 'searchStatus',
-        status: 'searching'
-      });
-
-      const results = await executeSearch(input, this._workspaceRoot);
-
-      // Check if limit was reached
-      const config = vscode.workspace.getConfiguration('r3blFuzzySearch');
-      const resultLimit = config.get<number>('resultLimit', 100);
-      const limitReached = results.length >= resultLimit;
-
-      // Send results back to webview
-      this._panel.webview.postMessage({
-        command: 'searchResults',
-        results: results.map(r => ({
-          file: r.file,
-          line: r.line,
-          content: r.content.replace(/\x1b\[[0-9;]*m/g, '') // Remove ANSI codes
-        })),
-        error: null,
-        limitReached: limitReached
-      });
-
-      this._panel.webview.postMessage({
-        command: 'searchStatus',
-        status: 'complete'
-      });
-    } catch (error) {
-      this._panel.webview.postMessage({
-        command: 'searchResults',
-        results: [],
-        error: error instanceof Error ? error.message : String(error)
-      });
-
-      this._panel.webview.postMessage({
-        command: 'searchStatus',
-        status: 'error'
-      });
+            await vscode.window.showTextDocument(doc, {
+                selection: range,
+                viewColumn: vscode.ViewColumn.Two,
+                preserveFocus: true,
+            });
+        } catch (error) {
+            showStatusBarMessage(
+                `Failed to open file: ${error instanceof Error ? error.message : String(error)}`,
+                'error',
+            );
+        }
     }
-  }
 
-  private async _handleOpenFile(file: string, line: number) {
-    try {
-      const uri = vscode.Uri.file(file);
-      const doc = await vscode.workspace.openTextDocument(uri);
-      const lineIndex = line - 1; // Convert to 0-based
-      const range = new vscode.Range(lineIndex, 0, lineIndex, 0);
+    private async _handleOpenInTab(
+        query: string,
+        excludePatterns: string,
+        respectGitignore: boolean,
+    ) {
+        try {
+            const input: SearchInput = {
+                query: query.trim(),
+                excludePatterns,
+                respectGitignore,
+            };
 
-      await vscode.window.showTextDocument(doc, {
-        selection: range,
-        viewColumn: vscode.ViewColumn.Two,
-        preserveFocus: true
-      });
-    } catch (error) {
-      StatusBarMessage.show(`Failed to open file: ${error instanceof Error ? error.message : String(error)}`, StatusBarMessageType.Error);
+            // Run the search to get results
+            const results = await executeSearch(input, this._workspaceRoot);
+
+            if (results.length === 0) {
+                showStatusBarMessage(`No results found for "${query}"`, 'info');
+                return;
+            }
+
+            // Generate search editor content
+            const { generateSearchEditorContent } = await import(
+                './searchEditorGenerator'
+            );
+            const content = generateSearchEditorContent(input, results);
+
+            // Save to /tmp/
+            const filename =
+                query.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '') +
+                '.code-search';
+            const filepath = `/tmp/${filename}`;
+            const uri = vscode.Uri.file(filepath);
+            await vscode.workspace.fs.writeFile(uri, Buffer.from(content, 'utf8'));
+
+            // Close the search panel first
+            this._panel.dispose();
+
+            // Open the saved file in the active column (replaces current tab)
+            const doc = await vscode.workspace.openTextDocument(uri);
+            await vscode.window.showTextDocument(doc, {
+                preview: false,
+                viewColumn: vscode.ViewColumn.Active,
+            });
+
+            // Show summary
+            const uniqueFiles = new Set(results.map(r => r.file)).size;
+            showStatusBarMessage(
+                `Found ${results.length} results in ${uniqueFiles} files`,
+                'success',
+            );
+        } catch (error) {
+            showStatusBarMessage(
+                `Failed to open results: ${error instanceof Error ? error.message : String(error)}`,
+                'error',
+            );
+        }
     }
-  }
 
-  private async _handleOpenInTab(query: string, excludePatterns: string, respectGitignore: boolean) {
-    try {
-      const input: SearchInput = {
-        query: query.trim(),
-        excludePatterns,
-        respectGitignore
-      };
+    public dispose() {
+        SearchPanel.currentPanel = undefined;
 
-      // Run the search to get results
-      const results = await executeSearch(input, this._workspaceRoot);
+        this._panel.dispose();
 
-      if (results.length === 0) {
-        StatusBarMessage.show(`No results found for "${query}"`, StatusBarMessageType.Info);
-        return;
-      }
-
-      // Generate search editor content
-      const { generateSearchEditorContent } = await import('./searchEditorGenerator');
-      const content = generateSearchEditorContent(input, results);
-
-      // Save to /tmp/
-      const filename = query.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '') + '.code-search';
-      const filepath = `/tmp/${filename}`;
-      const uri = vscode.Uri.file(filepath);
-      await vscode.workspace.fs.writeFile(uri, Buffer.from(content, 'utf8'));
-
-      // Close the search panel first
-      this._panel.dispose();
-
-      // Open the saved file in the active column (replaces current tab)
-      const doc = await vscode.workspace.openTextDocument(uri);
-      await vscode.window.showTextDocument(doc, {
-        preview: false,
-        viewColumn: vscode.ViewColumn.Active
-      });
-
-      // Show summary
-      const uniqueFiles = new Set(results.map(r => r.file)).size;
-      StatusBarMessage.show(`Found ${results.length} results in ${uniqueFiles} files`, StatusBarMessageType.Success);
-    } catch (error) {
-      StatusBarMessage.show(`Failed to open results: ${error instanceof Error ? error.message : String(error)}`, StatusBarMessageType.Error);
+        while (this._disposables.length) {
+            const disposable = this._disposables.pop();
+            if (disposable) {
+                disposable.dispose();
+            }
+        }
     }
-  }
 
-  public dispose() {
-    SearchPanel.currentPanel = undefined;
+    private _update() {
+        const config = vscode.workspace.getConfiguration('r3blFuzzySearch');
+        const defaultExcludes = config.get<string>(
+            'defaultExcludePattern',
+            '**/node_modules/**,**/.git/**,**/.vscode/**,**/target/**',
+        );
+        const defaultRespectGitignore = config.get<boolean>('respectGitignore', true);
 
-    this._panel.dispose();
-
-    while (this._disposables.length) {
-      const disposable = this._disposables.pop();
-      if (disposable) {
-        disposable.dispose();
-      }
+        this._panel.webview.html = this._getHtmlForWebview(
+            defaultExcludes,
+            defaultRespectGitignore,
+        );
     }
-  }
 
-  private _update() {
-    const config = vscode.workspace.getConfiguration('r3blFuzzySearch');
-    const defaultExcludes = config.get<string>(
-      'defaultExcludePattern',
-      '**/node_modules/**,**/.git/**,**/.vscode/**,**/target/**'
-    );
-    const defaultRespectGitignore = config.get<boolean>('respectGitignore', true);
+    private _getHtmlForWebview(
+        defaultExcludes: string,
+        defaultRespectGitignore: boolean,
+    ) {
+        const nonce = getNonce();
 
-    this._panel.webview.html = this._getHtmlForWebview(defaultExcludes, defaultRespectGitignore);
-  }
-
-  private _getHtmlForWebview(defaultExcludes: string, defaultRespectGitignore: boolean) {
-    const nonce = getNonce();
-
-    return `<!DOCTYPE html>
+        return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -691,14 +732,14 @@ export class SearchPanel {
   </script>
 </body>
 </html>`;
-  }
+    }
 }
 
 function getNonce() {
-  let text = '';
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
 }

@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
+import { showStatusBarMessage } from 'r3bl-common-code';
 
 // In-memory history of copied items (session only)
 interface CopyHistoryItem {
@@ -18,25 +18,23 @@ const MAX_HISTORY_SIZE = 20;
 export function activate(context: vscode.ExtensionContext) {
     const copyCommand = vscode.commands.registerCommand(
         'r3bl-copy-selection-path-and-range.copyPathAndRange',
-        handleCopyPathAndRange
+        handleCopyPathAndRange,
     );
 
     const historyCommand = vscode.commands.registerCommand(
         'r3bl-copy-selection-path-and-range.showCopyHistory',
-        showCopyHistory
+        showCopyHistory,
     );
 
     context.subscriptions.push(copyCommand, historyCommand);
 }
 
-export function deactivate() {
-    StatusBarMessage.dispose();
-}
+export function deactivate() {}
 
 async function handleCopyPathAndRange() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        StatusBarMessage.show('No active editor', StatusBarMessageType.Error);
+        showStatusBarMessage('No active editor', 'error');
         return;
     }
 
@@ -45,7 +43,7 @@ async function handleCopyPathAndRange() {
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
 
     if (!workspaceFolder) {
-        StatusBarMessage.show('No workspace folder found', StatusBarMessageType.Error);
+        showStatusBarMessage('No workspace folder found', 'error');
         return;
     }
 
@@ -60,7 +58,9 @@ async function handleCopyPathAndRange() {
     const { lineRange, isMultiLine } = calculateLineRange(selection);
 
     // Format the output (add @ prefix for multi-line selections)
-    const output = isMultiLine ? `@${normalizedPath}${lineRange}` : `${normalizedPath}${lineRange}`;
+    const output = isMultiLine
+        ? `@${normalizedPath}${lineRange}`
+        : `${normalizedPath}${lineRange}`;
 
     // Copy to clipboard
     await vscode.env.clipboard.writeText(output);
@@ -70,7 +70,7 @@ async function handleCopyPathAndRange() {
         output,
         uri: document.uri,
         selection,
-        timestamp: new Date()
+        timestamp: new Date(),
     });
 
     // Keep history size limited
@@ -79,12 +79,12 @@ async function handleCopyPathAndRange() {
     }
 
     // Show success message in status bar
-    StatusBarMessage.show(`Copied: ${output}`, StatusBarMessageType.Success);
+    showStatusBarMessage(`Copied: ${output}`, 'success');
 }
 
 async function showCopyHistory() {
     if (copyHistory.length === 0) {
-        StatusBarMessage.show('No copy history available', StatusBarMessageType.Info);
+        showStatusBarMessage('No copy history available', 'info');
         return;
     }
 
@@ -93,13 +93,13 @@ async function showCopyHistory() {
         label: item.output,
         description: item.timestamp.toLocaleTimeString(),
         detail: `Copied ${getRelativeTime(item.timestamp)}`,
-        item
+        item,
     }));
 
     const selected = await vscode.window.showQuickPick(items, {
         placeHolder: 'Select a copied path to open',
         matchOnDescription: true,
-        matchOnDetail: true
+        matchOnDetail: true,
     });
 
     if (selected) {
@@ -107,7 +107,7 @@ async function showCopyHistory() {
         await vscode.window.showTextDocument(selected.item.uri, {
             selection: selected.item.selection,
             viewColumn: vscode.ViewColumn.Active,
-            preserveFocus: false
+            preserveFocus: false,
         });
     }
 }
@@ -128,7 +128,10 @@ function getRelativeTime(date: Date): string {
     return `${hours} hour${hours === 1 ? '' : 's'} ago`;
 }
 
-function calculateLineRange(selection: vscode.Selection): { lineRange: string; isMultiLine: boolean } {
+function calculateLineRange(selection: vscode.Selection): {
+    lineRange: string;
+    isMultiLine: boolean;
+} {
     const startLine = selection.start.line + 1; // Convert to 1-based line numbers
     const endLine = selection.end.line + 1;
 

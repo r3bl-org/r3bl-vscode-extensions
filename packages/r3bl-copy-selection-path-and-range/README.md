@@ -15,13 +15,13 @@ Quickly copy file paths with selected line ranges in formats optimized for Claud
 ## Screenshots
 
 ![Single Line Copy](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-notification-single-line.png)
-*Single-line selection with auto-dismissing notification*
+_Single-line selection with auto-dismissing notification_
 
 ![Multi-Line Copy](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-notification-multi-line.png)
-*Multi-line selection in Claude Code format with @ prefix*
+_Multi-line selection in Claude Code format with @ prefix_
 
 ![Copy History](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-history.png)
-*Copy history (Alt+Shift+O) showing recent copies with timestamps*
+_Copy history (Alt+Shift+O) showing recent copies with timestamps_
 
 ## Output Formats
 
@@ -117,10 +117,10 @@ The bug occurs in src/components/Form.tsx:89
 
 ## Keyboard Shortcuts
 
-| Shortcut | Command | When |
-|----------|---------|------|
-| `Alt+O` | Copy File Path with Selection Range | Editor has focus |
-| `Alt+Shift+O` | Show Copy History | Always |
+| Shortcut      | Command                             | When             |
+| ------------- | ----------------------------------- | ---------------- |
+| `Alt+O`       | Copy File Path with Selection Range | Editor has focus |
+| `Alt+Shift+O` | Show Copy History                   | Always           |
 
 You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
 
@@ -129,8 +129,8 @@ You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
 1. **Path Calculation**: Gets relative path from workspace root
 2. **Line Detection**: Determines if selection spans multiple lines
 3. **Format Selection**:
-   - Multi-line → Claude Code format with `@` prefix
-   - Single-line → IDE format
+    - Multi-line → Claude Code format with `@` prefix
+    - Single-line → IDE format
 4. **Clipboard**: Copies formatted string
 5. **History Storage**: Adds to in-memory session history (last 20 items)
 6. **Notification**: Shows confirmation (auto-dismisses)
@@ -143,15 +143,11 @@ You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
 - Quick pick interface for easy navigation
 - Press `Alt+Shift+O` to access anytime
 
-## Global R3BL Configuration
+## Shared Infrastructure
 
-This extension uses global R3BL settings for feedback and notifications. You can customize how R3BL extensions display messages, including:
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
 
-- Feedback mechanism (status bar, notifications, or none)
-- Status bar message duration for each message type
-- Message length and display settings
-
-For detailed configuration options, see the [R3BL Extension Pack Configuration](../r3bl-extension-pack/README.md#configuration) section.
+See the [R3BL Shared documentation](../r3bl-shared/README.md#public-api) for available services, API usage, and configuration options.
 
 ## Release Notes
 

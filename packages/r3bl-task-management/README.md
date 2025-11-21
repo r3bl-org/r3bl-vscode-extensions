@@ -9,31 +9,31 @@ implementation plans in `task/*.md` files.
 ## Table of Contents
 
 - [Use Cases](#use-cases)
-  - [Context Preservation](#context-preservation)
-  - [Claude Code Collaboration](#claude-code-collaboration)
-  - [Multiple Concurrent Workflows (Same Branch)](#multiple-concurrent-workflows-same-branch)
-  - [Cross-IDE Sync (VS Code + VS Code Insiders)](#cross-ide-sync-vs-code--vs-code-insiders)
+    - [Context Preservation](#context-preservation)
+    - [Claude Code Collaboration](#claude-code-collaboration)
+    - [Multiple Concurrent Workflows (Same Branch)](#multiple-concurrent-workflows-same-branch)
+    - [Cross-IDE Sync (VS Code + VS Code Insiders)](#cross-ide-sync-vs-code--vs-code-insiders)
 - [What It Does](#what-it-does)
 - [Getting Started](#getting-started)
-  - [Requirements](#requirements)
-  - [Quick Start](#quick-start)
+    - [Requirements](#requirements)
+    - [Quick Start](#quick-start)
 - [Screenshots](#screenshots)
 - [Workflows](#workflows)
-  - [Basic Workflow](#basic-workflow)
-  - [Claude Code Workflow](#claude-code-workflow)
-  - [Claude Code Integration Commands](#claude-code-integration-commands)
-  - [Power User: Multiple Claude Code Instances](#power-user-multiple-claude-code-instances)
+    - [Basic Workflow](#basic-workflow)
+    - [Claude Code Workflow](#claude-code-workflow)
+    - [Claude Code Integration Commands](#claude-code-integration-commands)
+    - [Power User: Multiple Claude Code Instances](#power-user-multiple-claude-code-instances)
 - [Important: How It Works](#important-how-it-works)
-  - [Task Spaces Are WITHIN One Branch](#task-spaces-are-within-one-branch)
-  - [Filesystem-Based Memory](#filesystem-based-memory)
-  - [Should You Commit `.vscode/task-spaces.json`?](#should-you-commit-vscodetask-spacesjson)
+    - [Task Spaces Are WITHIN One Branch](#task-spaces-are-within-one-branch)
+    - [Filesystem-Based Memory](#filesystem-based-memory)
+    - [Should You Commit `.vscode/task-spaces.json`?](#should-you-commit-vscodetask-spacesjson)
 - [Reference](#reference)
-  - [Commands](#commands)
-  - [Keyboard Shortcuts](#keyboard-shortcuts)
-  - [Extension Settings](#extension-settings)
-  - [Status Bar](#status-bar)
-  - [File Format](#file-format)
-  - [When Does the File Get Saved?](#when-does-the-file-get-saved)
+    - [Commands](#commands)
+    - [Keyboard Shortcuts](#keyboard-shortcuts)
+    - [Extension Settings](#extension-settings)
+    - [Status Bar](#status-bar)
+    - [File Format](#file-format)
+    - [When Does the File Get Saved?](#when-does-the-file-get-saved)
 - [Release Notes](#release-notes)
 - [License](#license)
 - [Contributing](#contributing)
@@ -113,19 +113,19 @@ This enables workflows like:
 **Press Alt+Shift+T** to open the Task Spaces dialog.
 
 1. **Create your first task space:**
-   - Click "Create New Task Space"
-   - Name it (e.g., "Feature: User Auth")
-   - Optionally link a task/\*.md file
-   - All your currently open tabs are saved to this space
+    - Click "Create New Task Space"
+    - Name it (e.g., "Feature: User Auth")
+    - Optionally link a task/\*.md file
+    - All your currently open tabs are saved to this space
 
 2. **Switch between spaces:**
-   - Press Alt+Shift+T
-   - Select a different task space
-   - Your tabs switch automatically
+    - Press Alt+Shift+T
+    - Select a different task space
+    - Your tabs switch automatically
 
 3. **Manage spaces:**
-   - Click ✏️ to rename
-   - Click 🗑️ to delete (archives linked files to task/done/)
+    - Click ✏️ to rename
+    - Click 🗑️ to delete (archives linked files to task/done/)
 
 ## Screenshots
 
@@ -339,21 +339,21 @@ Task spaces are stored in **two separate locations** to avoid git noise:
 
 ```json
 {
-  "version": "2.0",
-  "taskSpaces": [
-    {
-      "name": "Feature: Authentication",
-      "id": "uuid",
-      "tabs": [
-        { "path": "src/auth.ts", "isPinned": true },
-        { "path": "src/login.ts", "isPinned": false }
-      ],
-      "taskFile": "task/task_authentication.md",
-      "activeTab": "src/auth.ts",
-      "createdAt": 1234567890
-    }
-  ],
-  "activeTaskSpaceId": "uuid"
+    "version": "2.0",
+    "taskSpaces": [
+        {
+            "name": "Feature: Authentication",
+            "id": "uuid",
+            "tabs": [
+                { "path": "src/auth.ts", "isPinned": true },
+                { "path": "src/login.ts", "isPinned": false }
+            ],
+            "taskFile": "task/task_authentication.md",
+            "activeTab": "src/auth.ts",
+            "createdAt": 1234567890
+        }
+    ],
+    "activeTaskSpaceId": "uuid"
 }
 ```
 
@@ -364,17 +364,19 @@ history. Each task space switch updates the `lastAccessed` timestamp, but these 
 never touch your workspace files.
 
 **Storage Location:**
+
 - Linux: `~/.config/Code/User/workspaceStorage/<workspace-id>/state.vscode.*`
 - macOS: `~/Library/Application Support/Code/User/workspaceStorage/<workspace-id>/state.vscode.*`
 - Windows: `%APPDATA%\Code\User\workspaceStorage\<workspace-id>\state.vscode.*`
 
 **Data Format:**
+
 ```json
 {
-  "taskSpaceMetadata": {
-    "uuid-1": { "lastAccessed": 1234567890 },
-    "uuid-2": { "lastAccessed": 1234555555 }
-  }
+    "taskSpaceMetadata": {
+        "uuid-1": { "lastAccessed": 1234567890 },
+        "uuid-2": { "lastAccessed": 1234555555 }
+    }
 }
 ```
 
@@ -412,15 +414,11 @@ branch), it won't be in the "currently open tabs" list and will be automatically
 from the task space on the next save. This keeps task spaces clean and accurate to your
 actual workspace.
 
-## Global R3BL Configuration
+## Shared Infrastructure
 
-This extension uses global R3BL settings for feedback and notifications. You can customize how R3BL extensions display messages, including:
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
 
-- Feedback mechanism (status bar, notifications, or none)
-- Status bar message duration for each message type
-- Message length and display settings
-
-For detailed configuration options, see the [R3BL Extension Pack Configuration](../r3bl-extension-pack/README.md#configuration) section.
+See the [R3BL Shared documentation](../r3bl-shared/README.md#public-api) for available services, API usage, and configuration options.
 
 ## Release Notes
 

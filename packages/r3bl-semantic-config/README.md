@@ -25,9 +25,9 @@ Automatically applies enhanced semantic token color customizations optimized for
 
 VS Code uses two separate highlighting systems:
 
-| Layer | Provided By | Customizable Via | Capabilities |
-|-------|-------------|------------------|--------------|
-| **TextMate Tokens** | Theme files | Theme package | Basic syntax: keywords, strings, comments |
+| Layer               | Provided By                      | Customizable Via         | Capabilities                                 |
+| ------------------- | -------------------------------- | ------------------------ | -------------------------------------------- |
+| **TextMate Tokens** | Theme files                      | Theme package            | Basic syntax: keywords, strings, comments    |
 | **Semantic Tokens** | Language servers (rust-analyzer) | `settings.json` **only** | Context-aware: mutability, lifetimes, traits |
 
 **The key constraint**: VS Code themes cannot include semantic token customizations. These rules must be defined in your `settings.json` - they cannot be bundled with a theme package.
@@ -37,16 +37,17 @@ VS Code uses two separate highlighting systems:
 ### Screenshots
 
 ![Commands Palette](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/commands-palette.png)
-*Manual enable/disable commands in the Command Palette*
+_Manual enable/disable commands in the Command Palette_
 
 ![Rust Syntax Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-semantic-config/images/rust-syntax-highlighting.png)
-*Semantic highlighting in action*
+_Semantic highlighting in action_
 
 ### How It Works
 
 #### Auto-Activation
 
 When installed with R3BL Theme active, the extension automatically:
+
 1. Detects R3BL Theme is active
 2. Applies semantic highlighting to global configuration
 3. Shows a success notification
@@ -54,6 +55,7 @@ When installed with R3BL Theme active, the extension automatically:
 #### Theme Watcher
 
 Monitors theme changes. When you switch to R3BL Theme:
+
 1. Detects the change
 2. Prompts: "R3BL Theme detected! Apply enhanced semantic highlighting?"
 3. Applies settings on confirmation
@@ -61,31 +63,32 @@ Monitors theme changes. When you switch to R3BL Theme:
 #### Manual Control
 
 Use commands in Command Palette (`Ctrl+Shift+P`):
+
 - `R3BL: Enable R3BL Semantic Highlighting`
 - `R3BL: Disable R3BL Semantic Highlighting`
 
 ### Semantic Token Rules
 
-| Token Type | Color | Style | Description |
-|------------|-------|-------|-------------|
-| **Functions & Methods** | `#4B8CDC` | - | Function and method names |
-| **Structs** | `#DDE86E` | - | Struct type names |
-| **Enums** | `#FCB141` | - | Enum type names |
-| **Enum Members** | `#FFCE66` | - | Enum variant names |
-| **Variables** | `#E192EF` | - | Variable names |
-| **Mutable Variables** | `#E192EF` | Bold Italic | Mutable variable names |
-| **Parameters** | `#7c86f4` | - | Function parameters |
-| **Properties** | `#ad83da` | - | Struct field access |
-| **Lifetimes** | `#c56db599` | - | Lifetime annotations |
-| **Keywords** | `#a8709e` | Italic Bold | Rust keywords |
-| **Control Flow** | `#d14178` | Bold | if, match, loop, etc. |
-| **Type Aliases** | `#ecc68e` | - | Type alias names |
-| **Traits** | `#d1de73` | - | Trait names |
-| **Unsafe** | `#e02b9d` | - | Unsafe functions/operators |
-| **Self** | `#ce55b7` | - | self keyword |
-| **Operators** | `#4d6a9f` | Bold | Arithmetic and logical operators |
-| **Deprecated** | - | Strikethrough | Deprecated items |
-| **Unresolved Reference** | `#ff6edb` | Strikethrough | Unresolved references |
+| Token Type               | Color       | Style         | Description                      |
+| ------------------------ | ----------- | ------------- | -------------------------------- |
+| **Functions & Methods**  | `#4B8CDC`   | -             | Function and method names        |
+| **Structs**              | `#DDE86E`   | -             | Struct type names                |
+| **Enums**                | `#FCB141`   | -             | Enum type names                  |
+| **Enum Members**         | `#FFCE66`   | -             | Enum variant names               |
+| **Variables**            | `#E192EF`   | -             | Variable names                   |
+| **Mutable Variables**    | `#E192EF`   | Bold Italic   | Mutable variable names           |
+| **Parameters**           | `#7c86f4`   | -             | Function parameters              |
+| **Properties**           | `#ad83da`   | -             | Struct field access              |
+| **Lifetimes**            | `#c56db599` | -             | Lifetime annotations             |
+| **Keywords**             | `#a8709e`   | Italic Bold   | Rust keywords                    |
+| **Control Flow**         | `#d14178`   | Bold          | if, match, loop, etc.            |
+| **Type Aliases**         | `#ecc68e`   | -             | Type alias names                 |
+| **Traits**               | `#d1de73`   | -             | Trait names                      |
+| **Unsafe**               | `#e02b9d`   | -             | Unsafe functions/operators       |
+| **Self**                 | `#ce55b7`   | -             | self keyword                     |
+| **Operators**            | `#4d6a9f`   | Bold          | Arithmetic and logical operators |
+| **Deprecated**           | -           | Strikethrough | Deprecated items                 |
+| **Unresolved Reference** | `#ff6edb`   | Strikethrough | Unresolved references            |
 
 ---
 
@@ -115,6 +118,7 @@ You stop typing → Timer expires → Flycheck runs
 ```
 
 **Why this works:**
+
 - While you're actively typing, **no heavy computation** - IDE stays responsive
 - After you pause (finished a thought, reviewing code), flycheck runs
 - You get compile feedback **exactly when you need it** - during natural pauses
@@ -133,12 +137,12 @@ The feature is **enabled by default**. Customize in `settings.json`:
 }
 ```
 
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `enabled` | boolean | `true` | Enable debounced flycheck |
-| `delayMs` | number | `1000` | Milliseconds to wait after last keystroke (100-10000) |
-| `languages` | string[] | `["rust"]` | Language IDs to monitor |
-| `autoDisableCheckOnSave` | boolean | `true` | Auto-disable `rust-analyzer.checkOnSave` |
+| Setting                  | Type     | Default    | Description                                           |
+| ------------------------ | -------- | ---------- | ----------------------------------------------------- |
+| `enabled`                | boolean  | `true`     | Enable debounced flycheck                             |
+| `delayMs`                | number   | `1000`     | Milliseconds to wait after last keystroke (100-10000) |
+| `languages`              | string[] | `["rust"]` | Language IDs to monitor                               |
+| `autoDisableCheckOnSave` | boolean  | `true`     | Auto-disable `rust-analyzer.checkOnSave`              |
 
 ### How It Works
 
@@ -154,6 +158,7 @@ The timer is **global** - all Rust file changes share one timer since `runFlyche
 **Default keybinding:** `Ctrl+R` (when editing a Rust file)
 
 This command:
+
 - Cancels any pending debounced flycheck
 - Runs flycheck immediately
 - Hides the status bar countdown
@@ -191,21 +196,17 @@ Both features in this extension depend on **rust-analyzer**:
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `R3BL: Enable R3BL Semantic Highlighting` | Apply semantic highlighting settings |
-| `R3BL: Disable R3BL Semantic Highlighting` | Remove semantic highlighting settings |
-| `R3BL: Run Flycheck (Debounced)` | Manually trigger flycheck, cancels pending |
+| Command                                    | Description                                |
+| ------------------------------------------ | ------------------------------------------ |
+| `R3BL: Enable R3BL Semantic Highlighting`  | Apply semantic highlighting settings       |
+| `R3BL: Disable R3BL Semantic Highlighting` | Remove semantic highlighting settings      |
+| `R3BL: Run Flycheck (Debounced)`           | Manually trigger flycheck, cancels pending |
 
-## Global R3BL Configuration
+## Shared Infrastructure
 
-This extension uses global R3BL settings for feedback and notifications. You can customize how R3BL extensions display messages, including:
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
 
-- Feedback mechanism (status bar, notifications, or none)
-- Status bar message duration for each message type
-- Message length and display settings
-
-For detailed configuration options, see the [R3BL Extension Pack Configuration](../r3bl-extension-pack/README.md#configuration) section.
+See the [R3BL Shared documentation](../r3bl-shared/README.md#public-api) for available services, API usage, and configuration options.
 
 ## Release Notes
 

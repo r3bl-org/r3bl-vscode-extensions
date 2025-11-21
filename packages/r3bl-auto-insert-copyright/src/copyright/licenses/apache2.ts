@@ -5,12 +5,12 @@
 import { Copyright } from '../copyright';
 
 export class Apache2 extends Copyright {
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  public header(): string {
-    let template = `/*
+    public header(): string {
+        let template = `/*
  *   Copyright (c) ${this.year} ${this.author}
  *   All rights reserved.
  *
@@ -27,6 +27,6 @@ export class Apache2 extends Copyright {
  *   limitations under the License.
  */
 \n`;
-    return template;
-  }
+        return template;
+    }
 }

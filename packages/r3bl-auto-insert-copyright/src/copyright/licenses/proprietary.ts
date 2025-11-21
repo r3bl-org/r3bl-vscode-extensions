@@ -1,16 +1,16 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
-'use strict'
+'use strict';
 
-import { Copyright } from '../copyright'
+import { Copyright } from '../copyright';
 
 export class Proprietary extends Copyright {
-  constructor() {
-    super()
-  }
+    constructor() {
+        super();
+    }
 
-  public header(): string {
-    let template = `/*
+    public header(): string {
+        let template = `/*
  * Copyright (c) ${this.year} ${this.author}
  * All rights reserved.
  *
@@ -19,7 +19,7 @@ export class Proprietary extends Copyright {
  *
  * Proprietary and confidential.
  */
-\n`
-    return template
-  }
+\n`;
+        return template;
+    }
 }

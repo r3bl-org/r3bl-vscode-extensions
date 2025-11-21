@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs/promises';
-import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
+import { showStatusBarMessage } from 'r3bl-common-code';
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined;
@@ -13,83 +13,83 @@ let statusBarItem: vscode.StatusBarItem | undefined;
 const ROCKET_DISPLAY_DURATION_MS = 700;
 
 const SEMANTIC_CONFIG = {
-    "editor.semanticHighlighting.enabled": true,
-    "editor.semanticTokenColorCustomizations": {
-        "rules": {
-            "function": {
-                "foreground": "#4B8CDC",
+    'editor.semanticHighlighting.enabled': true,
+    'editor.semanticTokenColorCustomizations': {
+        rules: {
+            function: {
+                foreground: '#4B8CDC',
             },
-            "method": {
-                "foreground": "#4B8CDC",
+            method: {
+                foreground: '#4B8CDC',
             },
-            "unresolvedReference": {
-                "foreground": "#ff6edb",
-                "fontStyle": "strikethrough"
+            unresolvedReference: {
+                foreground: '#ff6edb',
+                fontStyle: 'strikethrough',
             },
-            "*.deprecated": {
-                "fontStyle": "strikethrough"
+            '*.deprecated': {
+                fontStyle: 'strikethrough',
             },
-            "namespace": {
-                "foreground": "#7b939d",
+            namespace: {
+                foreground: '#7b939d',
             },
-            "method.static": "#4B8CDC",
-            "function.static": "#4B8CDC",
-            "macro": "#4B8CDC",
-            "struct": "#DDE86E",
-            "enum": "#FCB141",
-            "enumMember": {
-                "foreground": "#FFCE66",
+            'method.static': '#4B8CDC',
+            'function.static': '#4B8CDC',
+            macro: '#4B8CDC',
+            struct: '#DDE86E',
+            enum: '#FCB141',
+            enumMember: {
+                foreground: '#FFCE66',
             },
-            "*.reference": {
-                "fontStyle": "italic"
+            '*.reference': {
+                fontStyle: 'italic',
             },
-            "*.mutable": {
-                "fontStyle": "bold"
+            '*.mutable': {
+                fontStyle: 'bold',
             },
-            "variable.mutable": {
-                "fontStyle": "bold italic"
+            'variable.mutable': {
+                fontStyle: 'bold italic',
             },
-            "property": "#ad83da",
-            "variable": "#E192EF",
-            "parameter": "#7c86f4",
-            "selfTypeKeyword": "#ce55b7",
-            "selfKeyword": "#ce55b7",
-            "lifetime": "#c56db599",
-            "attributeBracket": "#2469ae",
-            "angle": "#2469ae",
-            "escapeSequence": "#2d78c2",
-            "formatSpecifier": "#2d78c2",
-            "typeAlias": "#ecc68e",
-            "operator": {
-                "fontStyle": "bold",
-                "foreground": "#4d6a9f"
+            property: '#ad83da',
+            variable: '#E192EF',
+            parameter: '#7c86f4',
+            selfTypeKeyword: '#ce55b7',
+            selfKeyword: '#ce55b7',
+            lifetime: '#c56db599',
+            attributeBracket: '#2469ae',
+            angle: '#2469ae',
+            escapeSequence: '#2d78c2',
+            formatSpecifier: '#2d78c2',
+            typeAlias: '#ecc68e',
+            operator: {
+                fontStyle: 'bold',
+                foreground: '#4d6a9f',
             },
-            "operator.unsafe": "#e02b9d",
-            "function.unsafe": "#e02b9d",
-            "method.unsafe": "#e02b9d",
-            "keyword": {
-                "foreground": "#a8709e",
-                "fontStyle": "italic bold",
+            'operator.unsafe': '#e02b9d',
+            'function.unsafe': '#e02b9d',
+            'method.unsafe': '#e02b9d',
+            keyword: {
+                foreground: '#a8709e',
+                fontStyle: 'italic bold',
             },
-            "*.controlFlow": {
-                "fontStyle": "bold",
-                "foreground": "#d14178"
+            '*.controlFlow': {
+                fontStyle: 'bold',
+                foreground: '#d14178',
             },
-            "*.static": {
-                "fontStyle": "bold",
-                "foreground": "#6665c7"
+            '*.static': {
+                fontStyle: 'bold',
+                foreground: '#6665c7',
             },
-            "constParameter": {
-                "fontStyle": "bold",
-                "foreground": "#6665c7"
+            constParameter: {
+                fontStyle: 'bold',
+                foreground: '#6665c7',
             },
-            "*.constant": {
-                "fontStyle": "bold",
-                "foreground": "#c465c7"
+            '*.constant': {
+                fontStyle: 'bold',
+                foreground: '#c465c7',
             },
-            "*.trait": "#d1de73"
-        }
-    }
+            '*.trait': '#d1de73',
+        },
+    },
 };
 
 export function activate(context: vscode.ExtensionContext) {
@@ -100,31 +100,42 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     // Command to enable R3BL semantic highlighting
-    const enableCommand = vscode.commands.registerCommand('r3bl-semantic-config.enable', () => {
-        applySemanticConfig();
-        StatusBarMessage.show('R3BL Semantic Highlighting enabled', StatusBarMessageType.Success);
-    });
+    const enableCommand = vscode.commands.registerCommand(
+        'r3bl-semantic-config.enable',
+        () => {
+            applySemanticConfig();
+            showStatusBarMessage('R3BL Semantic Highlighting enabled', 'success');
+        },
+    );
 
     // Command to disable R3BL semantic highlighting
-    const disableCommand = vscode.commands.registerCommand('r3bl-semantic-config.disable', () => {
-        removeSemanticConfig();
-        StatusBarMessage.show('R3BL Semantic Highlighting disabled', StatusBarMessageType.Success);
-    });
+    const disableCommand = vscode.commands.registerCommand(
+        'r3bl-semantic-config.disable',
+        () => {
+            removeSemanticConfig();
+            showStatusBarMessage('R3BL Semantic Highlighting disabled', 'success');
+        },
+    );
 
     // Watch for theme changes
-    const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
+    const themeWatcher = vscode.workspace.onDidChangeConfiguration(e => {
         if (e.affectsConfiguration('workbench.colorTheme')) {
-            const newTheme = vscode.workspace.getConfiguration('workbench').get('colorTheme');
+            const newTheme = vscode.workspace
+                .getConfiguration('workbench')
+                .get('colorTheme');
             if (newTheme === 'R3BL Theme') {
                 // Ask user if they want to apply semantic highlighting
-                vscode.window.showInformationMessage(
-                    'R3BL Theme detected! Apply enhanced semantic highlighting?',
-                    'Yes', 'No'
-                ).then(selection => {
-                    if (selection === 'Yes') {
-                        applySemanticConfig();
-                    }
-                });
+                vscode.window
+                    .showInformationMessage(
+                        'R3BL Theme detected! Apply enhanced semantic highlighting?',
+                        'Yes',
+                        'No',
+                    )
+                    .then(selection => {
+                        if (selection === 'Yes') {
+                            applySemanticConfig();
+                        }
+                    });
             }
         }
     });
@@ -137,7 +148,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 // Debounced Flycheck Implementation
 function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
-    const config = vscode.workspace.getConfiguration('r3bl-semantic-config.debouncedFlycheck');
+    const config = vscode.workspace.getConfiguration(
+        'r3bl-semantic-config.debouncedFlycheck',
+    );
     const enabled = config.get<boolean>('enabled', true);
 
     if (!enabled) {
@@ -147,10 +160,12 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
     // Create status bar item (high priority to ensure visibility)
     statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Left,
-        10000
+        10000,
     );
-    statusBarItem.name = "Debounced Flycheck";
-    statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+    statusBarItem.name = 'Debounced Flycheck';
+    statusBarItem.backgroundColor = new vscode.ThemeColor(
+        'statusBarItem.warningBackground',
+    );
     context.subscriptions.push(statusBarItem);
 
     // Auto-disable rust-analyzer.checkOnSave if configured
@@ -163,7 +178,7 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
     const languages = config.get<string[]>('languages', ['rust']);
 
     // Watch for text document changes
-    const documentWatcher = vscode.workspace.onDidChangeTextDocument((event) => {
+    const documentWatcher = vscode.workspace.onDidChangeTextDocument(event => {
         if (!languages.includes(event.document.languageId)) {
             return;
         }
@@ -173,19 +188,24 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
     });
 
     // Register manual flycheck command that cancels pending debounce
-    const flycheckCommand = vscode.commands.registerCommand('r3bl-semantic-config.runFlycheck', () => {
-        // Cancel pending debounced flycheck
-        cancelDebounce();
+    const flycheckCommand = vscode.commands.registerCommand(
+        'r3bl-semantic-config.runFlycheck',
+        () => {
+            // Cancel pending debounced flycheck
+            cancelDebounce();
 
-        // Run flycheck immediately
-        vscode.commands.executeCommand('rust-analyzer.runFlycheck');
-    });
+            // Run flycheck immediately
+            vscode.commands.executeCommand('rust-analyzer.runFlycheck');
+        },
+    );
 
     // Watch for configuration changes
-    const configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
+    const configWatcher = vscode.workspace.onDidChangeConfiguration(e => {
         if (e.affectsConfiguration('r3bl-semantic-config.debouncedFlycheck')) {
             // Reload configuration
-            const newConfig = vscode.workspace.getConfiguration('r3bl-semantic-config.debouncedFlycheck');
+            const newConfig = vscode.workspace.getConfiguration(
+                'r3bl-semantic-config.debouncedFlycheck',
+            );
             const newEnabled = newConfig.get<boolean>('enabled', true);
 
             if (!newEnabled) {
@@ -206,13 +226,20 @@ async function disableCheckOnSave() {
 
     if (currentValue !== false) {
         try {
-            await rustAnalyzerConfig.update('checkOnSave', false, vscode.ConfigurationTarget.Global);
-            StatusBarMessage.show(
+            await rustAnalyzerConfig.update(
+                'checkOnSave',
+                false,
+                vscode.ConfigurationTarget.Global,
+            );
+            showStatusBarMessage(
                 'Disabled rust-analyzer.checkOnSave (debounced flycheck handling)',
-                StatusBarMessageType.Info
+                'info',
             );
         } catch (error) {
-            StatusBarMessage.show(`Failed to disable rust-analyzer.checkOnSave: ${error}`, StatusBarMessageType.Error);
+            showStatusBarMessage(
+                `Failed to disable rust-analyzer.checkOnSave: ${error}`,
+                'error',
+            );
         }
     }
 }
@@ -234,7 +261,8 @@ function startDebounce(delayMs: number) {
 
         const remaining = Math.max(0, delayMs - (Date.now() - startTime));
         statusBarItem.text = `$(watch) Flycheck in ${(remaining / 1000).toFixed(1)}s`;
-        statusBarItem.tooltip = "Debounced flycheck pending - will run after typing stops";
+        statusBarItem.tooltip =
+            'Debounced flycheck pending - will run after typing stops';
     };
 
     updateStatusBar();
@@ -251,7 +279,7 @@ function startDebounce(delayMs: number) {
         }
 
         if (statusBarItem) {
-            statusBarItem.text = "$(rocket) Running flycheck...";
+            statusBarItem.text = '$(rocket) Running flycheck...';
         }
 
         vscode.commands.executeCommand('rust-analyzer.runFlycheck');
@@ -286,20 +314,28 @@ async function applySemanticConfig() {
 
     try {
         // First clean existing token customizations to avoid pollution
-        await config.update('editor.tokenColorCustomizations', undefined, vscode.ConfigurationTarget.Global);
-        await config.update('editor.semanticTokenColorCustomizations', undefined, vscode.ConfigurationTarget.Global);
+        await config.update(
+            'editor.tokenColorCustomizations',
+            undefined,
+            vscode.ConfigurationTarget.Global,
+        );
+        await config.update(
+            'editor.semanticTokenColorCustomizations',
+            undefined,
+            vscode.ConfigurationTarget.Global,
+        );
 
         // Then apply fresh configuration
         for (const [key, value] of Object.entries(SEMANTIC_CONFIG)) {
             await config.update(key, value, vscode.ConfigurationTarget.Global);
         }
-        
+
         // Check for duplicate settings after successful application
         await checkForDuplicateSettings();
 
-        StatusBarMessage.show('R3BL semantic highlighting applied', StatusBarMessageType.Success);
+        showStatusBarMessage('R3BL semantic highlighting applied', 'success');
     } catch (error) {
-        StatusBarMessage.show(`Failed to apply semantic config: ${error}`, StatusBarMessageType.Error);
+        showStatusBarMessage(`Failed to apply semantic config: ${error}`, 'error');
     }
 }
 
@@ -311,9 +347,9 @@ async function removeSemanticConfig() {
         for (const key of Object.keys(SEMANTIC_CONFIG)) {
             await config.update(key, undefined, vscode.ConfigurationTarget.Global);
         }
-        StatusBarMessage.show('R3BL semantic highlighting removed', StatusBarMessageType.Success);
+        showStatusBarMessage('R3BL semantic highlighting removed', 'success');
     } catch (error) {
-        StatusBarMessage.show(`Failed to remove semantic config: ${error}`, StatusBarMessageType.Error);
+        showStatusBarMessage(`Failed to remove semantic config: ${error}`, 'error');
     }
 }
 
@@ -321,27 +357,27 @@ async function checkForDuplicateSettings() {
     try {
         const settingsPath = getSettingsPath();
         const settingsContent = await fs.readFile(settingsPath, 'utf8');
-        
+
         // Count occurrences of "editor.semanticHighlighting.enabled"
         const matches = settingsContent.match(/"editor\.semanticHighlighting\.enabled"/g);
         const count = matches ? matches.length : 0;
-        
+
         if (count > 1) {
             const message = `Multiple 'editor.semanticHighlighting.enabled' entries detected in settings.json (${count} found). This can happen with language-specific overrides and may cause conflicts. Please consolidate to a single entry.`;
-            
+
             const action = await vscode.window.showWarningMessage(
                 message,
                 'Open Settings',
-                'Ignore'
+                'Ignore',
             );
-            
+
             if (action === 'Open Settings') {
                 await vscode.commands.executeCommand('workbench.action.openSettingsJson');
             }
         }
     } catch (error) {
         // Show error in VS Code dialog to understand what's failing
-        StatusBarMessage.show(`Failed to check for duplicate settings: ${error}`, StatusBarMessageType.Error);
+        showStatusBarMessage(`Failed to check for duplicate settings: ${error}`, 'error');
         console.warn('Failed to check for duplicate settings:', error);
     }
 }
@@ -350,7 +386,7 @@ function getSettingsPath(): string {
     const isWindows = process.platform === 'win32';
     const isMac = process.platform === 'darwin';
     const isInsiders = vscode.env.appName.includes('Insiders');
-    
+
     if (isWindows) {
         const appFolder = isInsiders ? 'Code - Insiders' : 'Code';
         return `${process.env.APPDATA}/${appFolder}/User/settings.json`;
@@ -371,5 +407,4 @@ export function deactivate() {
     if (countdownInterval) {
         clearInterval(countdownInterval);
     }
-    StatusBarMessage.dispose();
 }

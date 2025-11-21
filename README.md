@@ -34,6 +34,17 @@ configuration.
 | **R3BL Copy Selection Path and Range** | Copy file paths with line ranges for Claude Code | [Docs](packages/r3bl-copy-selection-path-and-range/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range) |
 | **R3BL Auto Insert Copyright**         | Automatic copyright header insertion             | [Docs](packages/r3bl-auto-insert-copyright/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)                 |
 
+### Infrastructure Packages
+
+This monorepo also contains shared infrastructure used by the extensions:
+
+| Package              | Type              | Description                                                              |
+| -------------------- | ----------------- | ------------------------------------------------------------------------ |
+| **r3bl-shared**      | VSCode Extension  | Centralized services (message queue, config) - auto-installed as dependency |
+| **r3bl-common-code** | NPM Package       | Common utilities and helpers shared across extensions                   |
+
+> **Note for developers:** These are internal packages used by the extensions above. See [CLAUDE.md](CLAUDE.md) for development details.
+
 ## Installation
 
 ### From Marketplace (Recommended)
@@ -75,10 +86,10 @@ npm install
 2. Update version in `packages/extension-name/package.json`
 3. Update version in `packages/r3bl-extension-pack/package.json`
 4. Build and test:
-   ```bash
-   ./build.sh
-   ./install.sh
-   ```
+    ```bash
+    ./build.sh
+    ./install.sh
+    ```
 5. Commit changes
 
 **Key points:**
@@ -131,13 +142,15 @@ The build script:
 
 ```
 packages/
-├── r3bl-extension-pack/                  # Extension pack
+├── r3bl-extension-pack/                  # Extension pack (installs all extensions)
 ├── r3bl-theme/                           # Theme
 ├── r3bl-semantic-config/                 # Semantic highlighting
 ├── r3bl-task-management/                 # Task spaces
 ├── r3bl-fuzzy-search/                    # Fuzzy search
 ├── r3bl-copy-selection-path-and-range/   # Copy file paths
-└── r3bl-auto-insert-copyright/           # Copyright headers
+├── r3bl-auto-insert-copyright/           # Copyright headers
+├── r3bl-shared/                          # Shared services (infrastructure)
+└── r3bl-common-code/                     # Common utilities (infrastructure)
 ```
 
 ## Changelog

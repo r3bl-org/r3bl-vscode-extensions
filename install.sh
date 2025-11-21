@@ -18,6 +18,14 @@ get_all_versions
 echo ""
 echo -e "${BLUE}Installing individual extensions...${NC}"
 
+# Install R3BL Shared (infrastructure - must be first since other extensions depend on it)
+if command -v code &> /dev/null; then
+    code --install-extension packages/r3bl-shared/r3bl-shared-${SHARED_VERSION}.vsix
+fi
+if command -v code-insiders &> /dev/null; then
+    code-insiders --install-extension packages/r3bl-shared/r3bl-shared-${SHARED_VERSION}.vsix
+fi
+
 # Install R3BL Theme
 if command -v code &> /dev/null; then
     code --install-extension packages/r3bl-theme/r3bl-theme-${THEME_VERSION}.vsix
@@ -98,6 +106,7 @@ echo ""
 echo -e "${GREEN}🎉 Installation complete!${NC}"
 echo ""
 echo -e "${BLUE}The R3BL Extension Pack includes:${NC}"
+echo "  • R3BL Shared - Shared utilities and centralized services (infrastructure)"
 echo "  • R3BL Theme - Custom dark theme optimized for Rust and Markdown"
 echo "  • R3BL Auto Insert Copyright - Automatic copyright header insertion"
 echo "  • R3BL Semantic Configuration - Enhanced Rust syntax highlighting"

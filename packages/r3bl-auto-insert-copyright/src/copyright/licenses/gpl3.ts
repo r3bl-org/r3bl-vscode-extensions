@@ -5,12 +5,12 @@
 import { Copyright } from '../copyright';
 
 export class Gpl extends Copyright {
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  public header(): string {
-    let template = `/*
+    public header(): string {
+        let template = `/*
  *   Copyright (c) ${this.year} ${this.author}
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,6 @@ export class Gpl extends Copyright {
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 \n`;
-    return template;
-  }
+        return template;
+    }
 }

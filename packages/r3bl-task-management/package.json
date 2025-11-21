@@ -1,111 +1,114 @@
 {
-  "name": "r3bl-task-management",
-  "displayName": "R3BL Task Management",
-  "description": "Manage task spaces - collections of open tabs for different work contexts",
-  "version": "1.1.0",
-  "publisher": "R3BL",
-  "license": "MIT",
-  "engines": {
-    "vscode": "^1.70.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "keywords": [
-    "task management",
-    "workspace",
-    "tabs",
-    "context switching",
-    "workflow",
-    "task spaces",
-    "claude code",
-    "productivity",
-    "organization"
-  ],
-  "icon": "r3bl-cube-logo.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
-    "directory": "packages/r3bl-task-management"
-  },
-  "activationEvents": [
-    "onStartupFinished"
-  ],
-  "main": "./dist/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "r3bl-task-management.showTaskSpaces",
-        "title": "Manage Task Spaces",
-        "category": "R3BL"
-      },
-      {
-        "command": "r3bl-task-management.installClaudeCodeIntegration",
-        "title": "Task Management: Install Claude Code Integration",
-        "category": "R3BL"
-      },
-      {
-        "command": "r3bl-task-management.createTaskSpaceFromFile",
-        "title": "Task Management: Create Task Space from Task File",
-        "category": "R3BL"
-      }
+    "name": "r3bl-task-management",
+    "displayName": "R3BL Task Management",
+    "description": "Manage task spaces - collections of open tabs for different work contexts",
+    "version": "1.1.1",
+    "publisher": "R3BL",
+    "license": "MIT",
+    "engines": {
+        "vscode": "^1.70.0"
+    },
+    "categories": [
+        "Other"
     ],
-    "keybindings": [
-      {
-        "command": "r3bl-task-management.showTaskSpaces",
-        "key": "alt+shift+t",
-        "when": "!terminalFocus"
-      }
+    "keywords": [
+        "task management",
+        "workspace",
+        "tabs",
+        "context switching",
+        "workflow",
+        "task spaces",
+        "claude code",
+        "productivity",
+        "organization"
     ],
-    "configuration": {
-      "title": "R3BL Task Management",
-      "properties": {
-        "r3bl-task-management.autoSaveCurrentTaskSpace": {
-          "type": "boolean",
-          "default": true,
-          "description": "Automatically save the current task space when tabs change"
-        },
-        "r3bl-task-management.confirmBeforeSwitch": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show confirmation dialog before switching task spaces"
-        },
-        "r3bl-task-management.showStatusBar": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show current task space in status bar"
-        },
-        "r3bl-task-management.restoreTabsOnStartup": {
-          "type": "boolean",
-          "default": true,
-          "description": "Restore tabs from the active task space when VS Code starts"
+    "icon": "r3bl-cube-logo.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
+        "directory": "packages/r3bl-task-management"
+    },
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "extensionDependencies": [
+        "R3BL.r3bl-shared"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "r3bl-task-management.showTaskSpaces",
+                "title": "Manage Task Spaces",
+                "category": "R3BL"
+            },
+            {
+                "command": "r3bl-task-management.installClaudeCodeIntegration",
+                "title": "Task Management: Install Claude Code Integration",
+                "category": "R3BL"
+            },
+            {
+                "command": "r3bl-task-management.createTaskSpaceFromFile",
+                "title": "Task Management: Create Task Space from Task File",
+                "category": "R3BL"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "r3bl-task-management.showTaskSpaces",
+                "key": "alt+shift+t",
+                "when": "!terminalFocus"
+            }
+        ],
+        "configuration": {
+            "title": "R3BL Task Management",
+            "properties": {
+                "r3bl-task-management.autoSaveCurrentTaskSpace": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Automatically save the current task space when tabs change"
+                },
+                "r3bl-task-management.confirmBeforeSwitch": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show confirmation dialog before switching task spaces"
+                },
+                "r3bl-task-management.showStatusBar": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show current task space in status bar"
+                },
+                "r3bl-task-management.restoreTabsOnStartup": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Restore tabs from the active task space when VS Code starts"
+                }
+            }
         }
-      }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run build",
+        "compile": "webpack",
+        "watch": "webpack --watch",
+        "build": "webpack --mode production --devtool hidden-source-map",
+        "package": "vsce package --no-dependencies",
+        "compile-tests": "tsc -p . --outDir out",
+        "watch-tests": "tsc -p . -w --outDir out",
+        "pretest": "npm run compile-tests && npm run compile",
+        "test": "node ./out/test/runTest.js"
+    },
+    "dependencies": {
+        "r3bl-common-code": "file:../r3bl-common-code"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.0",
+        "@types/vscode": "^1.70.0",
+        "@types/mocha": "^10.0.0",
+        "@vscode/test-electron": "^2.3.0",
+        "mocha": "^10.0.0",
+        "typescript": "^5.0.0",
+        "ts-loader": "^9.5.1",
+        "webpack": "^5.95.0",
+        "webpack-cli": "^5.1.4"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run build",
-    "compile": "webpack",
-    "watch": "webpack --watch",
-    "build": "webpack --mode production --devtool hidden-source-map",
-    "package": "vsce package --no-dependencies",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile",
-    "test": "node ./out/test/runTest.js"
-  },
-  "dependencies": {
-    "@r3bl/shared": "file:../r3bl-shared"
-  },
-  "devDependencies": {
-    "@types/node": "^18.0.0",
-    "@types/vscode": "^1.70.0",
-    "@types/mocha": "^10.0.0",
-    "@vscode/test-electron": "^2.3.0",
-    "mocha": "^10.0.0",
-    "typescript": "^5.0.0",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4"
-  }
 }

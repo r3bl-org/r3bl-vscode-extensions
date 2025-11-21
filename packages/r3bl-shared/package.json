@@ -1,23 +1,43 @@
 {
-  "name": "@r3bl/shared",
-  "version": "1.0.0",
-  "description": "Shared utilities for R3BL VSCode extensions",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "build": "tsc"
-  },
-  "keywords": [
-    "r3bl",
-    "vscode",
-    "shared",
-    "utilities"
-  ],
-  "author": "R3BL",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^18.0.0",
-    "@types/vscode": "^1.60.0",
-    "typescript": "^5.0.0"
-  }
+    "name": "r3bl-shared",
+    "displayName": "R3BL Shared Utilities",
+    "description": "Shared utilities and APIs for R3BL VSCode extensions (automatically installed as dependency)",
+    "version": "1.0.0",
+    "publisher": "R3BL",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/r3bl-org/r3bl-vscode-extensions",
+        "directory": "packages/r3bl-shared"
+    },
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "r3bl",
+        "shared",
+        "utilities",
+        "internal"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {},
+    "scripts": {
+        "build": "webpack --mode production --devtool hidden-source-map",
+        "compile": "webpack",
+        "watch": "webpack --watch"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.0",
+        "@types/vscode": "^1.60.0",
+        "ts-loader": "^9.4.2",
+        "typescript": "^5.0.0",
+        "webpack": "^5.89.0",
+        "webpack-cli": "^5.1.4"
+    }
 }
