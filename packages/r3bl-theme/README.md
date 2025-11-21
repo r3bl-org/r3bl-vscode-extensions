@@ -1,14 +1,21 @@
 # R3BL Theme
 
-A carefully crafted dark theme for VS Code, optimized for Rust and Markdown development with enhanced readability and visual appeal.
+A carefully crafted dark theme for VS Code, optimized for Rust and Markdown development
+with enhanced readability and visual appeal.
 
 ## Features
 
-- **Rust-Optimized Colors**: Specially designed syntax highlighting for Rust code with distinct colors for keywords, types, functions, and macros
-- **Dark Theme Excellence**: Professional dark color scheme that reduces eye strain during long coding sessions
-- **Rich Markdown Support**: Beautiful rendering of documentation comments and markdown tables
-- **Semantic Highlighting**: Automatically installs [R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config) for enhanced Rust highlighting
-- **Consistent UI**: Carefully selected colors for sidebar, tabs, status bar, and terminals
+- **Rust-Optimized Colors**: Specially designed syntax highlighting for Rust code with
+  distinct colors for keywords, types, functions, and macros
+- **Dark Theme Excellence**: Professional dark color scheme that reduces eye strain during
+  long coding sessions
+- **Rich Markdown Support**: Beautiful rendering of documentation comments and markdown
+  tables
+- **Semantic Highlighting**: Automatically installs
+  [R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)
+  for enhanced Rust highlighting
+- **Consistent UI**: Carefully selected colors for sidebar, tabs, status bar, and
+  terminals
 - **Bracket Pair Colorization**: Clear visual distinction for nested code blocks
 - **Selection & Search**: High-contrast selection and search highlighting
 
@@ -45,7 +52,9 @@ _Selection highlighting with bracket pair colorization_
 
 ### From Extension Pack (Recommended)
 
-Install the [R3BL Extension Pack](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack) which includes this theme along with other R3BL tools.
+Install the
+[R3BL Extension Pack](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack)
+which includes this theme along with other R3BL tools.
 
 ### Standalone Installation
 
@@ -76,15 +85,19 @@ code --install-extension r3bl-theme-x.x.x.vsix
 
 ### Enhanced Semantic Highlighting
 
-This theme **automatically installs** the R3BL Semantic Configuration extension, which provides enhanced semantic highlighting specifically designed to complement this theme's color palette.
+This theme **automatically installs** the R3BL Semantic Configuration extension, which
+provides enhanced semantic highlighting specifically designed to complement this theme's
+color palette.
 
 The semantic configuration extension:
 
 - Automatically detects when R3BL Theme is active
-- Applies optimized semantic highlighting for Rust (functions, methods, structs, enums, etc.)
+- Applies optimized semantic highlighting for Rust (functions, methods, structs, enums,
+  etc.)
 - Can be enabled/disabled via commands: `R3BL: Enable/Disable Semantic Highlighting`
 
-**No additional setup required** - just activate the R3BL Theme and enjoy enhanced syntax highlighting!
+**No additional setup required** - just activate the R3BL Theme and enjoy enhanced syntax
+highlighting!
 
 ### Color Palette
 
@@ -142,7 +155,8 @@ Unlike generic themes, R3BL Theme is built specifically for Rust developers:
 
 ### Semantic Awareness
 
-Works with VS Code's semantic highlighting to provide context-aware colors based on the language server's understanding of your code, not just regex patterns.
+Works with VS Code's semantic highlighting to provide context-aware colors based on the
+language server's understanding of your code, not just regex patterns.
 
 ### Eye Comfort
 
@@ -197,8 +211,8 @@ MIT
 
 ## Contributing
 
-Found a color that doesn't look quite right? Have a suggestion for improvement? Please open an issue at:
-https://github.com/r3bl-org/r3bl-vscode-extensions/issues
+Found a color that doesn't look quite right? Have a suggestion for improvement? Please
+open an issue at: https://github.com/r3bl-org/r3bl-vscode-extensions/issues
 
 ---
 

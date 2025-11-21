@@ -170,7 +170,7 @@ export class Storage {
                 if (taskSpace.tabs.length > 0 && typeof taskSpace.tabs[0] === 'string') {
                     // Cast to unknown first to handle the type mismatch during migration
                     const oldTabs = taskSpace.tabs as unknown as string[];
-                    const newTabs: TabInfo[] = oldTabs.map(path => ({
+                    const newTabs: TabInfo[] = oldTabs.map((path) => ({
                         path,
                         isPinned: false, // Default to not pinned for migrated tabs
                     }));

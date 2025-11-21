@@ -46,7 +46,7 @@ export async function collectSearchInput(): Promise<SearchInput | undefined> {
         },
     ];
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         let currentExcludes = defaultExcludes;
         let currentRespectGitignore = defaultRespectGitignore;
         let isTemporaryHide = false; // Track if hide is temporary (for showing InputBox)
@@ -65,7 +65,7 @@ export async function collectSearchInput(): Promise<SearchInput | undefined> {
             }
         });
 
-        quickPick.onDidTriggerButton(async button => {
+        quickPick.onDidTriggerButton(async (button) => {
             const buttonIndex = quickPick.buttons.indexOf(button);
 
             if (buttonIndex === 0) {

@@ -14,6 +14,10 @@ check_requirements
 # Get all extension versions
 get_all_versions
 
+# Format all code with Prettier
+echo -e "${BLUE}Formatting code with Prettier...${NC}"
+npm run format
+
 # Install dependencies for the monorepo
 echo -e "${BLUE}Installing dependencies...${NC}"
 npm install

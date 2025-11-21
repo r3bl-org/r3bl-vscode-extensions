@@ -42,7 +42,8 @@ adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - **All Extensions**: Fixed documentation links and improved marketplace presentation
-    - Updated "Shared Infrastructure" section links to point to marketplace instead of GitHub
+    - Updated "Shared Infrastructure" section links to point to marketplace instead of
+      GitHub
     - All R3BL Shared documentation links now direct users to the published extension page
     - Improved consistency across all extension README files
 
@@ -65,11 +66,14 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 
-- **R3BL Task Management 1.0.15**: Fixed task file not opening when creating task space from file
-    - Task file now opens as a pinned tab when creating a task space from an existing task file
+- **R3BL Task Management 1.0.15**: Fixed task file not opening when creating task space
+  from file
+    - Task file now opens as a pinned tab when creating a task space from an existing task
+      file
     - Task file appears as the leftmost tab in the editor
     - Task file automatically receives focus if no other active tab is specified
-    - Improves workflow by immediately showing the task file associated with the new task space
+    - Improves workflow by immediately showing the task file associated with the new task
+      space
 
 ## [2025-11-20] - Task Management Storage Architecture Improvement
 
@@ -81,12 +85,17 @@ adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - **R3BL Task Management 1.0.13**: Split storage architecture to eliminate git noise
-    - **Eliminated git noise**: `lastAccessed` timestamps now stored in VSCode workspace state instead of `.vscode/task-spaces.json`
-    - **Clean git history**: Task space definitions remain in version control, but frequent timestamp updates no longer pollute commits
-    - **Preserved functionality**: "Last accessed" sorting and display still work perfectly
+    - **Eliminated git noise**: `lastAccessed` timestamps now stored in VSCode workspace
+      state instead of `.vscode/task-spaces.json`
+    - **Clean git history**: Task space definitions remain in version control, but
+      frequent timestamp updates no longer pollute commits
+    - **Preserved functionality**: "Last accessed" sorting and display still work
+      perfectly
     - **Persistent timestamps**: Access times still persist across VSCode sessions
-    - **Split storage**: Task space definitions in `.vscode/task-spaces.json` (git-friendly), metadata in VSCode workspace state (not version controlled)
-    - **Developer benefit**: Task space files only change when you actually modify spaces (create/delete/rename), not on every switch
+    - **Split storage**: Task space definitions in `.vscode/task-spaces.json`
+      (git-friendly), metadata in VSCode workspace state (not version controlled)
+    - **Developer benefit**: Task space files only change when you actually modify spaces
+      (create/delete/rename), not on every switch
 
 ## [2025-11-20] - Fuzzy Search Improvements and Notification Auto-Dismiss
 
@@ -99,15 +108,18 @@ adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - **R3BL Fuzzy Search 1.0.6**: Critical bug fix and interactive search with live preview
-    - **Fixed critical bug**: Search results now use absolute file paths instead of relative paths, enabling navigation from `/tmp/` saved results
-    - **New interactive search with live preview**: Type query and see real-time results (Alt+Shift+D)
+    - **Fixed critical bug**: Search results now use absolute file paths instead of
+      relative paths, enabling navigation from `/tmp/` saved results
+    - **New interactive search with live preview**: Type query and see real-time results
+      (Alt+Shift+D)
     - Press Enter to save all results to a .code-search file and open in editor
     - Debounced search (300ms) for smooth typing experience
     - Toggle gitignore respect and modify exclude patterns on the fly during search
     - Simplified to single search mode - removed separate static/interactive modes
 
 - **R3BL Copy Selection Path and Range 1.1.0**: Auto-dismiss notifications
-    - **Configurable auto-dismiss**: Notifications now automatically dismiss after a configurable timeout (default: 60 seconds)
+    - **Configurable auto-dismiss**: Notifications now automatically dismiss after a
+      configurable timeout (default: 60 seconds)
     - Set timeout via `r3blCopySelectionPathAndRange.notificationTimeoutMs` setting
     - Set to 0 to disable auto-dismiss and keep original behavior
     - Prevents screen clutter when using the extension frequently
@@ -128,13 +140,18 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Fixes contrast issues with status bar warning indicators
 
 - **R3BL Semantic Configuration 1.0.7**: New debounced flycheck feature
-    - **Intelligent flycheck timing**: Automatically runs `rust-analyzer.runFlycheck` after a configurable period of typing inactivity
-    - **Replaces checkOnSave**: Provides continuous feedback without save-triggered interruptions
+    - **Intelligent flycheck timing**: Automatically runs `rust-analyzer.runFlycheck`
+      after a configurable period of typing inactivity
+    - **Replaces checkOnSave**: Provides continuous feedback without save-triggered
+      interruptions
     - **Live status bar countdown**: Shows "Flycheck in 0.8s..." with real-time countdown
     - **Status bar spinner**: Shows "Running flycheck..." during execution
-    - **Global debounce timer**: All Rust file changes share one timer (workspace-wide check)
-    - **Manual trigger command**: `R3BL: Run Flycheck (Debounced)` cancels pending and runs immediately
-    - **Auto-disable checkOnSave**: Automatically sets `rust-analyzer.checkOnSave` to `false` with notification
+    - **Global debounce timer**: All Rust file changes share one timer (workspace-wide
+      check)
+    - **Manual trigger command**: `R3BL: Run Flycheck (Debounced)` cancels pending and
+      runs immediately
+    - **Auto-disable checkOnSave**: Automatically sets `rust-analyzer.checkOnSave` to
+      `false` with notification
     - **Configurable settings**:
         - `enabled`: Enable/disable feature (default: true)
         - `delayMs`: Delay before flycheck (default: 1000ms, range: 100-10000)
@@ -151,7 +168,8 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 
-- **R3BL Copy Selection Path and Range 1.0.9**: Version bump to resolve marketplace verification
+- **R3BL Copy Selection Path and Range 1.0.9**: Version bump to resolve marketplace
+  verification
     - Republished to push through stuck verification status
     - No functional changes from 1.0.8
 
@@ -165,14 +183,21 @@ adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - **R3BL Task Management 1.0.7**: Major improvements to tab state management
-    - **Pinned tabs preserved**: When switching task spaces or restarting VS Code, pinned tabs maintain their pinned state
-    - **Tab ordering preserved**: Tabs maintain their exact order when switching or restarting
-    - **Smart startup restore**: Skips restore if current tabs already match saved state (no jarring close/reopen)
-    - **Diff-based sync**: Only applies minimal changes (close/open/move/pin) instead of full restore
-    - **Cross-IDE sync**: Changes in one VS Code instance reflect in another via file watcher
-    - **Data format upgrade**: Storage format upgraded from v1.0 to v2.0 with automatic migration
+    - **Pinned tabs preserved**: When switching task spaces or restarting VS Code, pinned
+      tabs maintain their pinned state
+    - **Tab ordering preserved**: Tabs maintain their exact order when switching or
+      restarting
+    - **Smart startup restore**: Skips restore if current tabs already match saved state
+      (no jarring close/reopen)
+    - **Diff-based sync**: Only applies minimal changes (close/open/move/pin) instead of
+      full restore
+    - **Cross-IDE sync**: Changes in one VS Code instance reflect in another via file
+      watcher
+    - **Data format upgrade**: Storage format upgraded from v1.0 to v2.0 with automatic
+      migration
     - **New TabInfo structure**: Tabs now store both path and pinned state
-    - **New configuration option**: `r3bl-task-management.restoreTabsOnStartup` (default: true)
+    - **New configuration option**: `r3bl-task-management.restoreTabsOnStartup` (default:
+      true)
 
 ## [2025-11-18] - Documentation and Screenshot Updates
 
@@ -185,7 +210,8 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 
-- **R3BL Copy Selection Path and Range 1.0.5**: Enhanced README with comprehensive documentation
+- **R3BL Copy Selection Path and Range 1.0.5**: Enhanced README with comprehensive
+  documentation
     - Added screenshots demonstrating single-line and multi-line selection formats
     - Improved documentation clarity for Claude Code integration
 
@@ -244,14 +270,22 @@ adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - **All Extensions**: Improved marketplace discoverability
-    - Fixed categories: 5 extensions moved from "Other" to appropriate categories (Productivity, Formatters, Programming Languages, Themes)
+    - Fixed categories: 5 extensions moved from "Other" to appropriate categories
+      (Productivity, Formatters, Programming Languages, Themes)
     - Added comprehensive keywords to all extensions for better search results
-    - **R3BL Task Management**: Added 9 keywords (task management, workspace, tabs, context switching, workflow, task spaces, claude code, productivity, organization)
-    - **R3BL Theme**: Added 6 keywords (theme, color theme, dark theme, rust, syntax highlighting, r3bl)
-    - **R3BL Auto Insert Copyright**: Expanded keywords from 2 to 8 (copyright, license, header, automatic, mit, apache, gpl, legal)
-    - **R3BL Semantic Configuration**: Added 5 keywords (semantic highlighting, syntax highlighting, configuration, rust, settings)
-    - **R3BL Copy Selection Path and Range**: Expanded keywords from 5 to 9 (copy, selection, path, range, claude, claude code, file reference, line numbers, clipboard)
-    - **R3BL Fuzzy Search**: Expanded keywords from 5 to 8 (search, fzf, fuzzy, ripgrep, find, file search, fuzzy finder, grep)
+    - **R3BL Task Management**: Added 9 keywords (task management, workspace, tabs,
+      context switching, workflow, task spaces, claude code, productivity, organization)
+    - **R3BL Theme**: Added 6 keywords (theme, color theme, dark theme, rust, syntax
+      highlighting, r3bl)
+    - **R3BL Auto Insert Copyright**: Expanded keywords from 2 to 8 (copyright, license,
+      header, automatic, mit, apache, gpl, legal)
+    - **R3BL Semantic Configuration**: Added 5 keywords (semantic highlighting, syntax
+      highlighting, configuration, rust, settings)
+    - **R3BL Copy Selection Path and Range**: Expanded keywords from 5 to 9 (copy,
+      selection, path, range, claude, claude code, file reference, line numbers,
+      clipboard)
+    - **R3BL Fuzzy Search**: Expanded keywords from 5 to 8 (search, fzf, fuzzy, ripgrep,
+      find, file search, fuzzy finder, grep)
 
 ## [2025-11-17] - Claude Code Integration for Task Management
 
@@ -272,14 +306,20 @@ adheres to [Semantic Versioning](http://semver.org/).
         - Clear messaging when all files are linked or no files exist
         - Pre-fills task space name from filename
         - Creates task space and switches to it in one action
-        - **Fixed race condition bug**: Task space now properly activates when created from file
+        - **Fixed race condition bug**: Task space now properly activates when created
+          from file
     - **Smart prompting** when creating task spaces with linked files
         - Non-intrusive notification offers to install Claude Code integration
         - "Don't Ask Again" option respects user preference
         - Only shows if `.claude/commands/r3bl-task.md` doesn't exist
-    - **Silent missing file handling**: Files that can't be opened (e.g., on different branch) are silently skipped with console logging instead of showing error notifications
-    - **Save lifecycle documentation**: Added comprehensive section to README explaining when task-spaces.json is saved
-    - **Power-user workflow**: Run multiple Claude Code instances in parallel (terminal tabs/tmux panes), each working on different tasks, coordinated through a single VS Code instance with task spaces
+    - **Silent missing file handling**: Files that can't be opened (e.g., on different
+      branch) are silently skipped with console logging instead of showing error
+      notifications
+    - **Save lifecycle documentation**: Added comprehensive section to README explaining
+      when task-spaces.json is saved
+    - **Power-user workflow**: Run multiple Claude Code instances in parallel (terminal
+      tabs/tmux panes), each working on different tasks, coordinated through a single VS
+      Code instance with task spaces
     - New helper methods for task file management in `TaskSpaceManager`
 
 ## [2025-11-17] - Task Management Enhancement
@@ -292,12 +332,15 @@ adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - **R3BL Task Management 1.0.2**: Move task files to done folder on deletion
-    - When deleting a task space with an associated task file, the file is automatically moved from `task/` to `task/done/`
+    - When deleting a task space with an associated task file, the file is automatically
+      moved from `task/` to `task/done/`
     - Creates `task/done/` directory if it doesn't exist
-    - Handles filename collisions by adding numeric suffixes (e.g., `task_foo_2.md`, `task_foo_3.md`)
+    - Handles filename collisions by adding numeric suffixes (e.g., `task_foo_2.md`,
+      `task_foo_3.md`)
     - Shows warning if file cannot be moved but continues with task space deletion
     - Updated deletion confirmation dialog to inform users about file relocation
-    - Task files are optional - if no file is associated with a task space, deletion works normally without any file operations
+    - Task files are optional - if no file is associated with a task space, deletion works
+      normally without any file operations
 
 ## [2025-11-16] - Auto Insert Copyright Bug Fix
 
@@ -313,7 +356,8 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Improved copyright detection to scan first 30 lines for copyright/license keywords
     - Now properly detects MIT license format where "Copyright" appears on line 3
     - Prevents duplicate license headers from being added to files that already have them
-    - Enhanced detection logic with hybrid approach: checks single-line formats and scans multi-line comment blocks
+    - Enhanced detection logic with hybrid approach: checks single-line formats and scans
+      multi-line comment blocks
     - All license formats now properly detected: MIT, Apache2, Apache2OneLine, GPL3
 
 ## [2025-11-16] - New Extension: R3BL Fuzzy Search
@@ -329,8 +373,10 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Fuzzy search across file contents using fzf and ripgrep
     - Smart search with typo tolerance (e.g., "exprt" finds "export")
     - Results displayed in VS Code's Search Editor format with clickable navigation
-    - Results automatically saved to `/tmp/` with query-based filename (spaces → underscores)
-    - Configurable exclude patterns for files and directories (default: node_modules, .git, .vscode, target)
+    - Results automatically saved to `/tmp/` with query-based filename (spaces →
+      underscores)
+    - Configurable exclude patterns for files and directories (default: node_modules,
+      .git, .vscode, target)
     - Configurable result limit (default: 100, range: 1-10000)
     - Toggle .gitignore respect on/off (enabled by default)
     - Automatically respects .gitignore, .ignore, and .rgignore files
@@ -391,9 +437,12 @@ adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - **R3BL Theme 1.0.2**: Enhanced UI color refinements for better visual hierarchy
-    - Updated tab border and inactive tab background from `#253340` to darker `#202530` for improved contrast
-    - Changed title bar colors from `#253340` to darker `#1a1f26` for better visual separation
-    - These subtle color adjustments create a more refined and cohesive dark theme experience
+    - Updated tab border and inactive tab background from `#253340` to darker `#202530`
+      for improved contrast
+    - Changed title bar colors from `#253340` to darker `#1a1f26` for better visual
+      separation
+    - These subtle color adjustments create a more refined and cohesive dark theme
+      experience
     - Improved overall visual hierarchy while maintaining the signature R3BL aesthetic
 
 - **R3BL Extension Pack 1.0.2**: Updated to include latest theme refinements
@@ -411,7 +460,8 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 - **R3BL Semantic Configuration 1.0.1**: Enhanced settings management
     - Added duplicate `editor.semanticHighlighting.enabled` detection to prevent conflicts
-    - Shows warning if multiple entries found in settings.json (can happen with language-specific overrides)
+    - Shows warning if multiple entries found in settings.json (can happen with
+      language-specific overrides)
     - Helps prevent configuration conflicts by guiding users to consolidate entries
     - Improved reliability of semantic highlighting configuration
 
@@ -430,16 +480,20 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 - **R3BL Auto Insert Copyright 1.2.0**: New Apache 2.0 one-line license template
     - Added `Apache2OneLine` license option for concise copyright headers
-    - Generates single-line format: `// Copyright (c) {year} {author}. Licensed under Apache License, Version 2.0.`
+    - Generates single-line format:
+      `// Copyright (c) {year} {author}. Licensed under Apache License, Version 2.0.`
     - Alternative to the traditional multi-line Apache 2.0 license block
     - Available in VS Code settings under "Apache 2.0 License (One Line)"
     - Improved copyright detection for all license formats:
-        - Fixed `hasCopyright` function to properly detect both single-line and multi-line copyright headers
-        - Now checks both line 0 (for single-line formats like Apache2OneLine) and line 1 (for multi-line formats like MIT/Apache2/GPL3)
+        - Fixed `hasCopyright` function to properly detect both single-line and multi-line
+          copyright headers
+        - Now checks both line 0 (for single-line formats like Apache2OneLine) and line 1
+          (for multi-line formats like MIT/Apache2/GPL3)
         - Prevents duplicate copyright insertion when using different license formats
 
 - **R3BL Theme 1.0.1**: Significantly improved comment visibility and readability
-    - Updated comment colors from dull `#6272A4`/`#9C8CB2` to bright `#D4C4E8` for better contrast
+    - Updated comment colors from dull `#6272A4`/`#9C8CB2` to bright `#D4C4E8` for better
+      contrast
     - Fixed all comment color definitions including:
         - General comments (`comment`, `punctuation.definition.comment`)
         - GraphQL line comments (`comment.line.graphql`)
@@ -457,7 +511,8 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 
-- **R3BL Semantic Configuration 1.0.0**: New extension for enhanced Rust syntax highlighting
+- **R3BL Semantic Configuration 1.0.0**: New extension for enhanced Rust syntax
+  highlighting
     - Automatically detects when R3BL Theme is active
     - Offers to apply semantic highlighting automatically
     - Provides commands to enable/disable enhanced highlighting
@@ -482,9 +537,11 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Updated `install.sh` to call `build.sh` then install extensions
     - Separated build and install processes for better CI/CD support
 - **Enhanced Documentation**: Updated README with detailed build and install instructions
-- **Maintainer Guidelines**: Added section for keeping .vsix files up-to-date after changes
+- **Maintainer Guidelines**: Added section for keeping .vsix files up-to-date after
+  changes
 - **Optimized File Sizes**: Removed large redundant icon files to reduce extension sizes
-- **Improved Installation Process**: Extension pack now properly references and installs all individual extensions
+- **Improved Installation Process**: Extension pack now properly references and installs
+  all individual extensions
 
 ## [2024-12-04] - Initial Release
 

@@ -96,7 +96,7 @@ export async function showTaskSpacesDialog(
     });
 
     // Handle button clicks
-    quickPick.onDidTriggerItemButton(async e => {
+    quickPick.onDidTriggerItemButton(async (e) => {
         const item = e.item as TaskSpaceQuickPickItem;
         if (!item.taskSpace) {
             return;
@@ -133,14 +133,14 @@ async function handleCreateTaskSpace(
     const name = await vscode.window.showInputBox({
         prompt: 'Enter task space name',
         placeHolder: 'e.g., Feature: User Authentication',
-        validateInput: value => {
+        validateInput: (value) => {
             if (!value || value.trim().length === 0) {
                 return 'Task space name cannot be empty';
             }
 
             // Check for duplicate names
             const taskSpaces = manager.getTaskSpaces();
-            if (taskSpaces.some(ts => ts.name === value)) {
+            if (taskSpaces.some((ts) => ts.name === value)) {
                 return `Task space "${value}" already exists`;
             }
 
@@ -264,7 +264,7 @@ async function handleSwitchTaskSpace(
             title: `Switching to "${taskSpace.name}"...`,
             cancellable: false,
         },
-        async progress => {
+        async (progress) => {
             try {
                 progress.report({ increment: 0 });
 
@@ -336,14 +336,14 @@ async function handleRenameTaskSpace(
         prompt: 'Enter new task space name',
         value: taskSpace.name,
         placeHolder: taskSpace.name,
-        validateInput: value => {
+        validateInput: (value) => {
             if (!value || value.trim().length === 0) {
                 return 'Task space name cannot be empty';
             }
 
             // Check for duplicate names (excluding current task space)
             const taskSpaces = manager.getTaskSpaces();
-            if (taskSpaces.some(ts => ts.name === value && ts.id !== taskSpace.id)) {
+            if (taskSpaces.some((ts) => ts.name === value && ts.id !== taskSpace.id)) {
                 return `Task space "${value}" already exists`;
             }
 

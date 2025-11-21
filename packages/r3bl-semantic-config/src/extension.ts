@@ -118,7 +118,7 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     // Watch for theme changes
-    const themeWatcher = vscode.workspace.onDidChangeConfiguration(e => {
+    const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('workbench.colorTheme')) {
             const newTheme = vscode.workspace
                 .getConfiguration('workbench')
@@ -131,7 +131,7 @@ export function activate(context: vscode.ExtensionContext) {
                         'Yes',
                         'No',
                     )
-                    .then(selection => {
+                    .then((selection) => {
                         if (selection === 'Yes') {
                             applySemanticConfig();
                         }
@@ -178,7 +178,7 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
     const languages = config.get<string[]>('languages', ['rust']);
 
     // Watch for text document changes
-    const documentWatcher = vscode.workspace.onDidChangeTextDocument(event => {
+    const documentWatcher = vscode.workspace.onDidChangeTextDocument((event) => {
         if (!languages.includes(event.document.languageId)) {
             return;
         }
@@ -200,7 +200,7 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
     );
 
     // Watch for configuration changes
-    const configWatcher = vscode.workspace.onDidChangeConfiguration(e => {
+    const configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('r3bl-semantic-config.debouncedFlycheck')) {
             // Reload configuration
             const newConfig = vscode.workspace.getConfiguration(

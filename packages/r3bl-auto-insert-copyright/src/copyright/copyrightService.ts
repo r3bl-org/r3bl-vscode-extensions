@@ -86,7 +86,7 @@ function insertCopyright(editor: vscode.TextEditor) {
     const documentStartPosition = new vscode.Position(0, 0);
     const copyright = configuration.getCopyright().header();
 
-    editor.edit(document => {
+    editor.edit((document) => {
         document.insert(documentStartPosition, copyright);
     });
 }

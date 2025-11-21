@@ -55,9 +55,13 @@
 
 # Overview
 
-This extension provides task space management for VSCode, allowing users to organize their work by switching between different collections of open tabs. Each task space can optionally be linked to a task markdown file for tracking work items.
+This extension provides task space management for VSCode, allowing users to organize their
+work by switching between different collections of open tabs. Each task space can
+optionally be linked to a task markdown file for tracking work items.
 
-This extension is inspired by the [IntelliJ Task Management plugin](https://plugins.jetbrains.com/plugin/11545-task-management) and brings similar functionality to VSCode.
+This extension is inspired by the
+[IntelliJ Task Management plugin](https://plugins.jetbrains.com/plugin/11545-task-management)
+and brings similar functionality to VSCode.
 
 ## Purpose
 
@@ -72,12 +76,17 @@ When working on multiple features or tasks simultaneously, developers need a way
 
 1. **Quick Access**: `Alt+Shift+T` brings up a dialog for all task management operations
 2. **Task Spaces**: Collections of open editor tabs that can be saved and restored
-3. **Context Switching**: Seamlessly switch between task spaces (closes current tabs, opens new ones)
-4. **Auto-Save**: Tabs are automatically saved when opened/closed/moved within a task space
+3. **Context Switching**: Seamlessly switch between task spaces (closes current tabs,
+   opens new ones)
+4. **Auto-Save**: Tabs are automatically saved when opened/closed/moved within a task
+   space
 5. **Status Bar Indicator**: Always know which task space you're currently in
-6. **Task File Association**: Optionally link a `task/*.md` file that's always open in that task space
-7. **Full Management**: Create, switch to, rename, and delete task spaces from the same interface
-8. **Workspace-Specific**: Task spaces stored in `.vscode/task-spaces.json` (can be shared with team)
+6. **Task File Association**: Optionally link a `task/*.md` file that's always open in
+   that task space
+7. **Full Management**: Create, switch to, rename, and delete task spaces from the same
+   interface
+8. **Workspace-Specific**: Task spaces stored in `.vscode/task-spaces.json` (can be shared
+   with team)
 
 ---
 
@@ -131,9 +140,11 @@ interface TaskSpaceStorage {
 - ✅ Easy to inspect and edit manually if needed
 - ✅ Works with VSCode's built-in settings sync
 
-**Fallback**: Use `globalState` when no workspace is open (for single-file editing scenarios)
+**Fallback**: Use `globalState` when no workspace is open (for single-file editing
+scenarios)
 
-**File Paths**: Store as relative paths from workspace root for portability across machines
+**File Paths**: Store as relative paths from workspace root for portability across
+machines
 
 ## VSCode APIs to Use
 
@@ -271,7 +282,8 @@ Key configuration notes:
 - **Engine requirement**: VSCode 1.70+ for `tabGroups` API
 - **Activation**: On startup (`onStartupFinished`)
 - **Keybinding**: `Alt+Shift+T` (disabled when terminal has focus)
-- **Settings**: Allow users to disable auto-save, enable confirmation dialogs, hide status bar
+- **Settings**: Allow users to disable auto-save, enable confirmation dialogs, hide status
+  bar
 
 ### Step 0.2: Create tsconfig.json
 
@@ -297,7 +309,8 @@ Create `packages/r3bl-task-management/tsconfig.json` with TypeScript compilation
 
 ### Step 0.3: Create .vscodeignore
 
-Create `packages/r3bl-task-management/.vscodeignore` to exclude unnecessary files from the VSIX package:
+Create `packages/r3bl-task-management/.vscodeignore` to exclude unnecessary files from the
+VSIX package:
 
 ```
 .git
@@ -502,7 +515,7 @@ export class TaskSpaceManager {
      * Get active task space
      */
     getActiveTaskSpace(): TaskSpace | undefined {
-        return this.data.taskSpaces.find(ts => ts.id === this.data.activeTaskSpaceId);
+        return this.data.taskSpaces.find((ts) => ts.id === this.data.activeTaskSpaceId);
     }
 
     /**
@@ -517,7 +530,7 @@ export class TaskSpaceManager {
      */
     async createTaskSpace(name: string, taskFile?: string): Promise<TaskSpace> {
         // Validate name is unique
-        if (this.data.taskSpaces.some(ts => ts.name === name)) {
+        if (this.data.taskSpaces.some((ts) => ts.name === name)) {
             throw new Error(`Task space "${name}" already exists`);
         }
 
@@ -542,7 +555,7 @@ export class TaskSpaceManager {
      * Delete a task space
      */
     async deleteTaskSpace(id: string): Promise<void> {
-        const index = this.data.taskSpaces.findIndex(ts => ts.id === id);
+        const index = this.data.taskSpaces.findIndex((ts) => ts.id === id);
         if (index === -1) {
             throw new Error('Task space not found');
         }
@@ -561,7 +574,7 @@ export class TaskSpaceManager {
      * Switch to a different task space
      */
     async switchToTaskSpace(id: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find(ts => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
         }
@@ -590,13 +603,13 @@ export class TaskSpaceManager {
      * Rename a task space
      */
     async renameTaskSpace(id: string, newName: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find(ts => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
         }
 
         // Validate new name is unique
-        if (this.data.taskSpaces.some(ts => ts.name === newName && ts.id !== id)) {
+        if (this.data.taskSpaces.some((ts) => ts.name === newName && ts.id !== id)) {
             throw new Error(`Task space "${newName}" already exists`);
         }
 
@@ -608,7 +621,7 @@ export class TaskSpaceManager {
      * Update tabs for a task space
      */
     async updateTaskSpaceTabs(id: string, tabs: string[]): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find(ts => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
         }
@@ -862,7 +875,7 @@ async function showTaskSpacesDialog(
     });
 
     // Handle button clicks
-    quickPick.onDidTriggerItemButton(async e => {
+    quickPick.onDidTriggerItemButton(async (e) => {
         const item = e.item as TaskSpaceQuickPickItem;
         if (!item.taskSpace) {
             return;
@@ -933,14 +946,14 @@ async function handleCreateTaskSpace(
     const name = await vscode.window.showInputBox({
         prompt: 'Enter task space name',
         placeHolder: 'e.g., Feature: User Authentication',
-        validateInput: value => {
+        validateInput: (value) => {
             if (!value || value.trim().length === 0) {
                 return 'Task space name cannot be empty';
             }
 
             // Check for duplicate names
             const taskSpaces = manager.getTaskSpaces();
-            if (taskSpaces.some(ts => ts.name === value)) {
+            if (taskSpaces.some((ts) => ts.name === value)) {
                 return `Task space "${value}" already exists`;
             }
 
@@ -1061,7 +1074,7 @@ async function handleSwitchTaskSpace(
             title: `Switching to "${taskSpace.name}"...`,
             cancellable: false,
         },
-        async progress => {
+        async (progress) => {
             try {
                 progress.report({ increment: 0 });
 
@@ -1130,14 +1143,14 @@ async function handleRenameTaskSpace(
         prompt: 'Enter new task space name',
         value: taskSpace.name,
         placeHolder: taskSpace.name,
-        validateInput: value => {
+        validateInput: (value) => {
             if (!value || value.trim().length === 0) {
                 return 'Task space name cannot be empty';
             }
 
             // Check for duplicate names (excluding current task space)
             const taskSpaces = manager.getTaskSpaces();
-            if (taskSpaces.some(ts => ts.name === value && ts.id !== taskSpace.id)) {
+            if (taskSpaces.some((ts) => ts.name === value && ts.id !== taskSpace.id)) {
                 return `Task space "${value}" already exists`;
             }
 
@@ -1232,7 +1245,7 @@ Register listener in extension activation:
 ```typescript
 let autoSaveTimeout: NodeJS.Timeout | undefined;
 
-const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async e => {
+const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async (e) => {
     // Check if auto-save is enabled
     const config = vscode.workspace.getConfiguration('r3bl-task-management');
     const autoSave = config.get<boolean>('autoSaveCurrentTaskSpace', true);
@@ -1323,7 +1336,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(showCommand);
 
     // Register auto-save listener
-    const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async e => {
+    const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async (e) => {
         // Check if auto-save is enabled
         const config = vscode.workspace.getConfiguration('r3bl-task-management');
         const autoSave = config.get<boolean>('autoSaveCurrentTaskSpace', true);
@@ -1356,7 +1369,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(tabChangeDisposable);
 
     // Listen for configuration changes (e.g., status bar visibility)
-    const configChangeDisposable = vscode.workspace.onDidChangeConfiguration(e => {
+    const configChangeDisposable = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('r3bl-task-management.showStatusBar')) {
             updateStatusBar(statusBarItem, manager);
         }
@@ -1450,7 +1463,9 @@ async function showTaskSpacesDialog(
 
     ```typescript
     // Optional: Check for dirty editors before switching
-    const dirtyEditors = vscode.window.visibleTextEditors.filter(e => e.document.isDirty);
+    const dirtyEditors = vscode.window.visibleTextEditors.filter(
+        (e) => e.document.isDirty,
+    );
     if (dirtyEditors.length > 0 && confirmBeforeSwitch) {
         // Show warning
     }
@@ -1533,7 +1548,8 @@ Users can configure these in VSCode settings:
 
 ## Step 8: Integrate into Extension Pack
 
-Add the new extension to the R3BL extension pack so users can install all R3BL extensions together.
+Add the new extension to the R3BL extension pack so users can install all R3BL extensions
+together.
 
 Edit `packages/r3bl-extension-pack/package.json` and add to the `extensionPack` array:
 
@@ -1557,7 +1573,8 @@ Edit `packages/r3bl-extension-pack/package.json` and add to the `extensionPack` 
 }
 ```
 
-This ensures users who install the R3BL extension pack will get the task management extension automatically.
+This ensures users who install the R3BL extension pack will get the task management
+extension automatically.
 
 ---
 
@@ -1863,4 +1880,7 @@ These features can be added after the basic implementation is stable:
 
 **End of Implementation Plan**
 
-This plan provides a complete roadmap for implementing the R3BL Task Management extension for VSCode. The MVP focuses on the core features (create, switch, delete, rename task spaces with auto-save and status bar), while future enhancements can be prioritized based on user feedback.
+This plan provides a complete roadmap for implementing the R3BL Task Management extension
+for VSCode. The MVP focuses on the core features (create, switch, delete, rename task
+spaces with auto-save and status bar), while future enhancements can be prioritized based
+on user feedback.

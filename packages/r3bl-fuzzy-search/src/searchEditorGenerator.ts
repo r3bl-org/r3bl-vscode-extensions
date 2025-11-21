@@ -21,7 +21,7 @@ function generateHeader(input: SearchInput, results: SearchResult[]): string {
     }
 
     // Count unique files
-    const uniqueFiles = new Set(results.map(r => r.file)).size;
+    const uniqueFiles = new Set(results.map((r) => r.file)).size;
     lines.push(`#`);
     lines.push(`# ${results.length} results - ${uniqueFiles} files`);
 

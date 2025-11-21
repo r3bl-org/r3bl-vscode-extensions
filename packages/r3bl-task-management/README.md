@@ -22,6 +22,10 @@ implementation plans in `task/*.md` files.
     - [Basic Workflow](#basic-workflow)
     - [Claude Code Workflow](#claude-code-workflow)
     - [Claude Code Integration Commands](#claude-code-integration-commands)
+        - [Install Claude Code Integration](#install-claude-code-integration)
+        - [Automatic Updates](#automatic-updates)
+        - [Create Task Space from Task File](#create-task-space-from-task-file)
+        - [Smart Prompting](#smart-prompting)
     - [Power User: Multiple Claude Code Instances](#power-user-multiple-claude-code-instances)
 - [Important: How It Works](#important-how-it-works)
     - [Task Spaces Are WITHIN One Branch](#task-spaces-are-within-one-branch)
@@ -200,6 +204,20 @@ This installs the `/r3bl-task` command for Claude Code CLI:
 - `/r3bl-task update [name]` - Update progress
 - `/r3bl-task load [name]` - Resume work on a task
 
+**Automatic Updates:**
+
+The extension automatically keeps the `/r3bl-task` command up-to-date:
+
+- When the extension is updated with command improvements, your local
+  `.claude/commands/r3bl-task.md` file is automatically upgraded
+- Uses SHA256 checksum comparison to detect changes
+- No permission prompt needed (file is expected to be in git for review)
+- You'll see a brief notification: "R3BL Task command updated"
+- Review changes with `git diff .claude/commands/r3bl-task.md` before committing
+- Revert if needed: `git checkout .claude/commands/r3bl-task.md`
+
+This ensures you always have the latest command features without manual intervention.
+
 #### Create Task Space from Task File
 
 ![Create from File Command](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/create-from-file-command.png)
@@ -367,7 +385,8 @@ never touch your workspace files.
 **Storage Location:**
 
 - Linux: `~/.config/Code/User/workspaceStorage/<workspace-id>/state.vscode.*`
-- macOS: `~/Library/Application Support/Code/User/workspaceStorage/<workspace-id>/state.vscode.*`
+- macOS:
+  `~/Library/Application Support/Code/User/workspaceStorage/<workspace-id>/state.vscode.*`
 - Windows: `%APPDATA%\Code\User\workspaceStorage\<workspace-id>\state.vscode.*`
 
 **Data Format:**
@@ -381,8 +400,8 @@ never touch your workspace files.
 }
 ```
 
-**Note:** This metadata is automatically cleaned up when task spaces are deleted, preventing
-any memory leaks or storage bloat.
+**Note:** This metadata is automatically cleaned up when task spaces are deleted,
+preventing any memory leaks or storage bloat.
 
 **Storage Benefits:**
 
@@ -417,9 +436,12 @@ actual workspace.
 
 ## Shared Infrastructure
 
-This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL
+extensions (message queuing, global configuration, and more).
 
-See the [R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared) for available services, API usage, and configuration options.
+See the
+[R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)
+for available services, API usage, and configuration options.
 
 ## Release Notes
 

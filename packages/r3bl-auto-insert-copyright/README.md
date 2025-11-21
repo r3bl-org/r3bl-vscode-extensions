@@ -1,6 +1,8 @@
 # R3BL Auto Insert Copyright
 
-Automatically add copyright and license headers to your source code files. Save time and maintain consistency by automating the process of adding copyright notices to new and existing files.
+Automatically add copyright and license headers to your source code files. Save time and
+maintain consistency by automating the process of adding copyright notices to new and
+existing files.
 
 ## Features
 
@@ -60,9 +62,8 @@ Configure the extension in your `.vscode/settings.json`:
 
 #### `copyrighter.author`
 
-**Type**: `string`
-**Default**: `"Your Name"`
-**Description**: The copyright holder name that appears in the header
+**Type**: `string` **Default**: `"Your Name"` **Description**: The copyright holder name
+that appears in the header
 
 ```json
 "copyrighter.author": "Your name or Organization"
@@ -70,10 +71,9 @@ Configure the extension in your `.vscode/settings.json`:
 
 #### `copyrighter.license`
 
-**Type**: `string`
-**Default**: `"MIT"`
-**Options**: `"none"`, `"MIT"`, `"Apache2"`, `"Apache2OneLine"`, `"GPL3"`
-**Description**: The license type to use for the copyright header
+**Type**: `string` **Default**: `"MIT"` **Options**: `"none"`, `"MIT"`, `"Apache2"`,
+`"Apache2OneLine"`, `"GPL3"` **Description**: The license type to use for the copyright
+header
 
 ```json
 "copyrighter.license": "MIT"
@@ -81,9 +81,8 @@ Configure the extension in your `.vscode/settings.json`:
 
 #### `copyrighter.note` (Optional)
 
-**Type**: `string`
-**Default**: `""`
-**Description**: Additional note to include in the copyright header
+**Type**: `string` **Default**: `""` **Description**: Additional note to include in the
+copyright header
 
 ```json
 "copyrighter.note": "All rights reserved."
@@ -91,9 +90,8 @@ Configure the extension in your `.vscode/settings.json`:
 
 #### `copyrighter.newFilesOnly`
 
-**Type**: `boolean`
-**Default**: `true`
-**Description**: Only inject copyright in new files (not existing files when opened)
+**Type**: `boolean` **Default**: `true` **Description**: Only inject copyright in new
+files (not existing files when opened)
 
 ```json
 "copyrighter.newFilesOnly": true
@@ -181,7 +179,8 @@ The extension automatically detects the appropriate comment syntax for these lan
 
 ### Open Source Projects
 
-Automatically add open source license headers (MIT, Apache, GPL) to all your project files to ensure proper licensing.
+Automatically add open source license headers (MIT, Apache, GPL) to all your project files
+to ensure proper licensing.
 
 ### Commercial Software
 
@@ -230,11 +229,14 @@ Meet legal or organizational requirements for copyright notices in source code.
 
 ## How It Works
 
-1. **File Detection**: When you open or create a file, the extension checks if it's a supported language
+1. **File Detection**: When you open or create a file, the extension checks if it's a
+   supported language
 2. **Header Check**: Checks if a copyright header already exists
-3. **Automatic Insertion**: If no header exists and it's a new file (or `newFilesOnly` is `false`), inserts the header
+3. **Automatic Insertion**: If no header exists and it's a new file (or `newFilesOnly` is
+   `false`), inserts the header
 4. **Comment Style**: Automatically uses the correct comment syntax for the file type
-5. **Template Fill**: Fills in the template with your configured author, year, license, and notes
+5. **Template Fill**: Fills in the template with your configured author, year, license,
+   and notes
 
 ## Known Issues
 
@@ -244,9 +246,12 @@ Meet legal or organizational requirements for copyright notices in source code.
 
 ## Shared Infrastructure
 
-This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL
+extensions (message queuing, global configuration, and more).
 
-See the [R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared) for available services, API usage, and configuration options.
+See the
+[R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)
+for available services, API usage, and configuration options.
 
 ## Release Notes
 

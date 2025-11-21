@@ -27,16 +27,18 @@ export function callSharedAPI(apiMethod: string, ...args: any[]): boolean {
         return true;
     } else {
         // Show error with option to install r3bl-shared
-        vscode.window.showErrorMessage(
-            'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
-            'Install Extension'
-        ).then(choice => {
-            if (choice === 'Install Extension') {
-                vscode.env.openExternal(
-                    vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared')
-                );
-            }
-        });
+        vscode.window
+            .showErrorMessage(
+                'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
+                'Install Extension',
+            )
+            .then((choice) => {
+                if (choice === 'Install Extension') {
+                    vscode.env.openExternal(
+                        vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared'),
+                    );
+                }
+            });
         return false;
     }
 }
@@ -58,7 +60,7 @@ export function callSharedAPI(apiMethod: string, ...args: any[]): boolean {
  */
 export function showStatusBarMessage(
     message: string,
-    type: StatusBarMessageType = 'info'
+    type: StatusBarMessageType = 'info',
 ): void {
     callSharedAPI('showStatusBarMessage', message, type);
 }

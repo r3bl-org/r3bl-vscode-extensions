@@ -56,7 +56,7 @@ export class TaskSpaceManager {
      * Get active task space
      */
     getActiveTaskSpace(): TaskSpace | undefined {
-        return this.data.taskSpaces.find(ts => ts.id === this.data.activeTaskSpaceId);
+        return this.data.taskSpaces.find((ts) => ts.id === this.data.activeTaskSpaceId);
     }
 
     /**
@@ -76,7 +76,7 @@ export class TaskSpaceManager {
         setAsActive: boolean = false,
     ): Promise<TaskSpace> {
         // Validate name is unique
-        if (this.data.taskSpaces.some(ts => ts.name === name)) {
+        if (this.data.taskSpaces.some((ts) => ts.name === name)) {
             throw new Error(`Task space "${name}" already exists`);
         }
 
@@ -111,7 +111,7 @@ export class TaskSpaceManager {
      * Delete a task space
      */
     async deleteTaskSpace(id: string): Promise<void> {
-        const index = this.data.taskSpaces.findIndex(ts => ts.id === id);
+        const index = this.data.taskSpaces.findIndex((ts) => ts.id === id);
         if (index === -1) {
             throw new Error('Task space not found');
         }
@@ -207,7 +207,7 @@ export class TaskSpaceManager {
      * Switch to a different task space
      */
     async switchToTaskSpace(id: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find(ts => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
         }
@@ -234,7 +234,7 @@ export class TaskSpaceManager {
      * Returns true if changes were made, false if tabs already matched
      */
     async smartSwitchToTaskSpace(id: string): Promise<boolean> {
-        const taskSpace = this.data.taskSpaces.find(ts => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
         }
@@ -255,13 +255,13 @@ export class TaskSpaceManager {
      * Rename a task space
      */
     async renameTaskSpace(id: string, newName: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find(ts => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
         }
 
         // Validate new name is unique
-        if (this.data.taskSpaces.some(ts => ts.name === newName && ts.id !== id)) {
+        if (this.data.taskSpaces.some((ts) => ts.name === newName && ts.id !== id)) {
             throw new Error(`Task space "${newName}" already exists`);
         }
 
@@ -273,7 +273,7 @@ export class TaskSpaceManager {
      * Update tabs for a task space
      */
     async updateTaskSpaceTabs(id: string, tabs: TabInfo[]): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find(ts => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
         }
@@ -535,17 +535,17 @@ export class TaskSpaceManager {
     async getUnlinkedTaskFiles(): Promise<string[]> {
         const allTaskFiles = await this.getTaskFiles();
         const linkedFiles = new Set(
-            this.data.taskSpaces.filter(ts => ts.taskFile).map(ts => ts.taskFile!),
+            this.data.taskSpaces.filter((ts) => ts.taskFile).map((ts) => ts.taskFile!),
         );
 
-        return allTaskFiles.filter(file => !linkedFiles.has(file));
+        return allTaskFiles.filter((file) => !linkedFiles.has(file));
     }
 
     /**
      * Check if a task file has a linked task space
      */
     hasLinkedTaskSpace(taskFile: string): boolean {
-        return this.data.taskSpaces.some(ts => ts.taskFile === taskFile);
+        return this.data.taskSpaces.some((ts) => ts.taskFile === taskFile);
     }
 
     /**
@@ -580,7 +580,7 @@ export class TaskSpaceManager {
      * Only closes/opens/reorders/pins what's necessary
      */
     async diffSwitchToTaskSpace(id: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find(ts => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
         }
@@ -590,17 +590,17 @@ export class TaskSpaceManager {
         const savedTabs = taskSpace.tabs;
 
         // Build sets for quick lookup
-        const currentPaths = new Set(currentTabs.map(t => t.path));
-        const savedPaths = new Set(savedTabs.map(t => t.path));
+        const currentPaths = new Set(currentTabs.map((t) => t.path));
+        const savedPaths = new Set(savedTabs.map((t) => t.path));
 
         // 1. Close tabs that should be removed
-        const tabsToClose = currentTabs.filter(t => !savedPaths.has(t.path));
+        const tabsToClose = currentTabs.filter((t) => !savedPaths.has(t.path));
         for (const tab of tabsToClose) {
             await this.closeTabByPath(tab.path, workspaceFolder);
         }
 
         // 2. Open tabs that should be added (at end initially)
-        const tabsToOpen = savedTabs.filter(t => !currentPaths.has(t.path));
+        const tabsToOpen = savedTabs.filter((t) => !currentPaths.has(t.path));
         for (const tab of tabsToOpen) {
             await this.openSingleTab(tab.path, workspaceFolder);
         }
@@ -719,7 +719,7 @@ export class TaskSpaceManager {
             return paths;
         };
 
-        const targetOrder = targetTabs.map(t => t.path);
+        const targetOrder = targetTabs.map((t) => t.path);
 
         // Use insertion sort approach: for each position, move the correct tab there
         for (let targetPos = 0; targetPos < targetOrder.length; targetPos++) {

@@ -38,12 +38,12 @@ async function executePipeline(
         rg.stdout.pipe(fzf.stdin);
 
         // Handle pipe errors
-        rg.stdout.on('error', err => {
+        rg.stdout.on('error', (err) => {
             console.error('rg stdout pipe error:', err);
         });
 
         // Collect fzf output
-        fzf.stdout.on('data', data => {
+        fzf.stdout.on('data', (data) => {
             const chunk = data.toString();
             const lines = chunk.split('\n');
 
@@ -67,13 +67,13 @@ async function executePipeline(
         let rgErrorOutput = '';
         let fzfErrorOutput = '';
 
-        rg.stderr.on('data', data => {
+        rg.stderr.on('data', (data) => {
             const err = data.toString();
             rgErrorOutput += err;
             console.error('[R3BL Fuzzy Search] rg stderr:', err);
         });
 
-        fzf.stderr.on('data', data => {
+        fzf.stderr.on('data', (data) => {
             const err = data.toString();
             fzfErrorOutput += err;
             console.error('[R3BL Fuzzy Search] fzf stderr:', err);
@@ -84,7 +84,7 @@ async function executePipeline(
             isResolved = true;
         };
 
-        fzf.on('close', code => {
+        fzf.on('close', (code) => {
             cleanup();
             // fzf exit codes: 0 = match, 1 = no match, 2 = error, 130 = interrupted
             if (code === 0 || code === 1 || code === null) {
@@ -97,12 +97,12 @@ async function executePipeline(
             }
         });
 
-        rg.on('error', err => {
+        rg.on('error', (err) => {
             cleanup();
             reject(new Error(`ripgrep error: ${err.message}`));
         });
 
-        fzf.on('error', err => {
+        fzf.on('error', (err) => {
             cleanup();
             reject(new Error(`fzf error: ${err.message}`));
         });
@@ -138,8 +138,8 @@ export async function executeSearch(
     // Add exclude patterns
     const excludes = input.excludePatterns
         .split(',')
-        .map(p => p.trim())
-        .filter(p => p.length > 0);
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0);
 
     for (const exclude of excludes) {
         rgArgs.push('--glob', `!${exclude}`);
@@ -177,7 +177,7 @@ export async function executeSearch(
 
     console.log(
         '[R3BL Fuzzy Search] Search completed, found',
-        results.split('\n').filter(l => l.trim()).length,
+        results.split('\n').filter((l) => l.trim()).length,
         'lines',
     );
 

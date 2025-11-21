@@ -77,7 +77,7 @@ export async function executeInteractiveSearch(workspaceRoot: string): Promise<v
             currentQuery = query.trim();
 
             // Convert results to QuickPick items
-            const items: SearchResultItem[] = results.map(result => {
+            const items: SearchResultItem[] = results.map((result) => {
                 // Clean ANSI codes from content
                 const cleanContent = result.content.replace(/\x1b\[[0-9;]*m/g, '');
 
@@ -100,7 +100,7 @@ export async function executeInteractiveSearch(workspaceRoot: string): Promise<v
                     },
                 ];
             } else {
-                const uniqueFiles = new Set(results.map(r => r.file)).size;
+                const uniqueFiles = new Set(results.map((r) => r.file)).size;
                 const headerItem: SearchResultItem = {
                     label: `$(search) Found ${results.length} results in ${uniqueFiles} files`,
                     description: 'Select a result to open',
@@ -122,7 +122,7 @@ export async function executeInteractiveSearch(workspaceRoot: string): Promise<v
     };
 
     // Handle value changes (debounced search)
-    quickPick.onDidChangeValue(value => {
+    quickPick.onDidChangeValue((value) => {
         // Clear previous timeout
         if (searchTimeout) {
             clearTimeout(searchTimeout);
@@ -169,7 +169,7 @@ export async function executeInteractiveSearch(workspaceRoot: string): Promise<v
             });
 
             // Show summary
-            const uniqueFiles = new Set(currentResults.map(r => r.file)).size;
+            const uniqueFiles = new Set(currentResults.map((r) => r.file)).size;
             showStatusBarMessage(
                 `Found ${currentResults.length} results in ${uniqueFiles} files`,
                 'success',
@@ -178,7 +178,7 @@ export async function executeInteractiveSearch(workspaceRoot: string): Promise<v
     });
 
     // Handle button clicks
-    quickPick.onDidTriggerButton(async button => {
+    quickPick.onDidTriggerButton(async (button) => {
         const buttonIndex = quickPick.buttons.indexOf(button);
 
         if (buttonIndex === 0) {

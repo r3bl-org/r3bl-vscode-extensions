@@ -42,7 +42,7 @@ async function createTaskSpaceFromFile(
             taskFile: string;
         }
 
-        const items: TaskFileItem[] = unlinkedFiles.map(file => {
+        const items: TaskFileItem[] = unlinkedFiles.map((file) => {
             const fileName = path.basename(file);
 
             return {
@@ -70,11 +70,11 @@ async function createTaskSpaceFromFile(
         const name = await vscode.window.showInputBox({
             prompt: 'Enter task space name',
             value: suggestedName,
-            validateInput: value => {
+            validateInput: (value) => {
                 if (!value || value.trim().length === 0) {
                     return 'Name cannot be empty';
                 }
-                if (manager.getTaskSpaces().some(ts => ts.name === value)) {
+                if (manager.getTaskSpaces().some((ts) => ts.name === value)) {
                     return `Task space "${value}" already exists`;
                 }
                 return null;
@@ -201,7 +201,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(tabChangeDisposable);
 
     // Listen for configuration changes (e.g., status bar visibility)
-    const configChangeDisposable = vscode.workspace.onDidChangeConfiguration(e => {
+    const configChangeDisposable = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('r3bl-task-management.showStatusBar')) {
             updateStatusBar(statusBarItem, manager);
         }

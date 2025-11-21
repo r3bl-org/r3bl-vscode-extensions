@@ -26,17 +26,22 @@
 
 # Overview
 
-This task creates a new VSCode extension called `r3bl-copy-selection-path-and-range` that allows users to quickly copy the file path with selected line ranges in a specific format suitable for sharing with Claude Code or other tools.
+This task creates a new VSCode extension called `r3bl-copy-selection-path-and-range` that
+allows users to quickly copy the file path with selected line ranges in a specific format
+suitable for sharing with Claude Code or other tools.
 
 ## Purpose
 
-When working with code, users often need to reference a specific file and the lines they're working on. This extension allows them to:
+When working with code, users often need to reference a specific file and the lines
+they're working on. This extension allows them to:
 
 1. Select text in the editor
 2. Press `Alt+o`
-3. Get a formatted string copied to clipboard in the format: `#file:path/from/cwd/to/file/some_file.rs:165-169`
+3. Get a formatted string copied to clipboard in the format:
+   `#file:path/from/cwd/to/file/some_file.rs:165-169`
 
-This format is designed to be understood by Claude Code and other tools to quickly locate and reference code sections.
+This format is designed to be understood by Claude Code and other tools to quickly locate
+and reference code sections.
 
 ## Specifications
 
@@ -67,7 +72,8 @@ Breaking down the formats:
 - **Range of lines**: Uses `#L<start>-<end>` format (e.g., `#L331-335`)
     - Capital `L` followed by start line number, hyphen, and end line number
     - This format is used by Claude Code ONLY
-    - NOT semantically valid for IDEs like VSCode & RustRover (they don't support jumping to a file with a range of lines)
+    - NOT semantically valid for IDEs like VSCode & RustRover (they don't support jumping
+      to a file with a range of lines)
 - **Single line**: Uses `:<lineNumber>` format (e.g., `:331`)
     - Colon followed by line number
     - Only when there's an actual selection on a single line
@@ -96,7 +102,8 @@ Breaking down the formats:
 
 ### User Feedback
 
-After copying, show an information message displaying what was copied so the user confirms the action.
+After copying, show an information message displaying what was copied so the user confirms
+the action.
 
 ---
 
@@ -108,14 +115,16 @@ Create the directory structure and configuration files for the new extension.
 
 ### Step 0.0: Create Directory
 
-Create the extension directory at `packages/r3bl-copy-selection-path-and-range/` with necessary subdirectories:
+Create the extension directory at `packages/r3bl-copy-selection-path-and-range/` with
+necessary subdirectories:
 
 - `packages/r3bl-copy-selection-path-and-range/`
 - `packages/r3bl-copy-selection-path-and-range/src/`
 
 ### Step 0.1: Create package.json
 
-Create `packages/r3bl-copy-selection-path-and-range/package.json` with the following structure:
+Create `packages/r3bl-copy-selection-path-and-range/package.json` with the following
+structure:
 
 ```json
 {
@@ -167,7 +176,8 @@ Create `packages/r3bl-copy-selection-path-and-range/package.json` with the follo
 
 ### Step 0.2: Create tsconfig.json
 
-Create `packages/r3bl-copy-selection-path-and-range/tsconfig.json` with TypeScript compilation settings:
+Create `packages/r3bl-copy-selection-path-and-range/tsconfig.json` with TypeScript
+compilation settings:
 
 ```json
 {
@@ -186,7 +196,8 @@ Create `packages/r3bl-copy-selection-path-and-range/tsconfig.json` with TypeScri
 
 ### Step 0.3: Create .vscodeignore
 
-Create `packages/r3bl-copy-selection-path-and-range/.vscodeignore` to exclude unnecessary files from the VSIX package:
+Create `packages/r3bl-copy-selection-path-and-range/.vscodeignore` to exclude unnecessary
+files from the VSIX package:
 
 ```
 .git
@@ -202,8 +213,10 @@ node_modules
 
 Copy the following files from another extension package:
 
-- Copy `packages/r3bl-semantic-config/LICENSE` → `packages/r3bl-copy-selection-path-and-range/LICENSE`
-- Copy `packages/r3bl-semantic-config/r3bl-cube-logo.png` → `packages/r3bl-copy-selection-path-and-range/r3bl-cube-logo.png`
+- Copy `packages/r3bl-semantic-config/LICENSE` →
+  `packages/r3bl-copy-selection-path-and-range/LICENSE`
+- Copy `packages/r3bl-semantic-config/r3bl-cube-logo.png` →
+  `packages/r3bl-copy-selection-path-and-range/r3bl-cube-logo.png`
 
 ## Step 1: Implement Extension Logic
 
@@ -211,7 +224,8 @@ Create the TypeScript source file that implements the core functionality.
 
 ### Step 1.0: Create src/extension.ts
 
-Create `packages/r3bl-copy-selection-path-and-range/src/extension.ts` with the basic extension structure:
+Create `packages/r3bl-copy-selection-path-and-range/src/extension.ts` with the basic
+extension structure:
 
 ```typescript
 import * as vscode from 'vscode';
@@ -303,14 +317,16 @@ const relativePath = path.relative(workspaceFolder.uri.fsPath, absolutePath);
 
 The selection handling should:
 
-- Detect if text is selected using `selection.isEmpty` (returns `false` if there's a selection)
+- Detect if text is selected using `selection.isEmpty` (returns `false` if there's a
+  selection)
 - For multi-line selections: use format `#L<startLine>-<endLine>` (Claude Code specific)
 - For single-line selections: use format `:<lineNumber>`
 - For cursor only (no selection): return empty string (no line number)
 - Convert line numbers from 0-based (VSCode) to 1-based (user-friendly)
 - Handle edge cases where selection might be backwards (end before start)
 
-This is implemented in the `calculateLineRange` function which returns the appropriate format based on selection state:
+This is implemented in the `calculateLineRange` function which returns the appropriate
+format based on selection state:
 
 - Empty selection (cursor only): `` (empty string - just file path)
 - Single-line selection: `:<lineNumber>`
@@ -338,7 +354,8 @@ This configuration:
 
 ## Step 3: Integrate into Extension Pack
 
-Add the new extension to the R3BL extension pack so it gets installed with other R3BL extensions.
+Add the new extension to the R3BL extension pack so it gets installed with other R3BL
+extensions.
 
 Edit `packages/r3bl-extension-pack/package.json` and add to the `extensionPack` array:
 
@@ -351,11 +368,13 @@ Edit `packages/r3bl-extension-pack/package.json` and add to the `extensionPack` 
 ]
 ```
 
-This ensures users who install the R3BL extension pack will get this extension automatically.
+This ensures users who install the R3BL extension pack will get this extension
+automatically.
 
 ## Step 4: Update Build Infrastructure
 
-Update the build scripts and configuration files to include the new extension in the build process.
+Update the build scripts and configuration files to include the new extension in the build
+process.
 
 ### Step 4.0: Update Root package.json
 
@@ -368,11 +387,13 @@ Add a build script to the root `package.json` for convenience:
 }
 ```
 
-This allows developers to build just this extension with `npm run build:copy-selection-path`.
+This allows developers to build just this extension with
+`npm run build:copy-selection-path`.
 
 ### Step 4.1: Update build.sh
 
-Add build steps to `build.sh` in the root directory. Insert the following before the final summary:
+Add build steps to `build.sh` in the root directory. Insert the following before the final
+summary:
 
 ```bash
 # Build R3BL Copy Selection Path and Range
@@ -425,7 +446,8 @@ After implementation, verify the extension works correctly:
     - Test with multi-line selection
     - Verify the message confirms what was copied
 5. **Verify keyboard shortcut**: Make sure `Alt+o` doesn't conflict with other extensions
-6. **Test integration**: Verify it appears in the extension pack when installing the meta extension
+6. **Test integration**: Verify it appears in the extension pack when installing the meta
+   extension
 
 Expected output examples:
 

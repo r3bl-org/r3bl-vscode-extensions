@@ -2,8 +2,10 @@
 
 This extension provides two powerful features for Rust development in VS Code:
 
-1. **Enhanced Semantic Highlighting** - Automatically applies optimized color rules for Rust semantic tokens
-2. **Debounced rust-analyzer Flycheck** - Keeps your IDE responsive by intelligently timing `cargo check` runs
+1. **Enhanced Semantic Highlighting** - Automatically applies optimized color rules for
+   Rust semantic tokens
+2. **Debounced rust-analyzer Flycheck** - Keeps your IDE responsive by intelligently
+   timing `cargo check` runs
 
 ## Table of Contents
 
@@ -19,7 +21,10 @@ This extension provides two powerful features for Rust development in VS Code:
 
 ### What It Does
 
-Automatically applies enhanced semantic token color customizations optimized for Rust development. This extension is designed as a companion to the [R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme) and provides color rules that perfectly complement the theme's palette.
+Automatically applies enhanced semantic token color customizations optimized for Rust
+development. This extension is designed as a companion to the
+[R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme) and
+provides color rules that perfectly complement the theme's palette.
 
 ### Why This Feature Exists
 
@@ -30,9 +35,12 @@ VS Code uses two separate highlighting systems:
 | **TextMate Tokens** | Theme files                      | Theme package            | Basic syntax: keywords, strings, comments    |
 | **Semantic Tokens** | Language servers (rust-analyzer) | `settings.json` **only** | Context-aware: mutability, lifetimes, traits |
 
-**The key constraint**: VS Code themes cannot include semantic token customizations. These rules must be defined in your `settings.json` - they cannot be bundled with a theme package.
+**The key constraint**: VS Code themes cannot include semantic token customizations. These
+rules must be defined in your `settings.json` - they cannot be bundled with a theme
+package.
 
-**This is why we need a separate extension** - to automatically manage semantic token settings for you, rather than requiring manual configuration.
+**This is why we need a separate extension** - to automatically manage semantic token
+settings for you, rather than requiring manual configuration.
 
 ### Screenshots
 
@@ -96,20 +104,24 @@ Use commands in Command Palette (`Ctrl+Shift+P`):
 
 ### The Problem: IDE Lag During Typing
 
-When you're coding intensely - typing fast, thinking through logic, refactoring - you need your IDE to be **instantly responsive**. Every keystroke should feel immediate.
+When you're coding intensely - typing fast, thinking through logic, refactoring - you need
+your IDE to be **instantly responsive**. Every keystroke should feel immediate.
 
-**rust-analyzer's `checkOnSave`** runs `cargo check` every time you save a file. While useful, this creates problems:
+**rust-analyzer's `checkOnSave`** runs `cargo check` every time you save a file. While
+useful, this creates problems:
 
 - **Heavy CPU usage** during compilation blocks the IDE
 - **Lag and stuttering** interrupt your coding flow
 - **Constant interruptions** when you're rapidly saving while experimenting
 - On large projects, each check can take **several seconds**
 
-The result: your IDE becomes sluggish exactly when you need it most - during active development.
+The result: your IDE becomes sluggish exactly when you need it most - during active
+development.
 
 ### The Solution: Intelligent Debouncing
 
-Debounced flycheck solves this by **waiting for you to stop typing** before running `cargo check`:
+Debounced flycheck solves this by **waiting for you to stop typing** before running
+`cargo check`:
 
 ```
 You type → Timer starts (1 second)
@@ -151,7 +163,8 @@ The feature is **enabled by default**. Customize in `settings.json`:
 3. **Timer expires** → "🚀 Running flycheck..."
 4. **Flycheck completes** → Status bar hides
 
-The timer is **global** - all Rust file changes share one timer since `runFlycheck` checks the entire workspace.
+The timer is **global** - all Rust file changes share one timer since `runFlycheck` checks
+the entire workspace.
 
 ### Keybinding for Manual Trigger
 
@@ -175,7 +188,9 @@ To customize the keybinding, add to your `keybindings.json`:
 
 ### Auto-Disable checkOnSave
 
-When `autoDisableCheckOnSave` is `true` (default), the extension automatically sets `rust-analyzer.checkOnSave` to `false`. This prevents redundant checks - debounced flycheck replaces save-triggered checks.
+When `autoDisableCheckOnSave` is `true` (default), the extension automatically sets
+`rust-analyzer.checkOnSave` to `false`. This prevents redundant checks - debounced
+flycheck replaces save-triggered checks.
 
 You'll see: "Disabled rust-analyzer.checkOnSave (debounced flycheck is now handling this)"
 
@@ -184,14 +199,17 @@ You'll see: "Disabled rust-analyzer.checkOnSave (debounced flycheck is now handl
 ## Requirements
 
 - VS Code 1.60.0 or higher
-- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) extension
-- Works best with [R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)
+- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+  extension
+- Works best with
+  [R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)
 
 ### Why rust-analyzer is Required
 
 Both features in this extension depend on **rust-analyzer**:
 
-- **Semantic Highlighting** - rust-analyzer provides token information (e.g., "this variable is mutable", "this is a lifetime")
+- **Semantic Highlighting** - rust-analyzer provides token information (e.g., "this
+  variable is mutable", "this is a lifetime")
 - **Debounced Flycheck** - rust-analyzer's `runFlycheck` command executes `cargo check`
 
 ## Commands
@@ -204,9 +222,12 @@ Both features in this extension depend on **rust-analyzer**:
 
 ## Shared Infrastructure
 
-This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL
+extensions (message queuing, global configuration, and more).
 
-See the [R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared) for available services, API usage, and configuration options.
+See the
+[R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)
+for available services, API usage, and configuration options.
 
 ## Release Notes
 

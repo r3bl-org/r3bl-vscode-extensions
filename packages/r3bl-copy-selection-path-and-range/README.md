@@ -1,6 +1,8 @@
 # R3BL Copy Selection Path and Range
 
-Quickly copy file paths with selected line ranges in formats optimized for Claude Code and IDE navigation. Perfect for sharing code references in prompts, documentation, or team communication.
+Quickly copy file paths with selected line ranges in formats optimized for Claude Code and
+IDE navigation. Perfect for sharing code references in prompts, documentation, or team
+communication.
 
 ## Features
 
@@ -35,7 +37,8 @@ When you select multiple lines, the output includes an `@` prefix for Claude Cod
 @packages/r3bl-copy-selection-path-and-range/src/extension.ts#L6-14
 ```
 
-This format is optimized for use in Claude Code prompts where the `@` symbol tells Claude to reference that specific file and line range.
+This format is optimized for use in Claude Code prompts where the `@` symbol tells Claude
+to reference that specific file and line range.
 
 ### Single-Line Selection (IDE Format)
 
@@ -45,7 +48,8 @@ When you have a single line selected or cursor on a line:
 packages/r3bl-copy-selection-path-and-range/src/extension.ts:6
 ```
 
-This format is compatible with most IDEs and terminals that support `file:line` navigation.
+This format is compatible with most IDEs and terminals that support `file:line`
+navigation.
 
 ## Requirements
 
@@ -112,8 +116,10 @@ The bug occurs in src/components/Form.tsx:89
 
 ## Commands
 
-- **`R3BL: Copy File Path with Selection Range`** - Copy the current file path with selection range to clipboard
-- **`R3BL: Show Copy History`** - Show history of recently copied paths and navigate to any location
+- **`R3BL: Copy File Path with Selection Range`** - Copy the current file path with
+  selection range to clipboard
+- **`R3BL: Show Copy History`** - Show history of recently copied paths and navigate to
+  any location
 
 ## Keyboard Shortcuts
 
@@ -145,9 +151,12 @@ You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
 
 ## Shared Infrastructure
 
-This extension uses the **R3BL Shared** extension for centralized services across all R3BL extensions (message queuing, global configuration, and more).
+This extension uses the **R3BL Shared** extension for centralized services across all R3BL
+extensions (message queuing, global configuration, and more).
 
-See the [R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared) for available services, API usage, and configuration options.
+See the
+[R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)
+for available services, API usage, and configuration options.
 
 ## Release Notes
 

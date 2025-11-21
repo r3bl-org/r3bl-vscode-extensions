@@ -22,11 +22,13 @@
 
 ### 1. User Configuration Settings
 
-All R3BL extensions will share the same user settings for feedback behavior. This provides a consistent experience across all R3BL extensions and simplifies configuration.
+All R3BL extensions will share the same user settings for feedback behavior. This provides
+a consistent experience across all R3BL extensions and simplifies configuration.
 
 **Global settings for all R3BL extensions:**
 
-- `r3bl.transientFeedbackMechanism` - Controls how all R3BL extensions display transient/dismissable feedback
+- `r3bl.transientFeedbackMechanism` - Controls how all R3BL extensions display
+  transient/dismissable feedback
 - `r3bl.statusbarMessageMaxLength` - Controls truncation length for all R3BL extensions
 
 **Settings to add to ONE extension's `package.json` (recommended: r3bl-extension-pack):**
@@ -67,7 +69,8 @@ All R3BL extensions will share the same user settings for feedback behavior. Thi
 - Consistent behavior across the entire extension family
 - Simpler user experience - configure once, applies everywhere
 - Settings stored in user's settings.json (not project-specific)
-- Clear distinction: transient feedback is configurable, interactive notifications remain unchanged
+- Clear distinction: transient feedback is configurable, interactive notifications remain
+  unchanged
 
 ### 2. Create Shared Status Bar Utility
 
@@ -418,7 +421,8 @@ Or alternatively, copy the utility file into each extension's `src/utils/` direc
 
 **Keep as notifications** (2 interactive - both critical):
 
-- dependencyChecker.ts Line 29-42: ripgrep not installed (Open Installation Guide) - **KEEP**
+- dependencyChecker.ts Line 29-42: ripgrep not installed (Open Installation Guide) -
+  **KEEP**
 - dependencyChecker.ts Line 47-60: fzf not installed (Open Installation Guide) - **KEEP**
 
 **Impact**: 80% of notifications migrated (8/10)
@@ -602,25 +606,31 @@ Based on message importance and length:
 
 ## Benefits of This Approach
 
-1. **Global Configuration**: One setting controls all R3BL extensions - configure once, applies everywhere
-2. **User Choice**: Users can choose their preferred feedback mechanism (none, notification, statusbar)
+1. **Global Configuration**: One setting controls all R3BL extensions - configure once,
+   applies everywhere
+2. **User Choice**: Users can choose their preferred feedback mechanism (none,
+   notification, statusbar)
 3. **Less Intrusive Default**: Status bar messages don't interrupt workflow
 4. **Auto-Dismissal**: Configurable timeouts prevent lingering (for status bar mode)
 5. **Customizable Display**: Users can control message length with truncation settings
 6. **Consistent UX**: Unified appearance and behavior across all R3BL extensions
 7. **Better Context**: Status bar messages appear where users expect status updates
-8. **Preserves Interaction**: Important prompts remain as notifications regardless of setting
-9. **Visual Hierarchy**: Color-coded icons indicate severity (success, info, warning, error)
+8. **Preserves Interaction**: Important prompts remain as notifications regardless of
+   setting
+9. **Visual Hierarchy**: Color-coded icons indicate severity (success, info, warning,
+   error)
 10. **Backward Compatibility**: Users who prefer notifications can switch back
 11. **Accessibility**: Full message always available in tooltip when truncated
-12. **Simple Implementation**: No per-extension config needed, just call `StatusBarMessage.show()`
+12. **Simple Implementation**: No per-extension config needed, just call
+    `StatusBarMessage.show()`
 13. **User Settings**: Stored in user's settings.json, follows user across workspaces
 
 ---
 
 ## User Configuration Examples
 
-Users can customize transient feedback in their VSCode user settings (applies to all R3BL extensions):
+Users can customize transient feedback in their VSCode user settings (applies to all R3BL
+extensions):
 
 ### Example 1: Use Status Bar (Default)
 
@@ -631,7 +641,8 @@ Users can customize transient feedback in their VSCode user settings (applies to
 }
 ```
 
-This is the default configuration - transient feedback appears in status bar, messages truncated at 50 characters. Interactive notifications with buttons are unaffected.
+This is the default configuration - transient feedback appears in status bar, messages
+truncated at 50 characters. Interactive notifications with buttons are unaffected.
 
 ### Example 2: Prefer Classic Notifications
 
@@ -641,7 +652,8 @@ This is the default configuration - transient feedback appears in status bar, me
 }
 ```
 
-All R3BL extensions will use classic VSCode notifications for transient feedback instead of status bar messages. Interactive notifications still work as before.
+All R3BL extensions will use classic VSCode notifications for transient feedback instead
+of status bar messages. Interactive notifications still work as before.
 
 ### Example 3: Disable Transient Feedback
 
@@ -651,7 +663,8 @@ All R3BL extensions will use classic VSCode notifications for transient feedback
 }
 ```
 
-Completely silent - no transient feedback messages from any R3BL extension. Interactive notifications with buttons still appear when needed.
+Completely silent - no transient feedback messages from any R3BL extension. Interactive
+notifications with buttons still appear when needed.
 
 ### Example 4: Status Bar with Longer Messages
 
@@ -711,27 +724,35 @@ Keep status bar messages brief (useful for narrow monitors or minimal UI).
 ### Important Considerations When Migrating
 
 1. **Interactive Notifications Must Stay**
-    - Notifications with buttons (Yes/No, Open File, etc.) MUST remain as `vscode.window.showInformationMessage()` with buttons
+    - Notifications with buttons (Yes/No, Open File, etc.) MUST remain as
+      `vscode.window.showInformationMessage()` with buttons
     - These are NOT affected by the feedback mechanism setting
-    - Examples: Theme detection prompts, confirmation dialogs, dependency installation prompts
+    - Examples: Theme detection prompts, confirmation dialogs, dependency installation
+      prompts
 
 2. **Error Handling**
     - Non-critical errors (like "No active editor") can use the configurable feedback
-    - Critical system errors that require immediate attention should remain as notifications
+    - Critical system errors that require immediate attention should remain as
+      notifications
     - Use judgment: if the error prevents further work, keep it as a notification
 
 3. **Message Truncation Strategy**
     - Truncation only applies to status bar mode
     - Full message is always available in the tooltip
-    - Example: "Created task space 'My Very Long Task Space Name With Many Words'" (60 chars)
+    - Example: "Created task space 'My Very Long Task Space Name With Many Words'" (60
+      chars)
         - Truncated at 50 chars: "Created task space 'My Very Long Task Space..."
-        - Full message in tooltip: "Created task space 'My Very Long Task Space Name With Many Words'"
+        - Full message in tooltip: "Created task space 'My Very Long Task Space Name With
+          Many Words'"
 
 4. **Global Configuration**
-    - All R3BL extensions share the same settings: `r3bl.transientFeedbackMechanism` and `r3bl.statusbarMessageMaxLength`
-    - No need to pass config prefix - the utility automatically reads from `r3bl` configuration
+    - All R3BL extensions share the same settings: `r3bl.transientFeedbackMechanism` and
+      `r3bl.statusbarMessageMaxLength`
+    - No need to pass config prefix - the utility automatically reads from `r3bl`
+      configuration
     - Configuration applies consistently across all R3BL extensions
-    - Setting name clarifies it only affects transient feedback, not interactive notifications with buttons
+    - Setting name clarifies it only affects transient feedback, not interactive
+      notifications with buttons
 
 5. **Deactivation Cleanup**
     - MUST call `StatusBarMessage.dispose()` in the extension's `deactivate()` function
@@ -741,7 +762,8 @@ Keep status bar messages brief (useful for narrow monitors or minimal UI).
 6. **Testing Each Mode**
     - Test with `feedbackMechanism: "none"` - verify no messages appear
     - Test with `feedbackMechanism: "notification"` - verify classic notifications work
-    - Test with `feedbackMechanism: "statusbar"` - verify status bar messages appear and auto-dismiss
+    - Test with `feedbackMechanism: "statusbar"` - verify status bar messages appear and
+      auto-dismiss
     - Test with various `statusbarMessageMaxLength` values (20, 50, 100, 200)
 
 7. **Duration Guidelines Recap**
@@ -776,9 +798,11 @@ Keep status bar messages brief (useful for narrow monitors or minimal UI).
 
 ## package.json Configuration Template
 
-Add this configuration block to **ONE extension's `package.json`** (recommended: `r3bl-extension-pack`):
+Add this configuration block to **ONE extension's `package.json`** (recommended:
+`r3bl-extension-pack`):
 
-This single configuration applies to **ALL** R3BL extensions, providing a unified and consistent user experience.
+This single configuration applies to **ALL** R3BL extensions, providing a unified and
+consistent user experience.
 
 ```json
 "contributes": {
@@ -810,8 +834,10 @@ This single configuration applies to **ALL** R3BL extensions, providing a unifie
 
 **Where to add this:**
 
-- **Recommended**: `packages/r3bl-extension-pack/package.json` - since this is the umbrella package that includes all extensions
-- **Alternative**: Any one of the individual extensions (but avoid adding to multiple extensions)
+- **Recommended**: `packages/r3bl-extension-pack/package.json` - since this is the
+  umbrella package that includes all extensions
+- **Alternative**: Any one of the individual extensions (but avoid adding to multiple
+  extensions)
 
 **Why only one extension needs this:**
 
@@ -823,18 +849,24 @@ This single configuration applies to **ALL** R3BL extensions, providing a unifie
 
 ## Summary
 
-This plan provides a comprehensive roadmap for migrating 82% of notifications (36 out of 44) to a configurable feedback system while preserving important interactive notifications.
+This plan provides a comprehensive roadmap for migrating 82% of notifications (36 out
+of 44) to a configurable feedback system while preserving important interactive
+notifications.
 
 **Key Features:**
 
-- **Global Configuration**: Single setting (`r3bl.transientFeedbackMechanism`) controls all R3BL extensions
-- **Clear Scope**: Only affects transient/dismissable feedback; interactive notifications with buttons remain unchanged
+- **Global Configuration**: Single setting (`r3bl.transientFeedbackMechanism`) controls
+  all R3BL extensions
+- **Clear Scope**: Only affects transient/dismissable feedback; interactive notifications
+  with buttons remain unchanged
 - **User Control**: Three feedback modes (none, notification, statusbar)
 - **Smart Defaults**: Status bar mode with 50-character limit
-- **Customizable Truncation**: User-configurable message length (`r3bl.statusbarMessageMaxLength`)
+- **Customizable Truncation**: User-configurable message length
+  (`r3bl.statusbarMessageMaxLength`)
 - **Backward Compatible**: Users who prefer notifications can switch back
 - **Consistent**: Same behavior across all R3BL extensions
-- **Simple API**: No config prefix needed - just call `StatusBarMessage.show(message, type, duration)`
+- **Simple API**: No config prefix needed - just call
+  `StatusBarMessage.show(message, type, duration)`
 - **Accessible**: Full messages always available in tooltips
 - **User Settings**: Stored in user's settings.json (not project-specific)
 
@@ -842,8 +874,11 @@ This plan provides a comprehensive roadmap for migrating 82% of notifications (3
 
 - Only the extension pack needs to define the settings in package.json
 - All extensions use the same StatusBarMessage utility
-- Simple migration pattern: replace `showInformationMessage()` with `StatusBarMessage.show()`
+- Simple migration pattern: replace `showInformationMessage()` with
+  `StatusBarMessage.show()`
 - Interactive notifications (with buttons) remain unchanged
 - Comprehensive testing checklist ensures all modes work correctly
 
-The implementation is straightforward, well-documented, and significantly improves user experience by reducing notification clutter while giving users full control over their preferred feedback mechanism with a single, unified configuration.
+The implementation is straightforward, well-documented, and significantly improves user
+experience by reducing notification clutter while giving users full control over their
+preferred feedback mechanism with a single, unified configuration.

@@ -38,12 +38,46 @@ configuration.
 
 This monorepo also contains shared infrastructure used by the extensions:
 
-| Package              | Type              | Description                                                              |
-| -------------------- | ----------------- | ------------------------------------------------------------------------ |
-| **r3bl-shared**      | VSCode Extension  | Centralized services (message queue, config) - auto-installed as dependency |
-| **r3bl-common-code** | NPM Package       | Common utilities and helpers shared across extensions                   |
+| Package              | Type             | Description                                                                 |
+| -------------------- | ---------------- | --------------------------------------------------------------------------- |
+| **r3bl-shared**      | VSCode Extension | Centralized services (message queue, config) - auto-installed as dependency |
+| **r3bl-common-code** | NPM Package      | Common utilities and helpers shared across extensions                       |
 
-> **Note for developers:** These are internal packages used by the extensions above. See [CLAUDE.md](CLAUDE.md) for development details.
+#### Architecture Overview
+
+```
+User Installs Extension Pack
+         ↓
+    [r3bl-extension-pack]  ← Meta-package (no code, just installs dependencies)
+         ↓
+    ┌────┴─────┬──────────────┬───────────────┬─────────────┐
+    ↓          ↓              ↓               ↓             ↓
+[r3bl-theme] [r3bl-task-...] [r3bl-fuzzy-...] [r3bl-copy-...] [etc.]
+    ↓          ↓              ↓               ↓             ↓
+    └──────────┴──────────────┴───────────────┴─────────────┘
+         ↓                                    ↓
+    [r3bl-shared]                      [r3bl-common-code]
+    (VSCode extension)                   (npm package)
+    Runtime services API                 Compile-time utilities
+```
+
+**Component Roles:**
+
+- **r3bl-extension-pack**: Meta-package that installs all user-facing extensions (no code,
+  pure convenience)
+- **r3bl-shared**: VSCode extension providing runtime services (message queue, centralized
+  configuration)
+    - Loaded at runtime by VSCode
+    - Accessed via extension API: `vscode.extensions.getExtension('R3BL.r3bl-shared')`
+    - Auto-installed via `extensionDependencies` in each extension's package.json
+- **r3bl-common-code**: NPM package with compile-time utilities (wrapper functions, type
+  definitions)
+    - Bundled into each extension at build time via webpack
+    - Used as local dependency: `"r3bl-common-code": "file:../r3bl-common-code"`
+    - Provides simplified API wrappers that call r3bl-shared services
+
+> **Note for developers:** These are internal packages used by the extensions above. See
+> [CLAUDE.md](CLAUDE.md) for development details.
 
 ## Installation
 

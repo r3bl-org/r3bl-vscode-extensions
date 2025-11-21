@@ -4,9 +4,9 @@ import * as vscode from 'vscode';
 import { spawn } from 'child_process';
 
 async function checkCommand(command: string): Promise<boolean> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         const proc = spawn('which', [command]);
-        proc.on('close', code => {
+        proc.on('close', (code) => {
             resolve(code === 0);
         });
         proc.on('error', () => {
@@ -35,7 +35,7 @@ export async function checkDependencies(): Promise<boolean> {
                     'https://github.com/BurntSushi/ripgrep#installation',
                 'Open Installation Guide',
             )
-            .then(choice => {
+            .then((choice) => {
                 if (choice) {
                     vscode.env.openExternal(
                         vscode.Uri.parse(
@@ -57,7 +57,7 @@ export async function checkDependencies(): Promise<boolean> {
                     'https://github.com/junegunn/fzf#installation',
                 'Open Installation Guide',
             )
-            .then(choice => {
+            .then((choice) => {
                 if (choice) {
                     vscode.env.openExternal(
                         vscode.Uri.parse('https://github.com/junegunn/fzf#installation'),

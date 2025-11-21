@@ -1,19 +1,21 @@
 # R3BL Development Pack
 
-The complete R3BL development experience in one install. Get a carefully crafted dark theme, enhanced Rust syntax highlighting, task management, and productivity tools - all configured to work together seamlessly.
+The complete R3BL development experience in one install. Get a carefully crafted dark
+theme, enhanced Rust syntax highlighting, task management, and productivity tools - all
+configured to work together seamlessly.
 
 ## Included Extensions
 
-| Extension                                                                                                                             | Description                                                     |
-| ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| **[R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort     |
-| **[R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)**                      | Enhanced semantic highlighting for Rust (auto-configured)       |
-| **[R3BL Task Management](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)**                             | Task space management for context switching                     |
-| **[R3BL Fuzzy Search](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)**                                   | Fast fuzzy file search powered by fzf and ripgrep               |
-| **[R3BL Copy Selection Path and Range](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Claude Code                |
-| **[R3BL Auto Insert Copyright](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion                            |
-| **[R3BL Shared](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)   |
-| **[rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)**                                      | Official Rust language server (3rd party)                       |
+| Extension                                                                                                                             | Description                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **[R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort   |
+| **[R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)**                      | Enhanced semantic highlighting for Rust (auto-configured)     |
+| **[R3BL Task Management](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)**                             | Task space management for context switching                   |
+| **[R3BL Fuzzy Search](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)**                                   | Fast fuzzy file search powered by fzf and ripgrep             |
+| **[R3BL Copy Selection Path and Range](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Claude Code              |
+| **[R3BL Auto Insert Copyright](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion                          |
+| **[R3BL Shared](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed) |
+| **[rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)**                                      | Official Rust language server (3rd party)                     |
 
 ## What You Get
 
@@ -59,23 +61,28 @@ All shortcuts can be customized in VS Code's Keyboard Shortcuts settings.
 
 ### Rust Development
 
-The pack is optimized for Rust with enhanced semantic highlighting, rust-analyzer integration, and a theme designed for Rust syntax.
+The pack is optimized for Rust with enhanced semantic highlighting, rust-analyzer
+integration, and a theme designed for Rust syntax.
 
 ### Multi-Task Workflows
 
-Use task spaces to manage multiple features or bug fixes simultaneously, switching contexts without losing your place.
+Use task spaces to manage multiple features or bug fixes simultaneously, switching
+contexts without losing your place.
 
 ### AI-Assisted Development
 
-Copy Selection extension outputs paths in Claude Code format (`@path#L1-10`), making it easy to reference code in AI prompts.
+Copy Selection extension outputs paths in Claude Code format (`@path#L1-10`), making it
+easy to reference code in AI prompts.
 
 ## Configuration
 
-All R3BL extensions share a common configuration for user feedback and notifications. These settings apply globally across all R3BL extensions.
+All R3BL extensions share a common configuration for user feedback and notifications.
+These settings apply globally across all R3BL extensions.
 
 ### Feedback Mechanism
 
-Control how R3BL extensions display transient feedback messages (success, info, warning, error):
+Control how R3BL extensions display transient feedback messages (success, info, warning,
+error):
 
 ```json
 "r3bl.transientFeedbackMechanism": "statusbar"
@@ -83,11 +90,14 @@ Control how R3BL extensions display transient feedback messages (success, info, 
 
 **Options:**
 
-- `"statusbar"` (default) - Shows auto-dismissing messages in the status bar (less intrusive)
-- `"notification"` - Shows messages as VS Code notifications (classic behavior, may linger)
+- `"statusbar"` (default) - Shows auto-dismissing messages in the status bar (less
+  intrusive)
+- `"notification"` - Shows messages as VS Code notifications (classic behavior, may
+  linger)
 - `"none"` - Disables all transient feedback messages
 
-**Note:** This setting does NOT affect interactive notifications with action buttons (like confirmations or prompts).
+**Note:** This setting does NOT affect interactive notifications with action buttons (like
+confirmations or prompts).
 
 ### Status Bar Message Settings
 
@@ -99,7 +109,8 @@ When using `"statusbar"` feedback mechanism, you can customize the display:
 "r3bl.statusbarMessageMaxLength": 50
 ```
 
-Maximum characters to display before truncating with "...". Full message visible in tooltip.
+Maximum characters to display before truncating with "...". Full message visible in
+tooltip.
 
 - **Default:** 50
 - **Range:** 20-200
@@ -155,7 +166,8 @@ All R3BL extensions that display transient feedback messages use these global se
 - ✅ R3BL Semantic Configuration
 - ✅ R3BL Task Management
 
-**Infrastructure:** R3BL Shared provides the centralized message queue and configuration management that ensures a consistent feedback experience across all R3BL tools.
+**Infrastructure:** R3BL Shared provides the centralized message queue and configuration
+management that ensures a consistent feedback experience across all R3BL tools.
 
 ## Release Notes
 

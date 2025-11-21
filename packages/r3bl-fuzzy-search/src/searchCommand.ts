@@ -70,7 +70,7 @@ export async function executeSearchCommand() {
                 await displayResults(content, input.query);
 
                 // 7. Show summary
-                const uniqueFiles = new Set(results.map(r => r.file)).size;
+                const uniqueFiles = new Set(results.map((r) => r.file)).size;
                 showStatusBarMessage(
                     `Found ${results.length} results in ${uniqueFiles} files`,
                     'success',

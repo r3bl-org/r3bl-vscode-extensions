@@ -30,7 +30,7 @@ export class SearchPanel {
 
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(
-            async message => {
+            async (message) => {
                 switch (message.command) {
                     case 'search':
                         await this._handleSearch(
@@ -127,7 +127,7 @@ export class SearchPanel {
             // Send results back to webview
             this._panel.webview.postMessage({
                 command: 'searchResults',
-                results: results.map(r => ({
+                results: results.map((r) => ({
                     file: r.file,
                     line: r.line,
                     content: r.content.replace(/\x1b\[[0-9;]*m/g, ''), // Remove ANSI codes
@@ -219,7 +219,7 @@ export class SearchPanel {
             });
 
             // Show summary
-            const uniqueFiles = new Set(results.map(r => r.file)).size;
+            const uniqueFiles = new Set(results.map((r) => r.file)).size;
             showStatusBarMessage(
                 `Found ${results.length} results in ${uniqueFiles} files`,
                 'success',

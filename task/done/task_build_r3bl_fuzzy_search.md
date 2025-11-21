@@ -4,12 +4,14 @@
 
 **Extension Name:** `r3bl-fuzzy-search`
 
-**Purpose:** Fuzzy search across file contents using fzf, displaying results in VS Code's Search Editor format.
+**Purpose:** Fuzzy search across file contents using fzf, displaying results in VS Code's
+Search Editor format.
 
 **Key Specifications:**
 
 - ✅ Command: `r3bl-fuzzy-search.searchInFiles`
-- ✅ Keybinding: `ctrl+alt+d` (macOS: `cmd+alt+d`) - intentionally shadows built-in `search.action.openNewEditor`
+- ✅ Keybinding: `ctrl+alt+d` (macOS: `cmd+alt+d`) - intentionally shadows built-in
+  `search.action.openNewEditor`
 - ✅ Keybinding is user-configurable
 - ✅ macOS and Linux only (no Windows)
 - ✅ Results limit: 500 (user-configurable)
@@ -141,8 +143,8 @@ async function executeSearch(
     // Add exclude patterns
     const excludes = input.excludePatterns
         .split(',')
-        .map(p => p.trim())
-        .filter(p => p.length > 0);
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0);
 
     for (const exclude of excludes) {
         rgArgs.push('--glob', `!${exclude}`);
@@ -186,7 +188,7 @@ async function executePipeline(
         rg.stdout.pipe(fzf.stdin);
 
         // Collect fzf output
-        fzf.stdout.on('data', data => {
+        fzf.stdout.on('data', (data) => {
             const chunk = data.toString();
             const lines = chunk.split('\n');
 
@@ -207,11 +209,11 @@ async function executePipeline(
         });
 
         let errorOutput = '';
-        fzf.stderr.on('data', data => {
+        fzf.stderr.on('data', (data) => {
             errorOutput += data.toString();
         });
 
-        fzf.on('close', code => {
+        fzf.on('close', (code) => {
             if (code === 0 || code === 1) {
                 // 0 = matches, 1 = no matches
                 if (limitReached) {
@@ -225,11 +227,11 @@ async function executePipeline(
             }
         });
 
-        rg.on('error', err => {
+        rg.on('error', (err) => {
             reject(new Error(`ripgrep error: ${err.message}`));
         });
 
-        fzf.on('error', err => {
+        fzf.on('error', (err) => {
             reject(new Error(`fzf error: ${err.message}`));
         });
     });
@@ -298,7 +300,7 @@ function generateHeader(input: SearchInput, results: SearchResult[]): string {
     }
 
     // Count unique files
-    const uniqueFiles = new Set(results.map(r => r.file)).size;
+    const uniqueFiles = new Set(results.map((r) => r.file)).size;
     lines.push(`#`);
     lines.push(`# ${results.length} results - ${uniqueFiles} files`);
 
@@ -381,7 +383,7 @@ async function checkDependencies(): Promise<boolean> {
                     'https://github.com/BurntSushi/ripgrep#installation',
                 'Open Installation Guide',
             )
-            .then(choice => {
+            .then((choice) => {
                 if (choice) {
                     vscode.env.openExternal(
                         vscode.Uri.parse(
@@ -403,7 +405,7 @@ async function checkDependencies(): Promise<boolean> {
                     'https://github.com/junegunn/fzf#installation',
                 'Open Installation Guide',
             )
-            .then(choice => {
+            .then((choice) => {
                 if (choice) {
                     vscode.env.openExternal(
                         vscode.Uri.parse('https://github.com/junegunn/fzf#installation'),
@@ -417,9 +419,9 @@ async function checkDependencies(): Promise<boolean> {
 }
 
 async function checkCommand(command: string): Promise<boolean> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         const proc = spawn('which', [command]);
-        proc.on('close', code => {
+        proc.on('close', (code) => {
             resolve(code === 0);
         });
         proc.on('error', () => {
@@ -604,7 +606,7 @@ export async function executeSearchCommand() {
                 await displayResults(content);
 
                 // 7. Show summary
-                const uniqueFiles = new Set(results.map(r => r.file)).size;
+                const uniqueFiles = new Set(results.map((r) => r.file)).size;
                 vscode.window.showInformationMessage(
                     `Found ${results.length} results in ${uniqueFiles} files`,
                 );

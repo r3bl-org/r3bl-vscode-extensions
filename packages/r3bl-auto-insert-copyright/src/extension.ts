@@ -24,7 +24,10 @@ export function activate(context: vscode.ExtensionContext) {
             if (copyrightAdded) {
                 showStatusBarMessage('Copyright Added', 'success');
             } else {
-                showStatusBarMessage('Copyright could not be added to this file', 'warning');
+                showStatusBarMessage(
+                    'Copyright could not be added to this file',
+                    'warning',
+                );
             }
         },
     );

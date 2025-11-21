@@ -1,10 +1,12 @@
 # R3BL Common Code
 
-Common utilities for R3BL VSCode extensions. This is an internal npm package that provides shared TypeScript utilities used across all R3BL extensions.
+Common utilities for R3BL VSCode extensions. This is an internal npm package that provides
+shared TypeScript utilities used across all R3BL extensions.
 
 ## Purpose
 
 This package eliminates code duplication by providing:
+
 - Type-safe wrappers for r3bl-shared extension API
 - Shared utility functions
 - Common type definitions
@@ -15,9 +17,9 @@ This package is used as a local file dependency in R3BL extensions:
 
 ```json
 {
-  "dependencies": {
-    "r3bl-common-code": "file:../r3bl-common-code"
-  }
+    "dependencies": {
+        "r3bl-common-code": "file:../r3bl-common-code"
+    }
 }
 ```
 
@@ -41,6 +43,7 @@ showStatusBarMessage('Operation completed', 'info');
 **Available message types:** `'info'`, `'success'`, `'warning'`, `'error'`
 
 **Benefits:**
+
 - Reduces 9 lines of boilerplate to 2 lines
 - Automatic error handling with marketplace fallback
 - Type-safe API
@@ -74,6 +77,7 @@ type StatusBarMessageType = 'info' | 'success' | 'warning' | 'error';
 ## Architecture
 
 This package:
+
 - Is compiled with TypeScript compiler (tsc) to separate `.js` and `.d.ts` files
 - Provides proper type definitions for TypeScript intellisense
 - Includes complete error handling with marketplace link fallback
@@ -91,6 +95,7 @@ npm run compile
 ```
 
 This generates:
+
 - `dist/index.js` - Compiled JavaScript
 - `dist/index.d.ts` - TypeScript type definitions
 - `dist/index.js.map` - Source map
@@ -114,10 +119,12 @@ packages/r3bl-common-code/
 ## Why Not Webpack?
 
 This package uses `tsc` (TypeScript compiler) instead of webpack because:
+
 - Libraries need separate `.js` and `.d.ts` files for proper type exports
 - Consuming projects need to tree-shake unused code
 - Standard approach for npm libraries
-- Webpack bundles everything into a single file (appropriate for applications, not libraries)
+- Webpack bundles everything into a single file (appropriate for applications, not
+  libraries)
 
 ## License
 

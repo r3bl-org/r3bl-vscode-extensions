@@ -1,6 +1,7 @@
 # Development Guide for R3BL VSCode Extensions
 
-This document provides instructions for Claude on working with this monorepo of R3BL VSCode extensions.
+This document provides instructions for Claude on working with this monorepo of R3BL
+VSCode extensions.
 
 ## Project Overview
 
@@ -36,14 +37,51 @@ packages/
 ```
 
 **Architecture Notes:**
-- `r3bl-shared` is a VSCode extension that owns centralized state (message queues, configuration)
+
+- `r3bl-shared` is a VSCode extension that owns centralized state (message queues,
+  configuration)
 - `r3bl-common-code` is an NPM package with pure utilities (no VSCode-specific state)
 - User-facing extensions depend on both for shared functionality
-- Each extension maintains its own `package.json` and can be developed independently while sharing common tooling
+- Each extension maintains its own `package.json` and can be developed independently while
+  sharing common tooling
+
+**Architecture Diagram:**
+
+```
+User Installs Extension Pack
+         ↓
+    [r3bl-extension-pack]  ← Meta-package (no code, just installs dependencies)
+         ↓
+    ┌────┴─────┬──────────────┬───────────────┬─────────────┐
+    ↓          ↓              ↓               ↓             ↓
+[r3bl-theme] [r3bl-task-...] [r3bl-fuzzy-...] [r3bl-copy-...] [etc.]
+    ↓          ↓              ↓               ↓             ↓
+    └──────────┴──────────────┴───────────────┴─────────────┘
+         ↓                                    ↓
+    [r3bl-shared]                      [r3bl-common-code]
+    (VSCode extension)                   (npm package)
+    Runtime services API                 Compile-time utilities
+```
+
+**Component Roles:**
+
+- **r3bl-extension-pack**: Meta-package that installs all user-facing extensions (no code,
+  pure convenience)
+- **r3bl-shared**: VSCode extension providing runtime services (message queue, centralized
+  configuration)
+    - Loaded at runtime by VSCode
+    - Accessed via extension API: `vscode.extensions.getExtension('R3BL.r3bl-shared')`
+    - Auto-installed via `extensionDependencies` in each extension's package.json
+- **r3bl-common-code**: NPM package with compile-time utilities (wrapper functions, type
+  definitions)
+    - Bundled into each extension at build time via webpack
+    - Used as local dependency: `"r3bl-common-code": "file:../r3bl-common-code"`
+    - Provides simplified API wrappers that call r3bl-shared services
 
 ## Using R3BL Shared Extension API
 
-**r3bl-shared** provides centralized services (like status bar message queue) for all R3BL extensions.
+**r3bl-shared** provides centralized services (like status bar message queue) for all R3BL
+extensions.
 
 ### Declaring the Dependency
 
@@ -51,11 +89,12 @@ All R3BL extensions **must** declare their dependency on r3bl-shared in `package
 
 ```json
 {
-  "extensionDependencies": ["R3BL.r3bl-shared"]
+    "extensionDependencies": ["R3BL.r3bl-shared"]
 }
 ```
 
-This ensures VSCode loads r3bl-shared before your extension, guaranteeing the API is available.
+This ensures VSCode loads r3bl-shared before your extension, guaranteeing the API is
+available.
 
 ### Using the Status Bar Message Queue
 
@@ -64,22 +103,27 @@ This ensures VSCode loads r3bl-shared before your extension, guaranteeing the AP
 ```typescript
 const sharedExt = vscode.extensions.getExtension('R3BL.r3bl-shared');
 if (sharedExt?.isActive && sharedExt.exports?.showStatusBarMessage) {
-  sharedExt.exports.showStatusBarMessage('Task created!', 'success');
+    sharedExt.exports.showStatusBarMessage('Task created!', 'success');
 } else {
-  vscode.window.showErrorMessage(
-    "R3BL Shared extension is not active. Please ensure it is installed and enabled.",
-    "Install Extension"
-  ).then(choice => {
-    if (choice === "Install Extension") {
-      vscode.env.openExternal(vscode.Uri.parse("vscode:extension/R3BL.r3bl-shared"));
-    }
-  });
+    vscode.window
+        .showErrorMessage(
+            'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
+            'Install Extension',
+        )
+        .then((choice) => {
+            if (choice === 'Install Extension') {
+                vscode.env.openExternal(
+                    vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared'),
+                );
+            }
+        });
 }
 ```
 
 **Available message types:** `'info'`, `'success'`, `'warning'`, `'error'`
 
 **Why this approach?**
+
 - Centralized FIFO queue ensures messages don't overlap
 - Direct API calls - no wrapper imports needed
 - VSCode manages extension loading order via `extensionDependencies`
@@ -88,17 +132,19 @@ See `packages/r3bl-shared/README.md` for more details.
 
 ## Using R3BL Common Code Utilities
 
-**r3bl-common-code** provides simplified utilities for calling r3bl-shared APIs from TypeScript code.
+**r3bl-common-code** provides simplified utilities for calling r3bl-shared APIs from
+TypeScript code.
 
 ### Installing the Dependency
 
-All R3BL extensions that use common utilities must declare their dependency in `package.json`:
+All R3BL extensions that use common utilities must declare their dependency in
+`package.json`:
 
 ```json
 {
-  "dependencies": {
-    "r3bl-common-code": "file:../r3bl-common-code"
-  }
+    "dependencies": {
+        "r3bl-common-code": "file:../r3bl-common-code"
+    }
 }
 ```
 
@@ -115,6 +161,7 @@ showStatusBarMessage('Please check your settings', 'warning');
 ```
 
 **Benefits:**
+
 - Reduces 9 lines of boilerplate to 2 lines
 - Automatic error handling with fallback UI
 - Type-safe API with `StatusBarMessageType` enum
@@ -126,13 +173,16 @@ showStatusBarMessage('Please check your settings', 'warning');
 
 The r3bl-common-code package exports:
 
-- `showStatusBarMessage(message: string, type: StatusBarMessageType)` - Type-safe wrapper for status bar messages
-- `callSharedAPI(apiMethod: string, ...args: any[])` - Generic API caller for extensibility
+- `showStatusBarMessage(message: string, type: StatusBarMessageType)` - Type-safe wrapper
+  for status bar messages
+- `callSharedAPI(apiMethod: string, ...args: any[])` - Generic API caller for
+  extensibility
 - `StatusBarMessageType` - Type definition for message types
 
 ### Architecture
 
 The r3bl-common-code package:
+
 - Is compiled with TypeScript compiler (tsc) to separate .js and .d.ts files
 - Provides proper type definitions for TypeScript intellisense
 - Includes complete error handling with marketplace link fallback
@@ -160,7 +210,8 @@ In `packages/extension-name/package.json`, increment the version number:
 
 ### 3. Update Extension Pack Version
 
-In `packages/r3bl-extension-pack/package.json`, also increment the version to reflect that it includes the updated extension:
+In `packages/r3bl-extension-pack/package.json`, also increment the version to reflect that
+it includes the updated extension:
 
 ```json
 {
@@ -180,7 +231,8 @@ This script automatically:
 
 - Compiles TypeScript extensions
 - Generates new .vsix files with the correct versioned names
-- **Removes all outdated versions** of the extension (e.g., `r3bl-theme-1.0.2.vsix` is deleted when building 1.0.3)
+- **Removes all outdated versions** of the extension (e.g., `r3bl-theme-1.0.2.vsix` is
+  deleted when building 1.0.3)
 - Creates the extension pack with all current extension versions
 
 ### 5. Test the Changes (Optional but Recommended)
@@ -228,7 +280,8 @@ vsce publish
 - Publisher account must be set up
 - Run `vsce login R3BL` if not already authenticated
 
-**Note:** Publishing makes the extension publicly available on the VSCode Marketplace. Only do this after thorough testing.
+**Note:** Publishing makes the extension publicly available on the VSCode Marketplace.
+Only do this after thorough testing.
 
 ### Key Points for Modifications
 
@@ -369,12 +422,14 @@ git commit -m "[extension-name] Add r3bl-new-extension"
 
 This generates all .vsix files with your latest changes. The build script:
 
-- Compiles TypeScript extensions (r3bl-auto-insert-copyright, r3bl-semantic-config, r3bl-copy-selection-path-and-range)
+- Compiles TypeScript extensions (r3bl-auto-insert-copyright, r3bl-semantic-config,
+  r3bl-copy-selection-path-and-range)
 - Packages all individual extensions
 - Builds the extension pack
 - Creates all .vsix artifacts in their respective directories
 
-After building, run `./install.sh` to install the generated .vsix files. This separation is crucial for:
+After building, run `./install.sh` to install the generated .vsix files. This separation
+is crucial for:
 
 - Clean separation between building and installing
 - Enabling CI/CD workflows that only build artifacts
@@ -401,7 +456,8 @@ npm run package:extension-pack
 
 ## Maintaining CHANGELOG.md
 
-**Always update CHANGELOG.md when making changes to extensions.** This keeps users informed about what's new.
+**Always update CHANGELOG.md when making changes to extensions.** This keeps users
+informed about what's new.
 
 ### Format and Structure
 
@@ -467,9 +523,12 @@ Update CHANGELOG.md when:
 
 ### Why Centralized Services?
 
-**Problem**: Each VSCode extension is bundled separately by webpack. When multiple extensions try to show status bar messages simultaneously, they overlap and hide each other.
+**Problem**: Each VSCode extension is bundled separately by webpack. When multiple
+extensions try to show status bar messages simultaneously, they overlap and hide each
+other.
 
-**Solution**: The r3bl-shared extension owns centralized services (like the status bar message queue), and other extensions access these services via the VSCode extension API.
+**Solution**: The r3bl-shared extension owns centralized services (like the status bar
+message queue), and other extensions access these services via the VSCode extension API.
 
 ### Adding New Centralized Services
 
@@ -522,14 +581,18 @@ const sharedExt = vscode.extensions.getExtension('R3BL.r3bl-shared');
 if (sharedExt?.isActive && sharedExt.exports?.myServiceDoSomething) {
     sharedExt.exports.myServiceDoSomething('key', 'value');
 } else {
-    vscode.window.showErrorMessage(
-        'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
-        'Install Extension'
-    ).then(choice => {
-        if (choice === 'Install Extension') {
-            vscode.env.openExternal(vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared'));
-        }
-    });
+    vscode.window
+        .showErrorMessage(
+            'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
+            'Install Extension',
+        )
+        .then((choice) => {
+            if (choice === 'Install Extension') {
+                vscode.env.openExternal(
+                    vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared'),
+                );
+            }
+        });
 }
 ```
 
@@ -540,8 +603,8 @@ if (sharedExt?.isActive && sharedExt.exports?.myServiceDoSomething) {
 
 ### Current Shared APIs
 
-| API                      | Description                                     |
-| ------------------------ | ----------------------------------------------- |
+| API                      | Description                                    |
+| ------------------------ | ---------------------------------------------- |
 | `showStatusBarMessage()` | Centralized FIFO queue for status bar messages |
 
 ### When to Use Centralized Services
@@ -553,21 +616,25 @@ Only use centralized services for:
 - ✅ Global locks or semaphores
 - ✅ Centralized event buses
 
-For simple utilities without shared state, just duplicate the code across extensions or create a separate npm package.
+For simple utilities without shared state, just duplicate the code across extensions or
+create a separate npm package.
 
 ## Claude Code Integration
 
 ### Auto-Upgrade System for `/r3bl-task` Command
 
-The R3BL Task Management extension includes a `/r3bl-task` slash command for Claude Code CLI. This command is automatically upgraded when the extension is updated.
+The R3BL Task Management extension includes a `/r3bl-task` slash command for Claude Code
+CLI. This command is automatically upgraded when the extension is updated.
 
 #### How It Works
 
-1. **Checksum Comparison**: On extension activation, the extension calculates SHA256 checksums of:
+1. **Checksum Comparison**: On extension activation, the extension calculates SHA256
+   checksums of:
     - The template file: `packages/r3bl-task-management/templates/r3bl-task-command.md`
     - The installed file: `.claude/commands/r3bl-task.md`
 
-2. **Auto-Upgrade**: If the checksums differ (template has changed), the extension automatically overwrites the installed file.
+2. **Auto-Upgrade**: If the checksums differ (template has changed), the extension
+   automatically overwrites the installed file.
 
 3. **User Notification**: Shows an FYI message using `StatusBarMessage`:
 
@@ -583,15 +650,18 @@ The R3BL Task Management extension includes a `/r3bl-task` slash command for Cla
 
 #### Why Checksums Instead of Version Numbers?
 
-**Automatic detection**: No need to remember to bump version numbers - any template change triggers an upgrade.
+**Automatic detection**: No need to remember to bump version numbers - any template change
+triggers an upgrade.
 
 **Accurate upgrades**: Only upgrades when the template actually changes.
 
 **Simpler code**: No version parsing logic needed.
 
-**Git-friendly**: Users review changes in their normal git workflow, just like any other file.
+**Git-friendly**: Users review changes in their normal git workflow, just like any other
+file.
 
-**User customizations**: If users customize the command, they can merge changes from git when we upgrade the template.
+**User customizations**: If users customize the command, they can merge changes from git
+when we upgrade the template.
 
 #### Implementation Location
 
@@ -605,13 +675,15 @@ The R3BL Task Management extension includes a `/r3bl-task` slash command for Cla
 
 When you make changes to the `/r3bl-task` command:
 
-1. **Update the template**: Edit `packages/r3bl-task-management/templates/r3bl-task-command.md`
+1. **Update the template**: Edit
+   `packages/r3bl-task-management/templates/r3bl-task-command.md`
 
 2. **Build and test**: Run `./build.sh` and `./install.sh`
 
 3. **Version the extension**: Bump `packages/r3bl-task-management/package.json` version
 
-That's it! The checksum will automatically differ, triggering upgrades for all users on next activation.
+That's it! The checksum will automatically differ, triggering upgrades for all users on
+next activation.
 
 ## Quick Workflow Checklist
 
@@ -646,4 +718,5 @@ The following files automatically read versions from `package.json`:
 - `build.sh` - reads version to name .vsix files correctly
 - `install.sh` - reads version to install correct .vsix files
 
-Do NOT manually edit version numbers in scripts or .vsix filenames. The scripts handle this automatically based on the `package.json` version fields.
+Do NOT manually edit version numbers in scripts or .vsix filenames. The scripts handle
+this automatically based on the `package.json` version fields.
