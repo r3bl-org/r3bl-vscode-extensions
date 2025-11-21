@@ -1,0 +1,23 @@
+{
+  "version": "2.0",
+  "taskSpaces": [
+    {
+      "name": "remove_notifications",
+      "id": "1e36403b-6239-4cfd-9d9c-da8035450279",
+      "tabs": [
+        {
+          "path": "packages/r3bl-fuzzy-search/package.json",
+          "isPinned": false
+        },
+        {
+          "path": "task/task_remove_notifications.md",
+          "isPinned": false
+        }
+      ],
+      "taskFile": "task/task_remove_notifications.md",
+      "activeTab": "task/task_remove_notifications.md",
+      "createdAt": 1763734076771
+    }
+  ],
+  "activeTaskSpaceId": "1e36403b-6239-4cfd-9d9c-da8035450279"
+}
