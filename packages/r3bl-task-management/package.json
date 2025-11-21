@@ -2,7 +2,7 @@
   "name": "r3bl-task-management",
   "displayName": "R3BL Task Management",
   "description": "Manage task spaces - collections of open tabs for different work contexts",
-  "version": "1.0.15",
+  "version": "1.1.0",
   "publisher": "R3BL",
   "license": "MIT",
   "engines": {
@@ -93,6 +93,9 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile",
     "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "@r3bl/shared": "file:../r3bl-shared"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",

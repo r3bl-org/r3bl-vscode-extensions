@@ -119,6 +119,16 @@ You can customize this shortcut in VS Code's Keyboard Shortcuts settings by sear
 - Results are limited to the configured maximum (default 100). If you hit this limit, consider narrowing your search query.
 - Windows is not supported due to simplified path handling for Unix-like systems.
 
+## Global R3BL Configuration
+
+This extension uses global R3BL settings for feedback and notifications. You can customize how R3BL extensions display messages, including:
+
+- Feedback mechanism (status bar, notifications, or none)
+- Status bar message duration for each message type
+- Message length and display settings
+
+For detailed configuration options, see the [R3BL Extension Pack Configuration](../r3bl-extension-pack/README.md#configuration) section.
+
 ## Release Notes
 
 See [CHANGELOG.md](../../CHANGELOG.md) for detailed release notes and version history.

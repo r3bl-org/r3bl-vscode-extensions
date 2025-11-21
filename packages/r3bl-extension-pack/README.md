@@ -65,6 +65,91 @@ Use task spaces to manage multiple features or bug fixes simultaneously, switchi
 ### AI-Assisted Development
 Copy Selection extension outputs paths in Claude Code format (`@path#L1-10`), making it easy to reference code in AI prompts.
 
+## Configuration
+
+All R3BL extensions share a common configuration for user feedback and notifications. These settings apply globally across all R3BL extensions.
+
+### Feedback Mechanism
+
+Control how R3BL extensions display transient feedback messages (success, info, warning, error):
+
+```json
+"r3bl.transientFeedbackMechanism": "statusbar"
+```
+
+**Options:**
+- `"statusbar"` (default) - Shows auto-dismissing messages in the status bar (less intrusive)
+- `"notification"` - Shows messages as VS Code notifications (classic behavior, may linger)
+- `"none"` - Disables all transient feedback messages
+
+**Note:** This setting does NOT affect interactive notifications with action buttons (like confirmations or prompts).
+
+### Status Bar Message Settings
+
+When using `"statusbar"` feedback mechanism, you can customize the display:
+
+#### Message Length
+
+```json
+"r3bl.statusbarMessageMaxLength": 50
+```
+
+Maximum characters to display before truncating with "...". Full message visible in tooltip.
+- **Default:** 50
+- **Range:** 20-200
+
+#### Message Durations
+
+Customize how long each message type displays (in milliseconds):
+
+```json
+"r3bl.statusbarMessage.successDuration": 3000,
+"r3bl.statusbarMessage.infoDuration": 3000,
+"r3bl.statusbarMessage.warningDuration": 4000,
+"r3bl.statusbarMessage.errorDuration": 5000
+```
+
+**Defaults:**
+- Success: 3000ms (3 seconds)
+- Info: 3000ms (3 seconds)
+- Warning: 4000ms (4 seconds)
+- Error: 5000ms (5 seconds)
+
+**Range:** 500-10000ms per message type
+
+### Example Configuration
+
+For a completely silent experience with no transient messages:
+
+```json
+{
+  "r3bl.transientFeedbackMechanism": "none"
+}
+```
+
+For longer-lasting messages with extended display:
+
+```json
+{
+  "r3bl.transientFeedbackMechanism": "statusbar",
+  "r3bl.statusbarMessageMaxLength": 80,
+  "r3bl.statusbarMessage.successDuration": 5000,
+  "r3bl.statusbarMessage.errorDuration": 8000
+}
+```
+
+### Which Extensions Use These Settings?
+
+All R3BL extensions that display transient feedback messages use these global settings:
+
+- ✅ R3BL Auto Insert Copyright
+- ✅ R3BL Copy Selection Path and Range
+- ✅ R3BL Fuzzy Search
+- ✅ R3BL Semantic Configuration
+- ✅ R3BL Task Management
+
+This ensures a consistent feedback experience across all R3BL tools.
+
 ## Release Notes
 
 See [CHANGELOG.md](../../CHANGELOG.md) for detailed release notes and version history.

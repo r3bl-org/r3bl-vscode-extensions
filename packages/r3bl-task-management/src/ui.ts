@@ -5,6 +5,7 @@ import * as path from 'path';
 import { TaskSpace } from './types';
 import { TaskSpaceManager } from './taskSpaceManager';
 import { promptToInstallClaudeCodeIntegration } from './claudeCodeIntegration';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
   taskSpace?: TaskSpace;
@@ -187,11 +188,11 @@ async function handleCreateTaskSpace(
             taskFile = 'task/' + selected.label;
           }
         } else {
-          vscode.window.showInformationMessage('No .md files found in task/ directory');
+          StatusBarMessage.show('No .md files in task/ directory', StatusBarMessageType.Info);
         }
       } catch {
         // task/ directory doesn't exist
-        vscode.window.showInformationMessage('task/ directory not found');
+        StatusBarMessage.show('task/ directory not found', StatusBarMessageType.Info);
       }
     }
   }
@@ -207,16 +208,14 @@ async function handleCreateTaskSpace(
     updateStatusBar(statusBar, manager);
 
     // Show confirmation
-    vscode.window.showInformationMessage(
-      `Task space "${name}" created with ${taskSpace.tabs.length} tab(s)`
-    );
+    StatusBarMessage.show(`Task space "${name}" created (${taskSpace.tabs.length} tabs)`, StatusBarMessageType.Success);
 
     // Prompt to install Claude Code integration if task file is linked
     if (taskFile && context) {
       await promptToInstallClaudeCodeIntegration(context);
     }
   } catch (error) {
-    vscode.window.showErrorMessage(`Failed to create task space: ${error}`);
+    StatusBarMessage.show(`Failed to create task space: ${error}`, StatusBarMessageType.Error);
   }
 }
 
@@ -230,7 +229,7 @@ async function handleSwitchTaskSpace(
 ): Promise<void> {
   // Check if already active
   if (manager.getActiveTaskSpaceId() === taskSpace.id) {
-    vscode.window.showInformationMessage(`Already in task space "${taskSpace.name}"`);
+    StatusBarMessage.show(`Already in "${taskSpace.name}"`, StatusBarMessageType.Info);
     return;
   }
 
@@ -272,11 +271,9 @@ async function handleSwitchTaskSpace(
         updateStatusBar(statusBar, manager);
 
         // Show confirmation
-        vscode.window.showInformationMessage(
-          `Switched to "${taskSpace.name}" (${taskSpace.tabs.length} tabs)`
-        );
+        StatusBarMessage.show(`Switched to "${taskSpace.name}" (${taskSpace.tabs.length} tabs)`, StatusBarMessageType.Success);
       } catch (error) {
-        vscode.window.showErrorMessage(`Failed to switch task space: ${error}`);
+        StatusBarMessage.show(`Failed to switch task space: ${error}`, StatusBarMessageType.Error);
       }
     }
   );
@@ -312,9 +309,9 @@ async function handleDeleteTaskSpace(
     updateStatusBar(statusBar, manager);
 
     // Show confirmation
-    vscode.window.showInformationMessage(`Task space "${taskSpace.name}" deleted`);
+    StatusBarMessage.show(`Task space "${taskSpace.name}" deleted`, StatusBarMessageType.Success);
   } catch (error) {
-    vscode.window.showErrorMessage(`Failed to delete task space: ${error}`);
+    StatusBarMessage.show(`Failed to delete task space: ${error}`, StatusBarMessageType.Error);
   }
 }
 
@@ -356,9 +353,9 @@ async function handleRenameTaskSpace(
     updateStatusBar(statusBar, manager);
 
     // Show confirmation
-    vscode.window.showInformationMessage(`Task space renamed to "${newName}"`);
+    StatusBarMessage.show(`Task space renamed to "${newName}"`, StatusBarMessageType.Success);
   } catch (error) {
-    vscode.window.showErrorMessage(`Failed to rename task space: ${error}`);
+    StatusBarMessage.show(`Failed to rename task space: ${error}`, StatusBarMessageType.Error);
   }
 }
 

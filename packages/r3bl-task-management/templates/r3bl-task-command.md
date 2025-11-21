@@ -1,8 +1,8 @@
-# Manage a task 1) [create, update, load] 2) [task_name]
+# Manage a task 1) [create, update, load, done] 2) [task_name]
 
 ## Arguments $1 and $2
 
-$1 is the command to execute: "create", "update", "load"
+$1 is the command to execute: "create", "update", "load", "done"
 
 $2 is "do_something.md" or "do_something", the file you create is
 "./task/do_something.md"
@@ -48,6 +48,20 @@ else if $1 is "load" then:
   if they want to work on it. If they do, then begin work on that step.
 - Remind the user to switch to the corresponding task space in VS Code (Alt+Shift+T)
   to have the right files open for this task
+
+else if $1 is "done" then:
+- Inform the user that to mark a task as complete and archive it, they should use the
+  R3BL Task Management VS Code extension:
+  1. Press Alt+Shift+T (or Command Palette → "R3BL Task Management: Manage Task Spaces")
+  2. Find the task space linked to task/$2 in the dialog
+  3. Click the delete button (🗑️) next to that task space
+  4. Confirm the deletion
+- Explain that deleting the task space will automatically:
+  - Archive the task file to task/done/
+  - Handle filename collisions (adds numeric suffix if needed)
+  - Clean up the task space properly
+- If no task space exists for this task, suggest that the user can manually move
+  task/$2 to task/done/ or create a task space first and then delete it
 
 ## Notes
 

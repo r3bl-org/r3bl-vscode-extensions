@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { executeSearch } from './searchExecutor';
 import { SearchInput, SearchResult } from './types';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 export class SearchPanel {
   public static currentPanel: SearchPanel | undefined;
@@ -63,6 +64,12 @@ export class SearchPanel {
         localResourceRoots: [extensionUri]
       }
     );
+
+    // Set the webview icon to match the extension
+    panel.iconPath = vscode.Uri.joinPath(extensionUri, 'r3bl-cube-logo.png');
+
+    // Explicitly set the title (might help with window title bar)
+    panel.title = 'R3BL Fuzzy Search';
 
     SearchPanel.currentPanel = new SearchPanel(panel, extensionUri, workspaceRoot);
   }
@@ -142,9 +149,7 @@ export class SearchPanel {
         preserveFocus: true
       });
     } catch (error) {
-      vscode.window.showErrorMessage(
-        `Failed to open file: ${error instanceof Error ? error.message : String(error)}`
-      );
+      StatusBarMessage.show(`Failed to open file: ${error instanceof Error ? error.message : String(error)}`, StatusBarMessageType.Error);
     }
   }
 
@@ -160,7 +165,7 @@ export class SearchPanel {
       const results = await executeSearch(input, this._workspaceRoot);
 
       if (results.length === 0) {
-        vscode.window.showInformationMessage(`No results found for "${query}"`);
+        StatusBarMessage.show(`No results found for "${query}"`, StatusBarMessageType.Info);
         return;
       }
 
@@ -186,13 +191,9 @@ export class SearchPanel {
 
       // Show summary
       const uniqueFiles = new Set(results.map(r => r.file)).size;
-      vscode.window.showInformationMessage(
-        `Found ${results.length} results in ${uniqueFiles} files`
-      );
+      StatusBarMessage.show(`Found ${results.length} results in ${uniqueFiles} files`, StatusBarMessageType.Success);
     } catch (error) {
-      vscode.window.showErrorMessage(
-        `Failed to open results: ${error instanceof Error ? error.message : String(error)}`
-      );
+      StatusBarMessage.show(`Failed to open results: ${error instanceof Error ? error.message : String(error)}`, StatusBarMessageType.Error);
     }
   }
 
@@ -517,6 +518,25 @@ export class SearchPanel {
         searchTimeout = setTimeout(() => {
           performSearch();
         }, 250);
+      }
+    });
+
+    // Re-run search when exclude patterns change
+    excludePatterns.addEventListener('input', () => {
+      const query = searchInput.value.trim();
+      if (query.length >= 2) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          performSearch();
+        }, 250);
+      }
+    });
+
+    // Re-run search when gitignore checkbox changes
+    respectGitignore.addEventListener('change', () => {
+      const query = searchInput.value.trim();
+      if (query.length >= 2) {
+        performSearch();
       }
     });
 

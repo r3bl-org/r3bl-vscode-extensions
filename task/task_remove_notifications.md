@@ -433,13 +433,12 @@ Or alternatively, copy the utility file into each extension's `src/utils/` direc
 
 ## Implementation Checklist
 
-### Phase 1: Setup
-- [ ] Create `packages/shared/statusBarMessage.ts` utility
-- [ ] Or copy utility into each extension's `src/utils/` directory
-- [ ] Add global R3BL configuration to `packages/r3bl-extension-pack/package.json`:
-  - [ ] `r3bl.transientFeedbackMechanism` (default: "statusbar")
-  - [ ] `r3bl.statusbarMessageMaxLength` (default: 50)
-- [ ] Update extension pack version
+### Phase 1: Setup **[COMPLETE]**
+- [x] Create `packages/shared/statusBarMessage.ts` utility
+- [x] Add global R3BL configuration to `packages/r3bl-extension-pack/package.json`:
+  - [x] `r3bl.transientFeedbackMechanism` (default: "statusbar")
+  - [x] `r3bl.statusbarMessageMaxLength` (default: 50)
+- [x] Update extension pack version (1.0.41 → 1.0.42)
 
 ### Phase 2: Migration (Per Extension)
 
@@ -450,12 +449,12 @@ Or alternatively, copy the utility file into each extension's `src/utils/` direc
 - [ ] Test all copyright insertion scenarios
 - [ ] Update CHANGELOG.md
 
-#### R3BL Copy Selection Path and Range
-- [ ] Import StatusBarMessage utility
-- [ ] Replace 4 notifications with status bar calls
-- [ ] Update version: 1.0.X → 1.1.0
-- [ ] Test all copy scenarios
-- [ ] Update CHANGELOG.md
+#### R3BL Copy Selection Path and Range **[WORK_IN_PROGRESS - Ready for Testing]**
+- [x] Import StatusBarMessage utility
+- [x] Replace 4 notifications with status bar calls
+- [x] Update version: 1.2.2 → 1.3.0
+- [ ] Test all copy scenarios (MANUAL TESTING REQUIRED)
+- [ ] Update CHANGELOG.md (after testing confirms it works)
 
 #### R3BL Semantic Config
 - [ ] Import StatusBarMessage utility

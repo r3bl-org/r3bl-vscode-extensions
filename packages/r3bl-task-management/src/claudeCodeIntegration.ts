@@ -3,6 +3,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as crypto from 'crypto';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 const CLAUDE_COMMANDS_DIR = '.claude/commands';
 const COMMAND_FILE_NAME = 'r3bl-task.md';
@@ -28,9 +30,7 @@ export async function installClaudeCodeIntegration(
 ): Promise<boolean> {
   const workspaceRoot = getWorkspaceRoot();
   if (!workspaceRoot) {
-    vscode.window.showErrorMessage(
-      'Cannot install Claude Code integration: No workspace folder open'
-    );
+    StatusBarMessage.show('Cannot install: No workspace folder open', StatusBarMessageType.Error);
     return false;
   }
 
@@ -43,9 +43,7 @@ export async function installClaudeCodeIntegration(
     );
 
     if (!fs.existsSync(templatePath)) {
-      vscode.window.showErrorMessage(
-        'Cannot install Claude Code integration: Template file not found'
-      );
+      StatusBarMessage.show('Cannot install: Template file not found', StatusBarMessageType.Error);
       return false;
     }
 
@@ -128,6 +126,74 @@ export async function promptToInstallClaudeCodeIntegration(
     await context.globalState.update(dismissedKey, true);
   }
   // If 'Not Now', do nothing (will prompt again next time)
+}
+
+/**
+ * Calculates SHA256 checksum of a file
+ */
+function getFileSHA256(filePath: string): string | undefined {
+  try {
+    const content = fs.readFileSync(filePath);
+    return crypto.createHash('sha256').update(content).digest('hex');
+  } catch (error) {
+    return undefined;
+  }
+}
+
+/**
+ * Checks if the installed command needs upgrade and automatically upgrades it
+ * Uses SHA256 checksum comparison to detect changes
+ * Called on extension activation
+ */
+export async function checkAndUpgradeClaudeCommand(
+  context: vscode.ExtensionContext
+): Promise<void> {
+  // Only check if the command file exists
+  if (!isClaudeCodeIntegrationInstalled()) {
+    return;
+  }
+
+  const workspaceRoot = getWorkspaceRoot();
+  if (!workspaceRoot) {
+    return;
+  }
+
+  try {
+    // Get template path
+    const templatePath = path.join(
+      context.extensionPath,
+      'templates',
+      'r3bl-task-command.md'
+    );
+
+    if (!fs.existsSync(templatePath)) {
+      return;
+    }
+
+    const installedPath = path.join(workspaceRoot, CLAUDE_COMMANDS_DIR, COMMAND_FILE_NAME);
+
+    // Compare checksums
+    const templateSHA = getFileSHA256(templatePath);
+    const installedSHA = getFileSHA256(installedPath);
+
+    if (!templateSHA || !installedSHA) {
+      return; // Can't compare, skip upgrade
+    }
+
+    // If checksums differ, upgrade
+    if (templateSHA !== installedSHA) {
+      fs.copyFileSync(templatePath, installedPath);
+
+      // Show FYI notification
+      StatusBarMessage.show(
+        'R3BL Task command updated',
+        StatusBarMessageType.Info
+      );
+    }
+  } catch (error) {
+    // Silent fail - don't bother user with upgrade errors
+    console.error('Failed to upgrade Claude Code command:', error);
+  }
 }
 
 /**

@@ -2,7 +2,7 @@
   "name": "r3bl-extension-pack",
   "displayName": "R3BL Development Pack",
   "description": "Complete R3BL development experience with theme, semantic highlighting, and task management",
-  "version": "1.0.41",
+  "version": "1.0.47",
   "publisher": "R3BL",
   "engines": {
     "vscode": "^1.60.0"
@@ -25,7 +25,59 @@
     "R3BL.r3bl-fuzzy-search",
     "rust-lang.rust-analyzer"
   ],
-  "contributes": {},
+  "contributes": {
+    "configuration": {
+      "title": "R3BL Extensions",
+      "properties": {
+        "r3bl.transientFeedbackMechanism": {
+          "type": "string",
+          "enum": ["none", "notification", "statusbar"],
+          "default": "statusbar",
+          "description": "How to display transient/dismissable feedback messages across all R3BL extensions (does not affect interactive notifications with buttons)",
+          "enumDescriptions": [
+            "Don't show any transient feedback messages from R3BL extensions",
+            "Show transient feedback as VSCode notifications (classic behavior, may linger)",
+            "Show transient feedback in the status bar (auto-dismisses, less intrusive)"
+          ]
+        },
+        "r3bl.statusbarMessageMaxLength": {
+          "type": "number",
+          "default": 50,
+          "minimum": 20,
+          "maximum": 200,
+          "description": "Maximum characters to display in status bar messages before truncating with '...' (applies to all R3BL extensions)"
+        },
+        "r3bl.statusbarMessage.successDuration": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 500,
+          "maximum": 10000,
+          "description": "Duration in milliseconds to display success messages in the status bar (default: 3000ms)"
+        },
+        "r3bl.statusbarMessage.infoDuration": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 500,
+          "maximum": 10000,
+          "description": "Duration in milliseconds to display info messages in the status bar (default: 3000ms)"
+        },
+        "r3bl.statusbarMessage.warningDuration": {
+          "type": "number",
+          "default": 4000,
+          "minimum": 500,
+          "maximum": 10000,
+          "description": "Duration in milliseconds to display warning messages in the status bar (default: 4000ms)"
+        },
+        "r3bl.statusbarMessage.errorDuration": {
+          "type": "number",
+          "default": 5000,
+          "minimum": 500,
+          "maximum": 10000,
+          "description": "Duration in milliseconds to display error messages in the status bar (default: 5000ms)"
+        }
+      }
+    }
+  },
   "scripts": {
     "package": "vsce package --no-dependencies"
   }

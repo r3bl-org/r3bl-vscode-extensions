@@ -2,6 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 // In-memory history of copied items (session only)
 interface CopyHistoryItem {
@@ -28,12 +29,14 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(copyCommand, historyCommand);
 }
 
-export function deactivate() {}
+export function deactivate() {
+    StatusBarMessage.dispose();
+}
 
 async function handleCopyPathAndRange() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        vscode.window.showErrorMessage('No active editor');
+        StatusBarMessage.show('No active editor', StatusBarMessageType.Error);
         return;
     }
 
@@ -42,7 +45,7 @@ async function handleCopyPathAndRange() {
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
 
     if (!workspaceFolder) {
-        vscode.window.showErrorMessage('No workspace folder found');
+        StatusBarMessage.show('No workspace folder found', StatusBarMessageType.Error);
         return;
     }
 
@@ -75,13 +78,13 @@ async function handleCopyPathAndRange() {
         copyHistory.pop();
     }
 
-    // Show self-dismissing notification (no buttons = auto-dismiss)
-    vscode.window.showInformationMessage(`Copied: ${output}`);
+    // Show success message in status bar
+    StatusBarMessage.show(`Copied: ${output}`, StatusBarMessageType.Success);
 }
 
 async function showCopyHistory() {
     if (copyHistory.length === 0) {
-        vscode.window.showInformationMessage('No copy history available');
+        StatusBarMessage.show('No copy history available', StatusBarMessageType.Info);
         return;
     }
 

@@ -10,13 +10,21 @@
           "isPinned": true
         },
         {
-          "path": "packages/r3bl-fuzzy-search/package.json",
+          "path": "packages/r3bl-extension-pack/package.json",
+          "isPinned": false
+        },
+        {
+          "path": "packages/r3bl-fuzzy-search/README.md",
+          "isPinned": false
+        },
+        {
+          "path": "packages/r3bl-extension-pack/README.md",
           "isPinned": false
         }
       ],
       "taskFile": "task/task_remove_notifications.md",
-      "activeTab": "task/task_remove_notifications.md",
-      "createdAt": 1763735694305
+      "createdAt": 1763735694305,
+      "activeTab": "packages/r3bl-extension-pack/README.md"
     }
   ],
   "activeTaskSpaceId": "7a610d40-b97f-4591-a595-6d7ba6f5b337"

@@ -2,6 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs/promises';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined;
@@ -101,13 +102,13 @@ export function activate(context: vscode.ExtensionContext) {
     // Command to enable R3BL semantic highlighting
     const enableCommand = vscode.commands.registerCommand('r3bl-semantic-config.enable', () => {
         applySemanticConfig();
-        vscode.window.showInformationMessage('R3BL Semantic Highlighting enabled!');
+        StatusBarMessage.show('R3BL Semantic Highlighting enabled', StatusBarMessageType.Success);
     });
 
     // Command to disable R3BL semantic highlighting
     const disableCommand = vscode.commands.registerCommand('r3bl-semantic-config.disable', () => {
         removeSemanticConfig();
-        vscode.window.showInformationMessage('R3BL Semantic Highlighting disabled!');
+        StatusBarMessage.show('R3BL Semantic Highlighting disabled', StatusBarMessageType.Success);
     });
 
     // Watch for theme changes
@@ -206,11 +207,12 @@ async function disableCheckOnSave() {
     if (currentValue !== false) {
         try {
             await rustAnalyzerConfig.update('checkOnSave', false, vscode.ConfigurationTarget.Global);
-            vscode.window.showInformationMessage(
-                'Disabled rust-analyzer.checkOnSave (debounced flycheck is now handling this)'
+            StatusBarMessage.show(
+                'Disabled rust-analyzer.checkOnSave (debounced flycheck handling)',
+                StatusBarMessageType.Info
             );
         } catch (error) {
-            vscode.window.showErrorMessage(`Failed to disable rust-analyzer.checkOnSave: ${error}`);
+            StatusBarMessage.show(`Failed to disable rust-analyzer.checkOnSave: ${error}`, StatusBarMessageType.Error);
         }
     }
 }
@@ -294,10 +296,10 @@ async function applySemanticConfig() {
         
         // Check for duplicate settings after successful application
         await checkForDuplicateSettings();
-        
-        vscode.window.showInformationMessage('R3BL semantic highlighting applied successfully!');
+
+        StatusBarMessage.show('R3BL semantic highlighting applied', StatusBarMessageType.Success);
     } catch (error) {
-        vscode.window.showErrorMessage(`Failed to apply semantic config: ${error}`);
+        StatusBarMessage.show(`Failed to apply semantic config: ${error}`, StatusBarMessageType.Error);
     }
 }
 
@@ -309,9 +311,9 @@ async function removeSemanticConfig() {
         for (const key of Object.keys(SEMANTIC_CONFIG)) {
             await config.update(key, undefined, vscode.ConfigurationTarget.Global);
         }
-        vscode.window.showInformationMessage('R3BL semantic highlighting removed successfully!');
+        StatusBarMessage.show('R3BL semantic highlighting removed', StatusBarMessageType.Success);
     } catch (error) {
-        vscode.window.showErrorMessage(`Failed to remove semantic config: ${error}`);
+        StatusBarMessage.show(`Failed to remove semantic config: ${error}`, StatusBarMessageType.Error);
     }
 }
 
@@ -339,7 +341,7 @@ async function checkForDuplicateSettings() {
         }
     } catch (error) {
         // Show error in VS Code dialog to understand what's failing
-        vscode.window.showErrorMessage(`Failed to check for duplicate settings: ${error}`);
+        StatusBarMessage.show(`Failed to check for duplicate settings: ${error}`, StatusBarMessageType.Error);
         console.warn('Failed to check for duplicate settings:', error);
     }
 }
@@ -369,4 +371,5 @@ export function deactivate() {
     if (countdownInterval) {
         clearInterval(countdownInterval);
     }
+    StatusBarMessage.dispose();
 }

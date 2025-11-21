@@ -4,6 +4,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as copyrightService from './copyright/copyrightService';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -17,9 +18,9 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('r3bl-auto-insert-copyright.prepend_copyright', () => {
 		const copyrightAdded = copyrightService.handleManualCopyrightCheck(vscode.window.activeTextEditor);
 		if (copyrightAdded) {
-			vscode.window.showInformationMessage('Copyright Added');
+			StatusBarMessage.show('Copyright Added', StatusBarMessageType.Success);
 		} else {
-			vscode.window.showInformationMessage('Copyright could not be added to this file.');
+			StatusBarMessage.show('Copyright could not be added to this file', StatusBarMessageType.Warning);
 		}
 	});
 
@@ -34,4 +35,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {
+	StatusBarMessage.dispose();
+}

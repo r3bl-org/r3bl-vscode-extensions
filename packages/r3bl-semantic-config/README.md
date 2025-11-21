@@ -197,6 +197,16 @@ Both features in this extension depend on **rust-analyzer**:
 | `R3BL: Disable R3BL Semantic Highlighting` | Remove semantic highlighting settings |
 | `R3BL: Run Flycheck (Debounced)` | Manually trigger flycheck, cancels pending |
 
+## Global R3BL Configuration
+
+This extension uses global R3BL settings for feedback and notifications. You can customize how R3BL extensions display messages, including:
+
+- Feedback mechanism (status bar, notifications, or none)
+- Status bar message duration for each message type
+- Message length and display settings
+
+For detailed configuration options, see the [R3BL Extension Pack Configuration](../r3bl-extension-pack/README.md#configuration) section.
+
 ## Release Notes
 
 See [CHANGELOG.md](../../CHANGELOG.md) for detailed release notes and version history.

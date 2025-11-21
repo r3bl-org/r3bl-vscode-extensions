@@ -2,7 +2,7 @@
   "name": "r3bl-fuzzy-search",
   "displayName": "R3BL Fuzzy Search",
   "description": "Fuzzy search in files using fzf - fast and smart search with Search Editor results",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "publisher": "R3BL",
   "license": "MIT",
   "engines": {
@@ -88,6 +88,9 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile",
     "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "@r3bl/shared": "file:../r3bl-shared"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",

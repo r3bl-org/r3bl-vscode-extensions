@@ -3,8 +3,9 @@
 import * as vscode from 'vscode';
 import { TaskSpaceManager } from './taskSpaceManager';
 import { showTaskSpacesDialog, updateStatusBar, createStatusBarItem } from './ui';
-import { installClaudeCodeIntegration } from './claudeCodeIntegration';
+import { installClaudeCodeIntegration, checkAndUpgradeClaudeCommand } from './claudeCodeIntegration';
 import * as path from 'path';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 let manager: TaskSpaceManager;
 let statusBarItem: vscode.StatusBarItem;
@@ -26,13 +27,9 @@ async function createTaskSpaceFromFile(
       const allTaskFiles = await manager.getTaskFiles();
 
       if (allTaskFiles.length === 0) {
-        vscode.window.showInformationMessage(
-          'No task files found in task/ directory. Create task files with "task_*.md" naming pattern.'
-        );
+        StatusBarMessage.show('No task files found in task/ directory', StatusBarMessageType.Info);
       } else {
-        vscode.window.showInformationMessage(
-          'All task files are already linked to task spaces.'
-        );
+        StatusBarMessage.show('All task files already linked', StatusBarMessageType.Info);
       }
       return;
     }
@@ -106,11 +103,9 @@ async function createTaskSpaceFromFile(
     // Update status bar
     updateStatusBar(statusBarItem, manager);
 
-    vscode.window.showInformationMessage(
-      `Created task space "${name}" linked to ${path.basename(selected.taskFile)}`
-    );
+    StatusBarMessage.show(`Created task space "${name}"`, StatusBarMessageType.Success);
   } catch (error) {
-    vscode.window.showErrorMessage(`Failed to create task space: ${error}`);
+    StatusBarMessage.show(`Failed to create task space: ${error}`, StatusBarMessageType.Error);
   }
 }
 
@@ -120,6 +115,9 @@ export async function activate(context: vscode.ExtensionContext) {
   // Initialize manager
   manager = new TaskSpaceManager(context);
   await manager.initialize();
+
+  // Check and auto-upgrade Claude Code command if needed
+  await checkAndUpgradeClaudeCommand(context);
 
   // Restore tabs for active task space on startup
   const activeTaskSpace = manager.getActiveTaskSpace();
@@ -240,4 +238,5 @@ export function deactivate() {
   if (autoSaveTimeout) {
     clearTimeout(autoSaveTimeout);
   }
+  StatusBarMessage.dispose();
 }

@@ -26,7 +26,7 @@
   },
   "publisher": "R3BL",
   "preview": false,
-  "version": "1.2.2",
+  "version": "1.3.0",
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -69,6 +69,9 @@
     "watch": "webpack --watch",
     "build": "webpack --mode production --devtool hidden-source-map",
     "package": "vsce package --no-dependencies"
+  },
+  "dependencies": {
+    "@r3bl/shared": "file:../r3bl-shared"
   },
   "devDependencies": {
     "@types/vscode": "^1.95.0",

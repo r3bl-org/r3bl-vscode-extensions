@@ -5,6 +5,7 @@ import { checkDependencies } from './dependencyChecker';
 import { collectSearchInput } from './inputCollector';
 import { executeSearch } from './searchExecutor';
 import { generateSearchEditorContent } from './searchEditorGenerator';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 async function displayResults(content: string, query: string) {
   // Create filename from query (replace spaces with underscores)
@@ -33,7 +34,7 @@ export async function executeSearchCommand() {
   // 2. Get workspace root
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
   if (!workspaceFolder) {
-    vscode.window.showErrorMessage('Please open a folder first');
+    StatusBarMessage.show('Please open a folder first', StatusBarMessageType.Error);
     return;
   }
 
@@ -55,9 +56,7 @@ export async function executeSearchCommand() {
       const results = await executeSearch(input, workspaceRoot);
 
       if (results.length === 0) {
-        vscode.window.showInformationMessage(
-          `No results found for "${input.query}"`
-        );
+        StatusBarMessage.show(`No results found for "${input.query}"`, StatusBarMessageType.Info);
         return;
       }
 
@@ -69,13 +68,9 @@ export async function executeSearchCommand() {
 
       // 7. Show summary
       const uniqueFiles = new Set(results.map(r => r.file)).size;
-      vscode.window.showInformationMessage(
-        `Found ${results.length} results in ${uniqueFiles} files`
-      );
+      StatusBarMessage.show(`Found ${results.length} results in ${uniqueFiles} files`, StatusBarMessageType.Success);
     });
   } catch (error) {
-    vscode.window.showErrorMessage(
-      `Search failed: ${error instanceof Error ? error.message : String(error)}`
-    );
+    StatusBarMessage.show(`Search failed: ${error instanceof Error ? error.message : String(error)}`, StatusBarMessageType.Error);
   }
 }

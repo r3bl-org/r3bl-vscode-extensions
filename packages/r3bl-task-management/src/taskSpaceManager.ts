@@ -5,6 +5,7 @@ import * as path from 'path';
 import { TabInfo, TaskSpace, TaskSpaceStorage } from './types';
 import { Storage } from './storage';
 import { randomUUID } from 'crypto';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 export class TaskSpaceManager {
   private storage: Storage;
@@ -195,9 +196,7 @@ export class TaskSpaceManager {
       console.error(`Failed to move task file ${taskFile} to done/:`, error);
 
       // Show warning to user
-      vscode.window.showWarningMessage(
-        `Task space deleted but could not move file "${path.basename(taskFile)}" to task/done/`
-      );
+      StatusBarMessage.show(`Task space deleted but file move failed`, StatusBarMessageType.Warning);
     }
   }
 

@@ -1,0 +1,23 @@
+{
+  "name": "@r3bl/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities for R3BL VSCode extensions",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "r3bl",
+    "vscode",
+    "shared",
+    "utilities"
+  ],
+  "author": "R3BL",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.60.0",
+    "typescript": "^5.0.0"
+  }
+}

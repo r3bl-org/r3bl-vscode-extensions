@@ -334,6 +334,124 @@ Update CHANGELOG.md when:
 - ✅ Be user-focused: explain benefits, not just technical details
 - ✅ Update changelog BEFORE committing
 
+## Code Standards and Best Practices
+
+### Shared Utilities
+
+#### Using StatusBarMessage for Notifications
+
+**Always use `StatusBarMessage.show()` from `@r3bl/shared` for transient feedback messages.**
+
+```typescript
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
+
+// Show success message
+StatusBarMessage.show('Operation completed successfully', StatusBarMessageType.Success);
+
+// Show info message
+StatusBarMessage.show('Processing...', StatusBarMessageType.Info);
+
+// Show warning message
+StatusBarMessage.show('Please check your settings', StatusBarMessageType.Warning);
+
+// Show error message
+StatusBarMessage.show('Operation failed', StatusBarMessageType.Error);
+```
+
+**Why use StatusBarMessage?**
+- ✅ Respects user's global `r3bl.transientFeedbackMechanism` setting (statusbar/notification/none)
+- ✅ Provides consistent UX across all R3BL extensions
+- ✅ Configurable durations per message type
+- ✅ Auto-dismissing behavior
+- ✅ Single source of truth for feedback implementation
+
+**Do NOT use:**
+- ❌ `vscode.window.showInformationMessage()` for transient feedback
+- ❌ `vscode.window.showWarningMessage()` for transient feedback
+- ❌ `vscode.window.showErrorMessage()` for transient feedback
+
+**Exception:** Use VSCode's native methods for **interactive notifications** that require user input (buttons, choices, etc.):
+
+```typescript
+// OK: Interactive notification with buttons
+const result = await vscode.window.showInformationMessage(
+  'Do you want to continue?',
+  'Yes',
+  'No'
+);
+```
+
+### The Shared Package
+
+All R3BL extensions depend on `@r3bl/shared` package located at `packages/r3bl-shared/`.
+
+**Current shared utilities:**
+- `StatusBarMessage` - Transient feedback system
+- `StatusBarMessageType` - Enum for message types
+
+**When adding new shared utilities:**
+1. Add to `packages/r3bl-shared/src/`
+2. Export from `packages/r3bl-shared/src/index.ts`
+3. Build: `cd packages/r3bl-shared && npm run build`
+4. Update all extensions: `cd packages/extension-name && npm install`
+
+## Claude Code Integration
+
+### Auto-Upgrade System for `/r3bl-task` Command
+
+The R3BL Task Management extension includes a `/r3bl-task` slash command for Claude Code CLI. This command is automatically upgraded when the extension is updated.
+
+#### How It Works
+
+1. **Checksum Comparison**: On extension activation, the extension calculates SHA256 checksums of:
+   - The template file: `packages/r3bl-task-management/templates/r3bl-task-command.md`
+   - The installed file: `.claude/commands/r3bl-task.md`
+
+2. **Auto-Upgrade**: If the checksums differ (template has changed), the extension automatically overwrites the installed file.
+
+3. **User Notification**: Shows an FYI message using `StatusBarMessage`:
+   ```
+   R3BL Task command updated
+   ```
+
+4. **Git Integration**: Since `.claude/commands/` is typically checked into git:
+   - Users see the change in `git status` and `git diff`
+   - Users can review changes before committing
+   - Users can revert with `git checkout .claude/commands/r3bl-task.md` if needed
+   - User customizations are preserved in git history
+
+#### Why Checksums Instead of Version Numbers?
+
+**Automatic detection**: No need to remember to bump version numbers - any template change triggers an upgrade.
+
+**Accurate upgrades**: Only upgrades when the template actually changes.
+
+**Simpler code**: No version parsing logic needed.
+
+**Git-friendly**: Users review changes in their normal git workflow, just like any other file.
+
+**User customizations**: If users customize the command, they can merge changes from git when we upgrade the template.
+
+#### Implementation Location
+
+- **Template**: `packages/r3bl-task-management/templates/r3bl-task-command.md`
+- **Logic**: `packages/r3bl-task-management/src/claudeCodeIntegration.ts`
+  - `getFileSHA256()` function - Calculates SHA256 checksum
+  - `checkAndUpgradeClaudeCommand()` function - Compares checksums and upgrades
+- **Activation**: Called in `packages/r3bl-task-management/src/extension.ts` `activate()`
+
+#### Updating the Command
+
+When you make changes to the `/r3bl-task` command:
+
+1. **Update the template**: Edit `packages/r3bl-task-management/templates/r3bl-task-command.md`
+
+2. **Build and test**: Run `./build.sh` and `./install.sh`
+
+3. **Version the extension**: Bump `packages/r3bl-task-management/package.json` version
+
+That's it! The checksum will automatically differ, triggering upgrades for all users on next activation.
+
 ## Quick Workflow Checklist
 
 When modifying an extension:

@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { executeSearch } from './searchExecutor';
 import { SearchInput, SearchResult } from './types';
+import { StatusBarMessage, StatusBarMessageType } from '@r3bl/shared';
 
 interface SearchResultItem extends vscode.QuickPickItem {
   result?: SearchResult;
@@ -163,9 +164,7 @@ export async function executeInteractiveSearch(
 
       // Show summary
       const uniqueFiles = new Set(currentResults.map(r => r.file)).size;
-      vscode.window.showInformationMessage(
-        `Found ${currentResults.length} results in ${uniqueFiles} files`
-      );
+      StatusBarMessage.show(`Found ${currentResults.length} results in ${uniqueFiles} files`, StatusBarMessageType.Success);
     }
   });
 
