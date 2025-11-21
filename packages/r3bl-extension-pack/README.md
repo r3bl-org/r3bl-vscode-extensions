@@ -171,7 +171,9 @@ management that ensures a consistent feedback experience across all R3BL tools.
 
 ## Release Notes
 
-See [CHANGELOG.md](../../CHANGELOG.md) for detailed release notes and version history.
+See
+[CHANGELOG.md](https://github.com/r3bl-org/r3bl-vscode-extensions/blob/main/CHANGELOG.md)
+for detailed release notes and version history.
 
 ## License
 

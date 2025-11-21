@@ -27,6 +27,27 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-21] - Fixed CHANGELOG Links in Marketplace Listings
+
+### Package Versions
+
+- **R3BL Task Management**: 1.1.3 → 1.1.4
+- **R3BL Auto Insert Copyright**: 1.3.2 → 1.3.3
+- **R3BL Copy Selection Path and Range**: 1.3.2 → 1.3.3
+- **R3BL Fuzzy Search**: 1.1.2 → 1.1.3
+- **R3BL Semantic Config**: 1.1.3 → 1.1.4
+- **R3BL Theme**: 1.0.14 → 1.0.15
+- **R3BL Extension Pack**: 1.0.51 → 1.0.52
+
+### Changes
+
+- **All Extensions**: Fixed CHANGELOG links in marketplace listings
+    - Changed relative links `../../CHANGELOG.md` to absolute GitHub URL
+    - Correct link:
+      `https://github.com/r3bl-org/r3bl-vscode-extensions/blob/main/CHANGELOG.md`
+    - Ensures CHANGELOG is accessible from VSCode Marketplace pages
+    - Improves user experience for viewing release history
+
 ## [2025-11-21] - Documentation Updates and Branding Improvements
 
 ### Package Versions

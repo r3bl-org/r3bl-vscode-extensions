@@ -203,7 +203,9 @@ Want to tweak the theme? Add to your `settings.json`:
 
 ## Release Notes
 
-See [CHANGELOG.md](../../CHANGELOG.md) for detailed release notes and version history.
+See
+[CHANGELOG.md](https://github.com/r3bl-org/r3bl-vscode-extensions/blob/main/CHANGELOG.md)
+for detailed release notes and version history.
 
 ## License
 
