@@ -204,7 +204,7 @@ This installs the `/r3bl-task` command for Claude Code CLI:
 - `/r3bl-task update [name]` - Update progress
 - `/r3bl-task load [name]` - Resume work on a task
 
-**Automatic Updates:**
+**Automatic Updates**
 
 The extension automatically keeps the `/r3bl-task` command up-to-date:
 
