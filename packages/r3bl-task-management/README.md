@@ -335,7 +335,11 @@ the command ID above.
 ### Extension Settings
 
 - `r3bl-task-management.autoSaveCurrentTaskSpace` - Auto-save on tab changes (default:
-  `true`)
+  `true`). Disable for "view-only" mode where this instance syncs from others but doesn't
+  write back.
+- `r3bl-task-management.autoSaveDebounceMs` - Delay in milliseconds before auto-saving
+  after tab changes (default: `500`, range: 100-5000). Lower values save faster but may
+  cause more disk writes.
 - `r3bl-task-management.confirmBeforeSwitch` - Confirm before switching (default: `false`)
 - `r3bl-task-management.showStatusBar` - Show status bar item (default: `true`)
 - `r3bl-task-management.restoreTabsOnStartup` - Restore tabs from active task space when

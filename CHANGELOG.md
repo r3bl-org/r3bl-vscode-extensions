@@ -27,6 +27,19 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-26] - Documentation Update
+
+### Package Versions
+
+- **R3BL Task Management**: 1.1.6 → 1.1.7
+- **R3BL Extension Pack**: 1.0.54 → 1.0.55
+
+### Changes
+
+- **R3BL Task Management 1.1.7**: Documentation update
+    - Added `autoSaveDebounceMs` setting to README documentation
+    - Enhanced `autoSaveCurrentTaskSpace` setting description in README
+
 ## [2025-11-26] - Multi-Instance Sync and Architecture Improvements
 
 ### Package Versions
