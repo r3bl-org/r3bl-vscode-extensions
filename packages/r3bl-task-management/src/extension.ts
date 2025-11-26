@@ -10,6 +10,9 @@ import {
 } from './claudeCodeIntegration';
 import * as path from 'path';
 
+/** Default debounce delay for auto-save (milliseconds) */
+const DEFAULT_AUTO_SAVE_DEBOUNCE_MS = 500;
+
 let manager: TaskSpaceManager;
 let statusBarItem: vscode.StatusBarItem;
 let autoSaveTimeout: NodeJS.Timeout | undefined;
@@ -131,7 +134,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
         if (restoreOnStartup) {
             // Smart switch only restores if tabs differ (avoids jarring close/reopen)
-            await manager.smartSwitchToTaskSpace(activeTaskSpace.id);
+            await manager.switchToTaskSpaceFromFileWatcher(activeTaskSpace.id);
         }
     }
 
@@ -167,8 +170,36 @@ export async function activate(context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(createFromFileCommand);
 
+    // Register Manual Save command
+    const saveCommand = vscode.commands.registerCommand(
+        'r3bl-task-management.saveCurrentTaskSpace',
+        async () => {
+            const activeTaskSpace = manager.getActiveTaskSpace();
+            if (!activeTaskSpace) {
+                showStatusBarMessage('No active task space to save', 'warning');
+                return;
+            }
+
+            try {
+                const currentTabs = await manager.getCurrentOpenTabs();
+                await manager.updateTaskSpaceTabs(activeTaskSpace.id, currentTabs);
+                updateStatusBar(statusBarItem, manager);
+                showStatusBarMessage(`Saved "${activeTaskSpace.name}"`, 'success');
+            } catch (error) {
+                showStatusBarMessage(`Failed to save: ${error}`, 'error');
+            }
+        },
+    );
+    context.subscriptions.push(saveCommand);
+
     // Register auto-save listener
     const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async () => {
+        // Skip auto-save if tabs changed due to file watcher sync
+        // (prevents sync loop: A saves → B syncs → B's tabs change → B auto-saves → ...)
+        if (manager.isSyncingFromFileWatcher()) {
+            return;
+        }
+
         // Check if auto-save is enabled
         const config = vscode.workspace.getConfiguration('r3bl-task-management');
         const autoSave = config.get<boolean>('autoSaveCurrentTaskSpace', true);
@@ -183,7 +214,13 @@ export async function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        // Debounce: wait 500ms after last change
+        // Get debounce delay from settings
+        const debounceMs = config.get<number>(
+            'autoSaveDebounceMs',
+            DEFAULT_AUTO_SAVE_DEBOUNCE_MS,
+        );
+
+        // Debounce: wait before saving
         if (autoSaveTimeout) {
             clearTimeout(autoSaveTimeout);
         }
@@ -196,7 +233,7 @@ export async function activate(context: vscode.ExtensionContext) {
             } catch (error) {
                 console.error('Failed to auto-save task space:', error);
             }
-        }, 500);
+        }, debounceMs);
     });
     context.subscriptions.push(tabChangeDisposable);
 
@@ -218,14 +255,19 @@ export async function activate(context: vscode.ExtensionContext) {
         const fileWatcher = vscode.workspace.createFileSystemWatcher(taskSpacesPattern);
 
         fileWatcher.onDidChange(async () => {
-            // File changed externally (e.g., git checkout, another IDE instance)
-            await manager.reloadFromDisk();
+            // Reload data from disk
+            const loadedData = await manager.reloadFromDisk();
 
-            // Always try smart switch - it will only apply changes if tabs differ
+            // Skip if this is our own save (checksum matches what we wrote)
+            if (manager.isOwnSave(loadedData)) {
+                return;
+            }
+
+            // External change (e.g., git checkout, another IDE instance)
+            // Apply changes if tabs differ
             const activeTaskSpace = manager.getActiveTaskSpace();
             if (activeTaskSpace) {
-                // Smart switch only restores if tabs differ (avoids jarring close/reopen)
-                await manager.smartSwitchToTaskSpace(activeTaskSpace.id);
+                await manager.switchToTaskSpaceFromFileWatcher(activeTaskSpace.id);
             }
 
             // Update status bar to reflect new state

@@ -205,7 +205,7 @@ async function handleCreateTaskSpace(
         const taskSpace = await manager.createTaskSpace(name, taskFile);
 
         // Switch to the new task space
-        await manager.switchToTaskSpace(taskSpace.id);
+        await manager.switchToTaskSpaceFromUserAction(taskSpace.id);
 
         // Update status bar
         updateStatusBar(statusBar, manager);
@@ -269,7 +269,7 @@ async function handleSwitchTaskSpace(
                 progress.report({ increment: 0 });
 
                 // Switch task space
-                await manager.switchToTaskSpace(taskSpace.id);
+                await manager.switchToTaskSpaceFromUserAction(taskSpace.id);
 
                 progress.report({ increment: 100 });
 

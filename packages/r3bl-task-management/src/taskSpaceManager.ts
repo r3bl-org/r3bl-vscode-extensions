@@ -1,15 +1,137 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
+/**
+ * Task Space Switching Architecture
+ * ==================================
+ *
+ * All task space switching uses diff-based restore for minimal UI disruption.
+ * The core implementation is private, with two public entry points named by trigger:
+ *
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │              diffSwitchToTaskSpace (private)                │
+ * │              - Diff-based UI changes only                   │
+ * │              - No save                                      │
+ * └─────────────────────────────────────────────────────────────┘
+ *                     ▲                           ▲
+ *                     │                           │
+ *         ┌───────────┴───────────┐   ┌───────────┴───────────┐
+ *         │ switchToTaskSpace     │   │ switchToTaskSpace     │
+ *         │ FromUserAction        │   │ FromFileWatcher       │
+ *         │ (public)              │   │ (public)              │
+ *         │ - Saves after switch  │   │ - No save             │
+ *         │                       │   │ - Suppresses auto-save│
+ *         └───────────────────────┘   └───────────────────────┘
+ *
+ * Why two entry points?
+ * - FromUserAction: User clicks UI to switch → must persist the change
+ * - FromFileWatcher: External change detected → just apply UI state,
+ *   don't write back, and suppress auto-save during sync
+ *
+ *
+ * Checksum-Based Change Detection
+ * ===============================
+ *
+ * When multiple VS Code instances have the same project open, we need to detect
+ * whether a file change came from our own save or from another instance.
+ *
+ * Problem: File watcher fires for ALL changes to task-spaces.json, including
+ * our own writes. Without detection, this causes infinite sync loops:
+ *   A saves → B's watcher fires → B applies → B saves → A's watcher fires → ...
+ *
+ * Solution: Track SHA256 checksum of what we last wrote (lastSavedChecksum).
+ *
+ *   ┌─────────────────────────────────────────────────────────────┐
+ *   │                    lastSavedChecksum                        │
+ *   │         (in-memory, per VS Code instance)                   │
+ *   │                                                             │
+ *   │  - Set to null on construction                              │
+ *   │  - Set to file's checksum in initialize() at startup        │
+ *   │  - Updated after every save()                               │
+ *   └─────────────────────────────────────────────────────────────┘
+ *
+ * When file watcher fires:
+ *   1. Load new data from disk
+ *   2. Compute checksum of loaded data
+ *   3. Compare with lastSavedChecksum:
+ *      - Match → We wrote this, skip (isOwnSave returns true)
+ *      - Differ → External change, apply it (isOwnSave returns false)
+ *
+ * Example with two VS Code instances:
+ *
+ *   VS Code A                              VS Code B
+ *   ─────────                              ─────────
+ *   lastSavedChecksum = "abc123"           lastSavedChecksum = "xyz789"
+ *
+ *   A saves → file checksum "def456"
+ *   A's lastSavedChecksum = "def456"
+ *
+ *                                          B's file watcher fires
+ *                                          B loads → checksum "def456"
+ *                                          "def456" !== "xyz789" → External!
+ *                                          B applies changes
+ *                                          B's lastSavedChecksum = "def456"
+ *
+ *   A's file watcher fires
+ *   A loads → checksum "def456"
+ *   "def456" === "def456" → Own save, skip!
+ *
+ *
+ * Auto-Save Suppression During File Watcher Sync
+ * ==============================================
+ *
+ * Problem: When syncing from file watcher, tab changes trigger onDidChangeTabs,
+ * which would trigger auto-save after 500ms, causing another sync loop:
+ *   A saves → B syncs → B's tabs change → B auto-saves → A syncs → ...
+ *
+ * Solution: Track active file watcher syncs with a counter (pendingFileWatcherSyncs).
+ *
+ *   ┌─────────────────────────────────────────────────────────────┐
+ *   │                 pendingFileWatcherSyncs                     │
+ *   │         (in-memory counter, per VS Code instance)           │
+ *   │                                                             │
+ *   │  - Incremented before diffSwitchToTaskSpace in file watcher │
+ *   │  - Decremented after diffSwitchToTaskSpace completes        │
+ *   │  - Auto-save skips if counter > 0                           │
+ *   └─────────────────────────────────────────────────────────────┘
+ *
+ * Flow:
+ *   1. File watcher detects external change
+ *   2. switchToTaskSpaceFromFileWatcher increments counter
+ *   3. diffSwitchToTaskSpace changes tabs → onDidChangeTabs fires
+ *   4. Auto-save checks isSyncingFromFileWatcher() → true → skips
+ *   5. diffSwitchToTaskSpace completes → counter decremented
+ *   6. Future user tab changes → counter is 0 → auto-save works normally
+ *
+ * Uses a counter (not boolean) to handle theoretical overlapping syncs.
+ * No timing-based logic needed - the counter is set/cleared synchronously
+ * around the async operation.
+ */
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { showStatusBarMessage } from 'r3bl-common-code';
 import { TabInfo, TaskSpace, TaskSpaceStorage } from './types';
 import { Storage } from './storage';
-import { randomUUID } from 'crypto';
+import { randomUUID, createHash } from 'crypto';
 
 export class TaskSpaceManager {
     private storage: Storage;
     private data: TaskSpaceStorage;
+    private lastSavedChecksum: string | null = null;
+
+    /**
+     * Counter tracking active file watcher sync operations.
+     *
+     * When syncing from file watcher, tab changes occur which trigger onDidChangeTabs.
+     * Without this counter, those tab changes would trigger auto-save, causing a loop:
+     *   A saves → B syncs → B's tabs change → B auto-saves → A syncs → ...
+     *
+     * By incrementing before sync and decrementing after, we can check if tab changes
+     * are from file watcher sync (counter > 0) and skip auto-save in that case.
+     *
+     * Uses a counter (not boolean) to handle theoretical edge case of overlapping syncs.
+     */
+    private pendingFileWatcherSyncs: number = 0;
 
     constructor(context: vscode.ExtensionContext) {
         this.storage = new Storage(context);
@@ -17,32 +139,56 @@ export class TaskSpaceManager {
     }
 
     /**
+     * Check if currently syncing from file watcher (to suppress auto-save)
+     */
+    isSyncingFromFileWatcher(): boolean {
+        return this.pendingFileWatcherSyncs > 0;
+    }
+
+    /**
+     * Compute SHA256 checksum of task space data for change detection
+     */
+    private computeChecksum(data: TaskSpaceStorage): string {
+        const json = JSON.stringify(data);
+        return createHash('sha256').update(json).digest('hex');
+    }
+
+    /**
+     * Check if loaded data matches what we last saved (to detect external changes)
+     * Returns true if the data is from our own save, false if it's an external change
+     */
+    isOwnSave(loadedData: TaskSpaceStorage): boolean {
+        if (this.lastSavedChecksum === null) {
+            return false; // Never saved, must be external
+        }
+        const loadedChecksum = this.computeChecksum(loadedData);
+        return loadedChecksum === this.lastSavedChecksum;
+    }
+
+    /**
      * Initialize manager by loading data from storage
      */
     async initialize(): Promise<void> {
         this.data = await this.storage.loadTaskSpaces();
+        // Set initial checksum so we don't treat first load as external change
+        this.lastSavedChecksum = this.computeChecksum(this.data);
     }
 
     /**
      * Reload task spaces from disk (e.g., after git branch switch)
-     * Returns true if active task space changed
+     * Returns the loaded data for checksum comparison
      */
-    async reloadFromDisk(): Promise<boolean> {
-        const oldActiveId = this.data.activeTaskSpaceId;
-
-        // Reload from storage
+    async reloadFromDisk(): Promise<TaskSpaceStorage> {
         this.data = await this.storage.loadTaskSpaces();
-
-        // Check if active task space changed
-        const newActiveId = this.data.activeTaskSpaceId;
-        return oldActiveId !== newActiveId;
+        return this.data;
     }
 
     /**
-     * Save current state to storage
+     * Save current state to storage and update checksum
      */
     private async save(): Promise<void> {
         await this.storage.saveTaskSpaces(this.data);
+        this.lastSavedChecksum = this.computeChecksum(this.data);
     }
 
     /**
@@ -204,36 +350,21 @@ export class TaskSpaceManager {
     }
 
     /**
-     * Switch to a different task space
+     * Switch to a different task space - triggered by user action (UI click)
+     * Saves the change to persist user's intent.
      */
-    async switchToTaskSpace(id: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
-        if (!taskSpace) {
-            throw new Error('Task space not found');
-        }
-
-        // Update active task space FIRST, before opening tabs
-        // This ensures auto-save listener saves to the correct space
-        this.data.activeTaskSpaceId = id;
-
-        // Update lastAccessed in workspace state (stored separately to avoid git noise)
-        await this.storage.setLastAccessed(id, Date.now());
-
-        // Close all current tabs
-        await this.closeAllTabs();
-
-        // Open tabs from target task space with correct ordering and focus
-        await this.openTabs(taskSpace.tabs, taskSpace.taskFile, taskSpace.activeTab);
-
+    async switchToTaskSpaceFromUserAction(id: string): Promise<void> {
+        await this.diffSwitchToTaskSpace(id);
         await this.save();
     }
 
     /**
-     * Smart switch to task space - applies minimal changes using diff-based restore
-     * Only closes/opens/reorders/pins what's necessary for smooth transitions
-     * Returns true if changes were made, false if tabs already matched
+     * Switch to task space - triggered by file watcher (external sync)
+     * Does NOT save (just applies external state to UI).
+     * Uses pendingFileWatcherSyncs counter to suppress auto-save during sync.
+     * Returns true if changes were made, false if tabs already matched.
      */
-    async smartSwitchToTaskSpace(id: string): Promise<boolean> {
+    async switchToTaskSpaceFromFileWatcher(id: string): Promise<boolean> {
         const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
@@ -243,8 +374,14 @@ export class TaskSpaceManager {
         const tabsMatch = await this.tabsMatchSavedState(taskSpace);
 
         if (!tabsMatch) {
-            // Use diff-based restore for minimal UI disruption
-            await this.diffSwitchToTaskSpace(id);
+            // Increment counter to suppress auto-save during sync
+            this.pendingFileWatcherSyncs++;
+            try {
+                // Use diff-based restore for minimal UI disruption
+                await this.diffSwitchToTaskSpace(id);
+            } finally {
+                this.pendingFileWatcherSyncs--;
+            }
             return true;
         }
 
@@ -379,105 +516,6 @@ export class TaskSpaceManager {
     }
 
     /**
-     * Close all open tabs
-     */
-    async closeAllTabs(): Promise<void> {
-        // Close all tab groups
-        for (const tabGroup of vscode.window.tabGroups.all) {
-            await vscode.window.tabGroups.close(tabGroup);
-        }
-    }
-
-    /**
-     * Open tabs from file paths and restore pinned state
-     * @param tabs - Array of TabInfo with relative paths (from workspace root) or absolute paths
-     * @param taskFile - Optional task file (unused, kept for API compatibility)
-     * @param activeTab - Optional active tab to focus after opening all tabs
-     */
-    async openTabs(
-        tabs: TabInfo[],
-        taskFile?: string,
-        activeTab?: string,
-    ): Promise<void> {
-        const workspaceFolder = this.getWorkspaceFolder();
-        const errors: string[] = [];
-
-        // Helper to convert relative path to absolute
-        const toAbsolutePath = (relativePath: string): string => {
-            if (path.isAbsolute(relativePath)) {
-                return relativePath;
-            }
-            if (workspaceFolder) {
-                return path.join(workspaceFolder.uri.fsPath, relativePath);
-            }
-            return relativePath;
-        };
-
-        // Helper to open a file and optionally pin it
-        const openFile = async (
-            filePath: string,
-            preserveFocus: boolean,
-            shouldPin: boolean,
-        ): Promise<boolean> => {
-            try {
-                const absolutePath = toAbsolutePath(filePath);
-                const uri = vscode.Uri.file(absolutePath);
-
-                await vscode.window.showTextDocument(uri, {
-                    preview: false,
-                    preserveFocus,
-                });
-
-                // Pin the tab if needed
-                if (shouldPin) {
-                    await vscode.commands.executeCommand('workbench.action.pinEditor');
-                }
-
-                return true;
-            } catch (error) {
-                errors.push(filePath);
-                return false;
-            }
-        };
-
-        // Step 1: Open ALL tabs in their exact saved order (preserves tab ordering)
-        for (const tab of tabs) {
-            await openFile(tab.path, true, tab.isPinned); // Don't steal focus yet
-        }
-
-        // Step 2: Focus the active tab (if specified) - don't reopen, just focus
-        if (activeTab) {
-            try {
-                const absolutePath = toAbsolutePath(activeTab);
-                const uri = vscode.Uri.file(absolutePath);
-                await vscode.window.showTextDocument(uri, {
-                    preview: false,
-                    preserveFocus: false, // Give it focus
-                });
-            } catch (error) {
-                // Tab might not exist, ignore
-            }
-        } else if (tabs.length > 0) {
-            // No active tab specified, focus the first tab
-            try {
-                const absolutePath = toAbsolutePath(tabs[0].path);
-                const uri = vscode.Uri.file(absolutePath);
-                await vscode.window.showTextDocument(uri, {
-                    preview: false,
-                    preserveFocus: false, // Give it focus
-                });
-            } catch (error) {
-                // Tab might not exist, ignore
-            }
-        }
-
-        // Log errors for debugging (silently ignore missing files)
-        if (errors.length > 0) {
-            console.log(`Skipped ${errors.length} missing file(s):`, errors);
-        }
-    }
-
-    /**
      * Get workspace folder (first one if multiple)
      */
     private getWorkspaceFolder(): vscode.WorkspaceFolder | undefined {
@@ -572,14 +610,21 @@ export class TaskSpaceManager {
             }
         }
 
+        // Compare active tab
+        const currentActiveTab = this.getActiveTab();
+        if (taskSpace.activeTab !== currentActiveTab) {
+            return false;
+        }
+
         return true;
     }
 
     /**
      * Diff-based switch to task space - applies minimal changes to match saved state
      * Only closes/opens/reorders/pins what's necessary
+     * NOTE: Does not save - caller is responsible for saving if needed
      */
-    async diffSwitchToTaskSpace(id: string): Promise<void> {
+    private async diffSwitchToTaskSpace(id: string): Promise<void> {
         const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
@@ -616,13 +661,11 @@ export class TaskSpaceManager {
             await this.focusTab(taskSpace.activeTab, workspaceFolder);
         }
 
-        // Update metadata
+        // Update in-memory metadata (caller saves if needed)
         this.data.activeTaskSpaceId = id;
 
         // Update lastAccessed in workspace state (stored separately to avoid git noise)
         await this.storage.setLastAccessed(id, Date.now());
-
-        await this.save();
     }
 
     /**

@@ -2,7 +2,7 @@
     "name": "r3bl-task-management",
     "displayName": "R3BL Task Management",
     "description": "Manage task spaces - collections of open tabs for different work contexts",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "publisher": "R3BL",
     "license": "MIT",
     "engines": {
@@ -43,6 +43,11 @@
                 "category": "R3BL"
             },
             {
+                "command": "r3bl-task-management.saveCurrentTaskSpace",
+                "title": "Task Management: Save Current Task Space",
+                "category": "R3BL"
+            },
+            {
                 "command": "r3bl-task-management.installClaudeCodeIntegration",
                 "title": "Task Management: Install Claude Code Integration",
                 "category": "R3BL"
@@ -66,7 +71,14 @@
                 "r3bl-task-management.autoSaveCurrentTaskSpace": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Automatically save the current task space when tabs change"
+                    "description": "Automatically save the current task space when tabs change. Disable for 'view-only' mode where this instance syncs from others but doesn't write back."
+                },
+                "r3bl-task-management.autoSaveDebounceMs": {
+                    "type": "number",
+                    "default": 500,
+                    "minimum": 100,
+                    "maximum": 5000,
+                    "description": "Delay in milliseconds before auto-saving after tab changes. Lower values save faster but may cause more disk writes."
                 },
                 "r3bl-task-management.confirmBeforeSwitch": {
                     "type": "boolean",

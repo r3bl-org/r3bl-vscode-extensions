@@ -27,6 +27,30 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-26] - Multi-Instance Sync and Architecture Improvements
+
+### Package Versions
+
+- **R3BL Task Management**: 1.1.5 → 1.1.6
+- **R3BL Extension Pack**: 1.0.53 → 1.0.54
+
+### Changes
+
+- **R3BL Task Management 1.1.6**: Major improvements to multi-VS Code instance sync
+    - Fixed race condition when multiple VS Code instances have same project open
+    - Added checksum-based change detection (replaces timing-based approach)
+    - Added auto-save suppression during file watcher sync to prevent sync loops
+    - Fixed active tab not being restored when only activeTab changed in task-spaces.json
+    - Refactored to use diff-based switching for all task space changes (smoother UX)
+    - Renamed methods for clarity: `switchToTaskSpaceFromUserAction`,
+      `switchToTaskSpaceFromFileWatcher`
+    - Added manual save command: "R3BL: Task Management: Save Current Task Space"
+    - Added `autoSaveDebounceMs` setting (default: 500ms, range: 100-5000ms)
+    - Improved `autoSaveCurrentTaskSpace` setting description for "view-only" mode use
+      case
+    - Removed dead code (`closeAllTabs`, `openTabs` methods)
+    - Added comprehensive architecture documentation in source code
+
 ## [2025-11-21] - Fixed CHANGELOG Links in Marketplace Listings
 
 ### Package Versions
