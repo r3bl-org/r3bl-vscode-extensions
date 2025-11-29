@@ -36,8 +36,14 @@
         "contrastBorder": "#191a21",
         "debugToolBar.background": "#0e1419",
         "debugToolBar.border": "#6272a4",
-        "diffEditor.insertedTextBackground": "#50fa7b20",
-        "diffEditor.removedTextBackground": "#ff555550",
+        "diffEditor.insertedLineBackground": "#4488ff35",
+        "diffEditor.insertedTextBackground": "#4488ff25",
+        "diffEditor.removedLineBackground": "#8b3a7040",
+        "diffEditor.removedTextBackground": "#9b3b7a55",
+        "diffEditorGutter.insertedLineBackground": "#4488ff70",
+        "diffEditorGutter.removedLineBackground": "#8b3a6a60",
+        "diffEditorOverview.insertedForeground": "#4488ff",
+        "diffEditorOverview.removedForeground": "#c060a0",
         "dropdown.background": "#253340",
         "dropdown.border": "#6272a4",
         "dropdown.foreground": "#f8f8f2",
@@ -70,7 +76,7 @@
         "editorGroup.dropBackground": "#44475a70",
         "editorGroupHeader.tabsBackground": "#1a1f26",
         "editorGroupHeader.tabsBorder": "#574473",
-        "editorGutter.addedBackground": "#50fa7b80",
+        "editorGutter.addedBackground": "#4488ff80",
         "editorGutter.deletedBackground": "#ff555580",
         "editorGutter.modifiedBackground": "#ffb86c80",
         "editorHint.border": "#62fa1b",
@@ -88,7 +94,7 @@
         "editorLineNumber.foreground": "#6272a4",
         "editorLink.activeForeground": "#8be9fd",
         "editorMarkerNavigation.background": "#0a0c2da3",
-        "editorOverviewRuler.addedForeground": "#50fa7b80",
+        "editorOverviewRuler.addedForeground": "#4488ff80",
         "editorOverviewRuler.border": "#191a21",
         "editorOverviewRuler.currentContentForeground": "#50fa7b",
         "editorOverviewRuler.deletedForeground": "#ff555580",
@@ -577,7 +583,7 @@
         {
             "scope": ["markup.inserted"],
             "settings": {
-                "foreground": "#50FA7B"
+                "foreground": "#4488FF"
             }
         },
         {

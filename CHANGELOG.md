@@ -27,6 +27,24 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-11-29] - Diff View Color Change
+
+### Package Versions
+
+- **R3BL Theme**: 1.0.15 → 1.0.16
+- **R3BL Extension Pack**: 1.0.55 → 1.0.56
+
+### Changes
+
+- **R3BL Theme 1.0.16**: Redesigned diff view colors for better visual distinction
+    - Added lines now use vibrant blue (`#4488ff`) instead of green
+    - Removed lines now use elegant pink/magenta (`#8b3a70`) instead of red
+    - Added new diff editor settings: `insertedLineBackground`, `removedLineBackground`
+    - Added gutter colors: `diffEditorGutter.insertedLineBackground`,
+      `diffEditorGutter.removedLineBackground`
+    - Added overview ruler colors for diff navigation
+    - Creates a more visually appealing and distinctive diff experience
+
 ## [2025-11-26] - Documentation Update
 
 ### Package Versions
