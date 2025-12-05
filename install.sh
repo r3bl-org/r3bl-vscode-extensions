@@ -14,65 +14,44 @@ check_requirements
 # Get all extension versions
 get_all_versions
 
+# Helper function to install extension to all available editors
+install_extension() {
+    local vsix_path="$1"
+    if command -v code &> /dev/null; then
+        code --install-extension "$vsix_path"
+    fi
+    if command -v code-insiders &> /dev/null; then
+        code-insiders --install-extension "$vsix_path"
+    fi
+    if command -v codium &> /dev/null; then
+        codium --install-extension "$vsix_path"
+    fi
+}
+
 # Install all individual extensions first (required for extension pack to work)
 echo ""
 echo -e "${BLUE}Installing individual extensions...${NC}"
 
 # Install R3BL Shared (infrastructure - must be first since other extensions depend on it)
-if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-shared/r3bl-shared-${SHARED_VERSION}.vsix
-fi
-if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-shared/r3bl-shared-${SHARED_VERSION}.vsix
-fi
+install_extension "packages/r3bl-shared/r3bl-shared-${SHARED_VERSION}.vsix"
 
 # Install R3BL Theme
-if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-theme/r3bl-theme-${THEME_VERSION}.vsix
-fi
-if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-theme/r3bl-theme-${THEME_VERSION}.vsix
-fi
+install_extension "packages/r3bl-theme/r3bl-theme-${THEME_VERSION}.vsix"
 
 # Install R3BL Auto Insert Copyright
-if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-${COPYRIGHT_VERSION}.vsix
-fi
-if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-${COPYRIGHT_VERSION}.vsix
-fi
+install_extension "packages/r3bl-auto-insert-copyright/r3bl-auto-insert-copyright-${COPYRIGHT_VERSION}.vsix"
 
 # Install R3BL Semantic Configuration
-if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-${SEMANTIC_VERSION}.vsix
-fi
-if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-semantic-config/r3bl-semantic-config-${SEMANTIC_VERSION}.vsix
-fi
+install_extension "packages/r3bl-semantic-config/r3bl-semantic-config-${SEMANTIC_VERSION}.vsix"
 
 # Install R3BL Task Management
-if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-task-management/r3bl-task-management-${TASK_MANAGEMENT_VERSION}.vsix
-fi
-if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-task-management/r3bl-task-management-${TASK_MANAGEMENT_VERSION}.vsix
-fi
+install_extension "packages/r3bl-task-management/r3bl-task-management-${TASK_MANAGEMENT_VERSION}.vsix"
 
 # Install R3BL Copy Selection Path and Range
-if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-copy-selection-path-and-range/r3bl-copy-selection-path-and-range-${COPY_SELECTION_VERSION}.vsix
-fi
-if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-copy-selection-path-and-range/r3bl-copy-selection-path-and-range-${COPY_SELECTION_VERSION}.vsix
-fi
+install_extension "packages/r3bl-copy-selection-path-and-range/r3bl-copy-selection-path-and-range-${COPY_SELECTION_VERSION}.vsix"
 
 # Install R3BL Fuzzy Search
-if command -v code &> /dev/null; then
-    code --install-extension packages/r3bl-fuzzy-search/r3bl-fuzzy-search-${FUZZY_SEARCH_VERSION}.vsix
-fi
-if command -v code-insiders &> /dev/null; then
-    code-insiders --install-extension packages/r3bl-fuzzy-search/r3bl-fuzzy-search-${FUZZY_SEARCH_VERSION}.vsix
-fi
+install_extension "packages/r3bl-fuzzy-search/r3bl-fuzzy-search-${FUZZY_SEARCH_VERSION}.vsix"
 
 # Install the extension pack
 echo ""
@@ -102,6 +81,18 @@ else
     echo -e "${YELLOW}VSCode Insiders not found, skipping installation for VSCode Insiders${NC}"
 fi
 
+# Install for VSCodium
+if command -v codium &> /dev/null; then
+    echo -e "${BLUE}Installing R3BL Extension Pack for VSCodium...${NC}"
+    if codium --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix; then
+        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCodium!${NC}"
+    else
+        echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCodium${NC}"
+    fi
+else
+    echo -e "${YELLOW}VSCodium not found, skipping installation for VSCodium${NC}"
+fi
+
 echo ""
 echo -e "${GREEN}🎉 Installation complete!${NC}"
 echo ""
@@ -116,7 +107,7 @@ echo "  • R3BL Fuzzy Search - Fuzzy search in files using fzf"
 echo "  • rust-analyzer - Official Rust language server"
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
-echo "1. Restart VSCode/Insiders"
+echo "1. Restart VSCode/Insiders/Codium"
 echo "2. Select 'R3BL Theme' from Color Theme picker (Ctrl+K Ctrl+T)"
 echo "3. Configure copyright settings in VSCode preferences if needed"
 echo ""
