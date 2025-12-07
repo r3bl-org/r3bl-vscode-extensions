@@ -258,30 +258,43 @@ git add packages/extension-name/src/ packages/extension-name/package.json packag
 git commit -m "[extension-name] Description of changes"
 ```
 
-### 7. Publish to VSCode Marketplace (Optional)
+### 7. Publish to Both Marketplaces (Optional)
 
-If you want to publish the extension to the VSCode Marketplace:
+R3BL extensions are published to **both** the Visual Studio Marketplace and Open VSX Registry
+(for VSCodium users).
 
 ```bash
-# Navigate to the extension directory
-cd packages/extension-name
+# Set environment variables (add to ~/.bashrc or ~/.zshrc for persistence)
+export VSCE_PAT="your-vs-marketplace-token"
+export OVSX_PAT="your-open-vsx-token"
 
-# Publish using vsce (requires PAT configured)
-vsce publish
-
-# Or publish the extension pack
-cd packages/r3bl-extension-pack
-vsce publish
+# Publish to both marketplaces
+./publish.sh
 ```
+
+The `publish.sh` script automatically:
+- Publishes all extensions to VS Marketplace using `vsce`
+- Publishes all extensions to Open VSX using `ovsx`
+- Respects dependency order (r3bl-shared first, then r3bl-semantic-config, etc.)
 
 **Prerequisites:**
 
-- Personal Access Token (PAT) from Azure DevOps must be configured
-- Publisher account must be set up
-- Run `vsce login R3BL` if not already authenticated
+- `VSCE_PAT`: Personal Access Token from Azure DevOps for VS Marketplace
+- `OVSX_PAT`: Access token from https://open-vsx.org/user-settings/tokens
+- Run `vsce login R3BL` if not already authenticated with VS Marketplace
 
-**Note:** Publishing makes the extension publicly available on the VSCode Marketplace.
-Only do this after thorough testing.
+**Manual Publishing (if needed):**
+
+```bash
+# VS Marketplace only
+cd packages/extension-name
+vsce publish
+
+# Open VSX only
+npx ovsx publish packages/extension-name/extension-name-X.Y.Z.vsix -p $OVSX_PAT
+```
+
+**Note:** Publishing makes extensions publicly available. Only do this after thorough testing.
 
 ### Key Points for Modifications
 
@@ -697,6 +710,7 @@ When modifying an extension:
 - [ ] Run `./install.sh` to test locally (optional)
 - [ ] Commit changes with proper git add of modified files
 - [ ] Push to repository
+- [ ] Run `./publish.sh` to publish to both marketplaces (optional)
 
 When creating a new extension:
 
@@ -710,6 +724,7 @@ When creating a new extension:
 - [ ] Update `script_lib.sh`, `build.sh`, `install.sh`
 - [ ] Run `./build.sh` and `./install.sh` to test
 - [ ] Commit all changes
+- [ ] Run `./publish.sh` to publish to both marketplaces
 
 ## Version Management Notes
 
