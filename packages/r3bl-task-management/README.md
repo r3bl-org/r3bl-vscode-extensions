@@ -12,7 +12,7 @@ implementation plans in `task/*.md` files.
     - [Context Preservation](#context-preservation)
     - [Claude Code Collaboration](#claude-code-collaboration)
     - [Multiple Concurrent Workflows (Same Branch)](#multiple-concurrent-workflows-same-branch)
-    - [Cross-IDE Sync (VS Code + VS Code Insiders)](#cross-ide-sync-vs-code--vs-code-insiders)
+    - [Multi-IDE Workflows (Different Task Spaces Per IDE)](#multi-ide-workflows-different-task-spaces-per-ide)
 - [What It Does](#what-it-does)
 - [Getting Started](#getting-started)
     - [Requirements](#requirements)
@@ -73,20 +73,34 @@ research? Create separate task spaces for each workflow **on your current branch
 - **"Code Review: PR #123"** - All changed files
 - **"Bug Fix: Login Error"** - Debugging context
 
-### Cross-IDE Sync (VS Code + VS Code Insiders)
+### Multi-IDE Workflows (Different Task Spaces Per IDE)
 
-Run both VS Code and VS Code Insiders on the same project simultaneously. Changes made in
-one instance are **automatically synced** to the other:
+**The problem:** VS Code only allows one window per project folder. You can't open the same
+project twice in VS Code.
 
-- Reorder tabs in VS Code → they slide into position in VS Code Insiders
-- Pin a tab in one → it gets pinned in the other
-- Close/open tabs → reflected seamlessly
+**The solution:** Use multiple IDEs! Open the same project folder in VS Code, VS Code
+Insiders, and/or VSCodium simultaneously - each with a **different task space active**:
+
+- **VS Code**: "Feature: Auth" task space with implementation files
+- **VS Code Insiders**: "Research: OAuth" task space with documentation tabs
+- **VSCodium**: "Code Review: PR #123" task space with changed files
+
+Each IDE maintains its own active task space independently. Task space definitions (names,
+tabs, files) sync across all IDEs via the shared `task-spaces.json` file, but which space
+is "active" is stored per-IDE instance.
 
 This enables workflows like:
 
-- **Side-by-side comparison** of different task space configurations
-- **Testing extensions** in Insiders while working in stable VS Code
-- **Pair programming** where each person controls different aspects
+- **Parallel development**: Implementation in VS Code, research in Insiders, review in
+  VSCodium
+- **Side-by-side comparison**: Compare different task space configurations across IDEs
+- **Testing + Development**: Test extensions in Insiders while working in stable VS Code
+- **Multiple Claude Code sessions**: Different Claude instances working on different task
+  spaces
+
+**How it works:** When you switch task spaces in VS Code, VS Code Insiders' active space
+stays unchanged. But if you add/remove tabs from "Feature: Auth" in VS Code, those changes
+sync to Insiders if it also has "Feature: Auth" active.
 
 ## What It Does
 
@@ -96,7 +110,9 @@ This enables workflows like:
   restarts
 - **Diff-Based Sync**: Only applies minimal changes (close/open/move/pin) for smooth
   transitions
-- **Cross-IDE Sync**: Changes in one VS Code instance reflect in another via file watcher
+- **Multi-IDE Support**: Different IDEs (VS Code, Insiders, VSCodium) can have different
+  task spaces active on the same project folder
+- **Cross-IDE Sync**: Tab changes sync when same space is active in multiple IDEs
 - **Smart Startup**: Skips restore if current tabs already match saved state
 - **Claude Code Integration**: Link task spaces to `task/*.md` files for tracking
   implementation plans
