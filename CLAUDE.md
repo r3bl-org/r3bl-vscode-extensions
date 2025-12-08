@@ -713,11 +713,12 @@ When modifying an extension:
 - [ ] Update version in `packages/extension-name/package.json`
 - [ ] Update version in `packages/r3bl-extension-pack/package.json`
 - [ ] Update CHANGELOG.md with changes and new versions
+- [ ] **If README.md has a TOC**: Verify TOC matches actual headings after any changes
 - [ ] Run `./build.sh` to generate artifacts
 - [ ] Run `./install.sh` to test locally (optional)
 - [ ] Commit changes with proper git add of modified files
 - [ ] Push to repository
-- [ ] Run `./publish.sh` to publish to both marketplaces (optional)
+- [ ] Run `./publish.sh <ext-names>` to publish to both marketplaces (optional)
 
 When creating a new extension:
 

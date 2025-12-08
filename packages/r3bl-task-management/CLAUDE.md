@@ -1,14 +1,14 @@
 # R3BL Task Management - Architecture Guide
 
-This document describes the internal architecture, event lifecycle, and common pitfalls when
-making changes to the R3BL Task Management extension. It is intended for AI assistants and
-developers working on this codebase.
+This document describes the internal architecture, event lifecycle, and common pitfalls
+when making changes to the R3BL Task Management extension. It is intended for AI
+assistants and developers working on this codebase.
 
 ## Overview
 
-R3BL Task Management allows users to manage "task spaces" - named collections of open tabs that
-can be saved and restored. The extension supports multiple VSCode instances having different
-task spaces active simultaneously on the same project folder.
+R3BL Task Management allows users to manage "task spaces" - named collections of open tabs
+that can be saved and restored. The extension supports multiple VSCode instances having
+different task spaces active simultaneously on the same project folder.
 
 ## File Structure
 
@@ -31,47 +31,48 @@ The extension uses a **split storage architecture** to support multi-instance be
 **Location**: `<workspace>/.vscode/task-spaces.json`
 
 **Contents** (version 3.0):
+
 ```json
 {
-  "version": "3.0",
-  "taskSpaces": [
-    {
-      "name": "Feature Work",
-      "id": "uuid-here",
-      "tabs": [
-        { "path": "src/index.ts", "isPinned": true },
-        { "path": "src/utils.ts", "isPinned": false }
-      ],
-      "taskFile": "task/task_feature.md",
-      "activeTab": "src/index.ts",
-      "createdAt": 1234567890
-    }
-  ]
+    "version": "3.0",
+    "taskSpaces": [
+        {
+            "name": "Feature Work",
+            "id": "uuid-here",
+            "tabs": [
+                { "path": "src/index.ts", "isPinned": true },
+                { "path": "src/utils.ts", "isPinned": false }
+            ],
+            "taskFile": "task/task_feature.md",
+            "activeTab": "src/index.ts",
+            "createdAt": 1234567890
+        }
+    ]
 }
 ```
 
-**Synced across instances**: Yes (via file watcher)
-**Version controlled**: Yes (can be committed to git)
+**Synced across instances**: Yes (via file watcher) **Version controlled**: Yes (can be
+committed to git)
 
 ### 2. Per-Instance State: VSCode WorkspaceState
 
 **Location**: `~/.config/Code/User/workspaceStorage/<workspace-id>/state.vscdb`
 
 **Contents**:
+
 - `activeTaskSpaceId`: Which task space is active in THIS window
 - `taskSpaceMetadata`: `{ [id]: { lastAccessed: number } }` for sorting
 
-**Synced across instances**: No
-**Version controlled**: No
+**Synced across instances**: No **Version controlled**: No
 
 ### Why This Split?
 
-| Requirement | Solution |
-|-------------|----------|
+| Requirement                                   | Solution                              |
+| --------------------------------------------- | ------------------------------------- |
 | Multiple windows with different active spaces | `activeTaskSpaceId` in workspaceState |
-| Task space definitions sync across instances | File watcher on `task-spaces.json` |
-| Avoid git noise from frequent timestamps | `lastAccessed` in workspaceState |
-| Allow version controlling task spaces | JSON file in `.vscode/` |
+| Task space definitions sync across instances  | File watcher on `task-spaces.json`    |
+| Avoid git noise from frequent timestamps      | `lastAccessed` in workspaceState      |
+| Allow version controlling task spaces         | JSON file in `.vscode/`               |
 
 ## Event Lifecycle
 
@@ -173,6 +174,7 @@ task-spaces.json changed on disk
 ### Problem 1: Own-Save Detection
 
 Without detection, file watcher creates infinite loops:
+
 ```
 A saves → B's watcher fires → B applies → B saves → A's watcher fires → ...
 ```
@@ -191,7 +193,9 @@ if (computeChecksum(loadedData) === this.lastSavedChecksum) {
 
 ### Problem 2: Auto-Save During Sync
 
-When syncing from file watcher, tab changes trigger onDidChangeTabs, which would auto-save:
+When syncing from file watcher, tab changes trigger onDidChangeTabs, which would
+auto-save:
+
 ```
 A saves → B syncs → B's tabs change → B auto-saves → A syncs → ...
 ```
@@ -215,7 +219,9 @@ Uses a counter (not boolean) to handle theoretical overlapping syncs.
 
 ### Problem 3: Auto-Save During User Switch
 
-When user clicks to switch spaces, tabs change → auto-save fires with old active space's tabs:
+When user clicks to switch spaces, tabs change → auto-save fires with old active space's
+tabs:
+
 ```
 User clicks "Space B" → tabs change → auto-save fires → saves current tabs to Space A (wrong!)
 ```
@@ -238,11 +244,11 @@ async switchToTaskSpaceFromUserAction(id: string): Promise<void> {
 
 ### Version History
 
-| Version | Changes |
-|---------|---------|
-| 1.0 | Original: `tabs` as `string[]` |
-| 2.0 | `tabs` as `TabInfo[]` with `isPinned`, `activeTaskSpaceId` in JSON |
-| 3.0 | `activeTaskSpaceId` moved to workspaceState (multi-instance support) |
+| Version | Changes                                                              |
+| ------- | -------------------------------------------------------------------- |
+| 1.0     | Original: `tabs` as `string[]`                                       |
+| 2.0     | `tabs` as `TabInfo[]` with `isPinned`, `activeTaskSpaceId` in JSON   |
+| 3.0     | `activeTaskSpaceId` moved to workspaceState (multi-instance support) |
 
 ### Migration Code Location
 
@@ -256,22 +262,24 @@ Migration happens during `loadTaskSpaces()` before data is returned to the calle
 
 1. Add command ID to `package.json` under `contributes.commands`
 2. Register handler in `extension.ts`:
-   ```typescript
-   const myCommand = vscode.commands.registerCommand(
-       'r3bl-task-management.myCommand',
-       async () => { /* handler */ }
-   );
-   context.subscriptions.push(myCommand);
-   ```
+    ```typescript
+    const myCommand = vscode.commands.registerCommand(
+        'r3bl-task-management.myCommand',
+        async () => {
+            /* handler */
+        },
+    );
+    context.subscriptions.push(myCommand);
+    ```
 
 ### Adding a New Setting
 
 1. Add to `package.json` under `contributes.configuration.properties`
 2. Read in code:
-   ```typescript
-   const config = vscode.workspace.getConfiguration('r3bl-task-management');
-   const value = config.get<boolean>('mySetting', defaultValue);
-   ```
+    ```typescript
+    const config = vscode.workspace.getConfiguration('r3bl-task-management');
+    const value = config.get<boolean>('mySetting', defaultValue);
+    ```
 
 ### Adding Data to task-spaces.json
 
@@ -282,6 +290,7 @@ Migration happens during `loadTaskSpaces()` before data is returned to the calle
 ### Adding Per-Instance State
 
 Store in workspaceState (NOT task-spaces.json):
+
 ```typescript
 // In storage.ts
 async getMyState(): Promise<T | undefined> {
@@ -330,8 +339,8 @@ fileWatcher.onDidChange(async () => {
 
 ## Common Pitfalls
 
-1. **Forgetting to suppress auto-save**: Any code that programmatically changes tabs should
-   increment `pendingFileWatcherSyncs` before and decrement after.
+1. **Forgetting to suppress auto-save**: Any code that programmatically changes tabs
+   should increment `pendingFileWatcherSyncs` before and decrement after.
 
 2. **Saving in file watcher handler**: Never call `save()` in the file watcher sync path -
    it creates loops.

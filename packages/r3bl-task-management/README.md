@@ -75,8 +75,8 @@ research? Create separate task spaces for each workflow **on your current branch
 
 ### Multi-IDE Workflows (Different Task Spaces Per IDE)
 
-**The problem:** VS Code only allows one window per project folder. You can't open the same
-project twice in VS Code.
+**The problem:** VS Code only allows one window per project folder. You can't open the
+same project twice in VS Code.
 
 **The solution:** Use multiple IDEs! Open the same project folder in VS Code, VS Code
 Insiders, and/or VSCodium simultaneously - each with a **different task space active**:
