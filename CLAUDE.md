@@ -260,41 +260,48 @@ git commit -m "[extension-name] Description of changes"
 
 ### 7. Publish to Both Marketplaces (Optional)
 
-R3BL extensions are published to **both** the Visual Studio Marketplace and Open VSX Registry
-(for VSCodium users).
+R3BL extensions are published to **both** the Visual Studio Marketplace and Open VSX
+Registry (for VSCodium users).
 
 ```bash
-# Set environment variables (add to ~/.bashrc or ~/.zshrc for persistence)
-export VSCE_PAT="your-vs-marketplace-token"
-export OVSX_PAT="your-open-vsx-token"
+# Publish specific extensions by name
+./publish.sh r3bl-task-management r3bl-extension-pack
 
-# Publish to both marketplaces
+# Run without args to see available extensions
 ./publish.sh
 ```
 
-The `publish.sh` script automatically:
-- Publishes all extensions to VS Marketplace using `vsce`
-- Publishes all extensions to Open VSX using `ovsx`
-- Respects dependency order (r3bl-shared first, then r3bl-semantic-config, etc.)
+The `publish.sh` script:
 
-**Prerequisites:**
+- Publishes only the extensions you specify as arguments
+- Loads tokens from `.secrets.json` (git-ignored) if environment variables not set
+- Publishes to both VS Marketplace and Open VSX
 
-- `VSCE_PAT`: Personal Access Token from Azure DevOps for VS Marketplace
-- `OVSX_PAT`: Access token from https://open-vsx.org/user-settings/tokens
-- Run `vsce login R3BL` if not already authenticated with VS Marketplace
+**Setting up tokens:**
 
-**Manual Publishing (if needed):**
+Create a `.secrets.json` file in the repo root (already in `.gitignore`):
 
-```bash
-# VS Marketplace only
-cd packages/extension-name
-vsce publish
-
-# Open VSX only
-npx ovsx publish packages/extension-name/extension-name-X.Y.Z.vsix -p $OVSX_PAT
+```json
+{
+    "VSCE_PAT": "your-vs-marketplace-personal-access-token",
+    "OVSX_PAT": "your-open-vsx-access-token"
+}
 ```
 
-**Note:** Publishing makes extensions publicly available. Only do this after thorough testing.
+Or use environment variables:
+
+```bash
+export VSCE_PAT="your-vs-marketplace-token"
+export OVSX_PAT="your-open-vsx-token"
+```
+
+**Token sources:**
+
+- `VSCE_PAT`: Azure DevOps at https://dev.azure.com/nazmul0206/_usersSettings/tokens
+- `OVSX_PAT`: Open VSX at https://open-vsx.org/user-settings/tokens
+
+**Note:** Publishing makes extensions publicly available. Only do this after thorough
+testing.
 
 ### Key Points for Modifications
 

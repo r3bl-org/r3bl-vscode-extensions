@@ -65,6 +65,16 @@ check_requirements() {
         missing_tools+=("vsce (@vscode/vsce)")
     fi
 
+    # Check for jq (required for JSON parsing in publish.sh)
+    if ! command -v jq &> /dev/null; then
+        missing_tools+=("jq")
+    fi
+
+    # Check for curl (required for Open VSX API queries in publish.sh)
+    if ! command -v curl &> /dev/null; then
+        missing_tools+=("curl")
+    fi
+
     if [ ${#missing_tools[@]} -gt 0 ]; then
         echo -e "${RED}Error: Missing required tools:${NC}"
         for tool in "${missing_tools[@]}"; do
@@ -74,6 +84,8 @@ check_requirements() {
         echo -e "${YELLOW}Please install the missing tools and try again.${NC}"
         echo "  • Node.js: https://nodejs.org/"
         echo "  • vsce: npm install -g @vscode/vsce"
+        echo "  • jq: sudo apt install jq (or brew install jq)"
+        echo "  • curl: sudo apt install curl (or brew install curl)"
         exit 1
     fi
 }

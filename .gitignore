@@ -34,3 +34,6 @@ temp/
 # Serena memories
 .serena/memories/
 .serena/cache/
+
+# Local secrets (never commit!)
+.secrets.json
