@@ -133,9 +133,16 @@ export class TaskSpaceManager {
      */
     private pendingFileWatcherSyncs: number = 0;
 
+    /**
+     * Active task space ID for THIS VSCode instance.
+     * Stored in workspaceState (per-instance), not in task-spaces.json (shared).
+     * This allows multiple VSCode windows to have different task spaces active.
+     */
+    private activeTaskSpaceId: string | undefined;
+
     constructor(context: vscode.ExtensionContext) {
         this.storage = new Storage(context);
-        this.data = { version: '2.0', taskSpaces: [], activeTaskSpaceId: undefined };
+        this.data = { version: '3.0', taskSpaces: [] };
     }
 
     /**
@@ -169,9 +176,14 @@ export class TaskSpaceManager {
      * Initialize manager by loading data from storage
      */
     async initialize(): Promise<void> {
+        // Load task spaces from JSON (migration from 2.0 → 3.0 happens during load)
         this.data = await this.storage.loadTaskSpaces();
         // Set initial checksum so we don't treat first load as external change
         this.lastSavedChecksum = this.computeChecksum(this.data);
+
+        // Load activeTaskSpaceId from workspaceState (per-instance)
+        // Note: If migrating from 2.0, the value was written to workspaceState during load
+        this.activeTaskSpaceId = this.storage.getActiveTaskSpaceId();
     }
 
     /**
@@ -202,14 +214,30 @@ export class TaskSpaceManager {
      * Get active task space
      */
     getActiveTaskSpace(): TaskSpace | undefined {
-        return this.data.taskSpaces.find((ts) => ts.id === this.data.activeTaskSpaceId);
+        return this.data.taskSpaces.find((ts) => ts.id === this.activeTaskSpaceId);
     }
 
     /**
      * Get active task space ID
      */
     getActiveTaskSpaceId(): string | undefined {
-        return this.data.activeTaskSpaceId;
+        return this.activeTaskSpaceId;
+    }
+
+    /**
+     * Clear activeTaskSpaceId if the task space was deleted externally.
+     * Called by file watcher when detecting external changes.
+     */
+    async clearActiveIfDeleted(): Promise<void> {
+        if (this.activeTaskSpaceId) {
+            const exists = this.data.taskSpaces.some(
+                (ts) => ts.id === this.activeTaskSpaceId,
+            );
+            if (!exists) {
+                this.activeTaskSpaceId = undefined;
+                await this.storage.setActiveTaskSpaceId(undefined);
+            }
+        }
     }
 
     /**
@@ -242,7 +270,8 @@ export class TaskSpaceManager {
 
         // Set as active if requested (atomically with creation)
         if (setAsActive) {
-            this.data.activeTaskSpaceId = taskSpace.id;
+            this.activeTaskSpaceId = taskSpace.id;
+            await this.storage.setActiveTaskSpaceId(taskSpace.id);
         }
 
         // Set lastAccessed in workspace state (stored separately to avoid git noise)
@@ -272,8 +301,9 @@ export class TaskSpaceManager {
         this.data.taskSpaces.splice(index, 1);
 
         // Clear active if we deleted the active task space
-        if (this.data.activeTaskSpaceId === id) {
-            this.data.activeTaskSpaceId = undefined;
+        if (this.activeTaskSpaceId === id) {
+            this.activeTaskSpaceId = undefined;
+            await this.storage.setActiveTaskSpaceId(undefined);
         }
 
         // Clean up lastAccessed metadata from workspace state to prevent memory leaks
@@ -352,9 +382,17 @@ export class TaskSpaceManager {
     /**
      * Switch to a different task space - triggered by user action (UI click)
      * Saves the change to persist user's intent.
+     * Suppresses auto-save during the switch to prevent race conditions.
      */
     async switchToTaskSpaceFromUserAction(id: string): Promise<void> {
-        await this.diffSwitchToTaskSpace(id);
+        // Suppress auto-save during switch to prevent saving partial state
+        // or saving old tabs to the new task space
+        this.pendingFileWatcherSyncs++;
+        try {
+            await this.diffSwitchToTaskSpace(id);
+        } finally {
+            this.pendingFileWatcherSyncs--;
+        }
         await this.save();
     }
 
@@ -661,8 +699,9 @@ export class TaskSpaceManager {
             await this.focusTab(taskSpace.activeTab, workspaceFolder);
         }
 
-        // Update in-memory metadata (caller saves if needed)
-        this.data.activeTaskSpaceId = id;
+        // Update active task space ID (per-instance, stored in workspaceState)
+        this.activeTaskSpaceId = id;
+        await this.storage.setActiveTaskSpaceId(id);
 
         // Update lastAccessed in workspace state (stored separately to avoid git noise)
         await this.storage.setLastAccessed(id, Date.now());

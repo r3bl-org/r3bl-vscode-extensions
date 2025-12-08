@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { TabInfo, TaskSpaceStorage } from './types';
 
 const STORAGE_FILE = '.vscode/task-spaces.json';
-const CURRENT_VERSION = '2.0';
+const CURRENT_VERSION = '3.0';
 
 /**
  * Manages task space storage using a split architecture:
@@ -14,14 +14,18 @@ const CURRENT_VERSION = '2.0';
  *    - Contains: name, id, tabs, taskFile, activeTab, createdAt
  *    - Only changes when spaces are created/deleted/renamed
  *
- * 2. Access Timestamps (VSCode Workspace State):
+ * 2. Per-Instance State (VSCode Workspace State):
  *    - Stored in VSCode's internal database (NOT version controlled)
- *    - Contains: lastAccessed timestamps for each task space
+ *    - Contains:
+ *      - activeTaskSpaceId: Which task space is active in THIS window
+ *      - lastAccessed timestamps for each task space (for sorting)
  *    - Updated frequently (every task space switch)
  *    - Location: ~/.config/Code/User/workspaceStorage/<workspace-id>/state.vscode.*
  *
- * This split prevents git noise from frequent timestamp updates while keeping
- * task space definitions clean and shareable.
+ * This split:
+ * - Prevents git noise from frequent timestamp updates
+ * - Allows multiple VSCode instances to have different task spaces active simultaneously
+ * - Keeps task space definitions clean and shareable
  */
 export class Storage {
     constructor(private context: vscode.ExtensionContext) {}
@@ -135,6 +139,22 @@ export class Storage {
     }
 
     /**
+     * Get activeTaskSpaceId from workspaceState (per-instance, not shared)
+     * This allows multiple VSCode windows to have different task spaces active
+     */
+    getActiveTaskSpaceId(): string | undefined {
+        return this.context.workspaceState.get<string>('activeTaskSpaceId');
+    }
+
+    /**
+     * Set activeTaskSpaceId in workspaceState (per-instance, not shared)
+     * @param id The task space ID to set as active, or undefined to clear
+     */
+    async setActiveTaskSpaceId(id: string | undefined): Promise<void> {
+        await this.context.workspaceState.update('activeTaskSpaceId', id);
+    }
+
+    /**
      * Get the current workspace folder
      * Returns undefined if no workspace is open
      */
@@ -150,7 +170,6 @@ export class Storage {
         return {
             version: CURRENT_VERSION,
             taskSpaces: [],
-            activeTaskSpaceId: undefined,
         };
     }
 
@@ -180,7 +199,24 @@ export class Storage {
             data.version = '2.0';
         }
 
-        // Future migrations go here: if (data.version === '2.0') { ... }
+        // Migrate from 2.0 to 3.0: Move activeTaskSpaceId to workspaceState
+        if (data.version === '2.0') {
+            // Extract legacy activeTaskSpaceId before removing it
+            // In 2.0, activeTaskSpaceId was stored in the JSON file
+            const legacyData = data as TaskSpaceStorage & { activeTaskSpaceId?: string };
+            const legacyActiveId = legacyData.activeTaskSpaceId;
+
+            // Migrate to workspaceState (only if workspaceState doesn't already have a value)
+            if (legacyActiveId && !this.getActiveTaskSpaceId()) {
+                // Note: Using sync update since migrateIfNeeded is called during load
+                this.context.workspaceState.update('activeTaskSpaceId', legacyActiveId);
+            }
+
+            // Remove from data structure (TypeScript doesn't know about the old field)
+            delete legacyData.activeTaskSpaceId;
+
+            data.version = '3.0';
+        }
 
         return data;
     }

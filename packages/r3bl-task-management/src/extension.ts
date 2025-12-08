@@ -264,6 +264,9 @@ export async function activate(context: vscode.ExtensionContext) {
             }
 
             // External change (e.g., git checkout, another IDE instance)
+            // Check if our active task space was deleted externally
+            await manager.clearActiveIfDeleted();
+
             // Apply changes if tabs differ
             const activeTaskSpace = manager.getActiveTaskSpace();
             if (activeTaskSpace) {

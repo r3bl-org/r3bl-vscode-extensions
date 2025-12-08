@@ -18,5 +18,4 @@ export interface TaskSpace {
 export interface TaskSpaceStorage {
     version: string; // For future schema migrations
     taskSpaces: TaskSpace[];
-    activeTaskSpaceId?: string;
 }

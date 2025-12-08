@@ -27,6 +27,27 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-12-08] - Multi-Instance Task Space Support
+
+### Package Versions
+
+- **R3BL Task Management**: 1.1.7 → 1.1.8
+- **R3BL Extension Pack**: 1.0.56 → 1.0.57
+
+### Changes
+
+- **R3BL Task Management 1.1.8**: Multi-instance task space support
+    - **Breaking change**: Storage format upgraded from v2.0 to v3.0 (automatic migration)
+    - Multiple VSCode windows can now have different task spaces active simultaneously
+    - `activeTaskSpaceId` moved from `task-spaces.json` (shared) to VSCode workspaceState
+      (per-instance)
+    - Task space definitions still sync across all instances (create/delete/rename/tabs)
+    - Fixed race condition when switching task spaces that could overwrite target space
+      tabs
+    - Added auto-save suppression during task space switches
+    - Added `clearActiveIfDeleted()` to handle external task space deletion
+    - Updated README with comprehensive data storage architecture documentation
+
 ## [2025-11-29] - Diff View Color Change
 
 ### Package Versions

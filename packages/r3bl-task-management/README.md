@@ -356,13 +356,18 @@ Click to open Task Spaces dialog.
 
 ### File Format
 
-Task spaces are stored in **two separate locations** to avoid git noise:
+Task spaces are stored in **two separate locations** to support multi-instance editing and
+avoid git noise:
 
-#### `.vscode/task-spaces.json` (Version Controlled)
+#### `.vscode/task-spaces.json` (Shared File)
+
+This file is synced across all VSCode instances opening the same project. Changes made in
+one window (creating/deleting/renaming task spaces, modifying tabs) are reflected in
+others.
 
 ```json
 {
-    "version": "2.0",
+    "version": "3.0",
     "taskSpaces": [
         {
             "name": "Feature: Authentication",
@@ -375,16 +380,15 @@ Task spaces are stored in **two separate locations** to avoid git noise:
             "activeTab": "src/auth.ts",
             "createdAt": 1234567890
         }
-    ],
-    "activeTaskSpaceId": "uuid"
+    ]
 }
 ```
 
-#### VSCode Workspace State (NOT Version Controlled)
+#### VSCode Workspace State (Per-Instance)
 
-Access timestamps are stored separately in VSCode's workspace state to avoid polluting git
-history. Each task space switch updates the `lastAccessed` timestamp, but these changes
-never touch your workspace files.
+Per-instance data is stored in VSCode's workspace state. This data is NOT shared between
+VSCode windows, allowing different windows to have different task spaces active
+simultaneously.
 
 **Storage Location:**
 
@@ -397,6 +401,7 @@ never touch your workspace files.
 
 ```json
 {
+    "activeTaskSpaceId": "uuid",
     "taskSpaceMetadata": {
         "uuid-1": { "lastAccessed": 1234567890 },
         "uuid-2": { "lastAccessed": 1234555555 }
@@ -407,16 +412,28 @@ never touch your workspace files.
 **Note:** This metadata is automatically cleaned up when task spaces are deleted,
 preventing any memory leaks or storage bloat.
 
+#### Multi-Instance Behavior
+
+| Data              | Synced? | Notes                                               |
+| ----------------- | ------- | --------------------------------------------------- |
+| Task space list   | ✅ Yes  | Creating/deleting/renaming syncs across all windows |
+| Tab content       | ✅ Yes  | Adding/removing files from a space syncs            |
+| Active task space | ❌ No   | Each window can have different task space active    |
+| Last accessed     | ❌ No   | Each window tracks its own usage history            |
+
+**Example use case:** Open the same project in VS Code and VS Code Insiders, with
+different task spaces active in each window. Both windows stay in sync for task space
+definitions, but each maintains its own context.
+
 **Storage Benefits:**
 
 - ✅ Task space definitions remain clean and git-friendly
-- ✅ No git noise from frequent timestamp updates
-- ✅ "Last accessed" sorting still works perfectly
-- ✅ Timestamps persist across VSCode sessions
+- ✅ No git noise from frequent timestamp/active space updates
+- ✅ Multiple VSCode windows can work on different task spaces simultaneously
+- ✅ "Last accessed" sorting still works perfectly per-instance
 - ✅ Automatic cleanup when task spaces are deleted (no memory leaks)
 
-**Note:** The extension automatically migrates from v1.0 (string array) to v2.0 (TabInfo
-array) format.
+**Note:** The extension automatically migrates from v1.0 → v2.0 → v3.0 format as needed.
 
 ### When Does the File Get Saved?
 
@@ -424,7 +441,8 @@ The JSON file is automatically saved to disk in these situations:
 
 1. **Create task space** - Saves the new task space with current tabs
 2. **Delete task space** - Saves after removing the space (and archives task file)
-3. **Switch to task space** - Saves to update active task space ID
+3. **Switch to task space** - Saves to persist the switch (active ID stored in
+   workspaceState)
 4. **Rename task space** - Saves with the new name
 5. **Auto-save tabs** - Saves current open tabs (500ms after tab changes, if
    `autoSaveCurrentTaskSpace` is enabled)
