@@ -274,26 +274,19 @@ Registry (for VSCodium users).
 The `publish.sh` script:
 
 - Publishes only the extensions you specify as arguments
-- Loads tokens from `.secrets.json` (git-ignored) if environment variables not set
+- Reads tokens from environment variables (set in `~/.profile`)
 - Publishes to both VS Marketplace and Open VSX
 
 **Setting up tokens:**
 
-Create a `.secrets.json` file in the repo root (already in `.gitignore`):
-
-```json
-{
-    "VSCE_PAT": "your-vs-marketplace-personal-access-token",
-    "OVSX_PAT": "your-open-vsx-access-token"
-}
-```
-
-Or use environment variables:
+Add to `~/.profile` (or `~/.bashrc`/`~/.zshrc`):
 
 ```bash
 export VSCE_PAT="your-vs-marketplace-token"
 export OVSX_PAT="your-open-vsx-token"
 ```
+
+Then reload: `source ~/.profile`
 
 **Token sources:**
 

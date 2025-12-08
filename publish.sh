@@ -8,32 +8,16 @@ source ./script_lib.sh
 # Get all extension versions
 get_all_versions
 
-# Load secrets from .secrets.json if it exists and env vars are not set
-if [ -f ".secrets.json" ]; then
-    if [ -z "$VSCE_PAT" ]; then
-        VSCE_PAT=$(jq -r '.VSCE_PAT // empty' .secrets.json 2>/dev/null)
-        export VSCE_PAT
-    fi
-    if [ -z "$OVSX_PAT" ]; then
-        OVSX_PAT=$(jq -r '.OVSX_PAT // empty' .secrets.json 2>/dev/null)
-        export OVSX_PAT
-    fi
-fi
-
-# Check for required tokens
+# Check for required tokens (expected to be set in ~/.profile or environment)
 if [ -z "$VSCE_PAT" ]; then
     echo -e "${RED}Error: VSCE_PAT not set${NC}"
-    echo "Either:"
-    echo "  1. Create .secrets.json with: {\"VSCE_PAT\": \"...\", \"OVSX_PAT\": \"...\"}"
-    echo "  2. Or set env var: export VSCE_PAT='your-token'"
+    echo "Add to ~/.profile: export VSCE_PAT='your-vs-marketplace-token'"
     exit 1
 fi
 
 if [ -z "$OVSX_PAT" ]; then
     echo -e "${RED}Error: OVSX_PAT not set${NC}"
-    echo "Either:"
-    echo "  1. Create .secrets.json with: {\"VSCE_PAT\": \"...\", \"OVSX_PAT\": \"...\"}"
-    echo "  2. Or set env var: export OVSX_PAT='your-token'"
+    echo "Add to ~/.profile: export OVSX_PAT='your-open-vsx-token'"
     exit 1
 fi
 
