@@ -26,6 +26,9 @@ install_extension() {
     if command -v codium &> /dev/null; then
         codium --install-extension "$vsix_path"
     fi
+    if command -v codium-insiders &> /dev/null; then
+        codium-insiders --install-extension "$vsix_path"
+    fi
 }
 
 # Install all individual extensions first (required for extension pack to work)
@@ -91,6 +94,18 @@ if command -v codium &> /dev/null; then
     fi
 else
     echo -e "${YELLOW}VSCodium not found, skipping installation for VSCodium${NC}"
+fi
+
+# Install for VSCodium Insiders
+if command -v codium-insiders &> /dev/null; then
+    echo -e "${BLUE}Installing R3BL Extension Pack for VSCodium Insiders...${NC}"
+    if codium-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix; then
+        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCodium Insiders!${NC}"
+    else
+        echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCodium Insiders${NC}"
+    fi
+else
+    echo -e "${YELLOW}VSCodium Insiders not found, skipping installation for VSCodium Insiders${NC}"
 fi
 
 echo ""
