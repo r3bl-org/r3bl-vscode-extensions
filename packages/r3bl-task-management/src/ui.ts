@@ -296,31 +296,49 @@ async function handleDeleteTaskSpace(
     taskSpace: TaskSpace,
     statusBar: vscode.StatusBarItem,
 ): Promise<void> {
-    // Confirm deletion
-    const message = taskSpace.taskFile
-        ? `Delete task space "${taskSpace.name}"?\n\nThe associated file "${path.basename(taskSpace.taskFile)}" will be moved to task/done/.\n\nThis cannot be undone.`
-        : `Delete task space "${taskSpace.name}"? This cannot be undone.`;
+    // Different dialog depending on whether there's a task file
+    if (taskSpace.taskFile) {
+        const message = `Delete task space "${taskSpace.name}"?\n\nThe associated file "${path.basename(taskSpace.taskFile)}" can be moved to task/done/ or left in place.\n\nThis cannot be undone.`;
 
-    const confirm = await vscode.window.showWarningMessage(
-        message,
-        { modal: true },
-        'Delete',
-    );
+        const result = await vscode.window.showWarningMessage(
+            message,
+            { modal: true },
+            'Close without moving',
+            'Close and move',
+        );
 
-    if (confirm !== 'Delete') {
-        return;
-    }
+        if (!result) {
+            return; // User cancelled
+        }
 
-    try {
-        await manager.deleteTaskSpace(taskSpace.id);
+        const moveFile = result === 'Close and move';
 
-        // Update status bar
-        updateStatusBar(statusBar, manager);
+        try {
+            await manager.deleteTaskSpace(taskSpace.id, moveFile);
+            updateStatusBar(statusBar, manager);
+            showStatusBarMessage(`Task space "${taskSpace.name}" deleted`, 'success');
+        } catch (error) {
+            showStatusBarMessage(`Failed to delete task space: ${error}`, 'error');
+        }
+    } else {
+        // No task file - simple confirmation
+        const confirm = await vscode.window.showWarningMessage(
+            `Delete task space "${taskSpace.name}"? This cannot be undone.`,
+            { modal: true },
+            'Delete',
+        );
 
-        // Show confirmation
-        showStatusBarMessage(`Task space "${taskSpace.name}" deleted`, 'success');
-    } catch (error) {
-        showStatusBarMessage(`Failed to delete task space: ${error}`, 'error');
+        if (confirm !== 'Delete') {
+            return;
+        }
+
+        try {
+            await manager.deleteTaskSpace(taskSpace.id);
+            updateStatusBar(statusBar, manager);
+            showStatusBarMessage(`Task space "${taskSpace.name}" deleted`, 'success');
+        } catch (error) {
+            showStatusBarMessage(`Failed to delete task space: ${error}`, 'error');
+        }
     }
 }
 

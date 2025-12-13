@@ -27,6 +27,28 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-12-12] - Task File Discovery and Delete Dialog Improvements
+
+### Package Versions
+
+- **R3BL Task Management**: 1.1.9 → 1.2.0
+- **R3BL Extension Pack**: 1.0.58 → 1.1.0
+
+### Changes
+
+- **R3BL Task Management 1.2.0**: Improved task file discovery and delete dialog UX
+    - **Fixed task file discovery**: "Create Task Space from Task File" command now finds
+      all `.md` files in both `task/` and `task/pending/` directories (previously only
+      found files with `task_` prefix in `task/` directory)
+    - **Excluded non-task files**: `CLAUDE.md` and `README.md` are now excluded from the
+      task file picker
+    - **Improved delete dialog**: When deleting a task space with a linked file, the
+      dialog now offers three clear options:
+        - "Close without moving" - deletes task space but leaves the file in place
+        - "Close and move" - moves the file to `task/done/` and deletes task space
+        - "Cancel" - aborts the operation
+    - Better UX with clearer button labels (changed "Move and close" to "Close and move")
+
 ## [2025-12-08] - Multi-IDE Task Space Support and Documentation
 
 ### Package Versions

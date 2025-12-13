@@ -285,7 +285,7 @@ export class TaskSpaceManager {
     /**
      * Delete a task space
      */
-    async deleteTaskSpace(id: string): Promise<void> {
+    async deleteTaskSpace(id: string, moveTaskFile: boolean = true): Promise<void> {
         const index = this.data.taskSpaces.findIndex((ts) => ts.id === id);
         if (index === -1) {
             throw new Error('Task space not found');
@@ -293,8 +293,8 @@ export class TaskSpaceManager {
 
         const taskSpace = this.data.taskSpaces[index];
 
-        // Move associated task file if it exists
-        if (taskSpace.taskFile) {
+        // Move associated task file if it exists and moveTaskFile is true
+        if (taskSpace.taskFile && moveTaskFile) {
             await this.moveTaskFileToDone(taskSpace.taskFile);
         }
 
@@ -571,6 +571,11 @@ export class TaskSpaceManager {
             return [];
         }
 
+        const taskFiles: string[] = [];
+
+        // Files to exclude from task file list
+        const excludeFiles = ['CLAUDE.md', 'README.md'];
+
         try {
             const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, 'task');
 
@@ -582,22 +587,37 @@ export class TaskSpaceManager {
                 return [];
             }
 
-            // Read directory contents
+            // Read task/ directory contents - all .md files except excluded ones
             const files = await vscode.workspace.fs.readDirectory(taskDir);
+            for (const [name, type] of files) {
+                if (
+                    type === vscode.FileType.File &&
+                    name.endsWith('.md') &&
+                    !excludeFiles.includes(name)
+                ) {
+                    taskFiles.push(`task/${name}`);
+                }
+            }
 
-            // Filter for task_*.md files
-            const taskFiles = files
-                .filter(([name, type]) => {
-                    return (
+            // Read task/pending/ directory if it exists
+            const pendingDir = vscode.Uri.joinPath(taskDir, 'pending');
+            try {
+                await vscode.workspace.fs.stat(pendingDir);
+                const pendingFiles = await vscode.workspace.fs.readDirectory(pendingDir);
+                for (const [name, type] of pendingFiles) {
+                    if (
                         type === vscode.FileType.File &&
-                        name.startsWith('task_') &&
-                        name.endsWith('.md')
-                    );
-                })
-                .map(([name]) => `task/${name}`)
-                .sort(); // Sort alphabetically
+                        name.endsWith('.md') &&
+                        !excludeFiles.includes(name)
+                    ) {
+                        taskFiles.push(`task/pending/${name}`);
+                    }
+                }
+            } catch {
+                // task/pending/ directory doesn't exist, skip
+            }
 
-            return taskFiles;
+            return taskFiles.sort();
         } catch (error) {
             console.error('Failed to get task files:', error);
             return [];
