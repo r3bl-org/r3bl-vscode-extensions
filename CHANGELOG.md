@@ -27,6 +27,33 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2025-12-24] - Rustdoc Folding and Task File Naming Improvements
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.1.4 → 1.1.7
+- **R3BL Task Management**: 1.2.0 → 1.2.3
+- **R3BL Extension Pack**: 1.1.0 → 1.1.4
+
+### Changes
+
+- **R3BL Semantic Configuration 1.1.7**: Rustdoc folding commands
+    - New command: "Fold All Rustdocs" (`Ctrl+-`) - collapses all `///` and `//!`
+      documentation blocks
+    - New command: "Unfold All Rustdocs" (`Ctrl+=`) - expands all rustdoc blocks
+    - Auto-fold on file open: rustdocs are automatically folded when opening a Rust file
+    - Configurable delay (`autoFoldDelayMs`) for larger files (default 500ms)
+    - Regular comments (`//`) are not affected
+    - Code remains unfolded
+    - Works only in Rust files
+
+- **R3BL Task Management 1.2.3**: Simplified task file naming in Claude Code integration
+    - Removed the `task_` prefix requirement from the `/r3bl-task` slash command
+    - Task files are now simply `*.md` files in the `task/` directory
+    - Example: `/r3bl-task create auth-feature` now creates `task/auth-feature.md`
+      (previously would create `task/task_auth-feature.md`)
+    - Loading tasks no longer prepends `task_` to the filename
+
 ## [2025-12-12] - Task File Discovery and Delete Dialog Improvements
 
 ### Package Versions

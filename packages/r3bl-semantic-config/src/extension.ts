@@ -3,11 +3,19 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs/promises';
 import { showStatusBarMessage } from 'r3bl-common-code';
+import {
+    foldAllRustdocs,
+    unfoldAllRustdocs,
+    RustdocFoldingProvider,
+} from './rustdocFolding';
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined;
 let countdownInterval: NodeJS.Timeout | undefined;
 let statusBarItem: vscode.StatusBarItem | undefined;
+
+// Track files that have been auto-folded to avoid re-folding on tab switch
+const autoFoldedFiles: Set<string> = new Set();
 
 // Constants
 const ROCKET_DISPLAY_DURATION_MS = 700;
@@ -117,6 +125,24 @@ export function activate(context: vscode.ExtensionContext) {
         },
     );
 
+    // Command to fold all rustdoc comments
+    const foldRustdocsCommand = vscode.commands.registerCommand(
+        'r3bl-semantic-config.foldRustdocs',
+        foldAllRustdocs,
+    );
+
+    // Command to unfold all rustdoc comments
+    const unfoldRustdocsCommand = vscode.commands.registerCommand(
+        'r3bl-semantic-config.unfoldRustdocs',
+        unfoldAllRustdocs,
+    );
+
+    // Register FoldingRangeProvider for rustdoc comments
+    const rustdocFoldingProvider = vscode.languages.registerFoldingRangeProvider(
+        { language: 'rust' },
+        new RustdocFoldingProvider(),
+    );
+
     // Watch for theme changes
     const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('workbench.colorTheme')) {
@@ -143,7 +169,17 @@ export function activate(context: vscode.ExtensionContext) {
     // Initialize debounced flycheck feature
     initializeDebouncedFlycheck(context);
 
-    context.subscriptions.push(enableCommand, disableCommand, themeWatcher);
+    // Initialize auto-fold rustdocs on file open
+    initializeAutoFoldRustdocs(context);
+
+    context.subscriptions.push(
+        enableCommand,
+        disableCommand,
+        foldRustdocsCommand,
+        unfoldRustdocsCommand,
+        rustdocFoldingProvider,
+        themeWatcher,
+    );
 }
 
 // Debounced Flycheck Implementation
@@ -218,6 +254,47 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(documentWatcher, flycheckCommand, configWatcher);
+}
+
+// Auto-fold rustdocs when opening Rust files
+function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
+    const config = vscode.workspace.getConfiguration('r3bl-semantic-config');
+    const getEnabled = () => config.get<boolean>('autoFoldRustdocsOnOpen', true);
+    const getDelay = () => config.get<number>('autoFoldDelayMs', 500);
+
+    // Listen for when a text editor becomes active
+    const editorWatcher = vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+        if (!editor) return;
+        if (!getEnabled()) return;
+        if (editor.document.languageId !== 'rust') return;
+
+        const uri = editor.document.uri.toString();
+
+        // Only auto-fold once per file per session
+        if (autoFoldedFiles.has(uri)) return;
+        autoFoldedFiles.add(uri);
+
+        // Delay to let the editor and language server fully initialize
+        await new Promise((resolve) => setTimeout(resolve, getDelay()));
+
+        // Run the fold command
+        await foldAllRustdocs();
+    });
+
+    // Also handle the currently active editor on startup
+    const activeEditor = vscode.window.activeTextEditor;
+    if (activeEditor && getEnabled() && activeEditor.document.languageId === 'rust') {
+        const uri = activeEditor.document.uri.toString();
+        if (!autoFoldedFiles.has(uri)) {
+            autoFoldedFiles.add(uri);
+            // Delay to let extension fully activate
+            setTimeout(async () => {
+                await foldAllRustdocs();
+            }, getDelay());
+        }
+    }
+
+    context.subscriptions.push(editorWatcher);
 }
 
 async function disableCheckOnSave() {

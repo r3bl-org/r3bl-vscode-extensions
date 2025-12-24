@@ -33,6 +33,30 @@ declare -A EXT_VERSIONS=(
     ["r3bl-extension-pack"]="${EXTENSION_PACK_VERSION}"
 )
 
+# Function to get published version from Open VSX
+get_openvsx_version() {
+    local ext_name="$1"
+    curl -s "https://open-vsx.org/api/R3BL/${ext_name}" 2>/dev/null | grep -o '"version":"[^"]*"' | head -1 | cut -d'"' -f4
+}
+
+# Function to check if version is newer than published
+is_version_newer() {
+    local local_ver="$1"
+    local published_ver="$2"
+
+    if [ -z "$published_ver" ]; then
+        return 0  # No published version, so local is "newer"
+    fi
+
+    # Compare versions using sort -V
+    local higher=$(echo -e "${local_ver}\n${published_ver}" | sort -V | tail -1)
+    if [ "$higher" = "$local_ver" ] && [ "$local_ver" != "$published_ver" ]; then
+        return 0  # Local is newer
+    else
+        return 1  # Local is same or older
+    fi
+}
+
 # Show usage if no arguments
 if [ $# -eq 0 ]; then
     echo "📦 Publish R3BL Extensions to Marketplaces"
@@ -56,7 +80,9 @@ echo "📦 Publishing R3BL Extensions to Marketplaces..."
 echo "================================================="
 echo ""
 
-# Publish each specified extension
+# Pre-check: Verify all versions are newer than published
+echo -e "${BLUE}Pre-checking versions against Open VSX...${NC}"
+all_versions_ok=true
 for ext in "$@"; do
     version="${EXT_VERSIONS[$ext]}"
 
@@ -66,6 +92,39 @@ for ext in "$@"; do
         exit 1
     fi
 
+    published_ver=$(get_openvsx_version "$ext")
+
+    if [ -n "$published_ver" ]; then
+        if is_version_newer "$version" "$published_ver"; then
+            echo -e "  ${GREEN}✓${NC} ${ext}: ${published_ver} → ${version} (will publish)"
+        else
+            echo -e "  ${YELLOW}⚠${NC} ${ext}: v${version} already published (current: ${published_ver})"
+            echo -e "    ${YELLOW}→ If you just published, WAIT for verification. DON'T bump version!${NC}"
+            all_versions_ok=false
+        fi
+    else
+        echo -e "  ${GREEN}✓${NC} ${ext}: v${version} (new extension)"
+    fi
+done
+echo ""
+
+if [ "$all_versions_ok" = false ]; then
+    echo -e "${YELLOW}Some versions already exist on the marketplace.${NC}"
+    echo -e "${YELLOW}If you recently published, versions may be in verification queue.${NC}"
+    echo -e "${YELLOW}Wait 5-10 minutes for verification before bumping versions.${NC}"
+    echo ""
+    read -p "Continue anyway? (y/N) " -n 1 -r
+    echo ""
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Aborted."
+        exit 0
+    fi
+    echo ""
+fi
+
+# Publish each specified extension
+for ext in "$@"; do
+    version="${EXT_VERSIONS[$ext]}"
     vsix_path="packages/${ext}/${ext}-${version}.vsix"
 
     if [ ! -f "$vsix_path" ]; then
@@ -78,22 +137,26 @@ for ext in "$@"; do
 
     # Publish to VS Marketplace
     echo -e "  ${BLUE}→ VS Marketplace${NC}"
-    if npx vsce publish --packagePath "$vsix_path" -p "$VSCE_PAT" 2>&1 | grep -q "already exists"; then
-        echo -e "  ${YELLOW}⚠ Already exists on VS Marketplace${NC}"
-    elif npx vsce publish --packagePath "$vsix_path" -p "$VSCE_PAT"; then
+    vsce_output=$(npx vsce publish --packagePath "$vsix_path" -p "$VSCE_PAT" 2>&1) || true
+    if echo "$vsce_output" | grep -q "already exists"; then
+        echo -e "  ${YELLOW}⚠ Version already exists (may be in verification queue)${NC}"
+    elif echo "$vsce_output" | grep -q "Successfully published"; then
         echo -e "  ${GREEN}✓ Published to VS Marketplace${NC}"
     else
         echo -e "  ${RED}✗ Failed to publish to VS Marketplace${NC}"
+        echo "    $vsce_output"
     fi
 
     # Publish to Open VSX
     echo -e "  ${BLUE}→ Open VSX${NC}"
-    if npx ovsx publish "$vsix_path" -p "$OVSX_PAT" 2>&1 | grep -q "already published"; then
-        echo -e "  ${YELLOW}⚠ Already exists on Open VSX${NC}"
-    elif npx ovsx publish "$vsix_path" -p "$OVSX_PAT"; then
+    ovsx_output=$(npx ovsx publish "$vsix_path" -p "$OVSX_PAT" 2>&1) || true
+    if echo "$ovsx_output" | grep -q "already published"; then
+        echo -e "  ${YELLOW}⚠ Version already exists (may be in verification queue)${NC}"
+    elif echo "$ovsx_output" | grep -q "Published"; then
         echo -e "  ${GREEN}✓ Published to Open VSX${NC}"
     else
         echo -e "  ${RED}✗ Failed to publish to Open VSX${NC}"
+        echo "    $ovsx_output"
     fi
 
     echo ""
@@ -104,3 +167,6 @@ echo ""
 echo "Check your extensions at:"
 echo "  VS Marketplace: https://marketplace.visualstudio.com/publishers/R3BL"
 echo "  Open VSX:       https://open-vsx.org/namespace/R3BL"
+echo ""
+echo -e "${BLUE}Note: New versions may take 5-10 minutes to become visible.${NC}"
+echo -e "${BLUE}If 'already exists' appeared, WAIT - don't bump versions!${NC}"

@@ -1,16 +1,19 @@
 # R3BL Semantic Configuration
 
-This extension provides two powerful features for Rust development in VS Code:
+This extension provides three powerful features for Rust development in VS Code:
 
 1. **Enhanced Semantic Highlighting** - Automatically applies optimized color rules for
    Rust semantic tokens
 2. **Debounced rust-analyzer Flycheck** - Keeps your IDE responsive by intelligently
    timing `cargo check` runs
+3. **Rustdoc Folding** - Fold/unfold all documentation comments (`///` and `//!`) with a
+   single command
 
 ## Table of Contents
 
 - [Feature 1: Semantic Highlighting](#feature-1-semantic-highlighting)
 - [Feature 2: Debounced rust-analyzer Flycheck](#feature-2-debounced-rust-analyzer-flycheck)
+- [Feature 3: Rustdoc Folding](#feature-3-rustdoc-folding)
 - [Requirements](#requirements)
 - [Commands](#commands)
 - [Release Notes](#release-notes)
@@ -196,6 +199,72 @@ You'll see: "Disabled rust-analyzer.checkOnSave (debounced flycheck is now handl
 
 ---
 
+## Feature 3: Rustdoc Folding
+
+### What It Does
+
+Provides commands to fold (collapse) or unfold (expand) all Rust documentation comments in
+a file. This makes it easy to focus on the code by hiding lengthy documentation blocks.
+
+### Comment Types
+
+| Comment Type | Example     | Behavior                         |
+| ------------ | ----------- | -------------------------------- |
+| `///`        | Item docs   | Folded by these commands         |
+| `//!`        | Module docs | Folded by these commands         |
+| `//`         | Regular     | **Not affected** (stays visible) |
+
+### Keybindings
+
+| Keybinding | Command             | Description                  |
+| ---------- | ------------------- | ---------------------------- |
+| `Ctrl+-`   | Fold All Rustdocs   | Collapse all `///` and `//!` |
+| `Ctrl+=`   | Unfold All Rustdocs | Expand all rustdoc blocks    |
+
+These keybindings only activate when:
+
+- You're editing a Rust file
+- The editor has focus
+
+### Auto-Fold on File Open
+
+By default, rustdoc comments are **automatically folded** when you open a Rust file. This
+lets you focus on the code immediately without manual folding.
+
+**Configuration:**
+
+```json
+{
+    "r3bl-semantic-config.autoFoldRustdocsOnOpen": true,
+    "r3bl-semantic-config.autoFoldDelayMs": 500
+}
+```
+
+| Setting                  | Type    | Default | Description                                          |
+| ------------------------ | ------- | ------- | ---------------------------------------------------- |
+| `autoFoldRustdocsOnOpen` | boolean | `true`  | Auto-fold rustdocs when opening a Rust file          |
+| `autoFoldDelayMs`        | number  | `500`   | Delay (ms) before folding. Increase for large files. |
+
+Set `autoFoldRustdocsOnOpen` to `false` to disable auto-folding and use manual `Ctrl+-`.
+Increase `autoFoldDelayMs` (up to 5000) if folding doesn't work consistently on larger
+files.
+
+### How It Works
+
+1. Scans the document for consecutive lines starting with `///` or `//!`
+2. Groups them into blocks (module-level and item-level separately)
+3. Creates folding ranges for each block
+4. Status bar shows feedback: "Folded 5 rustdoc blocks"
+
+### Manual Trigger
+
+Use Command Palette (`Ctrl+Shift+P`):
+
+- `R3BL: Fold All Rustdocs`
+- `R3BL: Unfold All Rustdocs`
+
+---
+
 ## Requirements
 
 - VS Code 1.60.0 or higher
@@ -214,11 +283,13 @@ Both features in this extension depend on **rust-analyzer**:
 
 ## Commands
 
-| Command                                    | Description                                |
-| ------------------------------------------ | ------------------------------------------ |
-| `R3BL: Enable R3BL Semantic Highlighting`  | Apply semantic highlighting settings       |
-| `R3BL: Disable R3BL Semantic Highlighting` | Remove semantic highlighting settings      |
-| `R3BL: Run Flycheck (Debounced)`           | Manually trigger flycheck, cancels pending |
+| Command                                    | Keybinding | Description                                |
+| ------------------------------------------ | ---------- | ------------------------------------------ |
+| `R3BL: Enable R3BL Semantic Highlighting`  | -          | Apply semantic highlighting settings       |
+| `R3BL: Disable R3BL Semantic Highlighting` | -          | Remove semantic highlighting settings      |
+| `R3BL: Run Flycheck (Debounced)`           | `Ctrl+R`   | Manually trigger flycheck, cancels pending |
+| `R3BL: Fold All Rustdocs`                  | `Ctrl+-`   | Collapse all `///` and `//!` blocks        |
+| `R3BL: Unfold All Rustdocs`                | `Ctrl+=`   | Expand all rustdoc blocks                  |
 
 ## Shared Infrastructure
 

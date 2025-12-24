@@ -185,7 +185,7 @@ Task spaces integrate with Claude Code for implementation tracking:
 
 **Planning Phase:**
 
-- Create `task/task_auth_feature.md` with detailed implementation plan
+- Create `task/auth_feature.md` with detailed implementation plan
 - Create task space "Feature: Auth" linked to this file
 - Give plan to Claude Code to work on
 
@@ -199,7 +199,7 @@ Task spaces integrate with Claude Code for implementation tracking:
 
 - Delete task space when done
 - Linked file **automatically moves** to `task/done/` (archival)
-- Numeric suffix added if file already exists (e.g., `task_auth_2.md`)
+- Numeric suffix added if file already exists (e.g., `auth_2.md`)
 
 ### Claude Code Integration Commands
 
@@ -261,10 +261,8 @@ _...prompts to install Claude Code integration (with "Don't Ask Again" option)_
 Run **multiple Claude Code CLI instances in parallel** (terminal tabs or tmux panes), each
 working on different tasks, coordinated through one VS Code instance:
 
-1. **Terminal 1**: `claude` → `/r3bl-task create feature_a` → Creates
-   `task/task_feature_a.md`
-2. **Terminal 2**: `claude` → `/r3bl-task create feature_b` → Creates
-   `task/task_feature_b.md`
+1. **Terminal 1**: `claude` → `/r3bl-task create feature_a` → Creates `task/feature_a.md`
+2. **Terminal 2**: `claude` → `/r3bl-task create feature_b` → Creates `task/feature_b.md`
 3. **VS Code**: "Create Task Space from Task File" for each
 4. **Switch**: Alt+Shift+T to switch between contexts as you work
 
@@ -392,7 +390,7 @@ others.
                 { "path": "src/auth.ts", "isPinned": true },
                 { "path": "src/login.ts", "isPinned": false }
             ],
-            "taskFile": "task/task_authentication.md",
+            "taskFile": "task/authentication.md",
             "activeTab": "src/auth.ts",
             "createdAt": 1234567890
         }
