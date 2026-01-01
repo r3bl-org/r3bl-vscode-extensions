@@ -2,7 +2,7 @@
     "name": "r3bl-semantic-config",
     "displayName": "R3BL Semantic Configuration",
     "description": "Companion to R3BL Theme - automatically applies enhanced semantic highlighting for Rust development",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"
@@ -110,13 +110,6 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Automatically fold all rustdoc comments (/// and //!) when opening a Rust file."
-                },
-                "r3bl-semantic-config.autoFoldDelayMs": {
-                    "type": "number",
-                    "default": 500,
-                    "minimum": 100,
-                    "maximum": 5000,
-                    "description": "Delay in milliseconds before auto-folding rustdocs after opening a file. Increase for larger files or slower systems."
                 }
             }
         }

@@ -92,48 +92,57 @@ export class RustdocFoldingProvider implements vscode.FoldingRangeProvider {
 /**
  * Folds all rustdoc blocks in the active editor.
  */
-export async function foldAllRustdocs(): Promise<void> {
+export async function foldAllRustdocs(silent: boolean = false): Promise<void> {
     const editor = vscode.window.activeTextEditor;
 
     if (!editor) {
-        showStatusBarMessage('No active editor', 'warning');
         return;
     }
 
     if (editor.document.languageId !== 'rust') {
-        showStatusBarMessage('Not a Rust file', 'warning');
         return;
     }
 
     const blocks = findRustdocBlocks(editor.document);
 
     if (blocks.length === 0) {
-        showStatusBarMessage('No rustdocs found', 'info');
         return;
     }
 
-    // Save current selection to restore later
+    // Save current selection
     const originalSelection = editor.selection;
 
-    // Fold each block by setting selection and calling fold
-    // Process from bottom to top to preserve line numbers
-    for (const block of [...blocks].reverse()) {
-        // Create a selection spanning the entire block
+    // Create all selections at once (multi-cursor)
+    const selections = blocks.map((block) => {
         const startPos = new vscode.Position(block.startLine, 0);
         const endPos = new vscode.Position(
             block.endLine,
             editor.document.lineAt(block.endLine).text.length,
         );
-        editor.selection = new vscode.Selection(startPos, endPos);
+        return new vscode.Selection(startPos, endPos);
+    });
 
-        // Fold the selection
-        await vscode.commands.executeCommand('editor.createFoldingRangeFromSelection');
-    }
+    // Set all selections at once
+    editor.selections = selections;
 
-    // Restore original selection
+    // Single fold command for all selections
+    await vscode.commands.executeCommand('editor.createFoldingRangeFromSelection');
+
+    // Restore selection and ensure cursor is visible
     editor.selection = originalSelection;
+    editor.revealRange(
+        originalSelection,
+        vscode.TextEditorRevealType.InCenterIfOutsideViewport,
+    );
 
-    showStatusBarMessage(`Folded ${blocks.length} rustdoc blocks`, 'success');
+    // Only show status message for manual invocation
+    if (!silent) {
+        const fileName = editor.document.uri.path.split('/').pop() ?? 'file';
+        showStatusBarMessage(
+            `Folded ${blocks.length} rustdoc blocks in ${fileName}`,
+            'success',
+        );
+    }
 }
 
 /**

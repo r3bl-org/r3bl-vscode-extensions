@@ -235,26 +235,22 @@ lets you focus on the code immediately without manual folding.
 
 ```json
 {
-    "r3bl-semantic-config.autoFoldRustdocsOnOpen": true,
-    "r3bl-semantic-config.autoFoldDelayMs": 500
+    "r3bl-semantic-config.autoFoldRustdocsOnOpen": true
 }
 ```
 
-| Setting                  | Type    | Default | Description                                          |
-| ------------------------ | ------- | ------- | ---------------------------------------------------- |
-| `autoFoldRustdocsOnOpen` | boolean | `true`  | Auto-fold rustdocs when opening a Rust file          |
-| `autoFoldDelayMs`        | number  | `500`   | Delay (ms) before folding. Increase for large files. |
+| Setting                  | Type    | Default | Description                                 |
+| ------------------------ | ------- | ------- | ------------------------------------------- |
+| `autoFoldRustdocsOnOpen` | boolean | `true`  | Auto-fold rustdocs when opening a Rust file |
 
 Set `autoFoldRustdocsOnOpen` to `false` to disable auto-folding and use manual `Ctrl+-`.
-Increase `autoFoldDelayMs` (up to 5000) if folding doesn't work consistently on larger
-files.
 
 ### How It Works
 
 1. Scans the document for consecutive lines starting with `///` or `//!`
 2. Groups them into blocks (module-level and item-level separately)
 3. Creates folding ranges for each block
-4. Status bar shows feedback: "Folded 5 rustdoc blocks"
+4. Manual fold shows status bar feedback: "Folded 5 rustdoc blocks in filename.rs"
 
 ### Manual Trigger
 

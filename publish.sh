@@ -140,7 +140,7 @@ for ext in "$@"; do
     vsce_output=$(npx vsce publish --packagePath "$vsix_path" -p "$VSCE_PAT" 2>&1) || true
     if echo "$vsce_output" | grep -q "already exists"; then
         echo -e "  ${YELLOW}⚠ Version already exists (may be in verification queue)${NC}"
-    elif echo "$vsce_output" | grep -q "Successfully published"; then
+    elif echo "$vsce_output" | grep -qE "(Successfully published|DONE.*Published)"; then
         echo -e "  ${GREEN}✓ Published to VS Marketplace${NC}"
     else
         echo -e "  ${RED}✗ Failed to publish to VS Marketplace${NC}"

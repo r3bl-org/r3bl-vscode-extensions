@@ -14,9 +14,6 @@ let debounceTimeout: NodeJS.Timeout | undefined;
 let countdownInterval: NodeJS.Timeout | undefined;
 let statusBarItem: vscode.StatusBarItem | undefined;
 
-// Track files that have been auto-folded to avoid re-folding on tab switch
-const autoFoldedFiles: Set<string> = new Set();
-
 // Constants
 const ROCKET_DISPLAY_DURATION_MS = 700;
 
@@ -260,7 +257,9 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
 function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
     const config = vscode.workspace.getConfiguration('r3bl-semantic-config');
     const getEnabled = () => config.get<boolean>('autoFoldRustdocsOnOpen', true);
-    const getDelay = () => config.get<number>('autoFoldDelayMs', 500);
+
+    // Small delay to let VSCode restore cursor position before we fold
+    const CURSOR_RESTORE_DELAY_MS = 50;
 
     // Listen for when a text editor becomes active
     const editorWatcher = vscode.window.onDidChangeActiveTextEditor(async (editor) => {
@@ -268,30 +267,30 @@ function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
         if (!getEnabled()) return;
         if (editor.document.languageId !== 'rust') return;
 
-        const uri = editor.document.uri.toString();
+        const uriString = editor.document.uri.toString();
 
-        // Only auto-fold once per file per session
-        if (autoFoldedFiles.has(uri)) return;
-        autoFoldedFiles.add(uri);
+        // Wait for VSCode to restore cursor position
+        await new Promise((resolve) => setTimeout(resolve, CURSOR_RESTORE_DELAY_MS));
 
-        // Delay to let the editor and language server fully initialize
-        await new Promise((resolve) => setTimeout(resolve, getDelay()));
-
-        // Run the fold command
-        await foldAllRustdocs();
+        // Only fold if this file is still the active editor
+        const currentEditor = vscode.window.activeTextEditor;
+        if (currentEditor?.document.uri.toString() === uriString) {
+            await foldAllRustdocs(true); // silent = true for auto-fold
+        }
     });
 
-    // Also handle the currently active editor on startup
+    // Handle the currently active editor on startup
     const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor && getEnabled() && activeEditor.document.languageId === 'rust') {
-        const uri = activeEditor.document.uri.toString();
-        if (!autoFoldedFiles.has(uri)) {
-            autoFoldedFiles.add(uri);
-            // Delay to let extension fully activate
-            setTimeout(async () => {
-                await foldAllRustdocs();
-            }, getDelay());
-        }
+        setTimeout(() => {
+            const currentEditor = vscode.window.activeTextEditor;
+            if (
+                currentEditor?.document.uri.toString() ===
+                activeEditor.document.uri.toString()
+            ) {
+                foldAllRustdocs(true);
+            }
+        }, 100);
     }
 
     context.subscriptions.push(editorWatcher);
