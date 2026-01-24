@@ -91,6 +91,10 @@ export class RustdocFoldingProvider implements vscode.FoldingRangeProvider {
 
 /**
  * Folds all rustdoc blocks in the active editor.
+ *
+ * Uses `editor.createFoldingRangeFromSelection` for all blocks because:
+ * - rust-analyzer doesn't register `//!` blocks as foldable
+ * - `editor.fold` with `selectionLines` folds containing regions, not the comments themselves
  */
 export async function foldAllRustdocs(silent: boolean = false): Promise<void> {
     const editor = vscode.window.activeTextEditor;
@@ -109,10 +113,10 @@ export async function foldAllRustdocs(silent: boolean = false): Promise<void> {
         return;
     }
 
-    // Save current selection
-    const originalSelection = editor.selection;
+    // Save original selection only for manual invocation
+    const originalSelection = silent ? null : editor.selection;
 
-    // Create all selections at once (multi-cursor)
+    // Create selections for all rustdoc blocks
     const selections = blocks.map((block) => {
         const startPos = new vscode.Position(block.startLine, 0);
         const endPos = new vscode.Position(
@@ -122,18 +126,18 @@ export async function foldAllRustdocs(silent: boolean = false): Promise<void> {
         return new vscode.Selection(startPos, endPos);
     });
 
-    // Set all selections at once
+    // Set selections and create folding ranges
     editor.selections = selections;
-
-    // Single fold command for all selections
     await vscode.commands.executeCommand('editor.createFoldingRangeFromSelection');
 
-    // Restore selection and ensure cursor is visible
-    editor.selection = originalSelection;
-    editor.revealRange(
-        originalSelection,
-        vscode.TextEditorRevealType.InCenterIfOutsideViewport,
-    );
+    // For manual invocation: restore original selection and reveal
+    // For auto-fold: let VSCode handle cursor naturally (less jumpiness)
+    if (originalSelection) {
+        editor.selection = originalSelection;
+        // Use Default reveal type - more reliable after fold operations
+        // InCenterIfOutsideViewport doesn't always recalculate viewport correctly
+        editor.revealRange(originalSelection, vscode.TextEditorRevealType.Default);
+    }
 
     // Only show status message for manual invocation
     if (!silent) {
@@ -147,6 +151,7 @@ export async function foldAllRustdocs(silent: boolean = false): Promise<void> {
 
 /**
  * Unfolds all rustdoc blocks in the active editor.
+ * Uses cursor positioning to unfold at each block's start line.
  */
 export async function unfoldAllRustdocs(): Promise<void> {
     const editor = vscode.window.activeTextEditor;
@@ -168,21 +173,18 @@ export async function unfoldAllRustdocs(): Promise<void> {
         return;
     }
 
-    // Save current selection to restore later
     const originalSelection = editor.selection;
 
-    // Unfold each block
+    // Unfold each block by positioning cursor and unfolding
     for (const block of blocks) {
-        // Position cursor at start of block
         const pos = new vscode.Position(block.startLine, 0);
         editor.selection = new vscode.Selection(pos, pos);
-
-        // Unfold at cursor
         await vscode.commands.executeCommand('editor.unfold');
     }
 
-    // Restore original selection
+    // Restore original selection and reveal
     editor.selection = originalSelection;
+    editor.revealRange(originalSelection, vscode.TextEditorRevealType.Default);
 
     showStatusBarMessage(`Unfolded ${blocks.length} rustdoc blocks`, 'success');
 }

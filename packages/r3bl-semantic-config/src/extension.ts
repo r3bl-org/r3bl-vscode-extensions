@@ -258,6 +258,10 @@ function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
     const config = vscode.workspace.getConfiguration('r3bl-semantic-config');
     const getEnabled = () => config.get<boolean>('autoFoldRustdocsOnOpen', true);
 
+    // Track documents that have already been auto-folded this session
+    // This prevents re-folding when switching back to an already-open tab
+    const alreadyFolded = new Set<string>();
+
     // Small delay to let VSCode restore cursor position before we fold
     const CURSOR_RESTORE_DELAY_MS = 50;
 
@@ -269,6 +273,11 @@ function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
 
         const uriString = editor.document.uri.toString();
 
+        // Skip if already folded this session (e.g., switching back to tab)
+        if (alreadyFolded.has(uriString)) {
+            return;
+        }
+
         // Wait for VSCode to restore cursor position
         await new Promise((resolve) => setTimeout(resolve, CURSOR_RESTORE_DELAY_MS));
 
@@ -276,24 +285,32 @@ function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
         const currentEditor = vscode.window.activeTextEditor;
         if (currentEditor?.document.uri.toString() === uriString) {
             await foldAllRustdocs(true); // silent = true for auto-fold
+            alreadyFolded.add(uriString);
         }
+    });
+
+    // Clean up tracking when documents are closed
+    const closeWatcher = vscode.workspace.onDidCloseTextDocument((document) => {
+        alreadyFolded.delete(document.uri.toString());
     });
 
     // Handle the currently active editor on startup
     const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor && getEnabled() && activeEditor.document.languageId === 'rust') {
+        const uriString = activeEditor.document.uri.toString();
         setTimeout(() => {
             const currentEditor = vscode.window.activeTextEditor;
             if (
-                currentEditor?.document.uri.toString() ===
-                activeEditor.document.uri.toString()
+                currentEditor?.document.uri.toString() === uriString &&
+                !alreadyFolded.has(uriString)
             ) {
                 foldAllRustdocs(true);
+                alreadyFolded.add(uriString);
             }
         }, 100);
     }
 
-    context.subscriptions.push(editorWatcher);
+    context.subscriptions.push(editorWatcher, closeWatcher);
 }
 
 async function disableCheckOnSave() {

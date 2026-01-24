@@ -252,6 +252,12 @@ Set `autoFoldRustdocsOnOpen` to `false` to disable auto-folding and use manual `
 3. Creates folding ranges for each block
 4. Manual fold shows status bar feedback: "Folded 5 rustdoc blocks in filename.rs"
 
+**Navigation-friendly behavior:**
+
+- Auto-fold only runs on **first file open**, not when switching tabs
+- This preserves your "Go Back" navigation history
+- Closing and reopening a file will auto-fold again
+
 ### Manual Trigger
 
 Use Command Palette (`Ctrl+Shift+P`):

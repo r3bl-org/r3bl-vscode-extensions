@@ -2,9 +2,15 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
-    - [[2026-01-01] - Rustdoc Auto-Fold Improvements](#2026-01-01---rustdoc-auto-fold-improvements)
+    - [[2026-01-24] - Rustdoc Folding Reliability and Navigation Improvements](#2026-01-24---rustdoc-folding-reliability-and-navigation-improvements)
         - [Package Versions](#package-versions)
         - [Changes](#changes)
+    - [[2026-01-06] - Task Command Flexibility Improvement](#2026-01-06---task-command-flexibility-improvement)
+        - [Package Versions](#package-versions-1)
+        - [Changes](#changes-1)
+    - [[2026-01-01] - Rustdoc Auto-Fold Improvements](#2026-01-01---rustdoc-auto-fold-improvements)
+        - [Package Versions](#package-versions-2)
+        - [Changes](#changes-2)
     - [[2025-12-24] - Rustdoc Folding and Task File Naming Improvements](#2025-12-24---rustdoc-folding-and-task-file-naming-improvements)
         - [Package Versions](#package-versions-1)
         - [Changes](#changes-1)
@@ -104,6 +110,33 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-01-24] - Rustdoc Folding Reliability and Navigation Improvements
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.1.8 → 1.1.9
+- **R3BL Extension Pack**: 1.1.6 → 1.1.7
+
+### Changes
+
+- **R3BL Semantic Configuration 1.1.9**: Major improvements to rustdoc folding reliability
+    - **Fixed navigation history pollution**: Auto-fold now only runs on first file open,
+      not when switching back to an already-open tab. This preserves "Go Back" navigation.
+    - **Fixed `//!` module docs not folding**: Discovered rust-analyzer doesn't register
+      `//!` blocks as foldable regions. Now uses `editor.createFoldingRangeFromSelection`
+      for reliable folding of both `///` and `//!` blocks.
+    - **Fixed `///` folding wrong regions**: `editor.fold` with `selectionLines` was
+      folding containing code blocks (like `mod`, `impl`) instead of comment blocks.
+      Switched to selection-based folding for accuracy.
+    - **Fixed viewport not scrolling to cursor**: Manual fold/unfold now properly reveals
+      cursor position using `Default` reveal type instead of `InCenterIfOutsideViewport`.
+    - **Cleaner auto-fold**: Silent mode skips cursor save/restore, letting VSCode handle
+      cursor positioning naturally (reduces jumpiness).
+    - **Document tracking cleanup**: Properly removes documents from tracking set when
+      tabs are closed, so reopening a file will auto-fold again.
+
+---
+
 ## [2026-01-06] - Task Command Flexibility Improvement
 
 ### Package Versions
@@ -122,6 +155,8 @@ adheres to [Semantic Versioning](http://semver.org/).
           immediately
     - Gives users flexibility to complete tasks without relying on the VS Code extension
     - Handles filename collisions in Option B by adding numeric suffix if needed
+
+---
 
 ## [2026-01-01] - Rustdoc Auto-Fold Improvements
 
