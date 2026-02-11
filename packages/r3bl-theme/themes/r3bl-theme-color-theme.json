@@ -312,7 +312,7 @@
                 "wildcard.comment"
             ],
             "settings": {
-                "foreground": "#D4C4E8"
+                "foreground": "#E8DCF4"
             }
         },
         {
@@ -742,13 +742,13 @@
         {
             "scope": ["comment.line.graphql"],
             "settings": {
-                "foreground": "#D4C4E8"
+                "foreground": "#E8DCF4"
             }
         },
         {
             "scope": ["string.block.description.graphql.DOCSTRING"],
             "settings": {
-                "foreground": "#D4C4E8"
+                "foreground": "#E8DCF4"
             }
         },
         {
@@ -1546,13 +1546,13 @@
         {
             "scope": "comment",
             "settings": {
-                "foreground": "#D4C4E8"
+                "foreground": "#E8DCF4"
             }
         },
         {
             "scope": "punctuation.definition.comment",
             "settings": {
-                "foreground": "#D4C4E8"
+                "foreground": "#E8DCF4"
             }
         },
         {

@@ -110,6 +110,20 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-02-11] - Brighter Comment Color
+
+### Package Versions
+
+- **R3BL Theme**: 1.0.16 → 1.0.17
+- **R3BL Extension Pack**: 1.1.7 → 1.1.8
+
+### Changes
+
+- **R3BL Theme 1.0.17**: Brightened comment foreground color
+    - Changed comment color from `#D4C4E8` to `#E8DCF4` for improved readability
+    - Applies to all comment scopes including line comments, block comments, and doc
+      comments
+
 ## [2026-01-24] - Rustdoc Folding Reliability and Navigation Improvements
 
 ### Package Versions
