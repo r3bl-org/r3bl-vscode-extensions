@@ -8,12 +8,15 @@ This extension provides three powerful features for Rust development in VS Code:
    timing `cargo check` runs
 3. **Rustdoc Folding** - Fold/unfold all documentation comments (`///` and `//!`) with a
    single command
+4. **Rustdoc Structure Navigator** - Quickly jump to headings within a rustdoc block or
+   navigate between rustdoc blocks in a file
 
 ## Table of Contents
 
 - [Feature 1: Semantic Highlighting](#feature-1-semantic-highlighting)
 - [Feature 2: Debounced rust-analyzer Flycheck](#feature-2-debounced-rust-analyzer-flycheck)
 - [Feature 3: Rustdoc Folding](#feature-3-rustdoc-folding)
+- [Feature 4: Rustdoc Structure Navigator](#feature-4-rustdoc-structure-navigator)
 - [Requirements](#requirements)
 - [Commands](#commands)
 - [Release Notes](#release-notes)
@@ -267,6 +270,56 @@ Use Command Palette (`Ctrl+Shift+P`):
 
 ---
 
+## Feature 4: Rustdoc Structure Navigator
+
+### What It Does
+
+Provides a quick navigation command for jumping to headings within rustdoc blocks or
+navigating between rustdoc blocks in a file. Similar to `Go to Symbol in Editor`
+(`Ctrl+Shift+O`) but for rustdoc documentation structure.
+
+### Two Modes
+
+| Cursor Position               | Behavior                                                  |
+| ----------------------------- | --------------------------------------------------------- |
+| **Inside a rustdoc block**    | Shows headings (`#`, `##`, `###`, etc.) within that block |
+| **Outside any rustdoc block** | Shows all rustdoc blocks in the file                      |
+
+### Keybinding
+
+| Keybinding     | Command                    | Description                          |
+| -------------- | -------------------------- | ------------------------------------ |
+| `Ctrl+Shift+Y` | Navigate Rustdoc Structure | Open rustdoc heading/block navigator |
+
+This keybinding only activates when editing a Rust file with editor focus.
+
+**Note:** `Ctrl+Shift+Y` is bound to Debug Console (`workbench.debug.action.toggleRepl`)
+by default. You may need to remove that binding in your `keybindings.json`:
+
+```json
+{
+    "key": "ctrl+shift+y",
+    "command": "-workbench.debug.action.toggleRepl"
+}
+```
+
+### How It Works
+
+**Inside a rustdoc block:**
+
+1. Parses all markdown headings (`# Heading`, `## Sub-heading`, etc.) in the current block
+2. Shows a QuickPick with headings indented by level for visual hierarchy
+3. Selecting a heading moves the cursor to that line and centers it in the viewport
+
+**Outside any rustdoc block:**
+
+1. Finds all rustdoc blocks (`///` and `//!`) in the file
+2. Labels each block by its first heading or first content line
+3. Shows a QuickPick listing all blocks for coarse navigation
+4. Selecting a block jumps to its start line
+
+---
+
 ## Requirements
 
 - VS Code 1.60.0 or higher
@@ -285,13 +338,14 @@ Both features in this extension depend on **rust-analyzer**:
 
 ## Commands
 
-| Command                                    | Keybinding | Description                                |
-| ------------------------------------------ | ---------- | ------------------------------------------ |
-| `R3BL: Enable R3BL Semantic Highlighting`  | -          | Apply semantic highlighting settings       |
-| `R3BL: Disable R3BL Semantic Highlighting` | -          | Remove semantic highlighting settings      |
-| `R3BL: Run Flycheck (Debounced)`           | `Ctrl+R`   | Manually trigger flycheck, cancels pending |
-| `R3BL: Fold All Rustdocs`                  | `Ctrl+-`   | Collapse all `///` and `//!` blocks        |
-| `R3BL: Unfold All Rustdocs`                | `Ctrl+=`   | Expand all rustdoc blocks                  |
+| Command                                    | Keybinding     | Description                                |
+| ------------------------------------------ | -------------- | ------------------------------------------ |
+| `R3BL: Enable R3BL Semantic Highlighting`  | -              | Apply semantic highlighting settings       |
+| `R3BL: Disable R3BL Semantic Highlighting` | -              | Remove semantic highlighting settings      |
+| `R3BL: Run Flycheck (Debounced)`           | `Ctrl+R`       | Manually trigger flycheck, cancels pending |
+| `R3BL: Fold All Rustdocs`                  | `Ctrl+-`       | Collapse all `///` and `//!` blocks        |
+| `R3BL: Unfold All Rustdocs`                | `Ctrl+=`       | Expand all rustdoc blocks                  |
+| `R3BL: Navigate Rustdoc Structure`         | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs     |
 
 ## Shared Infrastructure
 

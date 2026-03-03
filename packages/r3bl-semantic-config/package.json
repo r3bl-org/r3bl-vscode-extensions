@@ -2,7 +2,7 @@
     "name": "r3bl-semantic-config",
     "displayName": "R3BL Semantic Configuration",
     "description": "Companion to R3BL Theme - automatically applies enhanced semantic highlighting for Rust development",
-    "version": "1.1.9",
+    "version": "1.2.0",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"
@@ -57,6 +57,11 @@
                 "command": "r3bl-semantic-config.unfoldRustdocs",
                 "title": "Unfold All Rustdocs",
                 "category": "R3BL"
+            },
+            {
+                "command": "r3bl-semantic-config.navigateRustdocs",
+                "title": "Navigate Rustdoc Structure",
+                "category": "R3BL"
             }
         ],
         "keybindings": [
@@ -73,6 +78,11 @@
             {
                 "command": "r3bl-semantic-config.unfoldRustdocs",
                 "key": "ctrl+=",
+                "when": "editorTextFocus && editorLangId == rust"
+            },
+            {
+                "command": "r3bl-semantic-config.navigateRustdocs",
+                "key": "ctrl+shift+y",
                 "when": "editorTextFocus && editorLangId == rust"
             }
         ],

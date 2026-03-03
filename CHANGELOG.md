@@ -110,6 +110,26 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-03-03] - Rustdoc Structure Navigator
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.1.9 → 1.2.0
+- **R3BL Extension Pack**: 1.1.8 → 1.1.9
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.0**: New rustdoc structure navigator command
+    - Added `Navigate Rustdoc Structure` command (`Ctrl+Shift+Y`) for quick navigation
+      within and across rustdoc blocks
+    - When cursor is inside a rustdoc block: shows a QuickPick with all headings (`#`,
+      `##`, `###`, etc.) in that block, with visual indentation reflecting heading
+      hierarchy
+    - When cursor is outside any rustdoc block: shows a QuickPick listing all rustdoc
+      blocks in the file for coarse navigation to a specific block
+    - Selecting an item navigates directly to that line and centers it in the viewport
+    - Works with both `///` (item-level) and `//!` (module-level) rustdoc blocks
+
 ## [2026-02-11] - Brighter Comment Color
 
 ### Package Versions

@@ -4,7 +4,7 @@ import { showStatusBarMessage } from 'r3bl-common-code';
 /**
  * Represents a block of rustdoc comments.
  */
-interface RustdocBlock {
+export interface RustdocBlock {
     startLine: number;
     endLine: number;
     type: 'module' | 'item'; // //! vs ///
@@ -16,7 +16,7 @@ interface RustdocBlock {
  * - `//!` = module-level rustdoc
  * - `//` (not followed by / or !) = regular comment, skipped
  */
-function findRustdocBlocks(document: vscode.TextDocument): RustdocBlock[] {
+export function findRustdocBlocks(document: vscode.TextDocument): RustdocBlock[] {
     const blocks: RustdocBlock[] = [];
     let currentBlock: RustdocBlock | null = null;
 

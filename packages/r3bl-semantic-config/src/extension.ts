@@ -8,6 +8,7 @@ import {
     unfoldAllRustdocs,
     RustdocFoldingProvider,
 } from './rustdocFolding';
+import { navigateRustdocs } from './rustdocNavigator';
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined;
@@ -134,6 +135,12 @@ export function activate(context: vscode.ExtensionContext) {
         unfoldAllRustdocs,
     );
 
+    // Command to navigate rustdoc structure
+    const navigateRustdocsCommand = vscode.commands.registerCommand(
+        'r3bl-semantic-config.navigateRustdocs',
+        navigateRustdocs,
+    );
+
     // Register FoldingRangeProvider for rustdoc comments
     const rustdocFoldingProvider = vscode.languages.registerFoldingRangeProvider(
         { language: 'rust' },
@@ -174,6 +181,7 @@ export function activate(context: vscode.ExtensionContext) {
         disableCommand,
         foldRustdocsCommand,
         unfoldRustdocsCommand,
+        navigateRustdocsCommand,
         rustdocFoldingProvider,
         themeWatcher,
     );
