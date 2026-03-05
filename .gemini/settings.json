@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "multi-lang-analyze": {
+      "command": "/home/nazmul/.cargo/bin/narsil-mcp",
+      "args": [
+        "-r",
+        "."
+      ]
+    }
+  }
+}
