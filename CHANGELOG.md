@@ -2,6 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
+    - [[2026-03-07] - Rustdoc Navigator: TOP, BOTTOM, and LINK REF DEFS Navigation](#2026-03-07---rustdoc-navigator-top-bottom-and-link-ref-defs-navigation)
+        - [Package Versions](#package-versions)
+        - [Changes](#changes)
     - [[2026-01-24] - Rustdoc Folding Reliability and Navigation Improvements](#2026-01-24---rustdoc-folding-reliability-and-navigation-improvements)
         - [Package Versions](#package-versions)
         - [Changes](#changes)
@@ -109,6 +112,25 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2026-03-07] - Rustdoc Navigator: TOP, BOTTOM, and LINK REF DEFS Navigation
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.0 → 1.2.1
+- **R3BL Extension Pack**: 1.1.9 → 1.2.0
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.1**: Enhanced rustdoc structure navigator with
+  structural navigation
+    - Added `<TOP>` entry to navigate to the very first line of the rustdoc block
+    - Added `<BOTTOM>` entry to navigate to the very last line of the rustdoc block
+    - Added `<LINK REF DEFS>` entry to jump to the start of markdown link reference
+      definitions (e.g., `/// [label]: URL`) at the bottom of a rustdoc block, only shown
+      when link ref defs are present
+    - Headings are now shown between separators for clearer visual hierarchy
+    - The navigator now always shows navigation options even when a block has no headings
 
 ## [2026-03-03] - Rustdoc Structure Navigator
 

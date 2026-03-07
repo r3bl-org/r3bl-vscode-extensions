@@ -280,10 +280,10 @@ navigating between rustdoc blocks in a file. Similar to `Go to Symbol in Editor`
 
 ### Two Modes
 
-| Cursor Position               | Behavior                                                  |
-| ----------------------------- | --------------------------------------------------------- |
-| **Inside a rustdoc block**    | Shows headings (`#`, `##`, `###`, etc.) within that block |
-| **Outside any rustdoc block** | Shows all rustdoc blocks in the file                      |
+| Cursor Position               | Behavior                                                |
+| ----------------------------- | ------------------------------------------------------- |
+| **Inside a rustdoc block**    | Shows TOC with headings, TOP, BOTTOM, and LINK REF DEFS |
+| **Outside any rustdoc block** | Shows all rustdoc blocks in the file                    |
 
 ### Keybinding
 
@@ -307,9 +307,18 @@ by default. You may need to remove that binding in your `keybindings.json`:
 
 **Inside a rustdoc block:**
 
-1. Parses all markdown headings (`# Heading`, `## Sub-heading`, etc.) in the current block
-2. Shows a QuickPick with headings indented by level for visual hierarchy
-3. Selecting a heading moves the cursor to that line and centers it in the viewport
+The QuickPick shows a structured TOC:
+
+| Item              | Description                                                    |
+| ----------------- | -------------------------------------------------------------- |
+| `<TOP>`           | Jump to the first line of the rustdoc block                    |
+| Headings          | All `#`, `##`, `###` headings, indented by level               |
+| `<LINK REF DEFS>` | Jump to the start of link reference definitions (if any exist) |
+| `<BOTTOM>`        | Jump to the last line of the rustdoc block                     |
+
+Link reference definitions are markdown lines like `/// [label]: URL` typically found at
+the bottom of large rustdoc blocks. The `<LINK REF DEFS>` entry only appears when such
+definitions are present.
 
 **Outside any rustdoc block:**
 

@@ -76,6 +76,46 @@ function getBlockLabel(document: vscode.TextDocument, block: RustdocBlock): stri
 }
 
 /**
+ * Finds the start line of the link reference definitions section at the bottom
+ * of a rustdoc block. Link ref defs look like `/// [label]: URL`.
+ * Returns the line number of the first (topmost) link ref def, or undefined.
+ */
+function findLinkRefDefsStart(
+    document: vscode.TextDocument,
+    block: RustdocBlock,
+): number | undefined {
+    const prefix = block.type === 'module' ? '//!' : '///';
+    let firstLinkRefDefLine: number | undefined = undefined;
+
+    // Scan from bottom up to find the contiguous link ref def section
+    for (let i = block.endLine; i >= block.startLine; i--) {
+        const line = document.lineAt(i).text.trimStart();
+        if (!line.startsWith(prefix)) break;
+
+        const afterPrefix = line.slice(prefix.length);
+        const content = afterPrefix.trim();
+
+        if (/^\[.*\]:/.test(content)) {
+            // Link ref def line: [label]: ...
+            firstLinkRefDefLine = i;
+        } else if (firstLinkRefDefLine !== undefined) {
+            // We've already found link ref defs below; check if this is a
+            // continuation (indented) or empty line within the section
+            if (content === '' || /^\s{4}/.test(afterPrefix)) {
+                continue;
+            } else {
+                break;
+            }
+        } else {
+            // Haven't found any link ref defs yet, stop
+            break;
+        }
+    }
+
+    return firstLinkRefDefLine;
+}
+
+/**
  * Returns the rustdoc block containing the given cursor line, or undefined.
  */
 function findContainingBlock(
@@ -126,19 +166,59 @@ export async function navigateRustdocs(): Promise<void> {
     const containingBlock = findContainingBlock(blocks, cursorLine);
 
     if (containingBlock) {
-        // Mode A: cursor inside a rustdoc block — show headings
+        // Mode A: cursor inside a rustdoc block — show TOC with TOP/BOTTOM/LINK REFS
         const headings = findHeadingsInBlock(editor.document, containingBlock);
+        const linkRefDefsStart = findLinkRefDefsStart(editor.document, containingBlock);
 
-        if (headings.length === 0) {
-            showStatusBarMessage('No headings in this rustdoc block', 'info');
-            return;
+        const items: RustdocQuickPickItem[] = [];
+
+        // <TOP>
+        items.push({
+            label: '<TOP>',
+            description: `line ${containingBlock.startLine + 1}`,
+            targetLine: containingBlock.startLine,
+        });
+
+        // Separator before headings
+        if (headings.length > 0) {
+            items.push({
+                label: 'Headings',
+                kind: vscode.QuickPickItemKind.Separator,
+                targetLine: -1,
+            });
         }
 
-        const items: RustdocQuickPickItem[] = headings.map((h) => ({
-            label: `${'  '.repeat(h.level - 1)}${'#'.repeat(h.level)} ${h.text}`,
-            description: `line ${h.line + 1}`,
-            targetLine: h.line,
-        }));
+        // Headings
+        for (const h of headings) {
+            items.push({
+                label: `${'  '.repeat(h.level - 1)}${'#'.repeat(h.level)} ${h.text}`,
+                description: `line ${h.line + 1}`,
+                targetLine: h.line,
+            });
+        }
+
+        // Separator before navigation targets
+        items.push({
+            label: '',
+            kind: vscode.QuickPickItemKind.Separator,
+            targetLine: -1,
+        });
+
+        // <LINK REF DEFS> (only if they exist)
+        if (linkRefDefsStart !== undefined) {
+            items.push({
+                label: '<LINK REF DEFS>',
+                description: `line ${linkRefDefsStart + 1}`,
+                targetLine: linkRefDefsStart,
+            });
+        }
+
+        // <BOTTOM>
+        items.push({
+            label: '<BOTTOM>',
+            description: `line ${containingBlock.endLine + 1}`,
+            targetLine: containingBlock.endLine,
+        });
 
         const selected = await vscode.window.showQuickPick(items, {
             placeHolder: 'Navigate to heading in this rustdoc block',
