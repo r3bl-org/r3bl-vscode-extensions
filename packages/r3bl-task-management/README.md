@@ -3,14 +3,14 @@
 Manage task spaces - collections of open tabs for different work contexts **within a
 single git branch**. Inspired by IntelliJ IDEA's Task Management plugin, this extension
 helps you organize multiple concurrent workflows (feature development, bug fixing, code
-review, research) while working on the same branch. Integrates with Claude Code to track
-implementation plans in `task/*.md` files.
+review, research) while working on the same branch. Integrates with AI coding agents (like
+Claude Code, Gemini CLI) to track implementation plans in `task/*.md` files.
 
 ## Table of Contents
 
 - [Use Cases](#use-cases)
     - [Context Preservation](#context-preservation)
-    - [Claude Code Collaboration](#claude-code-collaboration)
+    - [AI Coding Agent Collaboration](#ai-coding-agent-collaboration)
     - [Multiple Concurrent Workflows (Same Branch)](#multiple-concurrent-workflows-same-branch)
     - [Multi-IDE Workflows (Different Task Spaces Per IDE)](#multi-ide-workflows-different-task-spaces-per-ide)
 - [What It Does](#what-it-does)
@@ -20,13 +20,13 @@ implementation plans in `task/*.md` files.
 - [Screenshots](#screenshots)
 - [Workflows](#workflows)
     - [Basic Workflow](#basic-workflow)
-    - [Claude Code Workflow](#claude-code-workflow)
+    - [AI Coding Agent Workflow](#ai-coding-agent-workflow)
     - [Claude Code Integration Commands](#claude-code-integration-commands)
         - [Install Claude Code Integration](#install-claude-code-integration)
         - [Automatic Updates](#automatic-updates)
         - [Create Task Space from Task File](#create-task-space-from-task-file)
         - [Smart Prompting](#smart-prompting)
-    - [Power User: Multiple Claude Code Instances](#power-user-multiple-claude-code-instances)
+    - [Power User: Multiple AI Coding Agent Instances](#power-user-multiple-ai-coding-agent-instances)
 - [Important: How It Works](#important-how-it-works)
     - [Task Spaces Are WITHIN One Branch](#task-spaces-are-within-one-branch)
     - [Filesystem-Based Memory](#filesystem-based-memory)
@@ -53,15 +53,15 @@ overhead.
 
 Switch between them instantly with **Alt+Shift+T** without losing your place.
 
-### Claude Code Collaboration
+### AI Coding Agent Collaboration
 
-Run multiple Claude Code instances in parallel (different terminal tabs or tmux panes),
-each working on different aspects of your work. Create task spaces for each to organize
-files and switch contexts seamlessly.
+Run multiple AI coding agent instances in parallel (e.g., Claude Code, Gemini CLI in
+different terminal tabs or tmux panes), each working on different aspects of your work.
+Create task spaces for each to organize files and switch contexts seamlessly.
 
-Attach a `task/*.md` file (that Claude manages, with the Claude Code custom command
-`/task`) to each space to track design and implementation plans, and have completed tasks
-automatically archived to `task/done/` when they're finished.
+Attach a `task/*.md` file (that the AI agent manages, with the `/r3bl-task` custom command
+for Claude Code) to each space to track design and implementation plans, and have
+completed tasks automatically archived to `task/done/` when they're finished.
 
 ### Multiple Concurrent Workflows (Same Branch)
 
@@ -95,8 +95,8 @@ This enables workflows like:
   VSCodium
 - **Side-by-side comparison**: Compare different task space configurations across IDEs
 - **Testing + Development**: Test extensions in Insiders while working in stable VS Code
-- **Multiple Claude Code sessions**: Different Claude instances working on different task
-  spaces
+- **Multiple AI coding agent sessions**: Different agent instances working on different
+  task spaces
 
 **How it works:** When you switch task spaces in VS Code, VS Code Insiders' active space
 stays unchanged. But if you add/remove tabs from "Feature: Auth" in VS Code, those changes
@@ -114,7 +114,7 @@ sync to Insiders if it also has "Feature: Auth" active.
   task spaces active on the same project folder
 - **Cross-IDE Sync**: Tab changes sync when same space is active in multiple IDEs
 - **Smart Startup**: Skips restore if current tabs already match saved state
-- **Claude Code Integration**: Link task spaces to `task/*.md` files for tracking
+- **AI Coding Agent Integration**: Link task spaces to `task/*.md` files for tracking
   implementation plans
 - **Automatic Archival**: Completed task files move to `task/done/` automatically
 - **Status Bar**: See your active task space at a glance
@@ -157,7 +157,7 @@ _Main dialog showing all your task spaces_
 _Create a new workflow context_
 
 ![Link Task File](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/link-task-file.png)
-_Link to Claude Code task files_
+_Link to AI coding agent task files_
 
 ![Delete Confirmation](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/delete-confirmation.png)
 _Automatic archival to task/done/_
@@ -179,19 +179,19 @@ Create separate task spaces for different aspects of your work **on the same bra
 
 Your previous tabs are auto-saved when you switch.
 
-### Claude Code Workflow
+### AI Coding Agent Workflow
 
-Task spaces integrate with Claude Code for implementation tracking:
+Task spaces integrate with AI coding agents for implementation tracking:
 
 **Planning Phase:**
 
 - Create `task/auth_feature.md` with detailed implementation plan
 - Create task space "Feature: Auth" linked to this file
-- Give plan to Claude Code to work on
+- Give plan to your AI coding agent to work on
 
 **Implementation Phase:**
 
-- Work with Claude Code
+- Work with your AI coding agent
 - Update task file with progress notes
 - All relevant files stay organized in your task space
 
@@ -256,10 +256,11 @@ _Creating task space with linked file..._
 ![Integration Prompt](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/smart-prompt-notification.png)
 _...prompts to install Claude Code integration (with "Don't Ask Again" option)_
 
-### Power User: Multiple Claude Code Instances
+### Power User: Multiple AI Coding Agent Instances
 
-Run **multiple Claude Code CLI instances in parallel** (terminal tabs or tmux panes), each
-working on different tasks, coordinated through one VS Code instance:
+Run **multiple AI coding agent instances in parallel** (e.g., Claude Code, Gemini CLI in
+terminal tabs or tmux panes), each working on different tasks, coordinated through one VS
+Code instance:
 
 1. **Terminal 1**: `claude` → `/r3bl-task create feature_a` → Creates `task/feature_a.md`
 2. **Terminal 2**: `claude` → `/r3bl-task create feature_b` → Creates `task/feature_b.md`

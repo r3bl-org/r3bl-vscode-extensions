@@ -116,6 +116,31 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-03-07] - Generalize "Claude Code" references to "AI coding agent"
+
+### Package Versions
+
+- **R3BL Copy Selection Path and Range**: 1.3.3 → 1.3.4
+- **R3BL Task Management**: 1.2.4 → 1.2.5
+- **R3BL Extension Pack**: 1.2.1 → 1.2.2
+
+### Changes
+
+- **R3BL Copy Selection Path and Range 1.3.4**: Generalize documentation for AI coding
+  agents
+    - Replaced "Claude Code" references with "AI coding agent" in README and package
+      description
+    - The `@path#L<start>-<end>` format works with any terminal-based AI coding agent
+      (Claude Code, Gemini CLI, etc.)
+    - Added "gemini cli" and "ai coding agent" keywords for marketplace discoverability
+
+- **R3BL Task Management 1.2.5**: Generalize workflow documentation for AI coding agents
+    - Updated collaboration, workflow, and power-user sections to reference AI coding
+      agents generically
+    - Claude Code-specific features (like `/r3bl-task` slash command installation) remain
+      clearly attributed
+    - Added "gemini cli" and "ai coding agent" keywords for marketplace discoverability
+
 ## [2026-03-07] - Rustdoc Navigator: Document keybinding customization
 
 ### Package Versions

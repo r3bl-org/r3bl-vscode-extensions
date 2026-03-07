@@ -1,12 +1,12 @@
 # R3BL Copy Selection Path and Range
 
-Quickly copy file paths with selected line ranges in formats optimized for Claude Code and
-IDE navigation. Perfect for sharing code references in prompts, documentation, or team
-communication.
+Quickly copy file paths with selected line ranges in formats optimized for AI coding
+agents (Claude Code, Gemini CLI, etc.) and IDE navigation. Perfect for sharing code
+references in prompts, documentation, or team communication.
 
 ## Features
 
-- **Claude Code Format**: Multi-line selections use `@path#L<start>-<end>` format
+- **AI Agent Format**: Multi-line selections use `@path#L<start>-<end>` format
 - **IDE Format**: Single-line selections use `path:<line>` format for IDE compatibility
 - **Keyboard Shortcuts**: Quick copy with `Alt+O`, view history with `Alt+Shift+O`
 - **Copy History**: Session-based history of recent copies (last 20 items)
@@ -20,7 +20,7 @@ communication.
 _Single-line selection with auto-dismissing notification_
 
 ![Multi-Line Copy](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-notification-multi-line.png)
-_Multi-line selection in Claude Code format with @ prefix_
+_Multi-line selection in AI agent format with @ prefix_
 
 ![Copy History](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-history.png)
 _Copy history (Alt+Shift+O) showing recent copies with timestamps_
@@ -29,16 +29,16 @@ _Copy history (Alt+Shift+O) showing recent copies with timestamps_
 
 The extension automatically chooses the best format based on your selection:
 
-### Multi-Line Selection (Claude Code Format)
+### Multi-Line Selection (AI Agent Format)
 
-When you select multiple lines, the output includes an `@` prefix for Claude Code:
+When you select multiple lines, the output includes an `@` prefix for AI coding agents:
 
 ```
 @packages/r3bl-copy-selection-path-and-range/src/extension.ts#L6-14
 ```
 
-This format is optimized for use in Claude Code prompts where the `@` symbol tells Claude
-to reference that specific file and line range.
+This format is optimized for use in AI coding agent prompts (Claude Code, Gemini CLI,
+etc.) where the `@` symbol tells the agent to reference that specific file and line range.
 
 ### Single-Line Selection (IDE Format)
 
@@ -80,7 +80,7 @@ navigation.
 
 ## Use Cases
 
-### Claude Code Prompts
+### AI Coding Agent Prompts
 
 Share specific code sections in your prompts:
 
@@ -88,7 +88,7 @@ Share specific code sections in your prompts:
 Can you review the error handling in @src/services/api.ts#L45-67?
 ```
 
-Claude Code will automatically reference that exact section of your code.
+The AI coding agent will automatically reference that exact section of your code.
 
 ### Code Reviews
 
@@ -135,7 +135,7 @@ You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
 1. **Path Calculation**: Gets relative path from workspace root
 2. **Line Detection**: Determines if selection spans multiple lines
 3. **Format Selection**:
-    - Multi-line → Claude Code format with `@` prefix
+    - Multi-line → AI agent format with `@` prefix
     - Single-line → IDE format
 4. **Clipboard**: Copies formatted string
 5. **History Storage**: Adds to in-memory session history (last 20 items)
@@ -175,4 +175,4 @@ https://github.com/r3bl-org/r3bl-vscode-extensions/issues
 
 ---
 
-**Copy and share context with Claude Code effortlessly!**
+**Copy and share context with AI coding agents effortlessly!**

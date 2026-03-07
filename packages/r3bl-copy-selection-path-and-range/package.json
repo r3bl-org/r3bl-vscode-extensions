@@ -1,7 +1,7 @@
 {
     "name": "r3bl-copy-selection-path-and-range",
     "displayName": "R3BL Copy Selection Path and Range",
-    "description": "Copy file path with selection ranges in Claude Code format (@path#L<start>-<end>) or IDE format (path:<line>) for single/no selection",
+    "description": "Copy file path with selection ranges in AI agent format (@path#L<start>-<end>) or IDE format (path:<line>) for single/no selection",
     "license": "MIT",
     "keywords": [
         "copy",
@@ -10,6 +10,8 @@
         "range",
         "claude",
         "claude code",
+        "gemini cli",
+        "ai coding agent",
         "file reference",
         "line numbers",
         "clipboard"
@@ -26,7 +28,7 @@
     },
     "publisher": "R3BL",
     "preview": false,
-    "version": "1.3.3",
+    "version": "1.3.4",
     "engines": {
         "vscode": "^1.95.0"
     },

@@ -25,14 +25,14 @@ configuration.
 
 ### Individual Extensions
 
-| Extension                              | Description                                      | Links                                                                                                                                                                      |
-| -------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **R3BL Theme**                         | Dark theme optimized for Rust and Markdown       | [Docs](packages/r3bl-theme/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)                                                 |
-| **R3BL Semantic Configuration**        | Enhanced semantic highlighting for Rust          | [Docs](packages/r3bl-semantic-config/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)                             |
-| **R3BL Task Management**               | Task space management for context switching      | [Docs](packages/r3bl-task-management/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)                             |
-| **R3BL Fuzzy Search**                  | Fast fuzzy file search with fzf and ripgrep      | [Docs](packages/r3bl-fuzzy-search/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)                                   |
-| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges for Claude Code | [Docs](packages/r3bl-copy-selection-path-and-range/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range) |
-| **R3BL Auto Insert Copyright**         | Automatic copyright header insertion             | [Docs](packages/r3bl-auto-insert-copyright/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)                 |
+| Extension                              | Description                                           | Links                                                                                                                                                                      |
+| -------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **R3BL Theme**                         | Dark theme optimized for Rust and Markdown            | [Docs](packages/r3bl-theme/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)                                                 |
+| **R3BL Semantic Configuration**        | Enhanced semantic highlighting for Rust               | [Docs](packages/r3bl-semantic-config/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)                             |
+| **R3BL Task Management**               | Task space management for context switching           | [Docs](packages/r3bl-task-management/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)                             |
+| **R3BL Fuzzy Search**                  | Fast fuzzy file search with fzf and ripgrep           | [Docs](packages/r3bl-fuzzy-search/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)                                   |
+| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges for AI coding agents | [Docs](packages/r3bl-copy-selection-path-and-range/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range) |
+| **R3BL Auto Insert Copyright**         | Automatic copyright header insertion                  | [Docs](packages/r3bl-auto-insert-copyright/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)                 |
 
 ### Infrastructure Packages
 

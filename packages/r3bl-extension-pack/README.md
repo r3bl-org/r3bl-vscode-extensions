@@ -12,7 +12,7 @@ configured to work together seamlessly.
 | **[R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)**                      | Enhanced semantic highlighting for Rust (auto-configured)     |
 | **[R3BL Task Management](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)**                             | Task space management for context switching                   |
 | **[R3BL Fuzzy Search](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)**                                   | Fast fuzzy file search powered by fzf and ripgrep             |
-| **[R3BL Copy Selection Path and Range](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Claude Code              |
+| **[R3BL Copy Selection Path and Range](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for AI coding agents         |
 | **[R3BL Auto Insert Copyright](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion                          |
 | **[R3BL Shared](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed) |
 | **[rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)**                                      | Official Rust language server (3rd party)                     |
@@ -71,8 +71,8 @@ contexts without losing your place.
 
 ### AI-Assisted Development
 
-Copy Selection extension outputs paths in Claude Code format (`@path#L1-10`), making it
-easy to reference code in AI prompts.
+Copy Selection extension outputs paths in AI agent format (`@path#L1-10`), making it easy
+to reference code in AI coding agent prompts.
 
 ## Configuration
 
