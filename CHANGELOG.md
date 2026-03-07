@@ -2,6 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
+    - [[2026-03-07] - Rustdoc Navigator: Document keybinding customization](#2026-03-07---rustdoc-navigator-document-keybinding-customization)
+        - [Package Versions](#package-versions)
+        - [Changes](#changes)
     - [[2026-03-07] - Rustdoc Navigator: TOP, BOTTOM, and LINK REF DEFS Navigation](#2026-03-07---rustdoc-navigator-top-bottom-and-link-ref-defs-navigation)
         - [Package Versions](#package-versions)
         - [Changes](#changes)
@@ -112,6 +115,19 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2026-03-07] - Rustdoc Navigator: Document keybinding customization
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.1 → 1.2.2
+- **R3BL Extension Pack**: 1.2.0 → 1.2.1
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.2**: Documentation improvement
+    - Added command ID (`r3bl-semantic-config.navigateRustdocs`) and keybinding
+      customization example to the README, making it easy for users to remap the shortcut
 
 ## [2026-03-07] - Rustdoc Navigator: TOP, BOTTOM, and LINK REF DEFS Navigation
 

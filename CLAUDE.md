@@ -245,9 +245,9 @@ This installs the newly built extensions to your local VSCode/Insiders.
 
 ### 6. Commit Your Changes
 
-Do not include any AI attribution in commit messages. This means no `Co-Authored-By`
-lines referencing Claude or Anthropic (regardless of model name), and no "Generated with
-Claude Code" lines.
+Do not include any AI attribution in commit messages. This means no `Co-Authored-By` lines
+referencing Claude or Anthropic (regardless of model name), and no "Generated with Claude
+Code" lines.
 
 ```bash
 git add packages/extension-name/src/ packages/extension-name/package.json packages/r3bl-extension-pack/package.json
@@ -400,9 +400,9 @@ fi
 
 ### 11. Commit All Changes
 
-Do not include any AI attribution in commit messages. This means no `Co-Authored-By`
-lines referencing Claude or Anthropic (regardless of model name), and no "Generated with
-Claude Code" lines.
+Do not include any AI attribution in commit messages. This means no `Co-Authored-By` lines
+referencing Claude or Anthropic (regardless of model name), and no "Generated with Claude
+Code" lines.
 
 ```bash
 git add packages/r3bl-new-extension/ packages/r3bl-extension-pack/package.json README.md script_lib.sh build.sh install.sh

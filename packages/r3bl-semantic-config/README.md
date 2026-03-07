@@ -293,8 +293,18 @@ navigating between rustdoc blocks in a file. Similar to `Go to Symbol in Editor`
 
 This keybinding only activates when editing a Rust file with editor focus.
 
+To customize the keybinding, add to your `keybindings.json`:
+
+```json
+{
+    "key": "ctrl+shift+y",
+    "command": "r3bl-semantic-config.navigateRustdocs",
+    "when": "editorTextFocus && editorLangId == rust"
+}
+```
+
 **Note:** `Ctrl+Shift+Y` is bound to Debug Console (`workbench.debug.action.toggleRepl`)
-by default. You may need to remove that binding in your `keybindings.json`:
+by default. You may need to remove that binding:
 
 ```json
 {

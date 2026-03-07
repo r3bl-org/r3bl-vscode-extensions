@@ -2,7 +2,7 @@
     "name": "r3bl-semantic-config",
     "displayName": "R3BL Semantic Configuration",
     "description": "Companion to R3BL Theme - automatically applies enhanced semantic highlighting for Rust development",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"
