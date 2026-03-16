@@ -9,6 +9,7 @@ import {
     RustdocFoldingProvider,
 } from './rustdocFolding';
 import { navigateRustdocs } from './rustdocNavigator';
+import { RustUseStatementsFoldingProvider } from './rustUseStatementsFolding';
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined;
@@ -147,6 +148,12 @@ export function activate(context: vscode.ExtensionContext) {
         new RustdocFoldingProvider(),
     );
 
+    // Register FoldingRangeProvider for use statements at top of file
+    const useStatementsFoldingProvider = vscode.languages.registerFoldingRangeProvider(
+        { language: 'rust' },
+        new RustUseStatementsFoldingProvider(),
+    );
+
     // Watch for theme changes
     const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('workbench.colorTheme')) {
@@ -183,6 +190,7 @@ export function activate(context: vscode.ExtensionContext) {
         unfoldRustdocsCommand,
         navigateRustdocsCommand,
         rustdocFoldingProvider,
+        useStatementsFoldingProvider,
         themeWatcher,
     );
 }
@@ -264,7 +272,7 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
 // Auto-fold rustdocs when opening Rust files
 function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
     const config = vscode.workspace.getConfiguration('r3bl-semantic-config');
-    const getEnabled = () => config.get<boolean>('autoFoldRustdocsOnOpen', true);
+    const getEnabled = () => config.get<boolean>('autoFoldRustdocsOnOpen', false);
 
     // Track documents that have already been auto-folded this session
     // This prevents re-folding when switching back to an already-open tab

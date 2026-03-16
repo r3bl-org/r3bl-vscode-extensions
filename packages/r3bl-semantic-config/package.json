@@ -2,7 +2,7 @@
     "name": "r3bl-semantic-config",
     "displayName": "R3BL Semantic Configuration",
     "description": "Companion to R3BL Theme - automatically applies enhanced semantic highlighting for Rust development",
-    "version": "1.2.2",
+    "version": "1.2.4",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"
@@ -118,7 +118,7 @@
                 },
                 "r3bl-semantic-config.autoFoldRustdocsOnOpen": {
                     "type": "boolean",
-                    "default": true,
+                    "default": false,
                     "description": "Automatically fold all rustdoc comments (/// and //!) when opening a Rust file."
                 }
             }
@@ -129,16 +129,20 @@
         "compile": "webpack",
         "watch": "webpack --watch",
         "build": "webpack --mode production --devtool hidden-source-map",
-        "package": "vsce package --no-dependencies"
+        "package": "vsce package --no-dependencies",
+        "test": "jest"
     },
     "dependencies": {
         "r3bl-common-code": "file:../r3bl-common-code"
     },
     "devDependencies": {
-        "@types/vscode": "^1.60.0",
+        "@types/jest": "^30.0.0",
         "@types/node": "14.x",
-        "typescript": "^5.0.0",
+        "@types/vscode": "^1.60.0",
+        "jest": "^30.3.0",
+        "ts-jest": "^29.4.6",
         "ts-loader": "^9.5.1",
+        "typescript": "^5.0.0",
         "webpack": "^5.95.0",
         "webpack-cli": "^5.1.4"
     }

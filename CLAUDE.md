@@ -230,6 +230,7 @@ it includes the updated extension:
 This script automatically:
 
 - Compiles TypeScript extensions
+- Runs unit tests for extensions that have them — test failures block packaging
 - Generates new .vsix files with the correct versioned names
 - **Removes all outdated versions** of the extension (e.g., `r3bl-theme-1.0.2.vsix` is
   deleted when building 1.0.3)
@@ -429,6 +430,8 @@ This generates all .vsix files with your latest changes. The build script:
 
 - Compiles TypeScript extensions (r3bl-auto-insert-copyright, r3bl-semantic-config,
   r3bl-copy-selection-path-and-range)
+- Runs unit tests for extensions that have them (r3bl-semantic-config) — test failures
+  block packaging
 - Packages all individual extensions
 - Builds the extension pack
 - Creates all .vsix artifacts in their respective directories
@@ -457,6 +460,9 @@ npm run package:theme
 npm run package:copyright
 npm run package:semantic-config
 npm run package:extension-pack
+
+# Run unit tests (for extensions that have them):
+cd packages/r3bl-semantic-config && npm test
 ```
 
 ## Maintaining CHANGELOG.md
@@ -699,7 +705,8 @@ When modifying an extension:
 - [ ] Update version in `packages/r3bl-extension-pack/package.json`
 - [ ] Update CHANGELOG.md with changes and new versions
 - [ ] **If README.md has a TOC**: Verify TOC matches actual headings after any changes
-- [ ] Run `./build.sh` to generate artifacts
+- [ ] Run `npm test` in the extension directory (if tests exist)
+- [ ] Run `./build.sh` to generate artifacts (also runs tests automatically)
 - [ ] Run `./install.sh` to test locally (optional)
 - [ ] Commit changes with proper git add of modified files
 - [ ] Push to repository

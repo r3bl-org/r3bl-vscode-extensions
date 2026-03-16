@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { showStatusBarMessage } from 'r3bl-common-code';
 import { findRustdocBlocks, RustdocBlock } from './rustdocFolding';
 
-interface RustdocHeading {
+export interface RustdocHeading {
     line: number;
     level: number;
     text: string;
@@ -16,7 +16,7 @@ interface RustdocQuickPickItem extends vscode.QuickPickItem {
  * Extracts markdown headings from within a rustdoc block.
  * Parses lines like `/// # Heading` or `//! ## Sub-heading`.
  */
-function findHeadingsInBlock(
+export function findHeadingsInBlock(
     document: vscode.TextDocument,
     block: RustdocBlock,
 ): RustdocHeading[] {
@@ -52,7 +52,10 @@ function findHeadingsInBlock(
  * Generates a display label for a rustdoc block.
  * Uses the first heading if available, otherwise the first non-empty content line.
  */
-function getBlockLabel(document: vscode.TextDocument, block: RustdocBlock): string {
+export function getBlockLabel(
+    document: vscode.TextDocument,
+    block: RustdocBlock,
+): string {
     const prefix = block.type === 'module' ? '//!' : '///';
     const headings = findHeadingsInBlock(document, block);
 
@@ -80,7 +83,7 @@ function getBlockLabel(document: vscode.TextDocument, block: RustdocBlock): stri
  * of a rustdoc block. Link ref defs look like `/// [label]: URL`.
  * Returns the line number of the first (topmost) link ref def, or undefined.
  */
-function findLinkRefDefsStart(
+export function findLinkRefDefsStart(
     document: vscode.TextDocument,
     block: RustdocBlock,
 ): number | undefined {
@@ -118,7 +121,7 @@ function findLinkRefDefsStart(
 /**
  * Returns the rustdoc block containing the given cursor line, or undefined.
  */
-function findContainingBlock(
+export function findContainingBlock(
     blocks: RustdocBlock[],
     cursorLine: number,
 ): RustdocBlock | undefined {

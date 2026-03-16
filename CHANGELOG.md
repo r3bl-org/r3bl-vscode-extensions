@@ -116,6 +116,44 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-03-16] - Use Statement Folding and Unit Test Infrastructure
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.3 → 1.2.4
+- **R3BL Extension Pack**: 1.2.3 → 1.2.4
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.4**: Fold `use` statements at top of Rust files
+    - All `use`/import statements at the top of each Rust file are now detected as a
+      single foldable region
+    - Folds/unfolds together with rustdoc blocks via `Ctrl+-` / `Ctrl+=`
+    - Native VSCode fold gutter arrow appears next to the import block
+    - Handles multi-line `use` statements with braces spanning lines
+    - Handles blank lines and comments between `use` groups
+    - Only folds top-of-file imports (inner module `use` statements are ignored)
+    - Requires at least 2 lines of imports to create a fold region
+    - Auto-fold on open also folds imports (when enabled)
+    - Added Jest unit test infrastructure with 44 tests covering all pure detection logic
+    - Build pipeline (`build.sh`) now runs tests before packaging — failures block builds
+
+## [2026-03-11] - Rustdoc Auto-Fold Default Changed to Disabled
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.2 → 1.2.3
+- **R3BL Extension Pack**: 1.2.2 → 1.2.3
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.3**: Change auto-fold rustdocs default to disabled
+    - `autoFoldRustdocsOnOpen` now defaults to `false` instead of `true`
+    - Preserves navigation targets when using "Go to Definition" — the destination line
+      remains visible instead of being collapsed inside a folded block
+    - Users who prefer auto-folding can re-enable it in settings
+    - Manual fold/unfold with `Ctrl+-` / `Ctrl+=` remains available
+
 ## [2026-03-07] - Generalize "Claude Code" references to "AI coding agent"
 
 ### Package Versions

@@ -56,6 +56,7 @@ echo -e "${BLUE}Building R3BL Semantic Configuration...${NC}"
 cd packages/r3bl-semantic-config
 npm install
 npm run compile
+npm test
 vsce package --no-dependencies
 cleanup_old_versions "r3bl-semantic-config" "$SEMANTIC_VERSION" "."
 cd ../..

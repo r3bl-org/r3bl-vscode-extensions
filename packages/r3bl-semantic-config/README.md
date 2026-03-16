@@ -1,6 +1,6 @@
 # R3BL Semantic Configuration
 
-This extension provides three powerful features for Rust development in VS Code:
+This extension provides powerful features for Rust development in VS Code:
 
 1. **Enhanced Semantic Highlighting** - Automatically applies optimized color rules for
    Rust semantic tokens
@@ -8,7 +8,9 @@ This extension provides three powerful features for Rust development in VS Code:
    timing `cargo check` runs
 3. **Rustdoc Folding** - Fold/unfold all documentation comments (`///` and `//!`) with a
    single command
-4. **Rustdoc Structure Navigator** - Quickly jump to headings within a rustdoc block or
+4. **Use Statement Folding** - Collapse all `use` imports at the top of a file into a
+   single foldable region
+5. **Rustdoc Structure Navigator** - Quickly jump to headings within a rustdoc block or
    navigate between rustdoc blocks in a file
 
 ## Table of Contents
@@ -16,7 +18,8 @@ This extension provides three powerful features for Rust development in VS Code:
 - [Feature 1: Semantic Highlighting](#feature-1-semantic-highlighting)
 - [Feature 2: Debounced rust-analyzer Flycheck](#feature-2-debounced-rust-analyzer-flycheck)
 - [Feature 3: Rustdoc Folding](#feature-3-rustdoc-folding)
-- [Feature 4: Rustdoc Structure Navigator](#feature-4-rustdoc-structure-navigator)
+- [Feature 4: Use Statement Folding](#feature-4-use-statement-folding)
+- [Feature 5: Rustdoc Structure Navigator](#feature-5-rustdoc-structure-navigator)
 - [Requirements](#requirements)
 - [Commands](#commands)
 - [Release Notes](#release-notes)
@@ -231,10 +234,12 @@ These keybindings only activate when:
 
 ### Auto-Fold on File Open
 
-By default, rustdoc comments are **automatically folded** when you open a Rust file. This
-lets you focus on the code immediately without manual folding.
+By default, rustdoc comments are **not** automatically folded when you open a Rust file.
+This preserves navigation targets — for example, when using "Go to Definition", the
+destination line remains visible instead of being collapsed inside a folded block.
 
-**Configuration:**
+If you prefer rustdocs to be automatically folded on file open, enable it in
+`settings.json`:
 
 ```json
 {
@@ -244,9 +249,9 @@ lets you focus on the code immediately without manual folding.
 
 | Setting                  | Type    | Default | Description                                 |
 | ------------------------ | ------- | ------- | ------------------------------------------- |
-| `autoFoldRustdocsOnOpen` | boolean | `true`  | Auto-fold rustdocs when opening a Rust file |
+| `autoFoldRustdocsOnOpen` | boolean | `false` | Auto-fold rustdocs when opening a Rust file |
 
-Set `autoFoldRustdocsOnOpen` to `false` to disable auto-folding and use manual `Ctrl+-`.
+You can always fold on-demand with `Ctrl+-`.
 
 ### How It Works
 
@@ -270,7 +275,42 @@ Use Command Palette (`Ctrl+Shift+P`):
 
 ---
 
-## Feature 4: Rustdoc Structure Navigator
+## Feature 4: Use Statement Folding
+
+### What It Does
+
+Detects all `use` (import) statements at the top of each Rust file and exposes them as a
+single foldable region. This lets you collapse imports to focus on the actual code.
+
+### How It Works
+
+1. Scans from the top of the file, skipping preamble (`//!` module docs, `#![...]` inner
+   attributes, regular comments, blank lines)
+2. Groups all consecutive `use` statements into a single block, including:
+    - Single-line `use foo::bar;`
+    - Multi-line `use` with braces spanning multiple lines
+    - Blank lines and comments between `use` groups
+3. Creates a single foldable region (requires at least 2 lines of imports)
+
+### Integration with Fold/Unfold Commands
+
+Import folding integrates seamlessly with the existing rustdoc fold/unfold commands:
+
+- **`Ctrl+-`** folds both rustdoc blocks **and** the import block
+- **`Ctrl+=`** unfolds both
+- Status bar shows: "Folded 5 rustdoc blocks + imports in filename.rs"
+- Auto-fold on open also folds imports (when enabled)
+
+### Scope
+
+- **Top-of-file only** — `use` statements inside inner modules or test blocks are not
+  affected
+- **Native VSCode folding** — the fold gutter arrow appears next to the import block, and
+  VSCode's built-in "Fold All" (`Ctrl+K Ctrl+0`) includes it
+
+---
+
+## Feature 5: Rustdoc Structure Navigator
 
 ### What It Does
 
@@ -357,14 +397,14 @@ Both features in this extension depend on **rust-analyzer**:
 
 ## Commands
 
-| Command                                    | Keybinding     | Description                                |
-| ------------------------------------------ | -------------- | ------------------------------------------ |
-| `R3BL: Enable R3BL Semantic Highlighting`  | -              | Apply semantic highlighting settings       |
-| `R3BL: Disable R3BL Semantic Highlighting` | -              | Remove semantic highlighting settings      |
-| `R3BL: Run Flycheck (Debounced)`           | `Ctrl+R`       | Manually trigger flycheck, cancels pending |
-| `R3BL: Fold All Rustdocs`                  | `Ctrl+-`       | Collapse all `///` and `//!` blocks        |
-| `R3BL: Unfold All Rustdocs`                | `Ctrl+=`       | Expand all rustdoc blocks                  |
-| `R3BL: Navigate Rustdoc Structure`         | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs     |
+| Command                                    | Keybinding     | Description                                 |
+| ------------------------------------------ | -------------- | ------------------------------------------- |
+| `R3BL: Enable R3BL Semantic Highlighting`  | -              | Apply semantic highlighting settings        |
+| `R3BL: Disable R3BL Semantic Highlighting` | -              | Remove semantic highlighting settings       |
+| `R3BL: Run Flycheck (Debounced)`           | `Ctrl+R`       | Manually trigger flycheck, cancels pending  |
+| `R3BL: Fold All Rustdocs`                  | `Ctrl+-`       | Collapse all `///`, `//!`, and `use` blocks |
+| `R3BL: Unfold All Rustdocs`                | `Ctrl+=`       | Expand all rustdoc and `use` blocks         |
+| `R3BL: Navigate Rustdoc Structure`         | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs      |
 
 ## Shared Infrastructure
 

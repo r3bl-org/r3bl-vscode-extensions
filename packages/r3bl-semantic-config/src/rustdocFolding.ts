@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { showStatusBarMessage } from 'r3bl-common-code';
+import { findImportBlock } from './rustUseStatementsFolding';
 
 /**
  * Represents a block of rustdoc comments.
@@ -108,23 +109,35 @@ export async function foldAllRustdocs(silent: boolean = false): Promise<void> {
     }
 
     const blocks = findRustdocBlocks(editor.document);
+    const importBlock = findImportBlock(editor.document);
 
-    if (blocks.length === 0) {
+    if (blocks.length === 0 && !importBlock) {
         return;
     }
 
     // Save original selection only for manual invocation
     const originalSelection = silent ? null : editor.selection;
 
-    // Create selections for all rustdoc blocks
-    const selections = blocks.map((block) => {
+    // Build selections for all foldable regions (rustdoc blocks + import block)
+    const selections: vscode.Selection[] = [];
+
+    for (const block of blocks) {
         const startPos = new vscode.Position(block.startLine, 0);
         const endPos = new vscode.Position(
             block.endLine,
             editor.document.lineAt(block.endLine).text.length,
         );
-        return new vscode.Selection(startPos, endPos);
-    });
+        selections.push(new vscode.Selection(startPos, endPos));
+    }
+
+    if (importBlock) {
+        const startPos = new vscode.Position(importBlock.startLine, 0);
+        const endPos = new vscode.Position(
+            importBlock.endLine,
+            editor.document.lineAt(importBlock.endLine).text.length,
+        );
+        selections.push(new vscode.Selection(startPos, endPos));
+    }
 
     // Set selections and create folding ranges
     editor.selections = selections;
@@ -142,10 +155,14 @@ export async function foldAllRustdocs(silent: boolean = false): Promise<void> {
     // Only show status message for manual invocation
     if (!silent) {
         const fileName = editor.document.uri.path.split('/').pop() ?? 'file';
-        showStatusBarMessage(
-            `Folded ${blocks.length} rustdoc blocks in ${fileName}`,
-            'success',
-        );
+        const parts: string[] = [];
+        if (blocks.length > 0) {
+            parts.push(`${blocks.length} rustdoc block${blocks.length > 1 ? 's' : ''}`);
+        }
+        if (importBlock) {
+            parts.push('imports');
+        }
+        showStatusBarMessage(`Folded ${parts.join(' + ')} in ${fileName}`, 'success');
     }
 }
 
@@ -167,17 +184,25 @@ export async function unfoldAllRustdocs(): Promise<void> {
     }
 
     const blocks = findRustdocBlocks(editor.document);
+    const importBlock = findImportBlock(editor.document);
 
-    if (blocks.length === 0) {
-        showStatusBarMessage('No rustdocs found', 'info');
+    if (blocks.length === 0 && !importBlock) {
+        showStatusBarMessage('No rustdocs or imports found', 'info');
         return;
     }
 
     const originalSelection = editor.selection;
 
-    // Unfold each block by positioning cursor and unfolding
+    // Unfold each rustdoc block by positioning cursor and unfolding
     for (const block of blocks) {
         const pos = new vscode.Position(block.startLine, 0);
+        editor.selection = new vscode.Selection(pos, pos);
+        await vscode.commands.executeCommand('editor.unfold');
+    }
+
+    // Unfold import block
+    if (importBlock) {
+        const pos = new vscode.Position(importBlock.startLine, 0);
         editor.selection = new vscode.Selection(pos, pos);
         await vscode.commands.executeCommand('editor.unfold');
     }
@@ -186,5 +211,12 @@ export async function unfoldAllRustdocs(): Promise<void> {
     editor.selection = originalSelection;
     editor.revealRange(originalSelection, vscode.TextEditorRevealType.Default);
 
-    showStatusBarMessage(`Unfolded ${blocks.length} rustdoc blocks`, 'success');
+    const parts: string[] = [];
+    if (blocks.length > 0) {
+        parts.push(`${blocks.length} rustdoc block${blocks.length > 1 ? 's' : ''}`);
+    }
+    if (importBlock) {
+        parts.push('imports');
+    }
+    showStatusBarMessage(`Unfolded ${parts.join(' + ')}`, 'success');
 }
