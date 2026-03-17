@@ -116,6 +116,24 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-03-17] - Simplified Task Command Format
+
+### Package Versions
+
+- **R3BL Task Management**: 1.2.5 → 1.2.6
+- **R3BL Extension Pack**: 1.2.4 → 1.2.5
+
+### Changes
+
+- **R3BL Task Management 1.2.6**: Simplified `/r3bl-task` slash command format
+    - Task files now use checkbox format (`[x]`/`[ ]`) instead of verbose status codes
+      (COMPLETE, WORK_IN_PROGRESS, BLOCKED, DEFERRED)
+    - "create" command produces concise plans: short overview + flat checkboxes under
+      phase headers, referencing `task/CLAUDE.md` for format
+    - "load" command finds first unchecked `[ ]` step instead of scanning for status
+      markers
+    - Aligns task file format across all projects using the `/r3bl-task` command
+
 ## [2026-03-16] - Use Statement Folding and Unit Test Infrastructure
 
 ### Package Versions
