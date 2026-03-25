@@ -2,7 +2,7 @@
     "name": "r3bl-fuzzy-search",
     "displayName": "R3BL Fuzzy Search",
     "description": "Fuzzy search in files using fzf - fast and smart search with Search Editor results",
-    "version": "1.1.3",
+    "version": "1.2.0",
     "publisher": "R3BL",
     "license": "MIT",
     "engines": {
@@ -19,7 +19,10 @@
         "find",
         "file search",
         "fuzzy finder",
-        "grep"
+        "grep",
+        "git",
+        "diff",
+        "unstaged"
     ],
     "icon": "r3bl-cube-logo.png",
     "repository": {
@@ -38,6 +41,11 @@
                 "command": "r3bl-fuzzy-search.searchInFiles",
                 "title": "R3BL Fuzzy Search: Interactive Search",
                 "category": "R3BL"
+            },
+            {
+                "command": "r3bl-fuzzy-search.showUnstagedChanges",
+                "title": "R3BL Fuzzy Search: Show Unstaged Changes",
+                "category": "R3BL"
             }
         ],
         "keybindings": [
@@ -45,6 +53,12 @@
                 "command": "r3bl-fuzzy-search.searchInFiles",
                 "key": "alt+shift+d",
                 "mac": "alt+shift+d",
+                "when": "editorTextFocus || !editorTextFocus"
+            },
+            {
+                "command": "r3bl-fuzzy-search.showUnstagedChanges",
+                "key": "ctrl+shift+g",
+                "mac": "ctrl+shift+g",
                 "when": "editorTextFocus || !editorTextFocus"
             }
         ],
@@ -89,18 +103,17 @@
         "package": "vsce package --no-dependencies",
         "compile-tests": "tsc -p . --outDir out",
         "watch-tests": "tsc -p . -w --outDir out",
-        "pretest": "npm run compile-tests && npm run compile",
-        "test": "node ./out/test/runTest.js"
+        "test": "jest"
     },
     "dependencies": {
         "r3bl-common-code": "file:../r3bl-common-code"
     },
     "devDependencies": {
+        "@types/jest": "^29.0.0",
         "@types/node": "^18.0.0",
         "@types/vscode": "^1.80.0",
-        "@types/mocha": "^10.0.0",
-        "@vscode/test-electron": "^2.3.0",
-        "mocha": "^10.0.0",
+        "jest": "^29.0.0",
+        "ts-jest": "^29.0.0",
         "typescript": "^5.0.0",
         "ts-loader": "^9.5.1",
         "webpack": "^5.95.0",

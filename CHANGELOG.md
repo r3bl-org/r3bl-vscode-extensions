@@ -116,6 +116,29 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-03-25] - Git Diff Search Editor
+
+### Package Versions
+
+- **R3BL Fuzzy Search**: 1.1.3 → 1.2.0
+- **R3BL Extension Pack**: 1.2.5 → 1.2.6
+
+### Changes
+
+- **R3BL Fuzzy Search 1.2.0**: Git Diff Search Editor command
+    - New command `Ctrl+Shift+G` opens a Search Editor tab showing all uncommitted git
+      changes
+    - Two clearly separated sections: unstaged changes on top, staged changes below
+    - Uses VSCode's `search-result` language for folding, click-to-navigate, and syntax
+      highlighting
+    - Only shows added lines and context — pure-deletion hunks are omitted since they
+      can't be navigated to
+    - Timestamped output files (`/tmp/git-diff-<timestamp>.code-search`) so previous
+      results are preserved
+    - Multi-root workspace support with folder-prefixed file paths
+    - Git dependency check with installation guide
+    - Added Jest unit test infrastructure with 10 tests covering the diff parser
+
 ## [2026-03-17] - Simplified Task Command Format
 
 ### Package Versions

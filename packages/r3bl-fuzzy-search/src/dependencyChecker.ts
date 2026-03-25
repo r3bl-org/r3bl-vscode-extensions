@@ -69,3 +69,25 @@ export async function checkDependencies(): Promise<boolean> {
 
     return true;
 }
+
+export async function checkGitDependency(): Promise<boolean> {
+    const gitInstalled = await checkCommand('git');
+
+    if (!gitInstalled) {
+        vscode.window
+            .showErrorMessage(
+                'git is not installed or not on PATH. Please install git.',
+                'Open Installation Guide',
+            )
+            .then((choice) => {
+                if (choice) {
+                    vscode.env.openExternal(
+                        vscode.Uri.parse('https://git-scm.com/downloads'),
+                    );
+                }
+            });
+        return false;
+    }
+
+    return true;
+}

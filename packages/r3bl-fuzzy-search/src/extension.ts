@@ -3,7 +3,8 @@
 import * as vscode from 'vscode';
 import { showStatusBarMessage } from 'r3bl-common-code';
 import { SearchPanel } from './searchPanel';
-import { checkDependencies } from './dependencyChecker';
+import { checkDependencies, checkGitDependency } from './dependencyChecker';
+import { showGitDiffSearchEditor } from './gitDiffCommand';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('R3BL Fuzzy Search extension is now active');
@@ -28,7 +29,19 @@ export function activate(context: vscode.ExtensionContext) {
         },
     );
 
-    context.subscriptions.push(searchDisposable);
+    // Register the git diff search editor command
+    const gitDiffDisposable = vscode.commands.registerCommand(
+        'r3bl-fuzzy-search.showUnstagedChanges',
+        async () => {
+            const gitOk = await checkGitDependency();
+            if (!gitOk) {
+                return;
+            }
+            await showGitDiffSearchEditor();
+        },
+    );
+
+    context.subscriptions.push(searchDisposable, gitDiffDisposable);
 }
 
 export function deactivate() {

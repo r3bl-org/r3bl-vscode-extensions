@@ -22,6 +22,8 @@ results.
 - **Respects VS Code Settings**: Font size, line height, and editor settings automatically
   applied
 - **Smart Result Ranking**: Best matches appear first, sorted by relevance
+- **Git Diff Search Editor**: View all unstaged and staged git changes in a Search Editor
+  tab with folding and click-to-navigate
 
 ## Screenshots
 
@@ -44,7 +46,12 @@ _Configure exclude patterns and .gitignore respect with interactive buttons_
 
 This extension requires the following command-line tools to be installed:
 
-- **ripgrep (rg)**: Fast file content search
+- **git**: Required for the Git Diff Search Editor command
+    - macOS: Included with Xcode Command Line Tools (`xcode-select --install`)
+    - Linux: `sudo apt install git` (Debian/Ubuntu) or `sudo dnf install git` (Fedora)
+    - More: https://git-scm.com/downloads
+
+- **ripgrep (rg)**: Fast file content search (required for fuzzy search only)
     - macOS: `brew install ripgrep`
     - Linux: `sudo apt install ripgrep` (Debian/Ubuntu) or `sudo dnf install ripgrep`
       (Fedora)
@@ -59,11 +66,12 @@ This extension requires the following command-line tools to be installed:
 
 ## Usage
 
-### Keyboard Shortcut
+### Keyboard Shortcuts
 
-Press `Alt+Shift+D` to start a fuzzy search (same shortcut for both macOS and Linux).
+- `Alt+Shift+D` — Open the interactive fuzzy search panel
+- `Ctrl+Shift+G` — Open the Git Diff Search Editor (show unstaged and staged changes)
 
-### Search Workflow
+### Fuzzy Search Workflow
 
 1. **Open search panel**: Press `Alt+Shift+D` to open the interactive search panel
 2. **Type your query**: Start typing your fuzzy search pattern (e.g., `exprt` will find
@@ -101,19 +109,27 @@ This extension contributes the following settings:
 - `r3blFuzzySearch.respectGitignore`: Automatically respect .gitignore files when
   searching (default: true)
 
+### Git Diff Search Editor
+
+Press `Ctrl+Shift+G` to view all uncommitted git changes in a Search Editor tab.
+
+- **Two sections**: Unstaged changes on top, staged changes below (either section is
+  omitted if empty)
+- **Foldable**: Each file group can be folded/unfolded
+- **Click-to-navigate**: Click any line to jump to that exact location in the source file
+- **Timestamped files**: Each invocation creates a new
+  `/tmp/git-diff-<timestamp>.code-search` file so previous results are preserved
+- **Multi-root support**: Works across all workspace folders in multi-root workspaces
+
 ## Commands
 
-- `R3BL Fuzzy Search: Interactive Search` - Open interactive search panel with live
-  preview
+| Command                                    | Description                                     | Shortcut       |
+| ------------------------------------------ | ----------------------------------------------- | -------------- |
+| `R3BL Fuzzy Search: Interactive Search`    | Open interactive search panel with live preview | `Alt+Shift+D`  |
+| `R3BL Fuzzy Search: Show Unstaged Changes` | Open git diff in Search Editor tab              | `Ctrl+Shift+G` |
 
-## Keyboard Shortcuts
-
-| Shortcut      | Command ID                        | When   |
-| ------------- | --------------------------------- | ------ |
-| `Alt+Shift+D` | `r3bl-fuzzy-search.searchInFiles` | Always |
-
-You can customize this shortcut in VS Code's Keyboard Shortcuts settings by searching for
-the command ID above.
+You can customize these shortcuts in VS Code's Keyboard Shortcuts settings by searching
+for the command IDs.
 
 ## Advantages Over Built-in Search
 

@@ -84,6 +84,7 @@ echo -e "${BLUE}Building R3BL Fuzzy Search...${NC}"
 cd packages/r3bl-fuzzy-search
 npm install
 npm run compile
+npm test
 vsce package --no-dependencies
 cleanup_old_versions "r3bl-fuzzy-search" "$FUZZY_SEARCH_VERSION" "."
 cd ../..
