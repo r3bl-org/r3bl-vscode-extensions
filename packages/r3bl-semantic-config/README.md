@@ -279,8 +279,30 @@ Use Command Palette (`Ctrl+Shift+P`):
 
 ### What It Does
 
-Detects all `use` (import) statements at the top of each Rust file and exposes them as a
-single foldable region. This lets you collapse imports to focus on the actual code.
+Detects all `use` (import) statements at the top of each Rust file and, when enabled,
+exposes them as a single foldable region. This lets you collapse imports to focus on the
+actual code.
+
+### Configuration
+
+By default, `use` statements are **not** automatically folded when you open a Rust file by
+this extension. If you prefer `use` statements to be automatically folded on file open,
+enable it in `settings.json`:
+
+```json
+{
+    "r3bl-semantic-config.autoFoldUseStatementsOnOpen": true
+}
+```
+
+| Setting                       | Type    | Default | Description                                                      |
+| ----------------------------- | ------- | ------- | ---------------------------------------------------------------- |
+| `autoFoldUseStatementsOnOpen` | boolean | `false` | Enable or disable auto-folding of `use` statements on file open. |
+
+The folding range provider for `use` statements is always registered, so manual
+fold/unfold via `Ctrl+-` / `Ctrl+=` is always available regardless of this setting. This
+setting only controls whether `use` statements are automatically folded when opening a
+Rust file.
 
 ### How It Works
 
@@ -294,7 +316,8 @@ single foldable region. This lets you collapse imports to focus on the actual co
 
 ### Integration with Fold/Unfold Commands
 
-Import folding integrates seamlessly with the existing rustdoc fold/unfold commands:
+Import folding integrates seamlessly with the existing rustdoc fold/unfold commands **when
+`autoFoldUseStatementsOnOpen` is enabled**:
 
 - **`Ctrl+-`** folds both rustdoc blocks **and** the import block
 - **`Ctrl+=`** unfolds both
@@ -394,6 +417,38 @@ Both features in this extension depend on **rust-analyzer**:
 - **Semantic Highlighting** - rust-analyzer provides token information (e.g., "this
   variable is mutable", "this is a lifetime")
 - **Debounced Flycheck** - rust-analyzer's `runFlycheck` command executes `cargo check`
+
+## Recommended Settings
+
+For the best experience with this extension's folding features, add these settings to your
+`settings.json`. These ensure that folding is enabled and that this extension has sole
+control over `use` statement folding behavior:
+
+```json
+{
+    "editor.folding": true,
+    "editor.showFoldingControls": "always",
+    "editor.foldingStrategy": "auto",
+    "editor.foldingImportsByDefault": false,
+    "editor.foldingHighlight": true,
+    "r3bl-semantic-config.autoFoldRustdocsOnOpen": false,
+    "r3bl-semantic-config.autoFoldUseStatementsOnOpen": false
+}
+```
+
+| Setting                          | Why                                                                                            |
+| -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `editor.folding`                 | Must be `true` for any folding to work                                                         |
+| `editor.foldingImportsByDefault` | Set to `false` so VSCode doesn't auto-fold imports on its own, conflicting with this extension |
+| `editor.foldingStrategy`         | `"auto"` lets language-specific folding providers (including this extension) work              |
+| `autoFoldRustdocsOnOpen`         | Set to `true` if you want rustdoc comments auto-folded when opening Rust files                 |
+| `autoFoldUseStatementsOnOpen`    | Set to `true` if you want `use` statements auto-folded when opening Rust files                 |
+
+> **Note:** If `editor.foldingImportsByDefault` is `true`, VSCode will auto-fold `use`
+> statements regardless of this extension's `autoFoldUseStatementsOnOpen` setting — which
+> can cause confusing behavior. Set it to `false` for predictable results. The extension
+> will show a one-time warning notification if it detects this conflict when you open a
+> Rust file.
 
 ## Commands
 

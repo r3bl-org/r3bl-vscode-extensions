@@ -9,7 +9,10 @@ import {
     RustdocFoldingProvider,
 } from './rustdocFolding';
 import { navigateRustdocs } from './rustdocNavigator';
-import { RustUseStatementsFoldingProvider } from './rustUseStatementsFolding';
+import {
+    RustUseStatementsFoldingProvider,
+    findImportBlock,
+} from './rustUseStatementsFolding';
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined;
@@ -148,40 +151,29 @@ export function activate(context: vscode.ExtensionContext) {
         new RustdocFoldingProvider(),
     );
 
-    // Register FoldingRangeProvider for use statements at top of file
+    // Register FoldingRangeProvider for use statements (always available)
     const useStatementsFoldingProvider = vscode.languages.registerFoldingRangeProvider(
         { language: 'rust' },
         new RustUseStatementsFoldingProvider(),
     );
 
-    // Watch for theme changes
+    // Initialize auto-fold rustdocs on file open
+    initializeAutoFoldRustdocs(context);
+
+    // Initialize auto-fold use statements on file open
+    initializeAutoFoldUseStatements(context);
+
+    // Watch for theme changes and auto-apply semantic config
     const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('workbench.colorTheme')) {
-            const newTheme = vscode.workspace
+            const theme = vscode.workspace
                 .getConfiguration('workbench')
                 .get('colorTheme');
-            if (newTheme === 'R3BL Theme') {
-                // Ask user if they want to apply semantic highlighting
-                vscode.window
-                    .showInformationMessage(
-                        'R3BL Theme detected! Apply enhanced semantic highlighting?',
-                        'Yes',
-                        'No',
-                    )
-                    .then((selection) => {
-                        if (selection === 'Yes') {
-                            applySemanticConfig();
-                        }
-                    });
+            if (theme === 'R3BL Theme') {
+                applySemanticConfig();
             }
         }
     });
-
-    // Initialize debounced flycheck feature
-    initializeDebouncedFlycheck(context);
-
-    // Initialize auto-fold rustdocs on file open
-    initializeAutoFoldRustdocs(context);
 
     context.subscriptions.push(
         enableCommand,
@@ -193,6 +185,168 @@ export function activate(context: vscode.ExtensionContext) {
         useStatementsFoldingProvider,
         themeWatcher,
     );
+}
+
+// Auto-fold rustdocs when opening Rust files
+function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
+    const config = vscode.workspace.getConfiguration('r3bl-semantic-config');
+    const getEnabled = () => config.get<boolean>('autoFoldRustdocsOnOpen', false);
+
+    // Track documents that have already been auto-folded this session
+    // This prevents re-folding when switching back to an already-open tab
+    const alreadyFolded = new Set<string>();
+
+    // Small delay to let VSCode restore cursor position before we fold
+    const CURSOR_RESTORE_DELAY_MS = 50;
+
+    // Listen for when a text editor becomes active
+    const editorWatcher = vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+        if (!editor) return;
+        if (!getEnabled()) return;
+        if (editor.document.languageId !== 'rust') return;
+
+        const uriString = editor.document.uri.toString();
+
+        // Skip if already folded this session (e.g., switching back to tab)
+        if (alreadyFolded.has(uriString)) {
+            return;
+        }
+
+        // Wait for VSCode to restore cursor position
+        await new Promise((resolve) => setTimeout(resolve, CURSOR_RESTORE_DELAY_MS));
+
+        // Only fold if this file is still the active editor
+        const currentEditor = vscode.window.activeTextEditor;
+        if (currentEditor?.document.uri.toString() === uriString) {
+            await foldAllRustdocs(true); // silent = true for auto-fold
+            alreadyFolded.add(uriString);
+        }
+    });
+
+    // Clean up tracking when documents are closed
+    const closeWatcher = vscode.workspace.onDidCloseTextDocument((document) => {
+        alreadyFolded.delete(document.uri.toString());
+    });
+
+    // Handle the currently active editor on startup
+    const activeEditor = vscode.window.activeTextEditor;
+    if (activeEditor && getEnabled() && activeEditor.document.languageId === 'rust') {
+        const uriString = activeEditor.document.uri.toString();
+        setTimeout(() => {
+            const currentEditor = vscode.window.activeTextEditor;
+            if (
+                currentEditor?.document.uri.toString() === uriString &&
+                !alreadyFolded.has(uriString)
+            ) {
+                foldAllRustdocs(true);
+                alreadyFolded.add(uriString);
+            }
+        }, 100);
+    }
+
+    context.subscriptions.push(editorWatcher, closeWatcher);
+}
+
+// Auto-fold use statements when opening Rust files
+function initializeAutoFoldUseStatements(context: vscode.ExtensionContext) {
+    const config = vscode.workspace.getConfiguration('r3bl-semantic-config');
+    const getEnabled = () => config.get<boolean>('autoFoldUseStatementsOnOpen', false);
+
+    // Track documents that have already been auto-folded this session
+    const alreadyFolded = new Set<string>();
+
+    // One-time conflict detection per session
+    let conflictChecked = false;
+
+    const CURSOR_RESTORE_DELAY_MS = 50;
+
+    const editorWatcher = vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+        if (!editor) return;
+        if (editor.document.languageId !== 'rust') return;
+
+        // Check for conflicting settings once per session, on first Rust file open
+        if (!conflictChecked) {
+            conflictChecked = true;
+            checkFoldingImportsConflict();
+        }
+
+        if (!getEnabled()) return;
+
+        const uriString = editor.document.uri.toString();
+        if (alreadyFolded.has(uriString)) return;
+
+        await new Promise((resolve) => setTimeout(resolve, CURSOR_RESTORE_DELAY_MS));
+
+        const currentEditor = vscode.window.activeTextEditor;
+        if (currentEditor?.document.uri.toString() === uriString) {
+            await foldUseStatements(currentEditor);
+            alreadyFolded.add(uriString);
+        }
+    });
+
+    const closeWatcher = vscode.workspace.onDidCloseTextDocument((document) => {
+        alreadyFolded.delete(document.uri.toString());
+    });
+
+    // Handle the currently active editor on startup
+    const activeEditor = vscode.window.activeTextEditor;
+    if (activeEditor && getEnabled() && activeEditor.document.languageId === 'rust') {
+        const uriString = activeEditor.document.uri.toString();
+        setTimeout(async () => {
+            const currentEditor = vscode.window.activeTextEditor;
+            if (
+                currentEditor?.document.uri.toString() === uriString &&
+                !alreadyFolded.has(uriString)
+            ) {
+                await foldUseStatements(currentEditor);
+                alreadyFolded.add(uriString);
+            }
+        }, 100);
+    }
+
+    context.subscriptions.push(editorWatcher, closeWatcher);
+}
+
+// Fold only use statement block in the given editor
+async function foldUseStatements(editor: vscode.TextEditor): Promise<void> {
+    const importBlock = findImportBlock(editor.document);
+    if (!importBlock) return;
+
+    const originalSelection = editor.selection;
+    const startPos = new vscode.Position(importBlock.startLine, 0);
+    const endPos = new vscode.Position(
+        importBlock.endLine,
+        editor.document.lineAt(importBlock.endLine).text.length,
+    );
+    editor.selections = [new vscode.Selection(startPos, endPos)];
+    await vscode.commands.executeCommand('editor.createFoldingRangeFromSelection');
+    editor.selection = originalSelection;
+}
+
+// Warn if editor.foldingImportsByDefault conflicts with our setting
+function checkFoldingImportsConflict() {
+    const autoFoldEnabled = vscode.workspace
+        .getConfiguration('r3bl-semantic-config')
+        .get<boolean>('autoFoldUseStatementsOnOpen', false);
+    const foldingImportsByDefault = vscode.workspace
+        .getConfiguration('editor')
+        .get<boolean>('foldingImportsByDefault', false);
+
+    if (!autoFoldEnabled && foldingImportsByDefault) {
+        vscode.window
+            .showWarningMessage(
+                'editor.foldingImportsByDefault is true — this may auto-fold Rust use statements even though autoFoldUseStatementsOnOpen is false.',
+                'Open Settings',
+            )
+            .then((choice) => {
+                if (choice === 'Open Settings') {
+                    vscode.commands.executeCommand(
+                        'workbench.action.openSettings',
+                        'editor.foldingImportsByDefault',
+                    );
+                }
+            });
+    }
 }
 
 // Debounced Flycheck Implementation
@@ -267,66 +421,6 @@ function initializeDebouncedFlycheck(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(documentWatcher, flycheckCommand, configWatcher);
-}
-
-// Auto-fold rustdocs when opening Rust files
-function initializeAutoFoldRustdocs(context: vscode.ExtensionContext) {
-    const config = vscode.workspace.getConfiguration('r3bl-semantic-config');
-    const getEnabled = () => config.get<boolean>('autoFoldRustdocsOnOpen', false);
-
-    // Track documents that have already been auto-folded this session
-    // This prevents re-folding when switching back to an already-open tab
-    const alreadyFolded = new Set<string>();
-
-    // Small delay to let VSCode restore cursor position before we fold
-    const CURSOR_RESTORE_DELAY_MS = 50;
-
-    // Listen for when a text editor becomes active
-    const editorWatcher = vscode.window.onDidChangeActiveTextEditor(async (editor) => {
-        if (!editor) return;
-        if (!getEnabled()) return;
-        if (editor.document.languageId !== 'rust') return;
-
-        const uriString = editor.document.uri.toString();
-
-        // Skip if already folded this session (e.g., switching back to tab)
-        if (alreadyFolded.has(uriString)) {
-            return;
-        }
-
-        // Wait for VSCode to restore cursor position
-        await new Promise((resolve) => setTimeout(resolve, CURSOR_RESTORE_DELAY_MS));
-
-        // Only fold if this file is still the active editor
-        const currentEditor = vscode.window.activeTextEditor;
-        if (currentEditor?.document.uri.toString() === uriString) {
-            await foldAllRustdocs(true); // silent = true for auto-fold
-            alreadyFolded.add(uriString);
-        }
-    });
-
-    // Clean up tracking when documents are closed
-    const closeWatcher = vscode.workspace.onDidCloseTextDocument((document) => {
-        alreadyFolded.delete(document.uri.toString());
-    });
-
-    // Handle the currently active editor on startup
-    const activeEditor = vscode.window.activeTextEditor;
-    if (activeEditor && getEnabled() && activeEditor.document.languageId === 'rust') {
-        const uriString = activeEditor.document.uri.toString();
-        setTimeout(() => {
-            const currentEditor = vscode.window.activeTextEditor;
-            if (
-                currentEditor?.document.uri.toString() === uriString &&
-                !alreadyFolded.has(uriString)
-            ) {
-                foldAllRustdocs(true);
-                alreadyFolded.add(uriString);
-            }
-        }, 100);
-    }
-
-    context.subscriptions.push(editorWatcher, closeWatcher);
 }
 
 async function disableCheckOnSave() {
