@@ -12,8 +12,8 @@ references in prompts, documentation, or team communication.
 - **Copy History**: Session-based history of recent copies (last 20 items)
 - **Quick Navigation**: Select from history to jump to any previously copied location
 - **Smart Paths**:
-    - **Relative Paths**: Automatically uses workspace-relative paths for files inside
-      the workspace
+    - **Relative Paths**: Automatically uses workspace-relative paths for files inside the
+      workspace
     - **Absolute Paths**: Fallback to full absolute paths for files outside the workspace
 - **Cross-Platform**: Normalizes path separators for consistency
 

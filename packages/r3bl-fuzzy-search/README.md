@@ -1,48 +1,61 @@
 # R3BL Fuzzy Search
 
 Interactive fuzzy search across file contents using fzf, with live preview and instant
-results.
+results. Combined with a powerful Git Diff Search Editor for high-efficiency code review.
 
 ## Use Case
 
-### Reviewing AI-Generated Changes
+### 1. Reviewing AI-Generated Changes
 
-When using AI coding agents (like Claude Code, GitHub Copilot, or Cursor), they often make
-extensive changes across multiple files in a single turn.
+AI coding agents (Claude Code, Copilot, Cursor) often modify dozens of files in a single
+turn. The **Git Diff Search Editor** (`Ctrl+Shift+G`) is purpose-built for this:
 
-**R3BL Fuzzy Search: Git Diff Search Editor** (`Ctrl+Shift+G`) provides a high-efficiency
-workflow for reviewing these changes:
+- **Unified Review**: See all uncommitted changes (staged and unstaged) or recent commits
+  in a single, searchable tab.
+- **Contextual Awareness**: Unlike a simple `git diff`, you get a foldable Search Editor
+  where you can see the surrounding context of every change.
+- **Navigation Power**: Click any line to jump directly to the source file for manual
+  adjustments.
 
-- **Instant Overview**: Immediately see all uncommitted changes (staged and unstaged) in a
-  single, searchable, and foldable Search Editor tab.
-- **Thorough Review**: Review every added line and its context without jumping between
-  files manually.
-- **Click-to-Navigate**: If a change needs further inspection or manual adjustment, click
-  any line to jump directly to that exact file and line in your editor.
-- **Compare with History**: Quickly switch between reviewing current uncommitted changes
-  and recent commits to understand the progression of the AI's work.
+### 2. High-Speed Code Exploration
+
+Traditional search requires exact matches or complex regex. R3BL Fuzzy Search brings the
+power of `fzf` and `ripgrep` to your editor:
+
+- **Typo Tolerance**: Search for `exprt` to find `export`. The fuzzy algorithm handles
+  small mistakes so you don't have to.
+- **Instant Discovery**: Results appear in a dedicated panel as you type (250ms debounce),
+  allowing you to refine your query in real-time until you find exactly what you need.
+- **Smart Ranking**: Matches are ranked by relevance, not just file order, so the best
+  results always appear at the top.
+
+### 3. Large-Scale Refactoring
+
+When renaming symbols or changing APIs across a large project:
+
+- **Interactive Filtering**: Use the interactive panel (`Alt+Shift+D`) to quickly gauge
+  the scope of changes.
+- **Persistent Search Editor**: Press `Enter` to move results into a permanent
+  `.code-search` tab. This becomes your "todo list" for the refactor.
+- **Exclude on the fly**: Quickly toggle `.gitignore` respect or add exclude patterns
+  without opening `settings.json`.
 
 ## Features
 
-- **Interactive Search Panel**: Always-editable search box with live preview as you type
+- **Interactive Search Panel**: Always-editable search box with live preview as you type.
 - **Fuzzy Search**: Smart search using [fzf](https://github.com/junegunn/fzf) that
-  tolerates typos and is case-insensitive
+  tolerates typos and is case-insensitive.
 - **Fast Results**: Powered by [ripgrep](https://github.com/BurntSushi/ripgrep) for
-  lightning-fast file content search
-- **Live Preview**: See results update in real-time as you type (250ms debounce)
+  lightning-fast file content search.
+- **Live Preview**: See results update in real-time as you type (250ms debounce).
 - **Dual View Modes**:
-    - Preview results in interactive panel with clickable navigation
-    - Press Enter to open full results in a code editor tab
-- **Customizable Excludes**: Configure which files and directories to exclude from search
-  on-the-fly
-- **Gitignore Support**: Toggle `.gitignore` respect on/off during search
-- **Result Limit**: Configurable maximum number of results (default: 100) with visual
-  warning
-- **Respects VS Code Settings**: Font size, line height, and editor settings automatically
-  applied
-- **Smart Result Ranking**: Best matches appear first, sorted by relevance
+    - **Interactive Panel**: Preview results with clickable navigation for quick lookups.
+    - **Search Editor Tab**: Press `Enter` to open full results in a permanent code tab.
 - **Git Diff Search Editor**: View all uncommitted changes or recent commits in a Search
-  Editor tab with folding and click-to-navigate
+  Editor tab with folding and click-to-navigate.
+- **Customizable Excludes**: Configure which files and directories to exclude from search
+  on-the-fly via the interactive UI.
+- **Smart Result Ranking**: Best matches appear first, sorted by relevance using `fzf`.
 
 ## Screenshots
 
@@ -65,128 +78,64 @@ _Configure exclude patterns and .gitignore respect with interactive buttons_
 
 This extension requires the following command-line tools to be installed:
 
-- **git**: Required for the Git Diff Search Editor command
-    - macOS: Included with Xcode Command Line Tools (`xcode-select --install`)
-    - Linux: `sudo apt install git` (Debian/Ubuntu) or `sudo dnf install git` (Fedora)
-    - More: https://git-scm.com/downloads
+- **git**: Required for the Git Diff Search Editor command.
+- **ripgrep (rg)**: Required for fast file content search.
+- **fzf**: Required for fuzzy matching and ranking.
 
-- **ripgrep (rg)**: Fast file content search (required for fuzzy search only)
-    - macOS: `brew install ripgrep`
-    - Linux: `sudo apt install ripgrep` (Debian/Ubuntu) or `sudo dnf install ripgrep`
-      (Fedora)
-    - More: https://github.com/BurntSushi/ripgrep#installation
-
-- **fzf**: Fuzzy finder
-    - macOS: `brew install fzf`
-    - Linux: `sudo apt install fzf` (Debian/Ubuntu) or `sudo dnf install fzf` (Fedora)
-    - More: https://github.com/junegunn/fzf#installation
-
-**Platform Support**: macOS and Linux only (Windows is not supported)
+**Platform Support**: macOS and Linux only (Windows is not supported).
 
 ## Usage
 
 ### Keyboard Shortcuts
 
-- `Alt+Shift+D` — Open the interactive fuzzy search panel
-- `Ctrl+Shift+G` — Open the Git Diff Search Editor (show uncommitted changes or commits)
+- `Alt+Shift+D` — Open the interactive fuzzy search panel.
+- `Ctrl+Shift+G` — Open the Git Diff Search Editor (Uncommitted changes or Recent
+  Commits).
 
 ### Fuzzy Search Workflow
 
-1. **Open search panel**: Press `Alt+Shift+D` to open the interactive search panel
-2. **Type your query**: Start typing your fuzzy search pattern (e.g., `exprt` will find
-   `export`)
-3. **See live results**: Results appear in real-time as you type (250ms debounce)
-4. **Navigate instantly**: Click any result in the panel to jump directly to that location
-5. **Modify and re-search**: Edit your query anytime to refine results
-6. **Open full results** (optional): Press Enter to save results to `/tmp/` and open in a
-   Search Editor tab
-7. **Configure settings**: Use icon buttons to toggle .gitignore respect or modify exclude
-   patterns
-    - Gear icon: Modify exclude patterns
-    - Search-stop icon: Toggle .gitignore respect on/off
+1. **Open search panel**: Press `Alt+Shift+D`.
+2. **Type your query**: Results appear in real-time. Typos are okay!
+3. **Navigate instantly**: Click any result in the panel to jump to that location.
+4. **Open full results**: Press `Enter` to open results in a permanent Search Editor tab.
+5. **Configure settings**: Use the gear icon to modify excludes or the search-stop icon to
+   toggle `.gitignore` respect.
 
-### Example
+### Git Diff Search Editor Workflow
 
-Search for `exprt activate` (with a typo):
-
-- Type in the interactive panel
-- Live results show: `export function activate`, `export const activate`, etc.
-- Click any result to navigate instantly
-- Press Enter to open full results in editor tab
-- Results saved to: `/tmp/exprt_activate.code-search`
+1. **Trigger command**: Press `Ctrl+Shift+G`.
+2. **Select context**: Choose between "Uncommitted Changes" or a list of recent commits.
+3. **Review**: Review the diff in a searchable, foldable tab.
+4. **Navigate**: Click any line to jump to the source file.
 
 ## Extension Settings
 
-This extension contributes the following settings:
-
-- `r3blFuzzySearch.fzfPath`: Path to fzf executable (default: `fzf`)
-- `r3blFuzzySearch.ripgrepPath`: Path to ripgrep executable (default: `rg`)
-- `r3blFuzzySearch.defaultExcludePattern`: Default comma-separated glob patterns for files
-  to exclude (default: `**/node_modules/**,**/.git/**,**/.vscode/**,**/target/**`)
-- `r3blFuzzySearch.resultLimit`: Maximum number of search results to display (default:
-  100, range: 1-10000)
-- `r3blFuzzySearch.respectGitignore`: Automatically respect .gitignore files when
-  searching (default: true)
-- `r3blFuzzySearch.commitHistoryLimit`: Maximum number of recent commits to show in the
-  Git Diff Search Editor picker (default: 10)
-
-### Git Diff Search Editor
-
-Press `Ctrl+Shift+G` to view all uncommitted git changes or a recent commit in a Search
-Editor tab.
-
-- **Choice of Content**: A QuickPick menu allows you to choose between "Uncommitted
-  Changes" or a list of recent commits.
-- **Two sections (Uncommitted)**: Unstaged changes on top, staged changes below (either
-  section is omitted if empty).
-- **Single section (Commits)**: Detailed diff for the selected commit (using
-  `git show --first-parent`).
-- **Foldable**: Each file group can be folded/unfolded.
-- **Click-to-navigate**: Click any line to jump to that exact location in the source file.
-- **Timestamped files**: Each invocation creates a new
-  `/tmp/git-diff-<timestamp>.code-search` file so previous results are preserved.
-- **Multi-root support**: Works across all workspace folders in multi-root workspaces,
-  aggregating commits from all repositories.
-
-## Commands
-
-| Command                                     | Description                                     | Shortcut       |
-| ------------------------------------------- | ----------------------------------------------- | -------------- |
-| `R3BL Fuzzy Search: Interactive Search`     | Open interactive search panel with live preview | `Alt+Shift+D`  |
-| `R3BL Fuzzy Search: Git Diff Search Editor` | Open git diff in Search Editor tab              | `Ctrl+Shift+G` |
-
-You can customize these shortcuts in VS Code's Keyboard Shortcuts settings by searching
-for the command IDs.
+- `r3blFuzzySearch.fzfPath`: Path to fzf executable (default: `fzf`).
+- `r3blFuzzySearch.ripgrepPath`: Path to ripgrep executable (default: `rg`).
+- `r3blFuzzySearch.defaultExcludePattern`: Default comma-separated glob patterns to
+  exclude.
+- `r3blFuzzySearch.resultLimit`: Maximum results to display (default: 100).
+- `r3blFuzzySearch.respectGitignore`: Respect .gitignore files by default (default: true).
+- `r3blFuzzySearch.commitHistoryLimit`: Number of recent commits to show in picker
+  (default: 10).
 
 ## Advantages Over Built-in Search
 
-| Feature            | Built-in Search   | R3BL Fuzzy Search          |
-| ------------------ | ----------------- | -------------------------- |
-| Matching           | Exact/Regex       | Fuzzy (FZF)                |
-| Typo Tolerance     | No                | Yes                        |
-| Speed              | Fast              | Fast (rg+fzf)              |
-| Live Preview       | No                | Yes (250ms debounce)       |
-| Result Display     | Sidebar or Editor | Interactive Panel + Editor |
-| Instant Navigation | No                | Click to jump              |
-| Re-query           | Must start over   | Edit anytime               |
-| Keybinding         | `Ctrl+Shift+F`    | `Alt+Shift+D`              |
-| Gitignore          | Always respected  | Toggleable                 |
-| Result Ranking     | Basic             | Smart (by relevance)       |
-
-## Known Issues
-
-- Results are limited to the configured maximum (default 100). If you hit this limit,
-  consider narrowing your search query.
-- Windows is not supported due to simplified path handling for Unix-like systems.
+| Feature            | Built-in Search   | R3BL Fuzzy Search           |
+| ------------------ | ----------------- | --------------------------- |
+| Matching           | Exact/Regex       | **Fuzzy (FZF)**             |
+| Typo Tolerance     | No                | **Yes**                     |
+| Speed              | Fast              | **Fast (rg+fzf)**           |
+| Live Preview       | No                | **Yes (250ms debounce)**    |
+| Result Display     | Sidebar or Editor | **Interactive Panel + Tab** |
+| Instant Navigation | No                | **Click to jump**           |
+| Gitignore          | Always respected  | **Toggleable on-the-fly**   |
+| Result Ranking     | Basic             | **Smart (by relevance)**    |
 
 ## Shared Infrastructure
 
 This extension uses the **R3BL Shared** extension for centralized services across all R3BL
 extensions (message queuing, global configuration, and more).
-
-See the
-[R3BL Shared documentation](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)
-for available services, API usage, and configuration options.
 
 ## Release Notes
 
@@ -200,7 +149,7 @@ MIT
 
 ## Contributing
 
-Found a bug or have a feature request? Please open an issue at:
+Found a bug or have a suggestion? Please open an issue at:
 https://github.com/r3bl-org/r3bl-vscode-extensions/issues
 
 ---

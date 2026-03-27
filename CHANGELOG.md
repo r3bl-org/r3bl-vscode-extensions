@@ -143,6 +143,21 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-03-27] - Fuzzy Search Documentation Overhaul
+
+### Package Versions
+
+- **R3BL Fuzzy Search**: 1.3.0 → 1.3.1
+- **R3BL Extension Pack**: 1.2.10 → 1.2.11
+
+### Changes
+
+- **R3BL Fuzzy Search 1.3.1**: Documentation Overhaul
+    - Expanded "Use Case" section to include High-Speed Code Exploration and Large-Scale
+      Refactoring scenarios.
+    - Improved feature descriptions to highlight Live Preview and Smart Result Ranking.
+    - Streamlined usage workflows for both Interactive Search and Git Diff Search Editor.
+
 ## [2026-03-27] - Extension Pack Documentation Overhaul
 
 ### Package Versions
@@ -154,7 +169,8 @@ adheres to [Semantic Versioning](http://semver.org/).
 - **R3BL Extension Pack 1.2.10**: Comprehensive Documentation Overhaul
     - Completely redesigned the "One-Stop Shop" README experience.
     - Added a full table of all keyboard shortcuts across the entire extension suite.
-    - Added a "Configuration Highlights" section with critical settings for all extensions.
+    - Added a "Configuration Highlights" section with critical settings for all
+      extensions.
     - Clarified third-party attribution for `rust-analyzer`.
     - Expanded use cases for AI-assisted development and Multi-IDE workflows.
     - Updated development guide (CLAUDE.md) with maintenance rules for the extension pack.

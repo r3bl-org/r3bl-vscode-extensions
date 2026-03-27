@@ -7,6 +7,7 @@ configured to work together seamlessly.
 ## Included Extensions
 
 ### R3BL Core Extensions
+
 These extensions are maintained and published by R3BL.
 
 | Extension                                                                                                                             | Description                                                          |
@@ -20,6 +21,7 @@ These extensions are maintained and published by R3BL.
 | **[R3BL Shared](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)        |
 
 ### Third-Party Dependencies
+
 These extensions are required for full functionality and are automatically installed.
 
 | Extension                                                                                        | Description                               |
@@ -65,21 +67,21 @@ These extensions are required for full functionality and are automatically insta
 
 ## Keyboard Shortcuts
 
-The most common shortcuts for the R3BL suite. All shortcuts can be customized in VS
-Code's Keyboard Shortcuts settings.
+The most common shortcuts for the R3BL suite. All shortcuts can be customized in VS Code's
+Keyboard Shortcuts settings.
 
-| Shortcut       | Extension       | Action                                            |
-| -------------- | --------------- | ------------------------------------------------- |
-| `Alt+Shift+T`  | Task Management | Open task spaces dialog                           |
-| `Alt+Shift+D`  | Fuzzy Search    | Start interactive fuzzy search                    |
-| `Ctrl+Shift+G` | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits) |
-| `Alt+O`        | Copy Selection  | Copy file path with line range (AI-ready)         |
-| `Alt+Shift+O`  | Copy Selection  | Show session copy history and navigation          |
-| `Ctrl+Shift+Y` | Semantic Config | Open Rustdoc Structure Navigator                  |
-| `Ctrl+R`       | Semantic Config | Run Flycheck (manual debounced `cargo check`)     |
-| `Ctrl+-`       | Semantic Config | Fold all Rustdocs in current file                 |
-| `Ctrl+=`       | Semantic Config | Unfold all Rustdocs in current file               |
-| `Ctrl+K Ctrl+T`| Theme           | Change Color Theme                                |
+| Shortcut        | Extension       | Action                                            |
+| --------------- | --------------- | ------------------------------------------------- |
+| `Alt+Shift+T`   | Task Management | Open task spaces dialog                           |
+| `Alt+Shift+D`   | Fuzzy Search    | Start interactive fuzzy search                    |
+| `Ctrl+Shift+G`  | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits) |
+| `Alt+O`         | Copy Selection  | Copy file path with line range (AI-ready)         |
+| `Alt+Shift+O`   | Copy Selection  | Show session copy history and navigation          |
+| `Ctrl+Shift+Y`  | Semantic Config | Open Rustdoc Structure Navigator                  |
+| `Ctrl+R`        | Semantic Config | Run Flycheck (manual debounced `cargo check`)     |
+| `Ctrl+-`        | Semantic Config | Fold all Rustdocs in current file                 |
+| `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file               |
+| `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                |
 
 ## Configuration Highlights
 
@@ -87,24 +89,26 @@ Configure the R3BL suite to match your workflow. Open `settings.json` or use the
 UI.
 
 ### Feedback & UI (Shared)
+
 These settings apply to all R3BL extensions via the R3BL Shared service.
 
 ```json
 {
-  "r3bl.transientFeedbackMechanism": "statusbar", // "statusbar", "notification", or "none"
-  "r3bl.statusbarMessageMaxLength": 50,           // Max characters in status bar messages
-  "r3bl.statusbarMessage.successDuration": 3000   // ms to show success messages
+    "r3bl.transientFeedbackMechanism": "statusbar", // "statusbar", "notification", or "none"
+    "r3bl.statusbarMessageMaxLength": 50, // Max characters in status bar messages
+    "r3bl.statusbarMessage.successDuration": 3000 // ms to show success messages
 }
 ```
 
 ### Rust Development
+
 Enhanced defaults for the R3BL Semantic Configuration.
 
 ```json
 {
-  "r3bl-semantic-config.autoFoldRustdocsOnOpen": false,      // Auto-hide /// comments
-  "r3bl-semantic-config.autoFoldUseStatementsOnOpen": false, // Auto-hide use imports
-  "r3bl-semantic-config.debouncedFlycheck.enabled": true     // Run cargo check on idle
+    "r3bl-semantic-config.autoFoldRustdocsOnOpen": false, // Auto-hide /// comments
+    "r3bl-semantic-config.autoFoldUseStatementsOnOpen": false, // Auto-hide use imports
+    "r3bl-semantic-config.debouncedFlycheck.enabled": true // Run cargo check on idle
 }
 ```
 
@@ -112,9 +116,9 @@ Enhanced defaults for the R3BL Semantic Configuration.
 
 ```json
 {
-  "r3bl-task-management.autoSaveCurrentTaskSpace": true, // Sync tabs automatically
-  "r3bl-task-management.showStatusBar": true,            // Show active task in status bar
-  "r3bl-task-management.restoreTabsOnStartup": true     // Resume last context on startup
+    "r3bl-task-management.autoSaveCurrentTaskSpace": true, // Sync tabs automatically
+    "r3bl-task-management.showStatusBar": true, // Show active task in status bar
+    "r3bl-task-management.restoreTabsOnStartup": true // Resume last context on startup
 }
 ```
 
@@ -122,9 +126,9 @@ Enhanced defaults for the R3BL Semantic Configuration.
 
 ```json
 {
-  "r3blFuzzySearch.respectGitignore": true,              // Skip gitignored files
-  "copyrighter.author": "Your Name",                     // Copyright holder name
-  "copyrighter.license": "MIT"                           // MIT, Apache2, GPL3, or none
+    "r3blFuzzySearch.respectGitignore": true, // Skip gitignored files
+    "copyrighter.author": "Your Name", // Copyright holder name
+    "copyrighter.license": "MIT" // MIT, Apache2, GPL3, or none
 }
 ```
 
