@@ -6,6 +6,9 @@ configured to work together seamlessly.
 
 ## Included Extensions
 
+### R3BL Core Extensions
+These extensions are maintained and published by R3BL.
+
 | Extension                                                                                                                             | Description                                                          |
 | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | **[R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort          |
@@ -15,7 +18,13 @@ configured to work together seamlessly.
 | **[R3BL Copy Selection Path and Range](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for AI coding agents                |
 | **[R3BL Auto Insert Copyright](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates |
 | **[R3BL Shared](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)        |
-| **[rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)**                                      | Official Rust language server (3rd party)                            |
+
+### Third-Party Dependencies
+These extensions are required for full functionality and are automatically installed.
+
+| Extension                                                                                        | Description                               |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| **[rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)** | Official Rust language server (3rd party) |
 
 ## What You Get
 
@@ -56,137 +65,104 @@ configured to work together seamlessly.
 
 ## Keyboard Shortcuts
 
-Quick reference for all R3BL extension shortcuts:
+The most common shortcuts for the R3BL suite. All shortcuts can be customized in VS
+Code's Keyboard Shortcuts settings.
 
 | Shortcut       | Extension       | Action                                            |
 | -------------- | --------------- | ------------------------------------------------- |
 | `Alt+Shift+T`  | Task Management | Open task spaces dialog                           |
 | `Alt+Shift+D`  | Fuzzy Search    | Start interactive fuzzy search                    |
 | `Ctrl+Shift+G` | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits) |
-| `Alt+Shift+S`  | Semantic Config | Open Rustdoc Structure Navigator                  |
-| `Alt+O`        | Copy Selection  | Copy file path with line range                    |
+| `Alt+O`        | Copy Selection  | Copy file path with line range (AI-ready)         |
+| `Alt+Shift+O`  | Copy Selection  | Show session copy history and navigation          |
+| `Ctrl+Shift+Y` | Semantic Config | Open Rustdoc Structure Navigator                  |
+| `Ctrl+R`       | Semantic Config | Run Flycheck (manual debounced `cargo check`)     |
+| `Ctrl+-`       | Semantic Config | Fold all Rustdocs in current file                 |
+| `Ctrl+=`       | Semantic Config | Unfold all Rustdocs in current file               |
+| `Ctrl+K Ctrl+T`| Theme           | Change Color Theme                                |
 
-All shortcuts can be customized in VS Code's Keyboard Shortcuts settings.
+## Configuration Highlights
+
+Configure the R3BL suite to match your workflow. Open `settings.json` or use the Settings
+UI.
+
+### Feedback & UI (Shared)
+These settings apply to all R3BL extensions via the R3BL Shared service.
+
+```json
+{
+  "r3bl.transientFeedbackMechanism": "statusbar", // "statusbar", "notification", or "none"
+  "r3bl.statusbarMessageMaxLength": 50,           // Max characters in status bar messages
+  "r3bl.statusbarMessage.successDuration": 3000   // ms to show success messages
+}
+```
+
+### Rust Development
+Enhanced defaults for the R3BL Semantic Configuration.
+
+```json
+{
+  "r3bl-semantic-config.autoFoldRustdocsOnOpen": false,      // Auto-hide /// comments
+  "r3bl-semantic-config.autoFoldUseStatementsOnOpen": false, // Auto-hide use imports
+  "r3bl-semantic-config.debouncedFlycheck.enabled": true     // Run cargo check on idle
+}
+```
+
+### Task & Tab Management
+
+```json
+{
+  "r3bl-task-management.autoSaveCurrentTaskSpace": true, // Sync tabs automatically
+  "r3bl-task-management.showStatusBar": true,            // Show active task in status bar
+  "r3bl-task-management.restoreTabsOnStartup": true     // Resume last context on startup
+}
+```
+
+### Search & Copyright
+
+```json
+{
+  "r3blFuzzySearch.respectGitignore": true,              // Skip gitignored files
+  "copyrighter.author": "Your Name",                     // Copyright holder name
+  "copyrighter.license": "MIT"                           // MIT, Apache2, GPL3, or none
+}
+```
 
 ## Use Cases
 
-### Rust Development
-
-The pack is a power-user's dream for Rust. It enhances `rust-analyzer` with intelligent
-folding (auto-hiding long `use` blocks and `rustdoc`), a custom theme that makes Rust
-syntax pop, and a structure navigator to jump between functions, traits, and impl blocks.
-
 ### AI-Assisted Development
 
-Optimized for working with AI coding agents (Claude Code, Copilot, etc.):
+Optimized for working with AI coding agents (Claude Code, Gemini CLI, Cursor, etc.):
 
 - **Context Gathering**: Use `Alt+O` to quickly grab correctly formatted file references
-  for your prompts.
-- **Change Review**: Use `Ctrl+Shift+G` (Git Diff Search Editor) to review the large
-  numbers of changes AI agents often make in a single turn. It's the most efficient way to
-  be thorough.
-- **Task Integration**: Task Management includes an auto-upgrading slash command for AI
-  agents to help track work.
+  (`@path#L10-20`) for your prompts.
+- **Change Review**: Use `Ctrl+Shift+G` (Git Diff Search Editor) to review large numbers
+  of changes AI agents make in a single turn. It's the most efficient way to be thorough
+  without leaving your IDE.
+- **Task Integration**: Use Task Management with the `/r3bl-task` custom command for
+  Claude Code to coordinate implementation plans in `task/*.md` files.
 
-### Multi-Task Workflows
+### High-Performance Rust Coding
 
-Use task spaces to manage multiple features or bug fixes simultaneously. Switch contexts
-instantly—the extension remembers which files you had open for each task.
+The pack is a power-user's dream for Rust. It enhances `rust-analyzer` with:
 
-## Configuration
+- **Intelligent Folding**: Auto-hiding long `use` blocks and `rustdoc` to focus on logic.
+- **Structure Navigator**: Use `Ctrl+Shift+Y` to jump between functions, traits, and impl
+  blocks in large files.
+- **Live Diagnostics**: Debounced Flycheck runs `cargo check` in the background after you
+  stop typing, without the "save to check" friction.
 
-All R3BL extensions share a common configuration for user feedback and notifications.
-These settings apply globally across all R3BL extensions.
+### Multi-Task Workflows (Context Switching)
 
-### Feedback Mechanism
+Use task spaces to manage multiple features or bug fixes simultaneously on the same
+branch. Switch contexts instantly with `Alt+Shift+T`—the extension remembers exactly which
+files you had open (and their pinned state) for each task.
 
-Control how R3BL extensions display transient feedback messages (success, info, warning,
-error):
+### Multi-IDE Workflows (Side-by-Side)
 
-```json
-"r3bl.transientFeedbackMechanism": "statusbar"
-```
-
-**Options:**
-
-- `"statusbar"` (default) - Shows auto-dismissing messages in the status bar (less
-  intrusive)
-- `"notification"` - Shows messages as VS Code notifications (classic behavior, may
-  linger)
-- `"none"` - Disables all transient feedback messages
-
-**Note:** This setting does NOT affect interactive notifications with action buttons (like
-confirmations or prompts).
-
-### Status Bar Message Settings
-
-When using `"statusbar"` feedback mechanism, you can customize the display:
-
-#### Message Length
-
-```json
-"r3bl.statusbarMessageMaxLength": 50
-```
-
-Maximum characters to display before truncating with "...". Full message visible in
-tooltip.
-
-- **Default:** 50
-- **Range:** 20-200
-
-#### Message Durations
-
-Customize how long each message type displays (in milliseconds):
-
-```json
-"r3bl.statusbarMessage.successDuration": 3000,
-"r3bl.statusbarMessage.infoDuration": 3000,
-"r3bl.statusbarMessage.warningDuration": 4000,
-"r3bl.statusbarMessage.errorDuration": 5000
-```
-
-**Defaults:**
-
-- Success: 3000ms (3 seconds)
-- Info: 3000ms (3 seconds)
-- Warning: 4000ms (4 seconds)
-- Error: 5000ms (5 seconds)
-
-**Range:** 500-10000ms per message type
-
-### Example Configuration
-
-For a completely silent experience with no transient messages:
-
-```json
-{
-    "r3bl.transientFeedbackMechanism": "none"
-}
-```
-
-For longer-lasting messages with extended display:
-
-```json
-{
-    "r3bl.transientFeedbackMechanism": "statusbar",
-    "r3bl.statusbarMessageMaxLength": 80,
-    "r3bl.statusbarMessage.successDuration": 5000,
-    "r3bl.statusbarMessage.errorDuration": 8000
-}
-```
-
-### Which Extensions Use These Settings?
-
-All R3BL extensions that display transient feedback messages use these global settings:
-
-- ✅ R3BL Auto Insert Copyright
-- ✅ R3BL Copy Selection Path and Range
-- ✅ R3BL Fuzzy Search
-- ✅ R3BL Semantic Configuration
-- ✅ R3BL Task Management
-
-**Infrastructure:** R3BL Shared provides the centralized message queue and configuration
-management that ensures a consistent feedback experience across all R3BL tools.
+Open the same project folder in VS Code and VS Code Insiders simultaneously. Each IDE can
+maintain its own **active** task space (e.g., VS Code for implementation, Insiders for
+research), while both IDEs stay in sync for the actual task definitions.
 
 ## Release Notes
 

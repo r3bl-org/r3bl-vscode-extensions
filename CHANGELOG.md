@@ -143,6 +143,22 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-03-27] - Extension Pack Documentation Overhaul
+
+### Package Versions
+
+- **R3BL Extension Pack**: 1.2.9 → 1.2.10
+
+### Changes
+
+- **R3BL Extension Pack 1.2.10**: Comprehensive Documentation Overhaul
+    - Completely redesigned the "One-Stop Shop" README experience.
+    - Added a full table of all keyboard shortcuts across the entire extension suite.
+    - Added a "Configuration Highlights" section with critical settings for all extensions.
+    - Clarified third-party attribution for `rust-analyzer`.
+    - Expanded use cases for AI-assisted development and Multi-IDE workflows.
+    - Updated development guide (CLAUDE.md) with maintenance rules for the extension pack.
+
 ## [2026-03-27] - Git Diff Search Editor Commit Selection and Copy Selection Absolute Path Support
 
 ### Package Versions

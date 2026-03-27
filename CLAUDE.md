@@ -299,6 +299,7 @@ testing.
 - ✅ Scripts automatically clean up old versions - no manual file deletion needed
 - ✅ Always update both the extension's version AND the extension pack version
 - ✅ Both `build.sh` and `install.sh` dynamically read versions from `package.json`
+- ✅ **Maintain the "One-Stop Shop"**: If shortcuts or configuration settings change in any extension, update the comprehensive `README.md` in `packages/r3bl-extension-pack/`.
 
 ## Creating New Extensions
 
@@ -704,6 +705,7 @@ When modifying an extension:
 - [ ] Update version in `packages/extension-name/package.json`
 - [ ] Update version in `packages/r3bl-extension-pack/package.json`
 - [ ] Update CHANGELOG.md with changes and new versions
+- [ ] **If shortcuts or settings changed**: Update `packages/r3bl-extension-pack/README.md`
 - [ ] **If README.md has a TOC**: Verify TOC matches actual headings after any changes
 - [ ] Run `npm test` in the extension directory (if tests exist)
 - [ ] Run `./build.sh` to generate artifacts (also runs tests automatically)
