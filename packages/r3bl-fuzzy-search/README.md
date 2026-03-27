@@ -3,6 +3,25 @@
 Interactive fuzzy search across file contents using fzf, with live preview and instant
 results.
 
+## Use Case
+
+### Reviewing AI-Generated Changes
+
+When using AI coding agents (like Claude Code, GitHub Copilot, or Cursor), they often make
+extensive changes across multiple files in a single turn.
+
+**R3BL Fuzzy Search: Git Diff Search Editor** (`Ctrl+Shift+G`) provides a high-efficiency
+workflow for reviewing these changes:
+
+- **Instant Overview**: Immediately see all uncommitted changes (staged and unstaged) in a
+  single, searchable, and foldable Search Editor tab.
+- **Thorough Review**: Review every added line and its context without jumping between
+  files manually.
+- **Click-to-Navigate**: If a change needs further inspection or manual adjustment, click
+  any line to jump directly to that exact file and line in your editor.
+- **Compare with History**: Quickly switch between reviewing current uncommitted changes
+  and recent commits to understand the progression of the AI's work.
+
 ## Features
 
 - **Interactive Search Panel**: Always-editable search box with live preview as you type
@@ -22,8 +41,8 @@ results.
 - **Respects VS Code Settings**: Font size, line height, and editor settings automatically
   applied
 - **Smart Result Ranking**: Best matches appear first, sorted by relevance
-- **Git Diff Search Editor**: View all unstaged and staged git changes in a Search Editor
-  tab with folding and click-to-navigate
+- **Git Diff Search Editor**: View all uncommitted changes or recent commits in a Search
+  Editor tab with folding and click-to-navigate
 
 ## Screenshots
 
@@ -69,7 +88,7 @@ This extension requires the following command-line tools to be installed:
 ### Keyboard Shortcuts
 
 - `Alt+Shift+D` — Open the interactive fuzzy search panel
-- `Ctrl+Shift+G` — Open the Git Diff Search Editor (show unstaged and staged changes)
+- `Ctrl+Shift+G` — Open the Git Diff Search Editor (show uncommitted changes or commits)
 
 ### Fuzzy Search Workflow
 
@@ -108,25 +127,33 @@ This extension contributes the following settings:
   100, range: 1-10000)
 - `r3blFuzzySearch.respectGitignore`: Automatically respect .gitignore files when
   searching (default: true)
+- `r3blFuzzySearch.commitHistoryLimit`: Maximum number of recent commits to show in the
+  Git Diff Search Editor picker (default: 10)
 
 ### Git Diff Search Editor
 
-Press `Ctrl+Shift+G` to view all uncommitted git changes in a Search Editor tab.
+Press `Ctrl+Shift+G` to view all uncommitted git changes or a recent commit in a Search
+Editor tab.
 
-- **Two sections**: Unstaged changes on top, staged changes below (either section is
-  omitted if empty)
-- **Foldable**: Each file group can be folded/unfolded
-- **Click-to-navigate**: Click any line to jump to that exact location in the source file
+- **Choice of Content**: A QuickPick menu allows you to choose between "Uncommitted
+  Changes" or a list of recent commits.
+- **Two sections (Uncommitted)**: Unstaged changes on top, staged changes below (either
+  section is omitted if empty).
+- **Single section (Commits)**: Detailed diff for the selected commit (using
+  `git show --first-parent`).
+- **Foldable**: Each file group can be folded/unfolded.
+- **Click-to-navigate**: Click any line to jump to that exact location in the source file.
 - **Timestamped files**: Each invocation creates a new
-  `/tmp/git-diff-<timestamp>.code-search` file so previous results are preserved
-- **Multi-root support**: Works across all workspace folders in multi-root workspaces
+  `/tmp/git-diff-<timestamp>.code-search` file so previous results are preserved.
+- **Multi-root support**: Works across all workspace folders in multi-root workspaces,
+  aggregating commits from all repositories.
 
 ## Commands
 
-| Command                                    | Description                                     | Shortcut       |
-| ------------------------------------------ | ----------------------------------------------- | -------------- |
-| `R3BL Fuzzy Search: Interactive Search`    | Open interactive search panel with live preview | `Alt+Shift+D`  |
-| `R3BL Fuzzy Search: Show Unstaged Changes` | Open git diff in Search Editor tab              | `Ctrl+Shift+G` |
+| Command                                     | Description                                     | Shortcut       |
+| ------------------------------------------- | ----------------------------------------------- | -------------- |
+| `R3BL Fuzzy Search: Interactive Search`     | Open interactive search panel with live preview | `Alt+Shift+D`  |
+| `R3BL Fuzzy Search: Git Diff Search Editor` | Open git diff in Search Editor tab              | `Ctrl+Shift+G` |
 
 You can customize these shortcuts in VS Code's Keyboard Shortcuts settings by searching
 for the command IDs.

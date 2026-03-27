@@ -11,7 +11,10 @@ references in prompts, documentation, or team communication.
 - **Keyboard Shortcuts**: Quick copy with `Alt+O`, view history with `Alt+Shift+O`
 - **Copy History**: Session-based history of recent copies (last 20 items)
 - **Quick Navigation**: Select from history to jump to any previously copied location
-- **Relative Paths**: Automatically uses workspace-relative paths
+- **Smart Paths**:
+    - **Relative Paths**: Automatically uses workspace-relative paths for files inside
+      the workspace
+    - **Absolute Paths**: Fallback to full absolute paths for files outside the workspace
 - **Cross-Platform**: Normalizes path separators for consistency
 
 ## Screenshots
@@ -51,10 +54,20 @@ packages/r3bl-copy-selection-path-and-range/src/extension.ts:6
 This format is compatible with most IDEs and terminals that support `file:line`
 navigation.
 
+### Outside Workspace (Absolute Path)
+
+When you copy a path for a file outside of the VS Code workspace, the extension provides
+the full absolute path:
+
+```
+@/home/user/Downloads/script.py#L10-25
+```
+
+It still maintains the `@` prefix and line range formatting for consistency.
+
 ## Requirements
 
 - VS Code 1.95.0 or higher
-- File must be in an open workspace
 
 ## Usage
 
@@ -132,7 +145,9 @@ You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
 
 ## How It Works
 
-1. **Path Calculation**: Gets relative path from workspace root
+1. **Path Calculation**:
+    - Gets relative path from workspace root if file is inside workspace
+    - Falls back to full absolute path if file is outside workspace
 2. **Line Detection**: Determines if selection spans multiple lines
 3. **Format Selection**:
     - Multi-line → AI agent format with `@` prefix

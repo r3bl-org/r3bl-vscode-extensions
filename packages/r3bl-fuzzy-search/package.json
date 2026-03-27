@@ -2,7 +2,7 @@
     "name": "r3bl-fuzzy-search",
     "displayName": "R3BL Fuzzy Search",
     "description": "Fuzzy search in files using fzf - fast and smart search with Search Editor results",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "publisher": "R3BL",
     "license": "MIT",
     "engines": {
@@ -44,7 +44,7 @@
             },
             {
                 "command": "r3bl-fuzzy-search.showUnstagedChanges",
-                "title": "R3BL Fuzzy Search: Show Unstaged Changes",
+                "title": "R3BL Fuzzy Search: Git Diff Search Editor",
                 "category": "R3BL"
             }
         ],
@@ -91,6 +91,13 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Respect .gitignore files when searching (disable to search in gitignored files)"
+                },
+                "r3blFuzzySearch.commitHistoryLimit": {
+                    "type": "number",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 50,
+                    "description": "Maximum number of recent commits to show in the Git Diff Search Editor picker"
                 }
             }
         }

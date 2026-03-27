@@ -42,17 +42,19 @@ async function handleCopyPathAndRange() {
     const selection = editor.selection;
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
 
-    if (!workspaceFolder) {
-        showStatusBarMessage('No workspace folder found', 'error');
-        return;
+    let pathToShow: string;
+    if (workspaceFolder) {
+        // Calculate relative path from workspace root
+        const absolutePath = document.uri.fsPath;
+        const relativePath = path.relative(workspaceFolder.uri.fsPath, absolutePath);
+        pathToShow = relativePath;
+    } else {
+        // Fallback to absolute path if not in workspace
+        pathToShow = document.uri.fsPath;
     }
 
-    // Calculate relative path from workspace root
-    const absolutePath = document.uri.fsPath;
-    const relativePath = path.relative(workspaceFolder.uri.fsPath, absolutePath);
-
     // Normalize path separators to forward slashes for consistency
-    const normalizedPath = relativePath.replace(/\\/g, '/');
+    const normalizedPath = pathToShow.replace(/\\/g, '/');
 
     // Calculate line range and determine if it's multi-line
     const { lineRange, isMultiLine } = calculateLineRange(selection);

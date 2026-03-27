@@ -6,32 +6,41 @@ configured to work together seamlessly.
 
 ## Included Extensions
 
-| Extension                                                                                                                             | Description                                                   |
-| ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **[R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort   |
-| **[R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)**                      | Enhanced semantic highlighting for Rust (auto-configured)     |
-| **[R3BL Task Management](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)**                             | Task space management for context switching                   |
-| **[R3BL Fuzzy Search](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)**                                   | Fast fuzzy file search powered by fzf and ripgrep             |
-| **[R3BL Copy Selection Path and Range](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for AI coding agents         |
-| **[R3BL Auto Insert Copyright](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion                          |
-| **[R3BL Shared](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed) |
-| **[rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)**                                      | Official Rust language server (3rd party)                     |
+| Extension                                                                                                                             | Description                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **[R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort          |
+| **[R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation   |
+| **[R3BL Task Management](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)**                             | Task space management with AI agent integration and tab organization |
+| **[R3BL Fuzzy Search](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes   |
+| **[R3BL Copy Selection Path and Range](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for AI coding agents                |
+| **[R3BL Auto Insert Copyright](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates |
+| **[R3BL Shared](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)        |
+| **[rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)**                                      | Official Rust language server (3rd party)                            |
 
 ## What You Get
 
-- Beautiful, carefully crafted dark theme optimized for long coding sessions
-- Enhanced semantic highlighting for Rust (functions, structs, lifetimes, traits, etc.)
-- Task space management for organizing multiple work contexts
-- Fast fuzzy search across your entire codebase
-- Quick file path copying with line ranges for AI assistants
-- Automatic copyright headers for new files
-- Full Rust language support via rust-analyzer
-- Zero manual configuration required
+- **Beautiful Dark Theme**: Carefully crafted theme optimized for long coding sessions and
+  high-contrast syntax highlighting.
+- **Enhanced Rust Experience**: Beyond syntax highlighting, get auto-folding for `use`
+  statements and `rustdoc`, plus a dedicated Structure Navigator for large files.
+- **Task Space Management**: Organize multiple work contexts, save/restore open tabs, and
+  integrate with AI coding agents via a custom slash command.
+- **High-Efficiency Code Review**: Use the Git Diff Search Editor to review uncommitted
+  changes or recent commits in a single, searchable tab—perfect for AI-generated diffs.
+- **Fast Fuzzy Search**: Lightning-fast file content search powered by `rg` and `fzf` with
+  live preview.
+- **AI-Ready Copying**: Quick file path copying with line ranges in `@path#L1-10` format
+  for AI assistant prompts. Supports both relative paths (within workspace) and absolute
+  paths (outside workspace).
+- **Automated Compliance**: Automatic copyright headers for new files with support for
+  MIT, Apache 2.0, GPLv3, and more.
+- **Full Rust Support**: Official `rust-analyzer` integration out of the box.
 
 ## Requirements
 
 - VS Code 1.60.0 or higher
 - For fuzzy search: `fzf` and `ripgrep` must be installed on your system
+- For git features: `git` must be installed
 
 ## Installation
 
@@ -49,11 +58,13 @@ configured to work together seamlessly.
 
 Quick reference for all R3BL extension shortcuts:
 
-| Shortcut      | Extension       | Action                         |
-| ------------- | --------------- | ------------------------------ |
-| `Alt+Shift+T` | Task Management | Open task spaces dialog        |
-| `Alt+Shift+D` | Fuzzy Search    | Start fuzzy search             |
-| `Alt+O`       | Copy Selection  | Copy file path with line range |
+| Shortcut       | Extension       | Action                                            |
+| -------------- | --------------- | ------------------------------------------------- |
+| `Alt+Shift+T`  | Task Management | Open task spaces dialog                           |
+| `Alt+Shift+D`  | Fuzzy Search    | Start interactive fuzzy search                    |
+| `Ctrl+Shift+G` | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits) |
+| `Alt+Shift+S`  | Semantic Config | Open Rustdoc Structure Navigator                  |
+| `Alt+O`        | Copy Selection  | Copy file path with line range                    |
 
 All shortcuts can be customized in VS Code's Keyboard Shortcuts settings.
 
@@ -61,18 +72,26 @@ All shortcuts can be customized in VS Code's Keyboard Shortcuts settings.
 
 ### Rust Development
 
-The pack is optimized for Rust with enhanced semantic highlighting, rust-analyzer
-integration, and a theme designed for Rust syntax.
-
-### Multi-Task Workflows
-
-Use task spaces to manage multiple features or bug fixes simultaneously, switching
-contexts without losing your place.
+The pack is a power-user's dream for Rust. It enhances `rust-analyzer` with intelligent
+folding (auto-hiding long `use` blocks and `rustdoc`), a custom theme that makes Rust
+syntax pop, and a structure navigator to jump between functions, traits, and impl blocks.
 
 ### AI-Assisted Development
 
-Copy Selection extension outputs paths in AI agent format (`@path#L1-10`), making it easy
-to reference code in AI coding agent prompts.
+Optimized for working with AI coding agents (Claude Code, Copilot, etc.):
+
+- **Context Gathering**: Use `Alt+O` to quickly grab correctly formatted file references
+  for your prompts.
+- **Change Review**: Use `Ctrl+Shift+G` (Git Diff Search Editor) to review the large
+  numbers of changes AI agents often make in a single turn. It's the most efficient way to
+  be thorough.
+- **Task Integration**: Task Management includes an auto-upgrading slash command for AI
+  agents to help track work.
+
+### Multi-Task Workflows
+
+Use task spaces to manage multiple features or bug fixes simultaneously. Switch contexts
+instantly—the extension remembers which files you had open for each task.
 
 ## Configuration
 

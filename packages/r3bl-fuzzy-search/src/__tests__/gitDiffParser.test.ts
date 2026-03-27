@@ -219,6 +219,87 @@ describe('parseUnifiedDiff', () => {
         ]);
     });
 
+    it('parses git show output (skips commit metadata header)', () => {
+        // git show prepends commit info before the diff
+        const diff = [
+            'commit abc123def456789',
+            'Author: John Doe <john@example.com>',
+            'Date:   Thu Mar 27 10:00:00 2026 -0400',
+            '',
+            '    Fix the bug',
+            '',
+            'diff --git a/src/file.ts b/src/file.ts',
+            'index abc1234..def5678 100644',
+            '--- a/src/file.ts',
+            '+++ b/src/file.ts',
+            '@@ -10,3 +10,4 @@ some context',
+            ' line 10',
+            ' line 11',
+            '+new line 12',
+            ' line 13',
+        ].join('\n');
+
+        const result = parseUnifiedDiff(diff);
+
+        expect(result).toHaveLength(4);
+        expect(result[0]).toEqual({
+            file: 'src/file.ts',
+            line: 10,
+            content: 'line 10',
+            type: 'context',
+        });
+        expect(result[2]).toEqual({
+            file: 'src/file.ts',
+            line: 12,
+            content: 'new line 12',
+            type: 'added',
+        });
+    });
+
+    it('parses --first-parent merge commit diff output', () => {
+        // --first-parent produces a normal unified diff, not combined format
+        const diff = [
+            'commit abc123def456789',
+            'Merge: aaa111 bbb222',
+            'Author: John Doe <john@example.com>',
+            'Date:   Thu Mar 27 10:00:00 2026 -0400',
+            '',
+            '    Merge branch feature into main',
+            '',
+            'diff --git a/src/feature.ts b/src/feature.ts',
+            'new file mode 100644',
+            'index 0000000..abc1234',
+            '--- /dev/null',
+            '+++ b/src/feature.ts',
+            '@@ -0,0 +1,3 @@',
+            '+export function newFeature() {',
+            '+    return true;',
+            '+}',
+            'diff --git a/src/main.ts b/src/main.ts',
+            'index abc1234..def5678 100644',
+            '--- a/src/main.ts',
+            '+++ b/src/main.ts',
+            '@@ -5,3 +5,4 @@ existing code',
+            ' line 5',
+            ' line 6',
+            '+import { newFeature } from "./feature";',
+            ' line 7',
+        ].join('\n');
+
+        const result = parseUnifiedDiff(diff);
+
+        const featureLines = result.filter((l) => l.file === 'src/feature.ts');
+        expect(featureLines).toHaveLength(3);
+        expect(featureLines[0].content).toBe('export function newFeature() {');
+        expect(featureLines.every((l) => l.type === 'added')).toBe(true);
+
+        const mainLines = result.filter((l) => l.file === 'src/main.ts');
+        expect(mainLines).toHaveLength(4);
+        expect(mainLines.find((l) => l.type === 'added')?.content).toBe(
+            'import { newFeature } from "./feature";',
+        );
+    });
+
     it('assigns correct sequential line numbers to context between added lines', () => {
         const diff = [
             'diff --git a/src/file.ts b/src/file.ts',
