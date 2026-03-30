@@ -91,6 +91,7 @@ This extension requires the following command-line tools to be installed:
 - `Alt+Shift+D` — Open the interactive fuzzy search panel.
 - `Ctrl+Shift+G` — Open the Git Diff Search Editor (Uncommitted changes or Recent
   Commits).
+- `Ctrl+R` — Refresh the content of an open Git Diff Search Editor (while tab is focused).
 
 ### Fuzzy Search Workflow
 
@@ -106,7 +107,9 @@ This extension requires the following command-line tools to be installed:
 1. **Trigger command**: Press `Ctrl+Shift+G`.
 2. **Select context**: Choose between "Uncommitted Changes" or a list of recent commits.
 3. **Review**: Review the diff in a searchable, foldable tab.
-4. **Navigate**: Click any line to jump to the source file.
+4. **Refresh**: Press `Ctrl+R` while the Search Editor tab is focused to refresh its
+   content with the latest git state.
+5. **Navigate**: Click any line to jump to the source file.
 
 ## Extension Settings
 

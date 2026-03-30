@@ -5,6 +5,41 @@ import { spawn } from 'child_process';
 import { showStatusBarMessage } from 'r3bl-common-code';
 import { parseUnifiedDiff, DiffLine } from './gitDiffParser';
 
+export function formatGitDiffContext(
+    selectionType: 'uncommitted' | 'commit',
+    commitInfo?: CommitInfo,
+): string {
+    if (selectionType === 'commit' && commitInfo) {
+        return `commit, hash: ${commitInfo.hash}, cwd: ${commitInfo.cwd}, folder: ${commitInfo.folderName}`;
+    }
+    return 'uncommitted';
+}
+
+export function parseGitDiffContext(contextLine: string):
+    | { type: 'uncommitted' }
+    | { type: 'commit'; hash: string; cwd: string; folder: string }
+    | undefined {
+    if (contextLine === 'uncommitted') {
+        return { type: 'uncommitted' };
+    }
+    if (contextLine.startsWith('commit')) {
+        const parts = contextLine.split(',').map((p) => p.trim());
+        const hash = parts
+            .find((p) => p.startsWith('hash:'))
+            ?.replace('hash:', '')
+            .trim();
+        const cwd = parts.find((p) => p.startsWith('cwd:'))?.replace('cwd:', '').trim();
+        const folder = parts
+            .find((p) => p.startsWith('folder:'))
+            ?.replace('folder:', '')
+            .trim();
+        if (hash && cwd && folder) {
+            return { type: 'commit', hash, cwd, folder };
+        }
+    }
+    return undefined;
+}
+
 function runGitDiff(
     cwd: string,
     staged: boolean,
@@ -353,6 +388,12 @@ export async function showGitDiffSearchEditor(): Promise<void> {
         );
     } else {
         output.push('# Git Diff: Workspace Changes');
+    }
+
+    const contextLine = formatGitDiffContext(selection.type, selection.commitInfo);
+    output.push(`# Context: ${contextLine}`);
+
+    if (selection.type !== 'commit') {
         output.push(`# ${totalAdded} changes - ${totalFiles} files`);
         output.push('#');
     }
@@ -383,4 +424,137 @@ export async function showGitDiffSearchEditor(): Promise<void> {
 
     const doc = await vscode.workspace.openTextDocument(fileUri);
     await vscode.window.showTextDocument(doc, { preview: false });
+}
+
+export async function refreshGitDiffSearchEditor(): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+
+    const doc = editor.document;
+    if (!doc.fileName.endsWith('.code-search')) {
+        return;
+    }
+
+    const firstLines = doc.getText(new vscode.Range(0, 0, 5, 0)).split('\n');
+    const contextHeader = firstLines.find((l) => l.startsWith('# Context:'));
+
+    if (!contextHeader) {
+        return;
+    }
+
+    const contextLine = contextHeader.replace('# Context:', '').trim();
+    const context = parseGitDiffContext(contextLine);
+
+    if (!context) {
+        return;
+    }
+
+    let allUnstaged: DiffLine[] = [];
+    let allStaged: DiffLine[] = [];
+    let headerLines: string[] = [];
+    let isCommit = false;
+
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders) {
+        return;
+    }
+    const isMultiRoot = workspaceFolders.length > 1;
+
+    if (context.type === 'uncommitted') {
+        for (const folder of workspaceFolders) {
+            const cwd = folder.uri.fsPath;
+            const [unstagedResult, stagedResult] = await Promise.all([
+                runGitDiff(cwd, false),
+                runGitDiff(cwd, true),
+            ]);
+
+            if (
+                unstagedResult.stderr.includes('not a git repository') ||
+                stagedResult.stderr.includes('not a git repository')
+            ) {
+                continue;
+            }
+
+            let unstaged = parseUnifiedDiff(unstagedResult.stdout);
+            let staged = parseUnifiedDiff(stagedResult.stdout);
+
+            if (isMultiRoot) {
+                const prefix = folder.name;
+                unstaged = unstaged.map((l) => ({ ...l, file: `${prefix}/${l.file}` }));
+                staged = staged.map((l) => ({ ...l, file: `${prefix}/${l.file}` }));
+            }
+
+            allUnstaged.push(...unstaged);
+            allStaged.push(...staged);
+        }
+
+        const totalAdded =
+            allUnstaged.filter((l) => l.type === 'added').length +
+            allStaged.filter((l) => l.type === 'added').length;
+        const totalFiles = new Set([
+            ...allUnstaged.map((l) => l.file),
+            ...allStaged.map((l) => l.file),
+        ]).size;
+
+        headerLines.push('# Git Diff: Workspace Changes');
+        headerLines.push(`# Context: ${contextLine}`);
+        headerLines.push(`# ${totalAdded} changes - ${totalFiles} files`);
+        headerLines.push('#');
+    } else if (context.type === 'commit') {
+        isCommit = true;
+
+        const result = await runGitShow(context.cwd, context.hash);
+        if (result.exitCode !== 0) {
+            showStatusBarMessage(`Refresh failed: ${result.stderr}`, 'error');
+            return;
+        }
+
+        let commitChanges = parseUnifiedDiff(result.stdout);
+        if (isMultiRoot) {
+            commitChanges = commitChanges.map((l) => ({
+                ...l,
+                file: `${context.folder}/${l.file}`,
+            }));
+        }
+        allUnstaged = commitChanges;
+
+        // We need some info for the header, let's try to reconstruct it or just use simple header
+        headerLines.push(`# Git Commit: ${context.hash.substring(0, 7)} (Refreshed)`);
+        headerLines.push(`# Context: ${contextLine}`);
+        headerLines.push(
+            `# ${allUnstaged.filter((l) => l.type === 'added').length} changes - ${new Set(allUnstaged.map((l) => l.file)).size} files`,
+        );
+        headerLines.push('#');
+    }
+
+    const output: string[] = [...headerLines];
+
+    if (!isCommit) {
+        if (allUnstaged.length > 0) {
+            output.push(formatSection({ label: 'Unstaged Changes', lines: allUnstaged }));
+        }
+        if (allStaged.length > 0) {
+            output.push(formatSection({ label: 'Staged Changes', lines: allStaged }));
+        }
+    } else {
+        output.push(
+            formatSection({
+                label: `Commit Changes`,
+                lines: allUnstaged,
+            }),
+        );
+    }
+
+    const newContent = output.join('\n');
+
+    const edit = new vscode.WorkspaceEdit();
+    const fullRange = new vscode.Range(
+        doc.lineAt(0).range.start,
+        doc.lineAt(doc.lineCount - 1).range.end,
+    );
+    edit.replace(doc.uri, fullRange, newContent);
+    await vscode.workspace.applyEdit(edit);
+    showStatusBarMessage('Git diff refreshed', 'success');
 }

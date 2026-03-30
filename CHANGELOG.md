@@ -2,9 +2,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
-    - [[2026-03-27] - Git Diff Search Editor Commit Selection](#2026-03-27---git-diff-search-editor-commit-selection)
+    - [[2026-03-30] - Git Diff Search Editor Refresh Support](#2026-03-30---git-diff-search-editor-refresh-support)
         - [Package Versions](#package-versions)
         - [Changes](#changes)
+    - [[2026-03-27] - Git Diff Search Editor Commit Selection](#2026-03-27---git-diff-search-editor-commit-selection)
+        - [Package Versions](#package-versions-1)
+        - [Changes](#changes-1)
     - [[2026-03-25] - Use Statement Folding Control](#2026-03-25---use-statement-folding-control)
         - [Package Versions](#package-versions-1)
         - [Changes](#changes-1)
@@ -142,6 +145,23 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2026-03-30] - Git Diff Search Editor Refresh Support
+
+### Package Versions
+
+- **R3BL Fuzzy Search**: 1.3.1 → 1.4.0
+- **R3BL Extension Pack**: 1.2.11 → 1.2.12
+
+### Changes
+
+- **R3BL Fuzzy Search 1.4.0**: Refresh support for Git Diff Search Editor
+    - Added `Ctrl+R` (`Cmd+R` on macOS) shortcut to refresh the content of an open Git
+      Diff Search Editor tab.
+    - Refreshing updates the tab with the latest git diff state (uncommitted changes or
+      specific commit) without having to re-select from the picker.
+    - Improved metadata tracking in `.code-search` headers to support contextual
+      refreshing.
 
 ## [2026-03-27] - Fuzzy Search Documentation Overhaul
 

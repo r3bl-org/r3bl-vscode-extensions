@@ -5,7 +5,51 @@ import {
     buildQuickPickItems,
     formatCommitHeader,
     CommitInfo,
+    formatGitDiffContext,
+    parseGitDiffContext,
 } from '../gitDiffCommand';
+
+describe('formatGitDiffContext', () => {
+    it('returns "uncommitted" for uncommitted type', () => {
+        expect(formatGitDiffContext('uncommitted')).toBe('uncommitted');
+    });
+
+    it('returns formatted commit info for commit type', () => {
+        const commitInfo: CommitInfo = {
+            hash: 'full_hash',
+            shortHash: 'short',
+            subject: 'sub',
+            author: 'auth',
+            relativeDate: 'date',
+            timestamp: 123,
+            cwd: '/path/to/repo',
+            folderName: 'my-repo',
+        };
+        const result = formatGitDiffContext('commit', commitInfo);
+        expect(result).toBe('commit, hash: full_hash, cwd: /path/to/repo, folder: my-repo');
+    });
+});
+
+describe('parseGitDiffContext', () => {
+    it('parses "uncommitted"', () => {
+        expect(parseGitDiffContext('uncommitted')).toEqual({ type: 'uncommitted' });
+    });
+
+    it('parses formatted commit info', () => {
+        const contextLine = 'commit, hash: abc123full, cwd: /work/dir, folder: my-proj';
+        expect(parseGitDiffContext(contextLine)).toEqual({
+            type: 'commit',
+            hash: 'abc123full',
+            cwd: '/work/dir',
+            folder: 'my-proj',
+        });
+    });
+
+    it('returns undefined for invalid format', () => {
+        expect(parseGitDiffContext('invalid')).toBeUndefined();
+        expect(parseGitDiffContext('commit, hash: abc')).toBeUndefined();
+    });
+});
 
 describe('parseCommitLog', () => {
     it('parses multiple commits from normal output', () => {

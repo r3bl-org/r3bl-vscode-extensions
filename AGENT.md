@@ -1,7 +1,7 @@
 # Development Guide for R3BL VSCode Extensions
 
-This document provides instructions for agents working with this monorepo of R3BL
-VSCode extensions.
+This document provides instructions for agents working with this monorepo of R3BL VSCode
+extensions.
 
 ## Local Workflows (.agent/)
 

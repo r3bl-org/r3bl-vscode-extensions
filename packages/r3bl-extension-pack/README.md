@@ -70,18 +70,19 @@ These extensions are required for full functionality and are automatically insta
 The most common shortcuts for the R3BL suite. All shortcuts can be customized in VS Code's
 Keyboard Shortcuts settings.
 
-| Shortcut        | Extension       | Action                                            |
-| --------------- | --------------- | ------------------------------------------------- |
-| `Alt+Shift+T`   | Task Management | Open task spaces dialog                           |
-| `Alt+Shift+D`   | Fuzzy Search    | Start interactive fuzzy search                    |
-| `Ctrl+Shift+G`  | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits) |
-| `Alt+O`         | Copy Selection  | Copy file path with line range (AI-ready)         |
-| `Alt+Shift+O`   | Copy Selection  | Show session copy history and navigation          |
-| `Ctrl+Shift+Y`  | Semantic Config | Open Rustdoc Structure Navigator                  |
-| `Ctrl+R`        | Semantic Config | Run Flycheck (manual debounced `cargo check`)     |
-| `Ctrl+-`        | Semantic Config | Fold all Rustdocs in current file                 |
-| `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file               |
-| `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                |
+| Shortcut        | Extension       | Action                                             |
+| --------------- | --------------- | -------------------------------------------------- |
+| `Alt+Shift+T`   | Task Management | Open task spaces dialog                            |
+| `Alt+Shift+D`   | Fuzzy Search    | Start interactive fuzzy search                     |
+| `Ctrl+Shift+G`  | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits)  |
+| `Ctrl+R`        | Fuzzy Search    | Refresh Git Diff Search Editor (while tab focused) |
+| `Alt+O`         | Copy Selection  | Copy file path with line range (AI-ready)          |
+| `Alt+Shift+O`   | Copy Selection  | Show session copy history and navigation           |
+| `Ctrl+Shift+Y`  | Semantic Config | Open Rustdoc Structure Navigator                   |
+| `Ctrl+R`        | Semantic Config | Run Flycheck (manual debounced `cargo check`)      |
+| `Ctrl+-`        | Semantic Config | Fold all Rustdocs in current file                  |
+| `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file                |
+| `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                 |
 
 ## Configuration Highlights
 
