@@ -5,9 +5,9 @@ import { showStatusBarMessage } from 'r3bl-common-code';
 import { TaskSpaceManager } from './taskSpaceManager';
 import { showTaskSpacesDialog, updateStatusBar, createStatusBarItem } from './ui';
 import {
-    installClaudeCodeIntegration,
-    checkAndUpgradeClaudeCommand,
-} from './claudeCodeIntegration';
+    installAIAgentIntegration,
+    checkAndUpgradeAIAgentCommand,
+} from './aiAgentIntegration';
 import * as path from 'path';
 
 /** Default debounce delay for auto-save (milliseconds) */
@@ -122,8 +122,8 @@ export async function activate(context: vscode.ExtensionContext) {
     manager = new TaskSpaceManager(context);
     await manager.initialize();
 
-    // Check and auto-upgrade Claude Code command if needed
-    await checkAndUpgradeClaudeCommand(context);
+    // Check and auto-upgrade AI Agent command if needed
+    await checkAndUpgradeAIAgentCommand(context);
 
     // Restore tabs for active task space on startup
     const activeTaskSpace = manager.getActiveTaskSpace();
@@ -152,14 +152,14 @@ export async function activate(context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(showCommand);
 
-    // Register Install Claude Code Integration command
-    const installClaudeCodeCommand = vscode.commands.registerCommand(
-        'r3bl-task-management.installClaudeCodeIntegration',
+    // Register Install AI Agent Integration command
+    const installAIAgentCommand = vscode.commands.registerCommand(
+        'r3bl-task-management.installAIAgentIntegration',
         async () => {
-            await installClaudeCodeIntegration(context);
+            await installAIAgentIntegration(context);
         },
     );
-    context.subscriptions.push(installClaudeCodeCommand);
+    context.subscriptions.push(installAIAgentCommand);
 
     // Register Create Task Space from Task File command
     const createFromFileCommand = vscode.commands.registerCommand(

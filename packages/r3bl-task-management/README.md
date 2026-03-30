@@ -21,8 +21,8 @@ Claude Code, Gemini CLI) to track implementation plans in `task/*.md` files.
 - [Workflows](#workflows)
     - [Basic Workflow](#basic-workflow)
     - [AI Coding Agent Workflow](#ai-coding-agent-workflow)
-    - [Claude Code Integration Commands](#claude-code-integration-commands)
-        - [Install Claude Code Integration](#install-claude-code-integration)
+    - [AI Coding Agent Integration](#ai-coding-agent-integration)
+        - [Install AI Agent Integration](#install-ai-agent-integration)
         - [Automatic Updates](#automatic-updates)
         - [Create Task Space from Task File](#create-task-space-from-task-file)
         - [Smart Prompting](#smart-prompting)
@@ -60,8 +60,8 @@ different terminal tabs or tmux panes), each working on different aspects of you
 Create task spaces for each to organize files and switch contexts seamlessly.
 
 Attach a `task/*.md` file (that the AI agent manages, with the `/r3bl-task` custom command
-for Claude Code) to each space to track design and implementation plans, and have
-completed tasks automatically archived to `task/done/` when they're finished.
+for Claude Code, Gemini CLI, etc.) to each space to track design and implementation plans,
+and have completed tasks automatically archived to `task/done/` when they're finished.
 
 ### Multiple Concurrent Workflows (Same Branch)
 
@@ -201,36 +201,46 @@ Task spaces integrate with AI coding agents for implementation tracking:
 - Linked file **automatically moves** to `task/done/` (archival)
 - Numeric suffix added if file already exists (e.g., `auth_2.md`)
 
-### Claude Code Integration Commands
+### AI Coding Agent Integration
 
-#### Install Claude Code Integration
+#### Install AI Agent Integration
 
 ![Install Command](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-command.png)
-_Command palette → "R3BL Task Management: Install Claude Code Integration"_
+_Command palette → "R3BL Task Management: Install AI Agent Integration"_
 
 ![Installation Prompt](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-prompt.png)
-_Creates .claude/commands if needed_
+_Creates .agent/commands, .gemini/commands, or .claude/commands if needed_
 
 ![Installation Success](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-success.png)
 _Installs `/r3bl-task` slash command_
 
-This installs the `/r3bl-task` command for Claude Code CLI:
+This installs the `/r3bl-task` command for your AI coding agent (Claude Code, Gemini CLI,
+etc.):
 
 - `/r3bl-task create [name]` - Create task file from your todo list
 - `/r3bl-task update [name]` - Update progress
 - `/r3bl-task load [name]` - Resume work on a task
 
+The extension supports the following directories for custom commands (in priority order):
+
+1. `.gemini/commands`
+2. `.claude/commands`
+3. `.agent/commands`
+
+If none of these exist, you'll be prompted to choose which one to create.
+
 **Automatic Updates**
 
 The extension automatically keeps the `/r3bl-task` command up-to-date:
 
-- When the extension is updated with command improvements, your local
-  `.claude/commands/r3bl-task.md` file is automatically upgraded
+- When the extension is updated with command improvements, your local command file is
+  automatically upgraded
 - Uses SHA256 checksum comparison to detect changes
 - No permission prompt needed (file is expected to be in git for review)
 - You'll see a brief notification: "R3BL Task command updated"
-- Review changes with `git diff .claude/commands/r3bl-task.md` before committing
-- Revert if needed: `git checkout .claude/commands/r3bl-task.md`
+- Review changes with `git diff .agent/commands/r3bl-task.md` (or your chosen directory)
+  before committing
+- Revert if needed: `git checkout .agent/commands/r3bl-task.md`
 
 This ensures you always have the latest command features without manual intervention.
 
@@ -254,7 +264,7 @@ _Ready to use!_
 _Creating task space with linked file..._
 
 ![Integration Prompt](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/smart-prompt-notification.png)
-_...prompts to install Claude Code integration (with "Don't Ask Again" option)_
+_...prompts to install AI Agent integration (with "Don't Ask Again" option)_
 
 ### Power User: Multiple AI Coding Agent Instances
 
@@ -334,7 +344,7 @@ not the recommended workflow for most users.
 ### Commands
 
 - `R3BL Task Management: Manage Task Spaces` - Open dialog (Alt+Shift+T)
-- `R3BL Task Management: Install Claude Code Integration` - Install /r3bl-task command
+- `R3BL Task Management: Install AI Agent Integration` - Install /r3bl-task command
 - `R3BL Task Management: Create Task Space from Task File` - Create from existing task
   file
 

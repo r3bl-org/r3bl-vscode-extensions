@@ -15,7 +15,9 @@ export function formatGitDiffContext(
     return 'uncommitted';
 }
 
-export function parseGitDiffContext(contextLine: string):
+export function parseGitDiffContext(
+    contextLine: string,
+):
     | { type: 'uncommitted' }
     | { type: 'commit'; hash: string; cwd: string; folder: string }
     | undefined {
@@ -28,7 +30,10 @@ export function parseGitDiffContext(contextLine: string):
             .find((p) => p.startsWith('hash:'))
             ?.replace('hash:', '')
             .trim();
-        const cwd = parts.find((p) => p.startsWith('cwd:'))?.replace('cwd:', '').trim();
+        const cwd = parts
+            .find((p) => p.startsWith('cwd:'))
+            ?.replace('cwd:', '')
+            .trim();
         const folder = parts
             .find((p) => p.startsWith('folder:'))
             ?.replace('folder:', '')

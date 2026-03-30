@@ -26,7 +26,9 @@ describe('formatGitDiffContext', () => {
             folderName: 'my-repo',
         };
         const result = formatGitDiffContext('commit', commitInfo);
-        expect(result).toBe('commit, hash: full_hash, cwd: /path/to/repo, folder: my-repo');
+        expect(result).toBe(
+            'commit, hash: full_hash, cwd: /path/to/repo, folder: my-repo',
+        );
     });
 });
 

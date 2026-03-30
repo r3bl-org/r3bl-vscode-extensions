@@ -144,8 +144,9 @@ Optimized for working with AI coding agents (Claude Code, Gemini CLI, Cursor, et
 - **Change Review**: Use `Ctrl+Shift+G` (Git Diff Search Editor) to review large numbers
   of changes AI agents make in a single turn. It's the most efficient way to be thorough
   without leaving your IDE.
-- **Task Integration**: Use Task Management with the `/r3bl-task` custom command for
-  Claude Code to coordinate implementation plans in `task/*.md` files.
+- **Task Integration**: Use Task Management with the `/r3bl-task` custom command for AI
+  coding agents (Claude Code, Gemini CLI, etc.) to coordinate implementation plans in
+  `task/*.md` files.
 
 ### High-Performance Rust Coding
 

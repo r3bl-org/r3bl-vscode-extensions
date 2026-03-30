@@ -146,6 +146,31 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-03-30] - Multi-Agent Support for Task Management
+
+### Package Versions
+
+- **R3BL Task Management**: 1.2.6 → 1.3.0
+- **R3BL Extension Pack**: 1.2.12 → 1.3.0
+
+### Changes
+
+- **R3BL Task Management 1.3.0**: Multi-agent support and `.agent` folder integration
+    - Generalized "Claude Code" integration to "AI Agent" integration.
+    - Added support for `.gemini/commands`, `.claude/commands`, and `.agent/commands`
+      directories for custom slash commands.
+    - When installing the `/r3bl-task` command, the extension now checks for existing
+      agent folders and prompts the user to choose one if none exist (defaulting to
+      `.agent`).
+    - Automatic detection and upgrade of the `/r3bl-task` command across all supported
+      directories.
+    - Updated all UI labels, notifications, and documentation to use generic "AI Agent"
+      terminology.
+    - Excluded `AGENT.md` from task file discovery (similar to `CLAUDE.md` and
+      `README.md`).
+    - Added "gemini cli" and "ai coding agent" keywords for better marketplace
+      discoverability.
+
 ## [2026-03-30] - Git Diff Search Editor Refresh Support
 
 ### Package Versions

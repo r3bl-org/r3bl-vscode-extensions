@@ -5,7 +5,7 @@ import * as path from 'path';
 import { showStatusBarMessage } from 'r3bl-common-code';
 import { TaskSpace } from './types';
 import { TaskSpaceManager } from './taskSpaceManager';
-import { promptToInstallClaudeCodeIntegration } from './claudeCodeIntegration';
+import { promptToInstallAIAgentIntegration } from './aiAgentIntegration';
 
 interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
     taskSpace?: TaskSpace;
@@ -216,9 +216,9 @@ async function handleCreateTaskSpace(
             'success',
         );
 
-        // Prompt to install Claude Code integration if task file is linked
+        // Prompt to install AI Agent integration if task file is linked
         if (taskFile && context) {
-            await promptToInstallClaudeCodeIntegration(context);
+            await promptToInstallAIAgentIntegration(context);
         }
     } catch (error) {
         showStatusBarMessage(`Failed to create task space: ${error}`, 'error');
