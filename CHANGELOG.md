@@ -2,9 +2,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
-    - [[2026-03-30] - Git Diff Search Editor Refresh Support](#2026-03-30---git-diff-search-editor-refresh-support)
+    - [[2026-04-02] - Fixed Debounced Flycheck Command and Extension Stabilization](#2026-04-02---fixed-debounced-flycheck-command-and-extension-stabilization)
         - [Package Versions](#package-versions)
         - [Changes](#changes)
+    - [[2026-03-30] - Git Diff Search Editor Refresh Support](#2026-03-30---git-diff-search-editor-refresh-support)
+        - [Package Versions](#package-versions-1)
+        - [Changes](#changes-1)
     - [[2026-03-27] - Git Diff Search Editor Commit Selection](#2026-03-27---git-diff-search-editor-commit-selection)
         - [Package Versions](#package-versions-1)
         - [Changes](#changes-1)
@@ -145,6 +148,23 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2026-04-02] - Fixed Debounced Flycheck Command and Extension Stabilization
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.5 → 1.2.7
+- **R3BL Extension Pack**: 1.3.0 → 1.3.2
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.6 - 1.2.7**: Fixed Flycheck command registration and
+  stabilization
+    - Added missing initialization call for debounced flycheck in the extension's
+      activation function.
+    - Improved extension deactivation by properly disposing of the status bar item.
+    - Fixed the error where 'R3BL: Run Flycheck (Debounced)' command was not found after
+      extension activation.
 
 ## [2026-03-30] - Multi-Agent Support for Task Management
 

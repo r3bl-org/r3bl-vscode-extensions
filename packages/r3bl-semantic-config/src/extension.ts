@@ -163,6 +163,9 @@ export function activate(context: vscode.ExtensionContext) {
     // Initialize auto-fold use statements on file open
     initializeAutoFoldUseStatements(context);
 
+    // Initialize debounced flycheck
+    initializeDebouncedFlycheck(context);
+
     // Watch for theme changes and auto-apply semantic config
     const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('workbench.colorTheme')) {
@@ -609,5 +612,9 @@ export function deactivate() {
     }
     if (countdownInterval) {
         clearInterval(countdownInterval);
+    }
+    if (statusBarItem) {
+        statusBarItem.hide();
+        statusBarItem.dispose();
     }
 }
