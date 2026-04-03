@@ -1,5 +1,8 @@
 # R3BL Auto Insert Copyright
 
+[![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-auto-insert-copyright?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-auto-insert-copyright)
+[![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)
+
 Automatically add copyright and license headers to your source code files. Save time and
 maintain consistency by automating the process of adding copyright notices to new and
 existing files.

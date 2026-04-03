@@ -137,7 +137,7 @@ function calculateLineRange(selection: vscode.Selection): {
     const startLine = selection.start.line + 1; // Convert to 1-based line numbers
     const endLine = selection.end.line + 1;
 
-    // If selection spans multiple lines - use AI agent format
+    // If selection spans multiple lines - use Coding Agent format
     if (startLine !== endLine) {
         return { lineRange: `#L${startLine}-${endLine}`, isMultiLine: true };
     }

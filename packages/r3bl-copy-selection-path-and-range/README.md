@@ -1,12 +1,15 @@
 # R3BL Copy Selection Path and Range
 
+[![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-copy-selection-path-and-range?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-copy-selection-path-and-range)
+[![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)
+
 Quickly copy file paths with selected line ranges in formats optimized for AI coding
 agents (Claude Code, Gemini CLI, etc.) and IDE navigation. Perfect for sharing code
 references in prompts, documentation, or team communication.
 
 ## Features
 
-- **AI Agent Format**: Multi-line selections use `@path#L<start>-<end>` format
+- **Coding Agent Format**: Multi-line selections use `@path#L<start>-<end>` format
 - **IDE Format**: Single-line selections use `path:<line>` format for IDE compatibility
 - **Keyboard Shortcuts**: Quick copy with `Alt+O`, view history with `Alt+Shift+O`
 - **Copy History**: Session-based history of recent copies (last 20 items)
@@ -23,7 +26,7 @@ references in prompts, documentation, or team communication.
 _Single-line selection with auto-dismissing notification_
 
 ![Multi-Line Copy](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-notification-multi-line.png)
-_Multi-line selection in AI agent format with @ prefix_
+_Multi-line selection in Coding Agent format with @ prefix_
 
 ![Copy History](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-history.png)
 _Copy history (Alt+Shift+O) showing recent copies with timestamps_
@@ -32,15 +35,15 @@ _Copy history (Alt+Shift+O) showing recent copies with timestamps_
 
 The extension automatically chooses the best format based on your selection:
 
-### Multi-Line Selection (AI Agent Format)
+### Multi-Line Selection (Coding Agent Format)
 
-When you select multiple lines, the output includes an `@` prefix for AI coding agents:
+When you select multiple lines, the output includes an `@` prefix for Coding Agents:
 
 ```
 @packages/r3bl-copy-selection-path-and-range/src/extension.ts#L6-14
 ```
 
-This format is optimized for use in AI coding agent prompts (Claude Code, Gemini CLI,
+This format is optimized for use in Coding Agent prompts (Claude Code, Gemini CLI,
 etc.) where the `@` symbol tells the agent to reference that specific file and line range.
 
 ### Single-Line Selection (IDE Format)
@@ -93,7 +96,7 @@ It still maintains the `@` prefix and line range formatting for consistency.
 
 ## Use Cases
 
-### AI Coding Agent Prompts
+### Coding Agent Prompts
 
 Share specific code sections in your prompts:
 
@@ -101,7 +104,7 @@ Share specific code sections in your prompts:
 Can you review the error handling in @src/services/api.ts#L45-67?
 ```
 
-The AI coding agent will automatically reference that exact section of your code.
+The Coding Agent will automatically reference that exact section of your code.
 
 ### Code Reviews
 
@@ -150,7 +153,7 @@ You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
     - Falls back to full absolute path if file is outside workspace
 2. **Line Detection**: Determines if selection spans multiple lines
 3. **Format Selection**:
-    - Multi-line → AI agent format with `@` prefix
+    - Multi-line → Coding Agent format with `@` prefix
     - Single-line → IDE format
 4. **Clipboard**: Copies formatted string
 5. **History Storage**: Adds to in-memory session history (last 20 items)
@@ -190,4 +193,4 @@ https://github.com/r3bl-org/r3bl-vscode-extensions/issues
 
 ---
 
-**Copy and share context with AI coding agents effortlessly!**
+**Copy and share context with Coding Agents effortlessly!**

@@ -20,7 +20,7 @@
         "task spaces",
         "claude code",
         "gemini cli",
-        "ai coding agent",
+        "coding agent",
         "productivity",
         "organization"
     ],
@@ -50,8 +50,8 @@
                 "category": "R3BL"
             },
             {
-                "command": "r3bl-task-management.installAIAgentIntegration",
-                "title": "Task Management: Install AI Agent Integration",
+                "command": "r3bl-task-management.installCodingAgentIntegration",
+                "title": "Task Management: Install Coding Agent Integration",
                 "category": "R3BL"
             },
             {

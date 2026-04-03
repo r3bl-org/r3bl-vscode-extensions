@@ -1,5 +1,8 @@
 # R3BL Shared Services Infrastructure
 
+[![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-shared?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-shared)
+[![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)
+
 **Internal infrastructure extension** that provides centralized services for all R3BL
 extensions.
 

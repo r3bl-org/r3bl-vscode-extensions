@@ -17,22 +17,22 @@ Or search for "R3BL Extension Pack" in the VS Code Marketplace.
 
 ### R3BL Extension Pack (Recommended)
 
-The complete package - installs all R3BL extensions plus rust-analyzer with zero
-configuration.
+The complete package - installs all R3BL extensions plus `rust-analyzer` (dependency) with
+zero configuration.
 
-**[View Documentation](packages/r3bl-extension-pack/README.md)** |
-**[Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack)**
+**[View Documentation][ext_pack-readme]** | **[Open VSX][ext_pack-ovsx]** |
+**[Marketplace][ext_pack-msft]**
 
 ### Individual Extensions
 
-| Extension                              | Description                                           | Links                                                                                                                                                                      |
-| -------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **R3BL Theme**                         | Dark theme optimized for Rust and Markdown            | [Docs](packages/r3bl-theme/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)                                                 |
-| **R3BL Semantic Configuration**        | Enhanced semantic highlighting for Rust               | [Docs](packages/r3bl-semantic-config/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)                             |
-| **R3BL Task Management**               | Task space management for context switching           | [Docs](packages/r3bl-task-management/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)                             |
-| **R3BL Fuzzy Search**                  | Fast fuzzy file search with fzf and ripgrep           | [Docs](packages/r3bl-fuzzy-search/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)                                   |
-| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges for AI coding agents | [Docs](packages/r3bl-copy-selection-path-and-range/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range) |
-| **R3BL Auto Insert Copyright**         | Automatic copyright header insertion                  | [Docs](packages/r3bl-auto-insert-copyright/README.md) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)                 |
+| Extension                              | Description                                        | Links                                                                                                                   |
+| -------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **R3BL Theme**                         | Dark theme optimized for Rust and Markdown         | [Docs][dark_theme-readme] · [Open VSX][dark_theme-ovsx] · [Microsoft][dark_theme-msft]                                  |
+| **R3BL Semantic Configuration**        | Enhanced semantic highlighting for Rust            | [Docs][semantic_config-readme] · [Open VSX][semantic_config-ovsx] · [Microsoft][semantic_config-msft]                   |
+| **R3BL Task Management**               | Task space management for context switching        | [Docs][task_mgmt-readme] · [Open VSX][task_mgmt-ovsx] · [Microsoft][task_mgmt-msft]                                     |
+| **R3BL Fuzzy Search**                  | Interactive fuzzy search & Git Diff Search Editor  | [Docs][fuzzy_search_and_git-readme] · [Open VSX][fuzzy_search_and_git-ovsx] · [Microsoft][fuzzy_search_and_git-msft]    |
+| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges for Coding Agents | [Docs][copy_selection-readme] · [Open VSX][copy_selection-ovsx] · [Microsoft][copy_selection-msft]                      |
+| **R3BL Auto Insert Copyright**         | Automatic copyright header insertion               | [Docs][auto_insert_copyright-readme] · [Open VSX][auto_insert_copyright-ovsx] · [Microsoft][auto_insert_copyright-msft] |
 
 ### Infrastructure Packages
 
@@ -198,3 +198,33 @@ MIT - See individual extension LICENSE files for details.
 ---
 
 **Rebels race on!**
+
+[ext_pack-readme]: packages/r3bl-extension-pack/README.md
+[ext_pack-ovsx]: https://open-vsx.org/extension/R3BL/r3bl-extension-pack
+[ext_pack-msft]:
+    https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack
+[dark_theme-readme]: packages/r3bl-theme/README.md
+[dark_theme-ovsx]: https://open-vsx.org/extension/R3BL/r3bl-theme
+[dark_theme-msft]: https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme
+[semantic_config-readme]: packages/r3bl-semantic-config/README.md
+[semantic_config-ovsx]: https://open-vsx.org/extension/R3BL/r3bl-semantic-config
+[semantic_config-msft]:
+    https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config
+[task_mgmt-readme]: packages/r3bl-task-management/README.md
+[task_mgmt-ovsx]: https://open-vsx.org/extension/R3BL/r3bl-task-management
+[task_mgmt-msft]:
+    https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management
+[fuzzy_search_and_git-readme]: packages/r3bl-fuzzy-search/README.md
+[fuzzy_search_and_git-ovsx]: https://open-vsx.org/extension/R3BL/r3bl-fuzzy-search
+[fuzzy_search_and_git-msft]:
+    https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search
+[copy_selection-readme]: packages/r3bl-copy-selection-path-and-range/README.md
+[copy_selection-ovsx]:
+    https://open-vsx.org/extension/R3BL/r3bl-copy-selection-path-and-range
+[copy_selection-msft]:
+    https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range
+[auto_insert_copyright-readme]: packages/r3bl-auto-insert-copyright/README.md
+[auto_insert_copyright-ovsx]:
+    https://open-vsx.org/extension/R3BL/r3bl-auto-insert-copyright
+[auto_insert_copyright-msft]:
+    https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright

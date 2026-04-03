@@ -1,5 +1,8 @@
 # R3BL Development Pack
 
+[![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-extension-pack?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-extension-pack)
+[![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack)
+
 The complete R3BL development experience in one install. Get a carefully crafted dark
 theme, enhanced Rust syntax highlighting, task management, and productivity tools - all
 configured to work together seamlessly.
@@ -10,23 +13,23 @@ configured to work together seamlessly.
 
 These extensions are maintained and published by R3BL.
 
-| Extension                                                                                                                             | Description                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| **[R3BL Theme](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort          |
-| **[R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation   |
-| **[R3BL Task Management](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)**                             | Task space management with AI agent integration and tab organization |
-| **[R3BL Fuzzy Search](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes   |
-| **[R3BL Copy Selection Path and Range](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for AI coding agents                |
-| **[R3BL Auto Insert Copyright](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates |
-| **[R3BL Shared](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)        |
+| Extension                                                                                                                                          | Description                                                          |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------- |:-------------------------------------------------------------------- |
+| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort          |
+| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation   |
+| **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization |
+| **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes   |
+| **[R3BL Copy Selection Path and Range](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Coding Agents                |
+| **[R3BL Auto Insert Copyright](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates |
+| **[R3BL Shared](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)        |
 
 ### Third-Party Dependencies
 
 These extensions are required for full functionality and are automatically installed.
 
-| Extension                                                                                        | Description                               |
-| ------------------------------------------------------------------------------------------------ | ----------------------------------------- |
-| **[rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)** | Official Rust language server (3rd party) |
+| Extension                                                       | Description                               |
+|:--------------------------------------------------------------- |:----------------------------------------- |
+| **[rust-analyzer](https://github.com/rust-lang/rust-analyzer)** | Official Rust language server (3rd party) |
 
 ## What You Get
 
@@ -35,7 +38,7 @@ These extensions are required for full functionality and are automatically insta
 - **Enhanced Rust Experience**: Beyond syntax highlighting, get auto-folding for `use`
   statements and `rustdoc`, plus a dedicated Structure Navigator for large files.
 - **Task Space Management**: Organize multiple work contexts, save/restore open tabs, and
-  integrate with AI coding agents via a custom slash command.
+  integrate with Coding Agents via a custom slash command.
 - **High-Efficiency Code Review**: Use the Git Diff Search Editor to review uncommitted
   changes or recent commits in a single, searchable tab—perfect for AI-generated diffs.
 - **Fast Fuzzy Search**: Lightning-fast file content search powered by `rg` and `fzf` with
@@ -71,7 +74,7 @@ The most common shortcuts for the R3BL suite. All shortcuts can be customized in
 Keyboard Shortcuts settings.
 
 | Shortcut        | Extension       | Action                                             |
-| --------------- | --------------- | -------------------------------------------------- |
+|:--------------- |:--------------- |:-------------------------------------------------- |
 | `Alt+Shift+T`   | Task Management | Open task spaces dialog                            |
 | `Alt+Shift+F`   | Task Management | Finish current task (archive and jump to next)     |
 | `Alt+Shift+J`   | Task Management | Pause current task and jump to next in queue       |
@@ -139,15 +142,15 @@ Enhanced defaults for the R3BL Semantic Configuration.
 
 ### AI-Assisted Development
 
-Optimized for working with AI coding agents (Claude Code, Gemini CLI, Cursor, etc.):
+Optimized for working with Coding Agents (Claude Code, Gemini CLI, Cursor, etc.):
 
 - **Context Gathering**: Use `Alt+O` to quickly grab correctly formatted file references
   (`@path#L10-20`) for your prompts.
 - **Change Review**: Use `Ctrl+Shift+G` (Git Diff Search Editor) to review large numbers
-  of changes AI agents make in a single turn. It's the most efficient way to be thorough
+  of changes Coding Agents make in a single turn. It's the most efficient way to be thorough
   without leaving your IDE.
 - **Task Integration**: Use Task Management with the `/r3bl-task` custom command for AI
-  coding agents (Claude Code, Gemini CLI, etc.) to coordinate implementation plans in
+  Coding Agents (Claude Code, Gemini CLI, etc.) to coordinate implementation plans in
   `task/*.md` files.
 
 ### High-Performance Rust Coding

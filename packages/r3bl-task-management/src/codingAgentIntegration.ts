@@ -25,9 +25,9 @@ function findAllExistingAgentCommandsDirs(): string[] {
 }
 
 /**
- * Checks if the AI Agent integration is installed (r3bl-task.md exists in any of the supported directories)
+ * Checks if the Coding Agent integration is installed (r3bl-task.md exists in any of the supported directories)
  */
-export function isAIAgentIntegrationInstalled(): boolean {
+export function isCodingAgentIntegrationInstalled(): boolean {
     const workspaceRoot = getWorkspaceRoot();
     if (!workspaceRoot) {
         return false;
@@ -46,9 +46,9 @@ export function isAIAgentIntegrationInstalled(): boolean {
 }
 
 /**
- * Installs the AI Agent integration by copying the template to the selected/existing directory
+ * Installs the Coding Agent integration by copying the template to the selected/existing directory
  */
-export async function installAIAgentIntegration(
+export async function installCodingAgentIntegration(
     context: vscode.ExtensionContext,
 ): Promise<boolean> {
     const workspaceRoot = getWorkspaceRoot();
@@ -82,12 +82,12 @@ export async function installAIAgentIntegration(
                 existingDirs.length > 1
                     ? existingDirs.map((dir) => ({
                           label: dir,
-                          description: 'Existing agent directory',
+                          description: 'Existing Coding Agent directory',
                       }))
                     : [
                           {
                               label: '.agent/commands',
-                              description: 'Standard AI agent directory (recommended)',
+                              description: 'Standard Coding Agent directory (recommended)',
                           },
                           {
                               label: '.gemini/commands',
@@ -102,8 +102,8 @@ export async function installAIAgentIntegration(
             const selected = await vscode.window.showQuickPick(options, {
                 title:
                     existingDirs.length > 1
-                        ? 'Multiple Agent Directories Found'
-                        : 'Choose AI Agent Directory',
+                        ? 'Multiple Coding Agent Directories Found'
+                        : 'Choose Coding Agent Directory',
                 placeHolder:
                     existingDirs.length > 1
                         ? 'Select which directory to update'
@@ -124,7 +124,7 @@ export async function installAIAgentIntegration(
 
             // Show info message about directory creation (don't await so it's not blocking)
             const learnMore = 'Learn More';
-            let message = `Created ${targetDir} directory for AI Agent custom commands`;
+            let message = `Created ${targetDir} directory for Coding Agent custom commands`;
             let url =
                 'https://github.com/r3bl-org/r3bl-open-source/tree/main/r3bl-vscode-extensions';
 
@@ -148,7 +148,7 @@ export async function installAIAgentIntegration(
         // Show success message
         const openFile = 'Open Command File';
         const result = await vscode.window.showInformationMessage(
-            `AI Agent integration installed! Use /r3bl-task in your AI agent to manage task files.`,
+            `Coding Agent integration installed! Use /r3bl-task in your Coding Agent to manage task files.`,
             openFile,
         );
 
@@ -160,25 +160,25 @@ export async function installAIAgentIntegration(
         return true;
     } catch (error) {
         vscode.window.showErrorMessage(
-            `Failed to install AI Agent integration: ${error}`,
+            `Failed to install Coding Agent integration: ${error}`,
         );
         return false;
     }
 }
 
 /**
- * Prompts the user to install AI Agent integration (non-intrusive)
+ * Prompts the user to install Coding Agent integration (non-intrusive)
  */
-export async function promptToInstallAIAgentIntegration(
+export async function promptToInstallCodingAgentIntegration(
     context: vscode.ExtensionContext,
 ): Promise<void> {
     // Check if already installed
-    if (isAIAgentIntegrationInstalled()) {
+    if (isCodingAgentIntegrationInstalled()) {
         return;
     }
 
     // Check if user has dismissed this prompt before
-    const dismissedKey = 'r3bl-task-management.aiAgentPromptDismissed';
+    const dismissedKey = 'r3bl-task-management.codingAgentPromptDismissed';
     const dismissed = context.globalState.get<boolean>(dismissedKey, false);
     if (dismissed) {
         return;
@@ -190,14 +190,14 @@ export async function promptToInstallAIAgentIntegration(
     const dontAskAgain = "Don't Ask Again";
 
     const result = await vscode.window.showInformationMessage(
-        'Enable AI Agent integration? Install /r3bl-task command to manage task files from AI coding agents.',
+        'Enable Coding Agent integration? Install /r3bl-task command to manage task files from Coding Agents.',
         install,
         notNow,
         dontAskAgain,
     );
 
     if (result === install) {
-        await installAIAgentIntegration(context);
+        await installCodingAgentIntegration(context);
     } else if (result === dontAskAgain) {
         await context.globalState.update(dismissedKey, true);
     }
@@ -221,7 +221,7 @@ function getFileSHA256(filePath: string): string | undefined {
  * Called on extension activation
  * Upgrades the command in ALL existing directories found
  */
-export async function checkAndUpgradeAIAgentCommand(
+export async function checkAndUpgradeCodingAgentCommand(
     context: vscode.ExtensionContext,
 ): Promise<void> {
     const workspaceRoot = getWorkspaceRoot();
@@ -272,7 +272,7 @@ export async function checkAndUpgradeAIAgentCommand(
         }
     } catch (error) {
         // Silent fail - don't bother user with upgrade errors
-        console.error('Failed to upgrade AI Agent command:', error);
+        console.error('Failed to upgrade Coding Agent command:', error);
     }
 }
 

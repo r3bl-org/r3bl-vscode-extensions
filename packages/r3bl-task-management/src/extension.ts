@@ -5,9 +5,9 @@ import { showStatusBarMessage } from 'r3bl-common-code';
 import { TaskSpaceManager } from './taskSpaceManager';
 import { showTaskSpacesDialog, updateStatusBar, createStatusBarItem } from './ui';
 import {
-    installAIAgentIntegration,
-    checkAndUpgradeAIAgentCommand,
-} from './aiAgentIntegration';
+    installCodingAgentIntegration,
+    checkAndUpgradeCodingAgentCommand,
+} from './codingAgentIntegration';
 import * as path from 'path';
 
 /** Default debounce delay for auto-save (milliseconds) */
@@ -122,8 +122,8 @@ export async function activate(context: vscode.ExtensionContext) {
     manager = new TaskSpaceManager(context);
     await manager.initialize();
 
-    // Check and auto-upgrade AI Agent command if needed
-    await checkAndUpgradeAIAgentCommand(context);
+    // Check and auto-upgrade Coding Agent command if needed
+    await checkAndUpgradeCodingAgentCommand(context);
 
     // Restore tabs for active task space on startup
     const activeTaskSpace = manager.getActiveTaskSpace();
@@ -152,14 +152,14 @@ export async function activate(context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(showCommand);
 
-    // Register Install AI Agent Integration command
-    const installAIAgentCommand = vscode.commands.registerCommand(
-        'r3bl-task-management.installAIAgentIntegration',
+    // Register Install Coding Agent Integration command
+    const installCodingAgentCommand = vscode.commands.registerCommand(
+        'r3bl-task-management.installCodingAgentIntegration',
         async () => {
-            await installAIAgentIntegration(context);
+            await installCodingAgentIntegration(context);
         },
     );
-    context.subscriptions.push(installAIAgentCommand);
+    context.subscriptions.push(installCodingAgentCommand);
 
     // Register Create Task Space from Task File command
     const createFromFileCommand = vscode.commands.registerCommand(

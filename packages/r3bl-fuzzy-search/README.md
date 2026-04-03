@@ -1,5 +1,8 @@
 # R3BL Fuzzy Search
 
+[![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-fuzzy-search?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-fuzzy-search)
+[![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-fuzzy-search)
+
 Interactive fuzzy search across file contents using fzf, with live preview and instant
 results. Combined with a powerful Git Diff Search Editor for high-efficiency code review.
 
@@ -7,7 +10,7 @@ results. Combined with a powerful Git Diff Search Editor for high-efficiency cod
 
 ### 1. Reviewing AI-Generated Changes
 
-AI coding agents (Claude Code, Copilot, Cursor) often modify dozens of files in a single
+Coding Agents (Claude Code, Copilot, Cursor) often modify dozens of files in a single
 turn. The **Git Diff Search Editor** (`Ctrl+Shift+G`) is purpose-built for this:
 
 - **Unified Review**: See all uncommitted changes (staged and unstaged) or recent commits

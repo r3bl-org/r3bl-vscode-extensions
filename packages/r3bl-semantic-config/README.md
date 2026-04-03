@@ -1,5 +1,8 @@
 # R3BL Semantic Configuration
 
+[![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-semantic-config?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-semantic-config)
+[![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)
+
 This extension provides powerful features for Rust development in VS Code:
 
 1. **Enhanced Semantic Highlighting** - Automatically applies optimized color rules for
@@ -16,13 +19,44 @@ This extension provides powerful features for Rust development in VS Code:
 ## Table of Contents
 
 - [Feature 1: Semantic Highlighting](#feature-1-semantic-highlighting)
+    - [What It Does](#what-it-does)
+    - [Why This Feature Exists](#why-this-feature-exists)
+    - [Screenshots](#screenshots)
+    - [How It Works](#how-it-works)
+    - [Semantic Token Rules](#semantic-token-rules)
 - [Feature 2: Debounced rust-analyzer Flycheck](#feature-2-debounced-rust-analyzer-flycheck)
+    - [The Problem: IDE Lag During Typing](#the-problem-ide-lag-during-typing)
+    - [The Solution: Intelligent Debouncing](#the-solution-intelligent-debouncing)
+    - [Configuration](#configuration)
+    - [How It Works](#how-it-works-1)
+    - [Keybinding for Manual Trigger](#keybinding-for-manual-trigger)
+    - [Auto-Disable checkOnSave](#auto-disable-checkonsave)
 - [Feature 3: Rustdoc Folding](#feature-3-rustdoc-folding)
+    - [What It Does](#what-it-does-1)
+    - [Comment Types](#comment-types)
+    - [Keybindings](#keybindings)
+    - [Auto-Fold on File Open](#auto-fold-on-file-open)
+    - [How It Works](#how-it-works-2)
+    - [Manual Trigger](#manual-trigger)
 - [Feature 4: Use Statement Folding](#feature-4-use-statement-folding)
+    - [What It Does](#what-it-does-2)
+    - [Configuration](#configuration-1)
+    - [How It Works](#how-it-works-3)
+    - [Integration with Fold/Unfold Commands](#integration-with-foldunfold-commands)
+    - [Scope](#scope)
 - [Feature 5: Rustdoc Structure Navigator](#feature-5-rustdoc-structure-navigator)
+    - [What It Does](#what-it-does-3)
+    - [Two Modes](#two-modes)
+    - [Keybinding](#keybinding)
+    - [How It Works](#how-it-works-4)
 - [Requirements](#requirements)
+    - [Why rust-analyzer is Required](#why-rust-analyzer-is-required)
+- [Recommended Settings](#recommended-settings)
 - [Commands](#commands)
+- [Shared Infrastructure](#shared-infrastructure)
 - [Release Notes](#release-notes)
+- [License](#license)
+- [Contributing](#contributing)
 
 ---
 

@@ -5,7 +5,7 @@ import * as path from 'path';
 import { showStatusBarMessage } from 'r3bl-common-code';
 import { TaskSpace } from './types';
 import { TaskSpaceManager } from './taskSpaceManager';
-import { promptToInstallAIAgentIntegration } from './aiAgentIntegration';
+import { promptToInstallCodingAgentIntegration } from './codingAgentIntegration';
 
 interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
     taskSpace?: TaskSpace;
@@ -353,9 +353,9 @@ async function handleCreateTaskSpace(
             'success',
         );
 
-        // Prompt to install AI Agent integration if task file is linked
+        // Prompt to install Coding Agent integration if task file is linked
         if (taskFile && context) {
-            await promptToInstallAIAgentIntegration(context);
+            await promptToInstallCodingAgentIntegration(context);
         }
     } catch (error) {
         showStatusBarMessage(`Failed to create task space: ${error}`, 'error');
