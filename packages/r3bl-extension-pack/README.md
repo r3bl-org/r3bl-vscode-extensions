@@ -13,22 +13,22 @@ configured to work together seamlessly.
 
 These extensions are maintained and published by R3BL.
 
-| Extension                                                                                                                                          | Description                                                          |
-|:-------------------------------------------------------------------------------------------------------------------------------------------------- |:-------------------------------------------------------------------- |
-| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort          |
-| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation   |
+| Extension                                                                                                                                          | Description                                                              |
+| :------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort              |
+| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation       |
 | **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization |
-| **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes   |
-| **[R3BL Copy Selection Path and Range](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Coding Agents                |
-| **[R3BL Auto Insert Copyright](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates |
-| **[R3BL Shared](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)        |
+| **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes       |
+| **[R3BL Copy Selection Path and Range](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Coding Agents                       |
+| **[R3BL Auto Insert Copyright](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates     |
+| **[R3BL Shared](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)            |
 
 ### Third-Party Dependencies
 
 These extensions are required for full functionality and are automatically installed.
 
 | Extension                                                       | Description                               |
-|:--------------------------------------------------------------- |:----------------------------------------- |
+| :-------------------------------------------------------------- | :---------------------------------------- |
 | **[rust-analyzer](https://github.com/rust-lang/rust-analyzer)** | Official Rust language server (3rd party) |
 
 ## What You Get
@@ -74,7 +74,7 @@ The most common shortcuts for the R3BL suite. All shortcuts can be customized in
 Keyboard Shortcuts settings.
 
 | Shortcut        | Extension       | Action                                             |
-|:--------------- |:--------------- |:-------------------------------------------------- |
+| :-------------- | :-------------- | :------------------------------------------------- |
 | `Alt+Shift+T`   | Task Management | Open task spaces dialog                            |
 | `Alt+Shift+F`   | Task Management | Finish current task (archive and jump to next)     |
 | `Alt+Shift+J`   | Task Management | Pause current task and jump to next in queue       |
@@ -147,8 +147,8 @@ Optimized for working with Coding Agents (Claude Code, Gemini CLI, Cursor, etc.)
 - **Context Gathering**: Use `Alt+O` to quickly grab correctly formatted file references
   (`@path#L10-20`) for your prompts.
 - **Change Review**: Use `Ctrl+Shift+G` (Git Diff Search Editor) to review large numbers
-  of changes Coding Agents make in a single turn. It's the most efficient way to be thorough
-  without leaving your IDE.
+  of changes Coding Agents make in a single turn. It's the most efficient way to be
+  thorough without leaving your IDE.
 - **Task Integration**: Use Task Management with the `/r3bl-task` custom command for AI
   Coding Agents (Claude Code, Gemini CLI, etc.) to coordinate implementation plans in
   `task/*.md` files.

@@ -43,8 +43,8 @@ When you select multiple lines, the output includes an `@` prefix for Coding Age
 @packages/r3bl-copy-selection-path-and-range/src/extension.ts#L6-14
 ```
 
-This format is optimized for use in Coding Agent prompts (Claude Code, Gemini CLI,
-etc.) where the `@` symbol tells the agent to reference that specific file and line range.
+This format is optimized for use in Coding Agent prompts (Claude Code, Gemini CLI, etc.)
+where the `@` symbol tells the agent to reference that specific file and line range.
 
 ### Single-Line Selection (IDE Format)
 

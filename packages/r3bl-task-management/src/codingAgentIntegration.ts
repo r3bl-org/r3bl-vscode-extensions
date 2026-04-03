@@ -87,7 +87,8 @@ export async function installCodingAgentIntegration(
                     : [
                           {
                               label: '.agent/commands',
-                              description: 'Standard Coding Agent directory (recommended)',
+                              description:
+                                  'Standard Coding Agent directory (recommended)',
                           },
                           {
                               label: '.gemini/commands',

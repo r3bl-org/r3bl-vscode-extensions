@@ -9,9 +9,9 @@ invent!
 
 ## The Dashboard Workflow - Designed for Humans & Fit for Purpose
 
-This extension implements the **Dashboard Workflow** (created by [Nazmul
-Idris](https://nazmulidris.com)) - a fluid, non-linear task management methodology designed
-for individual developer productivity with or without Coding Agents.
+This extension implements the **Dashboard Workflow** (created by
+[Nazmul Idris](https://nazmulidris.com)) - a fluid, non-linear task management methodology
+designed for individual developer productivity with or without Coding Agents.
 
 It provides an alternative to traditional, rigid frameworks like Scrum, Agile, or
 ticket/issue based systems, and really prioritizes fluidity over rigidity. The mantra is
@@ -68,11 +68,11 @@ good at. Let your machine buddies augment you with what they are good at.
   evolves into complexity. This knowledge is in your git repo in a Markdown file! You
   don't have to look at in an external tool / project management board to get it! You have
   it, your team has it, and your Coding Agents have it.
-- **Coding Agent Synergy:** Coding Agents can autonomously drop a task file into the `task/`
-  folder, and it instantly appears in your "Next Queue" dashboard, ready for human review
-  or joint implementation. And of course, as you explore your codebase with them, all the
-  history in `task/done/`, and the info in `task/` will help guide them too in their
-  predictions and pattern matching (if you are using LLM based agents).
+- **Coding Agent Synergy:** Coding Agents can autonomously drop a task file into the
+  `task/` folder, and it instantly appears in your "Next Queue" dashboard, ready for human
+  review or joint implementation. And of course, as you explore your codebase with them,
+  all the history in `task/done/`, and the info in `task/` will help guide them too in
+  their predictions and pattern matching (if you are using LLM based agents).
 
 ## Table of Contents
 
@@ -134,9 +134,10 @@ Run multiple Coding Agent instances in parallel (e.g., Claude Code, Gemini CLI i
 different terminal tabs or tmux panes), each working on different aspects of your work.
 Create task spaces for each to organize files and switch contexts seamlessly.
 
-Attach a `task/*.md` file (that the Coding Agent manages, with the `/r3bl-task` custom command
-for Claude Code, Gemini CLI, etc.) to each space to track design and implementation plans,
-and have completed tasks automatically archived to `task/done/` when they're finished.
+Attach a `task/*.md` file (that the Coding Agent manages, with the `/r3bl-task` custom
+command for Claude Code, Gemini CLI, etc.) to each space to track design and
+implementation plans, and have completed tasks automatically archived to `task/done/` when
+they're finished.
 
 ### Multiple Concurrent Workflows (Same Branch)
 
@@ -170,8 +171,8 @@ This enables workflows like:
   VSCodium
 - **Side-by-side comparison**: Compare different task space configurations across IDEs
 - **Testing + Development**: Test extensions in Insiders while working in stable VS Code
-- **Multiple Coding Agent sessions**: Different agent instances working on different
-  task spaces
+- **Multiple Coding Agent sessions**: Different agent instances working on different task
+  spaces
 
 **How it works:** When you switch task spaces in VS Code, VS Code Insiders' active space
 stays unchanged. But if you add/remove tabs from "Feature: Auth" in VS Code, those changes

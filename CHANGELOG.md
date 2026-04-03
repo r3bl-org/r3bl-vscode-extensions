@@ -149,6 +149,25 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-04-03] - README Documentation Refresh
+
+### Package Versions
+
+- **R3BL Auto Insert Copyright**: 1.3.3 → 1.3.4
+- **R3BL Copy Selection Path and Range**: 1.4.0 → 1.4.1
+- **R3BL Fuzzy Search**: 1.4.0 → 1.4.1
+- **R3BL Semantic Configuration**: 1.2.7 → 1.2.8
+- **R3BL Shared**: 1.0.1 → 1.0.2
+- **R3BL Task Management**: 1.4.0 → 1.4.1
+- **R3BL Theme**: 1.0.17 → 1.0.18
+- **R3BL Extension Pack**: 1.3.3 → 1.3.4
+
+### Changes
+
+- **All Extensions**: README documentation cleanup and improvements
+    - Cleaned up and standardized README.md files across all extensions
+    - Improved clarity and consistency of documentation for Marketplace listings
+
 ## [2026-04-02] - Dashboard Workflow and Extension Stabilization
 
 ### Package Versions

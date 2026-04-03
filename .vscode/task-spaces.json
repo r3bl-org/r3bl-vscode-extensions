@@ -1,24 +1,24 @@
 {
-  "version": "4.0",
-  "taskSpaces": [
-    {
-      "name": "fuzzy-add-git-history-for-a-file",
-      "id": "2c27359b-945b-4561-9aa1-9278afeeeb98",
-      "tabs": [],
-      "taskFile": "task/fuzzy-add-git-history-for-a-file.md",
-      "createdAt": 1775229686775
-    },
-    {
-      "name": "global-task-dashboard",
-      "id": "30a22f74-176a-41f0-a215-a08020a844ad",
-      "tabs": [],
-      "taskFile": "task/global-task-dashboard.md",
-      "createdAt": 1775230000530
-    }
-  ],
-  "nextQueueIds": [
-    "2c27359b-945b-4561-9aa1-9278afeeeb98",
-    "30a22f74-176a-41f0-a215-a08020a844ad"
-  ],
-  "previousStackIds": []
+    "version": "4.0",
+    "taskSpaces": [
+        {
+            "name": "fuzzy-add-git-history-for-a-file",
+            "id": "2c27359b-945b-4561-9aa1-9278afeeeb98",
+            "tabs": [],
+            "taskFile": "task/fuzzy-add-git-history-for-a-file.md",
+            "createdAt": 1775229686775
+        },
+        {
+            "name": "global-task-dashboard",
+            "id": "30a22f74-176a-41f0-a215-a08020a844ad",
+            "tabs": [],
+            "taskFile": "task/global-task-dashboard.md",
+            "createdAt": 1775230000530
+        }
+    ],
+    "nextQueueIds": [
+        "2c27359b-945b-4561-9aa1-9278afeeeb98",
+        "30a22f74-176a-41f0-a215-a08020a844ad"
+    ],
+    "previousStackIds": []
 }

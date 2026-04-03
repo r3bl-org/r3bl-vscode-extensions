@@ -2,7 +2,7 @@
     "name": "r3bl-shared",
     "displayName": "R3BL Shared Services Infrastructure",
     "description": "Shared utilities and APIs for R3BL VSCode extensions (automatically installed as dependency)",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "publisher": "R3BL",
     "license": "MIT",
     "icon": "r3bl-cube-logo.png",
