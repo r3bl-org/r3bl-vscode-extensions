@@ -1,8 +1,8 @@
 {
     "name": "r3bl-fuzzy-search",
     "displayName": "R3BL Fuzzy Search",
-    "description": "Fuzzy search in files using fzf - fast and smart search with Search Editor results",
-    "version": "1.4.1",
+    "description": "Interactive fuzzy search powered by fzf/ripgrep and an integrated Git Diff Search Editor for reviewing git changes and recent commits.",
+    "version": "1.4.2",
     "publisher": "R3BL",
     "license": "MIT",
     "engines": {
@@ -22,7 +22,13 @@
         "grep",
         "git",
         "diff",
-        "unstaged"
+        "unstaged",
+        "code review",
+        "git diff",
+        "git history",
+        "coding agent",
+        "claude code",
+        "gemini cli"
     ],
     "icon": "r3bl-cube-logo.png",
     "repository": {

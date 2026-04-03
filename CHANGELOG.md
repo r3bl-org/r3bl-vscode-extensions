@@ -149,6 +149,27 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-04-03] - Extension Pack Metadata Update and Search Feature Discovery
+
+### Package Versions
+
+- **R3BL Fuzzy Search**: 1.4.1 → 1.4.2
+- **R3BL Extension Pack**: 1.3.4 → 1.3.5
+
+### Changes
+
+- **R3BL Fuzzy Search 1.4.2**: Enhanced search feature discovery
+    - Updated keywords with "code review", "git diff", "git history", "coding agent",
+      "claude code", and "gemini cli"
+    - Improved extension description to highlight Git functionality and recent commits
+      review
+
+- **R3BL Extension Pack 1.3.5**: Improved marketplace discoverability
+    - Consolidated and deduplicated keywords and categories from all bundled R3BL
+      extensions
+    - Added comprehensive keyword set for better search indexing (AI coding agents, git,
+      search, theme, etc.)
+
 ## [2026-04-03] - README Documentation Refresh
 
 ### Package Versions
