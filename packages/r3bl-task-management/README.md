@@ -1,21 +1,40 @@
 # R3BL Task Management
 
+[![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-task-management?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-task-management)
+[![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-task-management)
+
 Manage task spaces - collections of open tabs for different work contexts **within a
-single git branch**.
+single git branch**. And leverage "The Dashboard Workflow" to unleash your creativity and
+invent!
 
-## The Dashboard Workflow
+## The Dashboard Workflow - Designed for Humans & Fit for Purpose
 
-**Methodology by Nazmul Idris (idris@developerlife.com)**
+This extension implements the **Dashboard Workflow** (created by [Nazmul
+Idris](https://nazmulidris.com)) - a fluid, non-linear task management methodology designed
+for individual developer productivity with or without Coding Agents.
 
-This extension implements the **Dashboard Workflow**, a fluid, non-linear task management
-methodology designed for individual developers and AI-agent collaboration. It represents a
-fundamental departure from traditional, rigid frameworks like Scrum, Agile, or
-ticket-based systems.
+It provides an alternative to traditional, rigid frameworks like Scrum, Agile, or
+ticket/issue based systems, and really prioritizes fluidity over rigidity. The mantra is
+"start with anything on a blank page", then refine over time.
+
+Invention, creativity, and programming are not linear - projects take many twists and
+turns, detours and story arcs. You will learn more about the problem surface as you take
+your first steps - for non-trivial problems this can't be known beforehand. This
+methodology is designed to work with this non-linearity rather than against it.
+
+It incorporates the use of tooling to help you (and not replace you) by optimizing and
+automating this workflow. The tooling removes as much cognitive load as possible, and
+manual / menial labor as possible, and gives you the richest context possible, as you move
+around rapidly, liberating you from "keeping it all in your head". You do what you are
+good at. Let your machine buddies augment you with what they are good at.
 
 ### Core Principles:
 
 1. **1:1 Mapping:** Every task is represented by a single Markdown file (`.md`) in the
-   `task/` directory. The `.md` file _is_ the task.
+   `task/` directory. The `.md` file _is_ the task. This Markdown file is either generated
+   by a person using a Coding Agent, or manually - it doesn't matter. The goal of the task
+   file is to capture the high level objectives around the body of work. It can be as
+   detailed or sparse as you like.
 2. **Context Preservation:** A task space remembers the exact files, tabs, and layout open
    for that task.
 3. **Fluid Routing:** Tasks move dynamically between queues:
@@ -34,23 +53,35 @@ ticket-based systems.
 
 - **Non-Linear vs. Linear:** Traditional systems often force a linear "Sprints" or "Ready
   -> Doing -> Done" progression. The Dashboard Workflow recognizes that development is
-  rarely linear. It allows you to "pivot on a dime"—shifting context as discovery happens
+  rarely linear. It allows you to "pivot on a dime", shifting context as discovery happens
   without the friction of updating a project management board.
-- **Opportunistic vs. Planned:** Encourages "fixing things when you see them." If you spot
+- **Opportunistic vs. Planned:** Encourages "fixing things when you see them". If you spot
   a bug or a refactoring opportunity while working on Task A, you can instantly create
   Task B (via a simple `.md` file), queue it, and choose to jump into it immediately or
   save it for the "Next" slot.
 - **Fluid Scoping:** Use context-preserving Task Spaces to spin off sub-tasks into their
   own spaces with their own tab layouts, keeping the mental overhead low.
-- **AI-Agent Synergy:** AI agents can autonomously drop a task file into the `task/`
+- **Retain knowledge:** If you ever want to look back in time and understand the "why"
+  behind a particular chunk of work, you can always look in your `task/done` folder and do
+  a retrospective. It can also be valuable context, that you don't have to fit in your
+  head, as you evolve something over a long period of time, that starts out simple, and
+  evolves into complexity. This knowledge is in your git repo in a Markdown file! You
+  don't have to look at in an external tool / project management board to get it! You have
+  it, your team has it, and your Coding Agents have it.
+- **Coding Agent Synergy:** Coding Agents can autonomously drop a task file into the `task/`
   folder, and it instantly appears in your "Next Queue" dashboard, ready for human review
-  or joint implementation.
+  or joint implementation. And of course, as you explore your codebase with them, all the
+  history in `task/done/`, and the info in `task/` will help guide them too in their
+  predictions and pattern matching (if you are using LLM based agents).
 
 ## Table of Contents
 
+- [The Dashboard Workflow - Designed for Humans & Fit for Purpose](#the-dashboard-workflow---designed-for-humans--fit-for-purpose)
+    - [Core Principles](#core-principles)
+    - [How it differs from Scrum, Agile, and Ticket Systems](#how-it-differs-from-scrum-agile-and-ticket-systems)
 - [Use Cases](#use-cases)
     - [Context Preservation](#context-preservation)
-    - [AI Coding Agent Collaboration](#ai-coding-agent-collaboration)
+    - [Coding Agent Collaboration](#coding-agent-collaboration)
     - [Multiple Concurrent Workflows (Same Branch)](#multiple-concurrent-workflows-same-branch)
     - [Multi-IDE Workflows (Different Task Spaces Per IDE)](#multi-ide-workflows-different-task-spaces-per-ide)
 - [What It Does](#what-it-does)
@@ -60,23 +91,27 @@ ticket-based systems.
 - [Screenshots](#screenshots)
 - [Workflows](#workflows)
     - [Basic Workflow](#basic-workflow)
-    - [AI Coding Agent Workflow](#ai-coding-agent-workflow)
-    - [AI Coding Agent Integration](#ai-coding-agent-integration)
-        - [Install AI Agent Integration](#install-ai-agent-integration)
-        - [Automatic Updates](#automatic-updates)
+    - [Coding Agent Workflow](#coding-agent-workflow)
+    - [Coding Agent Integration](#coding-agent-integration)
+        - [Install Coding Agent Integration](#install-coding-agent-integration)
         - [Create Task Space from Task File](#create-task-space-from-task-file)
         - [Smart Prompting](#smart-prompting)
-    - [Power User: Multiple AI Coding Agent Instances](#power-user-multiple-ai-coding-agent-instances)
+    - [Power User: Multiple Coding Agent Instances](#power-user-multiple-coding-agent-instances)
 - [Important: How It Works](#important-how-it-works)
     - [Task Spaces Are WITHIN One Branch](#task-spaces-are-within-one-branch)
     - [Filesystem-Based Memory](#filesystem-based-memory)
     - [Should You Commit `.vscode/task-spaces.json`?](#should-you-commit-vscodetask-spacesjson)
+        - [Recommended: Add to .gitignore](#recommended-add-to-gitignore)
+        - [Alternative: Commit It (Team Collaboration)](#alternative-commit-it-team-collaboration)
 - [Reference](#reference)
     - [Commands](#commands)
     - [Keyboard Shortcuts](#keyboard-shortcuts)
     - [Extension Settings](#extension-settings)
     - [Status Bar](#status-bar)
     - [File Format](#file-format)
+        - [.vscode/task-spaces.json (Shared File)](#vscodetask-spacesjson-shared-file)
+        - [VSCode Workspace State (Per-Instance)](#vscode-workspace-state-per-instance)
+        - [Multi-Instance Behavior](#multi-instance-behavior)
     - [When Does the File Get Saved?](#when-does-the-file-get-saved)
 - [Shared Infrastructure](#shared-infrastructure)
 - [Release Notes](#release-notes)
@@ -93,13 +128,13 @@ overhead.
 
 Switch between them instantly with **Alt+Shift+T** without losing your place.
 
-### AI Coding Agent Collaboration
+### Coding Agent Collaboration
 
-Run multiple AI coding agent instances in parallel (e.g., Claude Code, Gemini CLI in
+Run multiple Coding Agent instances in parallel (e.g., Claude Code, Gemini CLI in
 different terminal tabs or tmux panes), each working on different aspects of your work.
 Create task spaces for each to organize files and switch contexts seamlessly.
 
-Attach a `task/*.md` file (that the AI agent manages, with the `/r3bl-task` custom command
+Attach a `task/*.md` file (that the Coding Agent manages, with the `/r3bl-task` custom command
 for Claude Code, Gemini CLI, etc.) to each space to track design and implementation plans,
 and have completed tasks automatically archived to `task/done/` when they're finished.
 
@@ -135,7 +170,7 @@ This enables workflows like:
   VSCodium
 - **Side-by-side comparison**: Compare different task space configurations across IDEs
 - **Testing + Development**: Test extensions in Insiders while working in stable VS Code
-- **Multiple AI coding agent sessions**: Different agent instances working on different
+- **Multiple Coding Agent sessions**: Different agent instances working on different
   task spaces
 
 **How it works:** When you switch task spaces in VS Code, VS Code Insiders' active space
@@ -157,7 +192,7 @@ sync to Insiders if it also has "Feature: Auth" active.
   task spaces active on the same project folder
 - **Cross-IDE Sync**: Tab changes sync when same space is active in multiple IDEs
 - **Smart Startup**: Skips restore if current tabs already match saved state
-- **AI Coding Agent Integration**: Link task spaces to `task/*.md` files for tracking
+- **Coding Agent Integration**: Link task spaces to `task/*.md` files for tracking
   implementation plans
 - **Automatic Archival**: Completed task files move to `task/done/` automatically
 - **Status Bar**: See your active task space at a glance
@@ -205,7 +240,7 @@ _Main dialog showing all your task spaces_
 _Create a new workflow context_
 
 ![Link Task File](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/link-task-file.png)
-_Link to AI coding agent task files_
+_Link to Coding Agent task files_
 
 ![Delete Confirmation](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/delete-confirmation.png)
 _Automatic archival to task/done/_
@@ -227,19 +262,19 @@ Create separate task spaces for different aspects of your work **on the same bra
 
 Your previous tabs are auto-saved when you switch.
 
-### AI Coding Agent Workflow
+### Coding Agent Workflow
 
-Task spaces integrate with AI coding agents for implementation tracking:
+Task spaces integrate with Coding Agents for implementation tracking:
 
 **Planning Phase:**
 
 - Create `task/auth_feature.md` with detailed implementation plan
 - Create task space "Feature: Auth" linked to this file
-- Give plan to your AI coding agent to work on
+- Give plan to your Coding Agent to work on
 
 **Implementation Phase:**
 
-- Work with your AI coding agent
+- Work with your Coding Agent
 - Update task file with progress notes
 - All relevant files stay organized in your task space
 
@@ -249,12 +284,12 @@ Task spaces integrate with AI coding agents for implementation tracking:
 - Linked file **automatically moves** to `task/done/` (archival)
 - Numeric suffix added if file already exists (e.g., `auth_2.md`)
 
-### AI Coding Agent Integration
+### Coding Agent Integration
 
-#### Install AI Agent Integration
+#### Install Coding Agent Integration
 
 ![Install Command](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-command.png)
-_Command palette → "R3BL Task Management: Install AI Agent Integration"_
+_Command palette → "R3BL Task Management: Install Coding Agent Integration"_
 
 ![Installation Prompt](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-prompt.png)
 _Creates .agent/commands, .gemini/commands, or .claude/commands if needed_
@@ -262,7 +297,7 @@ _Creates .agent/commands, .gemini/commands, or .claude/commands if needed_
 ![Installation Success](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/install-claude-integration-success.png)
 _Installs `/r3bl-task` slash command_
 
-This installs the `/r3bl-task` command for your AI coding agent (Claude Code, Gemini CLI,
+This installs the `/r3bl-task` command for your Coding Agent (Claude Code, Gemini CLI,
 etc.):
 
 - `/r3bl-task create [name]` - Create task file from your todo list
@@ -312,11 +347,11 @@ _Ready to use!_
 _Creating task space with linked file..._
 
 ![Integration Prompt](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-task-management/images/smart-prompt-notification.png)
-_...prompts to install AI Agent integration (with "Don't Ask Again" option)_
+_...prompts to install Coding Agent integration (with "Don't Ask Again" option)_
 
-### Power User: Multiple AI Coding Agent Instances
+### Power User: Multiple Coding Agent Instances
 
-Run **multiple AI coding agent instances in parallel** (e.g., Claude Code, Gemini CLI in
+Run **multiple Coding Agent instances in parallel** (e.g., Claude Code, Gemini CLI in
 terminal tabs or tmux panes), each working on different tasks, coordinated through one VS
 Code instance:
 
@@ -397,7 +432,7 @@ not the recommended workflow for most users.
 - `R3BL Task Management: Pause and Jump to Next Task` - Context switch to Next
   (Alt+Shift+J)
 - `R3BL Task Management: Move Current Task to Backlog` - Relegate to task/pending/
-- `R3BL Task Management: Install AI Agent Integration` - Install /r3bl-task command
+- `R3BL Task Management: Install Coding Agent Integration` - Install /r3bl-task command
 - `R3BL Task Management: Create Task Space from Task File` - Create from existing task
   file
 
