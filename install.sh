@@ -2,6 +2,22 @@
 
 set -e
 
+# Show help
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "Usage: ./install.sh"
+    echo ""
+    echo "Install all built R3BL extensions to local VSCode editors."
+    echo ""
+    echo "Installs to all detected editors:"
+    echo "  • code (VSCode)"
+    echo "  • code-insiders (VSCode Insiders)"
+    echo "  • codium (VSCodium)"
+    echo "  • codium-insiders (VSCodium Insiders)"
+    echo ""
+    echo "Run ./build.sh first to generate .vsix artifacts."
+    exit 0
+fi
+
 echo "🚀 Installing R3BL Extension Pack..."
 echo "======================================"
 
@@ -18,16 +34,16 @@ get_all_versions
 install_extension() {
     local vsix_path="$1"
     if command -v code &> /dev/null; then
-        code --install-extension "$vsix_path"
+        code --install-extension "$vsix_path" --force
     fi
     if command -v code-insiders &> /dev/null; then
-        code-insiders --install-extension "$vsix_path"
+        code-insiders --install-extension "$vsix_path" --force
     fi
     if command -v codium &> /dev/null; then
-        codium --install-extension "$vsix_path"
+        codium --install-extension "$vsix_path" --force
     fi
     if command -v codium-insiders &> /dev/null; then
-        codium-insiders --install-extension "$vsix_path"
+        codium-insiders --install-extension "$vsix_path" --force
     fi
 }
 
@@ -63,7 +79,7 @@ echo -e "${BLUE}Installing R3BL Extension Pack...${NC}"
 # Install for regular VSCode
 if command -v code &> /dev/null; then
     echo -e "${BLUE}Installing R3BL Extension Pack for VSCode...${NC}"
-    if code --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix; then
+    if code --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
         echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCode!${NC}"
     else
         echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCode${NC}"
@@ -75,7 +91,7 @@ fi
 # Install for VSCode Insiders
 if command -v code-insiders &> /dev/null; then
     echo -e "${BLUE}Installing R3BL Extension Pack for VSCode Insiders...${NC}"
-    if code-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix; then
+    if code-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
         echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCode Insiders!${NC}"
     else
         echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCode Insiders${NC}"
@@ -87,7 +103,7 @@ fi
 # Install for VSCodium
 if command -v codium &> /dev/null; then
     echo -e "${BLUE}Installing R3BL Extension Pack for VSCodium...${NC}"
-    if codium --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix; then
+    if codium --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
         echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCodium!${NC}"
     else
         echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCodium${NC}"
@@ -99,7 +115,7 @@ fi
 # Install for VSCodium Insiders
 if command -v codium-insiders &> /dev/null; then
     echo -e "${BLUE}Installing R3BL Extension Pack for VSCodium Insiders...${NC}"
-    if codium-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix; then
+    if codium-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
         echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCodium Insiders!${NC}"
     else
         echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCodium Insiders${NC}"

@@ -12,6 +12,18 @@ task matches a skill, agent, or command:
 2. Read the markdown instructions inside that folder.
 3. Execute the underlying shell/scripts exactly as instructed.
 
+## File Operations
+
+Always use `git mv` instead of `mv` when moving or renaming files. This preserves git
+history and ensures the move is tracked as a rename rather than a delete + create.
+
+## Building Extensions
+
+Always use `./build.sh` to build extensions, not direct `npx webpack` or `npm run compile`
+commands. `build.sh` compiles, runs tests, and packages the `.vsix` files. Running webpack
+directly only updates `dist/` but does not repackage the `.vsix`, so `./install.sh` will
+install a stale bundle.
+
 ## Context Guardrail
 
 You do not have the full codebase in memory. Actively use search and file-reading tools to

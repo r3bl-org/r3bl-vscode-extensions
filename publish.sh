@@ -57,12 +57,18 @@ is_version_newer() {
     fi
 }
 
-# Show usage if no arguments
-if [ $# -eq 0 ]; then
+# Show usage if no arguments or --help
+if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "📦 Publish R3BL Extensions to Marketplaces"
     echo "==========================================="
     echo ""
     echo "Usage: ./publish.sh <extension-name> [extension-name...]"
+    echo ""
+    echo "Publishes specified extensions to both VS Marketplace and Open VSX."
+    echo ""
+    echo "Requires environment variables:"
+    echo "  VSCE_PAT  - VS Marketplace token (Azure DevOps)"
+    echo "  OVSX_PAT  - Open VSX token"
     echo ""
     echo "Available extensions:"
     for ext in "${!EXT_VERSIONS[@]}"; do

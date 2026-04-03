@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
-    - [[2026-04-02] - Fixed Debounced Flycheck Command and Extension Stabilization](#2026-04-02---fixed-debounced-flycheck-command-and-extension-stabilization)
+    - [[2026-04-02] - Dashboard Workflow and Extension Stabilization](#2026-04-02---dashboard-workflow-and-extension-stabilization)
         - [Package Versions](#package-versions)
         - [Changes](#changes)
     - [[2026-03-30] - Git Diff Search Editor Refresh Support](#2026-03-30---git-diff-search-editor-refresh-support)
@@ -149,22 +149,34 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
-## [2026-04-02] - Fixed Debounced Flycheck Command and Extension Stabilization
+## [2026-04-02] - Dashboard Workflow and Extension Stabilization
 
 ### Package Versions
 
+- **R3BL Task Management**: 1.3.0 → 1.4.0
 - **R3BL Semantic Configuration**: 1.2.5 → 1.2.7
-- **R3BL Extension Pack**: 1.3.0 → 1.3.2
+- **R3BL Extension Pack**: 1.3.0 → 1.3.3
 
 ### Changes
 
-- **R3BL Semantic Configuration 1.2.6 - 1.2.7**: Fixed Flycheck command registration and
-  stabilization
-    - Added missing initialization call for debounced flycheck in the extension's
-      activation function.
-    - Improved extension deactivation by properly disposing of the status bar item.
-    - Fixed the error where 'R3BL: Run Flycheck (Debounced)' command was not found after
-      extension activation.
+- **R3BL Task Management 1.4.0**: Dashboard Workflow
+    - New fluid, non-linear task management methodology for individual developers and
+      AI-agent collaboration
+    - 1:1 mapping: every task space is backed by a `.md` file in the `task/` directory
+    - Next Queue (FIFO) and Previous Stack (LIFO) for fluid task routing
+    - Auto-pickup: new `.md` files in `task/` are automatically discovered and queued
+    - Auto-discovery on startup: existing unlinked `.md` files are picked up on activation
+    - Finish task (`Alt+Shift+F`): archives task file to `task/done/` and jumps to next
+    - Move to backlog: moves task file to `task/pending/` and removes from dashboard
+    - Pause and jump to next (`Alt+Shift+J`): context-switches to next queued task
+    - Migration persists to disk immediately (version 4.0)
+    - Empty task spaces auto-seed with their task file tab on first jump
+    - Active task correctly removed from all queues when jumped to
+
+- **R3BL Semantic Configuration 1.2.7**: Fixed Flycheck command registration
+    - Added missing initialization call for debounced flycheck in activation
+    - Improved extension deactivation by properly disposing of the status bar item
+    - Fixed 'R3BL: Run Flycheck (Debounced)' command not found after activation
 
 ## [2026-03-30] - Multi-Agent Support for Task Management
 
@@ -1058,7 +1070,36 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Integrated color palette from custom Sublime Merge theme for consistent aesthetic
     - Enhances overall sidebar visibility and provides a more cohesive color experience
 
-## [2025-11-13] - Copy Selection Enhancement and Theme Refinement
+## [2026-04-02] - Dashboard Workflow Major Release
+
+### Package Versions
+
+- **R3BL Task Management**: 1.3.0 → 1.4.0
+- **R3BL Extension Pack**: 1.3.2 → 1.3.3
+
+### Changes
+
+- **R3BL Task Management 1.4.0**: Introduction of the **Dashboard Workflow**
+    - **Methodology by Nazmul Idris**: A fluid, non-linear task management methodology
+      designed for individual developers and AI coding agents.
+    - **Active Task Pointer**: Each IDE instance now has an independent "Active Task"
+      (HEAD) pointer while sharing the global task definitions.
+    - **Next Queue & Previous Stack**: Tasks move dynamically between a FIFO "Next Queue"
+      and a LIFO "Previous Stack" (Paused tasks).
+    - **1:1 Mapping**: Enforced a strict 1:1 mapping where every Task Space is tied to a
+      real `.md` file in the `task/` directory.
+    - **Auto-Pickup**: New `.md` files dropped into the `task/` folder are automatically
+      detected and added to the Next Queue.
+    - **Backlog Support**: Moved tasks to `task/pending/` are relegated to the backlog and
+      ignored by the dashboard.
+    - **New UI sections**: The `Alt+Shift+T` dialog now clearly separates tasks into
+      Active, Next, Paused, and Other sections.
+    - **New Commands**:
+        - `Alt+Shift+F`: Finish Current Task (Archives `.md` and picks next from queues).
+        - `Alt+Shift+J`: Pause current and jump to the first task in the Next Queue.
+        - `Move Current Task to Backlog`: Quickly relegate work to `task/pending/`.
+    - **Migration Support**: Automatically migrates v3.0 storage to v4.0 and generates
+      missing `.md` files for legacy task spaces.
 
 ### Package Versions
 

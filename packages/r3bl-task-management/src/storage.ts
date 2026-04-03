@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { TabInfo, TaskSpaceStorage } from './types';
 
 const STORAGE_FILE = '.vscode/task-spaces.json';
-const CURRENT_VERSION = '3.0';
+const CURRENT_VERSION = '4.0';
 
 /**
  * Manages task space storage using a split architecture:
@@ -28,7 +28,17 @@ const CURRENT_VERSION = '3.0';
  * - Keeps task space definitions clean and shareable
  */
 export class Storage {
+    private _migrationOccurred: boolean = false;
+
     constructor(private context: vscode.ExtensionContext) {}
+
+    /**
+     * Returns true if the last loadTaskSpaces() call triggered a version migration.
+     * Used by TaskSpaceManager.initialize() to persist migration results to disk.
+     */
+    didMigrate(): boolean {
+        return this._migrationOccurred;
+    }
 
     /**
      * Load task spaces from .vscode/task-spaces.json
@@ -44,15 +54,17 @@ export class Storage {
             try {
                 const content = await vscode.workspace.fs.readFile(storageUri);
                 const data = JSON.parse(content.toString()) as TaskSpaceStorage;
-                return this.migrateIfNeeded(data);
+                return await this.migrateIfNeeded(data);
             } catch (error) {
                 // File doesn't exist or is invalid, return empty storage
-                return this.createEmptyStorage();
+                return await this.migrateIfNeeded(this.createEmptyStorage());
             }
         } else {
             // No workspace, use globalState
             const data = this.context.globalState.get<TaskSpaceStorage>('taskSpaces');
-            return data ? this.migrateIfNeeded(data) : this.createEmptyStorage();
+            return data
+                ? await this.migrateIfNeeded(data)
+                : await this.migrateIfNeeded(this.createEmptyStorage());
         }
     }
 
@@ -176,7 +188,10 @@ export class Storage {
     /**
      * Migrate storage to current version if needed
      */
-    private migrateIfNeeded(data: TaskSpaceStorage): TaskSpaceStorage {
+    private async migrateIfNeeded(data: TaskSpaceStorage): Promise<TaskSpaceStorage> {
+        this._migrationOccurred = false;
+        const originalVersion = data.version;
+
         // Handle missing version (very old files)
         if (!data.version) {
             data.version = '1.0';
@@ -218,6 +233,77 @@ export class Storage {
             data.version = '3.0';
         }
 
+        // Migrate from 3.0 to 4.0: Initialize Dashboard Workflow queues and enforce 1:1 mapping
+        if (data.version === '3.0') {
+            if (!data.nextQueueIds) {
+                data.nextQueueIds = [];
+            }
+            if (!data.previousStackIds) {
+                data.previousStackIds = [];
+            }
+
+            // Ensure 1:1 mapping: generate .md files for tasks that don't have one
+            await this.ensureTaskFilesExist(data.taskSpaces);
+
+            data.version = '4.0';
+        }
+
+        if (data.version !== originalVersion) {
+            this._migrationOccurred = true;
+        }
+
         return data;
+    }
+
+    /**
+     * Internal helper to ensure every TaskSpace has an associated .md file (Dashboard Workflow)
+     */
+    private async ensureTaskFilesExist(taskSpaces: any[]): Promise<void> {
+        const workspaceFolder = this.getWorkspaceFolder();
+        if (!workspaceFolder) return;
+
+        const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, 'task');
+
+        // Ensure task/ directory exists
+        try {
+            await vscode.workspace.fs.createDirectory(taskDir);
+        } catch {
+            // Directory might already exist
+        }
+
+        for (const ts of taskSpaces) {
+            if (!ts.taskFile) {
+                // Create a basic filename from the task space name
+                const safeName = ts.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                let fileName = `task_${safeName}.md`;
+                let taskFile = `task/${fileName}`;
+                let fileUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile);
+
+                // Handle filename collisions
+                let counter = 1;
+                while (true) {
+                    try {
+                        await vscode.workspace.fs.stat(fileUri);
+                        counter++;
+                        fileName = `task_${safeName}_${counter}.md`;
+                        taskFile = `task/${fileName}`;
+                        fileUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile);
+                    } catch {
+                        // File doesn't exist, we can use this name
+                        break;
+                    }
+                }
+
+                // Write initial content
+                const content = `# ${ts.name}\n\n- [ ] Task migrated to Dashboard Workflow\n`;
+                await vscode.workspace.fs.writeFile(
+                    fileUri,
+                    Buffer.from(content, 'utf8'),
+                );
+
+                // Link the file
+                ts.taskFile = taskFile;
+            }
+        }
     }
 }

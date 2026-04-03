@@ -1,10 +1,50 @@
 # R3BL Task Management
 
 Manage task spaces - collections of open tabs for different work contexts **within a
-single git branch**. Inspired by IntelliJ IDEA's Task Management plugin, this extension
-helps you organize multiple concurrent workflows (feature development, bug fixing, code
-review, research) while working on the same branch. Integrates with AI coding agents (like
-Claude Code, Gemini CLI) to track implementation plans in `task/*.md` files.
+single git branch**.
+
+## The Dashboard Workflow
+
+**Methodology by Nazmul Idris (idris@developerlife.com)**
+
+This extension implements the **Dashboard Workflow**, a fluid, non-linear task management
+methodology designed for individual developers and AI-agent collaboration. It represents a
+fundamental departure from traditional, rigid frameworks like Scrum, Agile, or
+ticket-based systems.
+
+### Core Principles:
+
+1. **1:1 Mapping:** Every task is represented by a single Markdown file (`.md`) in the
+   `task/` directory. The `.md` file _is_ the task.
+2. **Context Preservation:** A task space remembers the exact files, tabs, and layout open
+   for that task.
+3. **Fluid Routing:** Tasks move dynamically between queues:
+    - **Active Task (HEAD):** The single task currently being worked on in a specific IDE
+      instance.
+    - **Next Queue:** A FIFO queue of planned future tasks.
+    - **Previous Stack (Paused):** A LIFO stack of tasks that were paused to work on
+      something else.
+    - **Backlog (Icebox):** Tasks moved to `task/pending/` are out of the immediate
+      workflow pipeline.
+    - **Done:** Finished tasks are archived to `task/done/`.
+4. **Auto-Pickup:** Creating a new `.md` file in the `task/` directory automatically adds
+   it to the Next Queue.
+
+### How it differs from Scrum, Agile, and Ticket Systems:
+
+- **Non-Linear vs. Linear:** Traditional systems often force a linear "Sprints" or "Ready
+  -> Doing -> Done" progression. The Dashboard Workflow recognizes that development is
+  rarely linear. It allows you to "pivot on a dime"—shifting context as discovery happens
+  without the friction of updating a project management board.
+- **Opportunistic vs. Planned:** Encourages "fixing things when you see them." If you spot
+  a bug or a refactoring opportunity while working on Task A, you can instantly create
+  Task B (via a simple `.md` file), queue it, and choose to jump into it immediately or
+  save it for the "Next" slot.
+- **Fluid Scoping:** Use context-preserving Task Spaces to spin off sub-tasks into their
+  own spaces with their own tab layouts, keeping the mental overhead low.
+- **AI-Agent Synergy:** AI agents can autonomously drop a task file into the `task/`
+  folder, and it instantly appears in your "Next Queue" dashboard, ready for human review
+  or joint implementation.
 
 ## Table of Contents
 
@@ -104,7 +144,10 @@ sync to Insiders if it also has "Feature: Auth" active.
 
 ## What It Does
 
-- **Task Spaces**: Collections of open tabs you can switch between instantly
+- **Task Dashboard**: A central dialog (Alt+Shift+T) to manage Active, Next, and Paused
+  tasks.
+- **1:1 Mapping**: Every task space is tied to a real `.md` file in your `task/` folder.
+- **Auto-Pickup**: New `.md` files in `task/` are automatically added to your Next Queue.
 - **Quick Switching**: Keyboard shortcut (Alt+Shift+T) to switch contexts
 - **Tab State Preservation**: Remembers tab order and pinned state across switches and
   restarts
@@ -131,20 +174,25 @@ sync to Insiders if it also has "Feature: Auth" active.
 
 ### Quick Start
 
-**Press Alt+Shift+T** to open the Task Spaces dialog.
+**Press Alt+Shift+T** to open the Task Dashboard.
 
-1. **Create your first task space:**
+1. **Create your first task:**
     - Click "Create New Task Space"
     - Name it (e.g., "Feature: User Auth")
-    - Optionally link a task/\*.md file
+    - A new `.md` file is created in `task/` and becomes your **Active** task.
     - All your currently open tabs are saved to this space
 
-2. **Switch between spaces:**
-    - Press Alt+Shift+T
-    - Select a different task space
-    - Your tabs switch automatically
+2. **Pause and Jump:**
+    - If you are working on Task A and select Task B from the Dashboard, Task A is
+      automatically moved to the **Previous Stack (Paused)**.
+    - Your tabs switch automatically.
 
-3. **Manage spaces:**
+3. **Finish Task:**
+    - Press **Alt+Shift+F** or select "Finish Current Task" in the Dashboard.
+    - Your `.md` file moves to `task/done/`, and you are prompted to pick the next task
+      from your queues.
+
+4. **Manage spaces:**
     - Click ✏️ to rename
     - Click 🗑️ to delete (archives linked files to task/done/)
 
@@ -343,16 +391,23 @@ not the recommended workflow for most users.
 
 ### Commands
 
-- `R3BL Task Management: Manage Task Spaces` - Open dialog (Alt+Shift+T)
+- `R3BL Task Management: Manage Task Spaces` - Open Dashboard (Alt+Shift+T)
+- `R3BL Task Management: Finish Current Task` - Archive current and pick next
+  (Alt+Shift+F)
+- `R3BL Task Management: Pause and Jump to Next Task` - Context switch to Next
+  (Alt+Shift+J)
+- `R3BL Task Management: Move Current Task to Backlog` - Relegate to task/pending/
 - `R3BL Task Management: Install AI Agent Integration` - Install /r3bl-task command
 - `R3BL Task Management: Create Task Space from Task File` - Create from existing task
   file
 
 ### Keyboard Shortcuts
 
-| Shortcut      | Command ID                            | When            |
-| ------------- | ------------------------------------- | --------------- |
-| `Alt+Shift+T` | `r3bl-task-management.showTaskSpaces` | Not in terminal |
+| Shortcut      | Command ID                                | When            |
+| ------------- | ----------------------------------------- | --------------- |
+| `Alt+Shift+T` | `r3bl-task-management.showTaskSpaces`     | Not in terminal |
+| `Alt+Shift+F` | `r3bl-task-management.finishCurrentTask`  | Not in terminal |
+| `Alt+Shift+J` | `r3bl-task-management.pauseAndJumpToNext` | Not in terminal |
 
 You can customize this shortcut in VS Code's Keyboard Shortcuts settings by searching for
 the command ID above.
@@ -387,12 +442,12 @@ avoid git noise:
 #### `.vscode/task-spaces.json` (Shared File)
 
 This file is synced across all VSCode instances opening the same project. Changes made in
-one window (creating/deleting/renaming task spaces, modifying tabs) are reflected in
-others.
+one window (creating/deleting/renaming task spaces, modifying tabs, queue management) are
+reflected in others.
 
 ```json
 {
-    "version": "3.0",
+    "version": "4.0",
     "taskSpaces": [
         {
             "name": "Feature: Authentication",
@@ -405,7 +460,9 @@ others.
             "activeTab": "src/auth.ts",
             "createdAt": 1234567890
         }
-    ]
+    ],
+    "nextQueueIds": ["uuid-1", "uuid-2"],
+    "previousStackIds": ["uuid-3"]
 }
 ```
 
@@ -443,12 +500,13 @@ preventing any memory leaks or storage bloat.
 | ----------------- | ------- | --------------------------------------------------- |
 | Task space list   | ✅ Yes  | Creating/deleting/renaming syncs across all windows |
 | Tab content       | ✅ Yes  | Adding/removing files from a space syncs            |
-| Active task space | ❌ No   | Each window can have different task space active    |
+| Shared Queues     | ✅ Yes  | Next Queue and Previous Stack sync across IDEs      |
+| Active task space | ❌ No   | Each window has its own **Active Task** pointer     |
 | Last accessed     | ❌ No   | Each window tracks its own usage history            |
 
 **Example use case:** Open the same project in VS Code and VS Code Insiders, with
 different task spaces active in each window. Both windows stay in sync for task space
-definitions, but each maintains its own context.
+definitions and queues, but each maintains its own focus.
 
 **Storage Benefits:**
 
@@ -458,7 +516,8 @@ definitions, but each maintains its own context.
 - ✅ "Last accessed" sorting still works perfectly per-instance
 - ✅ Automatic cleanup when task spaces are deleted (no memory leaks)
 
-**Note:** The extension automatically migrates from v1.0 → v2.0 → v3.0 format as needed.
+**Note:** The extension automatically migrates from v1.0 → v2.0 → v3.0 → v4.0 format as
+needed.
 
 ### When Does the File Get Saved?
 
@@ -466,11 +525,10 @@ The JSON file is automatically saved to disk in these situations:
 
 1. **Create task space** - Saves the new task space with current tabs
 2. **Delete task space** - Saves after removing the space (and archives task file)
-3. **Switch to task space** - Saves to persist the switch (active ID stored in
+3. **Switch to task space** - Saves to persist the switch (Active pointer stored in
    workspaceState)
-4. **Rename task space** - Saves with the new name
-5. **Auto-save tabs** - Saves current open tabs (500ms after tab changes, if
-   `autoSaveCurrentTaskSpace` is enabled)
+4. **Queue Management** - Saves when adding/removing tasks from Next or Paused queues
+5. **Auto-save tabs** - Saves current open tabs (500ms after tab changes)
 
 **Note:** The `lastAccessed` timestamp is updated separately in VSCode workspace state and
 does NOT trigger file saves, keeping git history clean.

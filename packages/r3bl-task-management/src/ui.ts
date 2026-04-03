@@ -9,11 +9,11 @@ import { promptToInstallAIAgentIntegration } from './aiAgentIntegration';
 
 interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
     taskSpace?: TaskSpace;
-    action?: 'create' | 'switch';
+    action?: 'create' | 'switch' | 'finish';
 }
 
 /**
- * Show main task spaces dialog
+ * Show main task spaces dialog (Dashboard Workflow)
  */
 export async function showTaskSpacesDialog(
     manager: TaskSpaceManager,
@@ -21,60 +21,88 @@ export async function showTaskSpacesDialog(
     context?: vscode.ExtensionContext,
 ): Promise<void> {
     const quickPick = vscode.window.createQuickPick<TaskSpaceQuickPickItem>();
-    quickPick.placeholder = 'Select a task space or create a new one';
+    quickPick.placeholder = 'Dashboard: Select a task or create a new one';
     quickPick.matchOnDescription = true;
     quickPick.matchOnDetail = true;
 
     // Populate items
     const items: TaskSpaceQuickPickItem[] = [];
 
-    // Add "Create New" option at the top
+    const activeTaskSpace = manager.getActiveTaskSpace();
+
+    // 1. [Action] Finish Current Task
+    if (activeTaskSpace) {
+        items.push({
+            label: `$(check) Finish Current Task: ${activeTaskSpace.name}`,
+            description: 'Archive current task and jump to next',
+            action: 'finish',
+        });
+        items.push({
+            label: '',
+            kind: vscode.QuickPickItemKind.Separator,
+        });
+    }
+
+    // 2. [Action] Create New
     items.push({
         label: '$(add) Create New Task Space',
-        description: '',
+        description: 'Every task space gets an .md file',
         action: 'create',
     });
 
-    // Add separator
-    items.push({
-        label: '',
-        kind: vscode.QuickPickItemKind.Separator,
-    });
-
-    // Add existing task spaces
-    const taskSpaces = manager.getTaskSpaces();
-    const activeId = manager.getActiveTaskSpaceId();
-
-    // Fetch lastAccessed timestamps from workspace state (stored separately to avoid git noise)
-    const lastAccessedMap = await manager.getAllLastAccessed();
-
-    // Sort by last accessed (most recent first)
-    const sortedSpaces = [...taskSpaces].sort((a, b) => {
-        const aTime = lastAccessedMap[a.id] || 0;
-        const bTime = lastAccessedMap[b.id] || 0;
-        return bTime - aTime;
-    });
-
-    for (const ts of sortedSpaces) {
-        const isActive = ts.id === activeId;
-        const lastAccessed = lastAccessedMap[ts.id] || ts.createdAt;
+    // 3. [Section] Next Queue
+    const nextQueue = manager.getNextQueue();
+    if (nextQueue.length > 0) {
         items.push({
-            label: `${isActive ? '$(arrow-right) ' : '$(book) '}${ts.name}`,
-            description: `${ts.tabs.length} tabs${ts.taskFile ? ' 📄' : ''}`,
-            detail: `Last accessed: ${formatRelativeTime(lastAccessed)}`,
-            taskSpace: ts,
-            action: 'switch',
-            buttons: [
-                {
-                    iconPath: new vscode.ThemeIcon('edit'),
-                    tooltip: 'Rename',
-                },
-                {
-                    iconPath: new vscode.ThemeIcon('trash'),
-                    tooltip: 'Delete',
-                },
-            ],
+            label: 'Next Queue',
+            kind: vscode.QuickPickItemKind.Separator,
         });
+        for (const ts of nextQueue) {
+            items.push(createTaskItem(ts, manager, false, 'next'));
+        }
+    }
+
+    // 4. [Section] Previous Stack (Paused)
+    const previousStack = manager.getPreviousStack();
+    if (previousStack.length > 0) {
+        items.push({
+            label: 'Previous Stack (Paused)',
+            kind: vscode.QuickPickItemKind.Separator,
+        });
+        // Reverse because it's a stack (top is most recent)
+        for (const ts of [...previousStack].reverse()) {
+            items.push(createTaskItem(ts, manager, false, 'previous'));
+        }
+    }
+
+    // 5. [Section] Other Tasks
+    const allTaskSpaces = manager.getTaskSpaces();
+    const queuedIds = new Set([
+        ...nextQueue.map((ts) => ts.id),
+        ...previousStack.map((ts) => ts.id),
+    ]);
+    if (activeTaskSpace) queuedIds.add(activeTaskSpace.id);
+
+    const otherTasks = allTaskSpaces.filter((ts) => !queuedIds.has(ts.id));
+
+    if (otherTasks.length > 0) {
+        items.push({
+            label: 'Other Task Spaces',
+            kind: vscode.QuickPickItemKind.Separator,
+        });
+
+        // Fetch lastAccessed timestamps for sorting
+        const lastAccessedMap = await manager.getAllLastAccessed();
+        const sortedOther = [...otherTasks].sort((a, b) => {
+            const aTime = lastAccessedMap[a.id] || 0;
+            const bTime = lastAccessedMap[b.id] || 0;
+            return bTime - aTime;
+        });
+
+        for (const ts of sortedOther) {
+            const lastAccessed = lastAccessedMap[ts.id] || ts.createdAt;
+            items.push(createTaskItem(ts, manager, false, 'other', lastAccessed));
+        }
     }
 
     quickPick.items = items;
@@ -82,43 +110,152 @@ export async function showTaskSpacesDialog(
     // Handle selection (Enter key)
     quickPick.onDidAccept(async () => {
         const selected = quickPick.selectedItems[0];
-        if (!selected) {
-            return;
-        }
+        if (!selected) return;
 
         quickPick.hide();
 
         if (selected.action === 'create') {
             await handleCreateTaskSpace(manager, statusBar, context);
-        } else if (selected.action === 'switch' && selected.taskSpace) {
-            await handleSwitchTaskSpace(manager, selected.taskSpace, statusBar);
+        } else if (selected.action === 'finish') {
+            await vscode.commands.executeCommand(
+                'r3bl-task-management.finishCurrentTask',
+            );
+        } else if (selected.taskSpace) {
+            await handleJumpToTask(manager, selected.taskSpace, statusBar);
         }
     });
 
     // Handle button clicks
     quickPick.onDidTriggerItemButton(async (e) => {
         const item = e.item as TaskSpaceQuickPickItem;
-        if (!item.taskSpace) {
-            return;
-        }
+        if (!item.taskSpace) return;
 
         const button = e.button;
+        const ts = item.taskSpace;
 
         if (button.tooltip === 'Rename') {
             quickPick.hide();
-            await handleRenameTaskSpace(manager, item.taskSpace, statusBar);
-            // Re-show dialog after rename
-            await showTaskSpacesDialog(manager, statusBar);
+            await handleRenameTaskSpace(manager, ts, statusBar);
+            await showTaskSpacesDialog(manager, statusBar, context);
         } else if (button.tooltip === 'Delete') {
             quickPick.hide();
-            await handleDeleteTaskSpace(manager, item.taskSpace, statusBar);
-            // Re-show dialog after delete
-            await showTaskSpacesDialog(manager, statusBar);
+            await handleDeleteTaskSpace(manager, ts, statusBar);
+            await showTaskSpacesDialog(manager, statusBar, context);
+        } else if (button.tooltip === 'Add to Next Queue') {
+            await manager.addToNextQueue(ts.id);
+            await showTaskSpacesDialog(manager, statusBar, context);
+        } else if (button.tooltip === 'Remove from Queue') {
+            await manager.removeFromNextQueue(ts.id);
+            await manager.removeFromPreviousStack(ts.id);
+            await showTaskSpacesDialog(manager, statusBar, context);
+        } else if (button.tooltip === 'Move to Backlog') {
+            quickPick.hide();
+            // Call internal method directly if it's the active task, or move the file manually?
+            // For simplicity, let's just trigger the command if it's the active one
+            if (ts.id === activeTaskSpace?.id) {
+                await vscode.commands.executeCommand(
+                    'r3bl-task-management.moveTaskToBacklog',
+                );
+            } else {
+                await manager.moveToBacklog(ts.id);
+                showStatusBarMessage(`Moved "${ts.name}" to backlog`, 'success');
+                await showTaskSpacesDialog(manager, statusBar, context);
+            }
         }
     });
 
     quickPick.onDidHide(() => quickPick.dispose());
     quickPick.show();
+}
+
+/**
+ * Helper to create QuickPick items for task spaces
+ */
+function createTaskItem(
+    ts: TaskSpace,
+    manager: TaskSpaceManager,
+    isActive: boolean,
+    location: 'next' | 'previous' | 'other',
+    lastAccessed?: number,
+): TaskSpaceQuickPickItem {
+    const buttons: vscode.QuickInputButton[] = [];
+
+    // Queue button
+    if (location === 'other') {
+        buttons.push({
+            iconPath: new vscode.ThemeIcon('add'),
+            tooltip: 'Add to Next Queue',
+        });
+    } else {
+        buttons.push({
+            iconPath: new vscode.ThemeIcon('close'),
+            tooltip: 'Remove from Queue',
+        });
+    }
+
+    // Standard buttons
+    buttons.push(
+        {
+            iconPath: new vscode.ThemeIcon('archive'),
+            tooltip: 'Move to Backlog',
+        },
+        {
+            iconPath: new vscode.ThemeIcon('edit'),
+            tooltip: 'Rename',
+        },
+        {
+            iconPath: new vscode.ThemeIcon('trash'),
+            tooltip: 'Delete',
+        },
+    );
+
+    let detail = '';
+    if (location === 'other') {
+        detail = `Last accessed: ${formatRelativeTime(lastAccessed || ts.createdAt)}`;
+    } else if (location === 'next') {
+        detail = 'Waiting in Next Queue';
+    } else {
+        detail = 'Paused in Previous Stack';
+    }
+
+    return {
+        label: `${isActive ? '$(arrow-right) ' : '$(book) '}${ts.name}`,
+        description: `${ts.tabs.length} tabs | ${ts.taskFile ? path.basename(ts.taskFile) : 'No file linked'}`,
+        detail,
+        taskSpace: ts,
+        buttons,
+    };
+}
+
+/**
+ * Handle jumping to a task (Dashboard Workflow logic)
+ */
+async function handleJumpToTask(
+    manager: TaskSpaceManager,
+    taskSpace: TaskSpace,
+    statusBar: vscode.StatusBarItem,
+): Promise<void> {
+    if (manager.getActiveTaskSpaceId() === taskSpace.id) {
+        showStatusBarMessage(`Already in "${taskSpace.name}"`, 'info');
+        return;
+    }
+
+    await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: `Jumping to "${taskSpace.name}"...`,
+            cancellable: false,
+        },
+        async (progress) => {
+            try {
+                await manager.jumpToTask(taskSpace.id);
+                updateStatusBar(statusBar, manager);
+                showStatusBarMessage(`Jumped to context: ${taskSpace.name}`, 'success');
+            } catch (error) {
+                showStatusBarMessage(`Failed to jump: ${error}`, 'error');
+            }
+        },
+    );
 }
 
 /**

@@ -2,6 +2,24 @@
 
 set -e
 
+# Show help
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "Usage: ./build.sh"
+    echo ""
+    echo "Build all R3BL VSCode extensions and generate .vsix artifacts."
+    echo ""
+    echo "This script:"
+    echo "  • Formats code with Prettier"
+    echo "  • Installs dependencies"
+    echo "  • Compiles TypeScript extensions"
+    echo "  • Runs unit tests (failures block packaging)"
+    echo "  • Packages all extensions into .vsix files"
+    echo "  • Removes outdated .vsix versions"
+    echo ""
+    echo "After building, run ./install.sh to install locally."
+    exit 0
+fi
+
 echo "🔨 Building R3BL VSCode Extensions..."
 echo "======================================"
 

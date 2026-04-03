@@ -192,6 +192,88 @@ export async function activate(context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(saveCommand);
 
+    // Register Finish Current Task command
+    const finishCommand = vscode.commands.registerCommand(
+        'r3bl-task-management.finishCurrentTask',
+        async () => {
+            const activeTaskSpace = manager.getActiveTaskSpace();
+            if (!activeTaskSpace) {
+                showStatusBarMessage('No active task to finish', 'warning');
+                return;
+            }
+
+            const message = `Finish and Archive task "${activeTaskSpace.name}"?\n\nThe associated file "${path.basename(activeTaskSpace.taskFile!)}" will be moved to task/done/.`;
+            const result = await vscode.window.showWarningMessage(
+                message,
+                { modal: true },
+                'Finish and Move',
+            );
+
+            if (result === 'Finish and Move') {
+                try {
+                    await manager.finishCurrentTask();
+                    updateStatusBar(statusBarItem, manager);
+                    showStatusBarMessage('Task finished and archived', 'success');
+                } catch (error) {
+                    showStatusBarMessage(`Failed to finish task: ${error}`, 'error');
+                }
+            }
+        },
+    );
+    context.subscriptions.push(finishCommand);
+
+    // Register Pause and Jump to Next command
+    const pauseAndJumpCommand = vscode.commands.registerCommand(
+        'r3bl-task-management.pauseAndJumpToNext',
+        async () => {
+            const nextQueue = manager.getNextQueue();
+            if (nextQueue.length === 0) {
+                showStatusBarMessage('Next Queue is empty', 'warning');
+                return;
+            }
+
+            const nextTask = nextQueue[0];
+            try {
+                await manager.jumpToTask(nextTask.id);
+                updateStatusBar(statusBarItem, manager);
+                showStatusBarMessage(`Jumped to next task: ${nextTask.name}`, 'success');
+            } catch (error) {
+                showStatusBarMessage(`Failed to jump to next task: ${error}`, 'error');
+            }
+        },
+    );
+    context.subscriptions.push(pauseAndJumpCommand);
+
+    // Register Move Task to Backlog command
+    const moveTaskToBacklogCommand = vscode.commands.registerCommand(
+        'r3bl-task-management.moveTaskToBacklog',
+        async () => {
+            const activeTaskSpace = manager.getActiveTaskSpace();
+            if (!activeTaskSpace) {
+                showStatusBarMessage('No active task to move to backlog', 'warning');
+                return;
+            }
+
+            const message = `Move task "${activeTaskSpace.name}" to backlog?\n\nThis will move the file to task/pending/ and clear its context state.`;
+            const result = await vscode.window.showWarningMessage(
+                message,
+                { modal: true },
+                'Move to Backlog',
+            );
+
+            if (result === 'Move to Backlog') {
+                try {
+                    await manager.moveToBacklog(activeTaskSpace.id);
+                    updateStatusBar(statusBarItem, manager);
+                    showStatusBarMessage('Task moved to backlog', 'success');
+                } catch (error) {
+                    showStatusBarMessage(`Failed to move task: ${error}`, 'error');
+                }
+            }
+        },
+    );
+    context.subscriptions.push(moveTaskToBacklogCommand);
+
     // Register auto-save listener
     const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async () => {
         // Skip auto-save if tabs changed due to file watcher sync
@@ -248,6 +330,9 @@ export async function activate(context: vscode.ExtensionContext) {
     // Watch for external changes to task-spaces.json (e.g., git branch switch)
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders && workspaceFolders.length > 0) {
+        const workspaceRoot = workspaceFolders[0].uri.fsPath;
+
+        // 1. Watch for task-spaces.json changes
         const taskSpacesPattern = new vscode.RelativePattern(
             workspaceFolders[0],
             '.vscode/task-spaces.json',
@@ -278,6 +363,28 @@ export async function activate(context: vscode.ExtensionContext) {
         });
 
         context.subscriptions.push(fileWatcher);
+
+        // 2. Watch for task/*.md changes (Dashboard Workflow auto-pickup)
+        const taskFilesPattern = new vscode.RelativePattern(
+            workspaceFolders[0],
+            'task/*.md',
+        );
+        const taskFileWatcher =
+            vscode.workspace.createFileSystemWatcher(taskFilesPattern);
+
+        taskFileWatcher.onDidCreate(async (uri) => {
+            const relativePath = path.relative(workspaceRoot, uri.fsPath);
+            await manager.handleFileCreate(relativePath);
+            updateStatusBar(statusBarItem, manager);
+        });
+
+        taskFileWatcher.onDidDelete(async (uri) => {
+            const relativePath = path.relative(workspaceRoot, uri.fsPath);
+            await manager.handleFileDelete(relativePath);
+            updateStatusBar(statusBarItem, manager);
+        });
+
+        context.subscriptions.push(taskFileWatcher);
     }
 }
 

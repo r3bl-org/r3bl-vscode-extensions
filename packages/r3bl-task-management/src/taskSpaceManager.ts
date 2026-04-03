@@ -142,7 +142,12 @@ export class TaskSpaceManager {
 
     constructor(context: vscode.ExtensionContext) {
         this.storage = new Storage(context);
-        this.data = { version: '3.0', taskSpaces: [] };
+        this.data = {
+            version: '4.0',
+            taskSpaces: [],
+            nextQueueIds: [],
+            previousStackIds: [],
+        };
     }
 
     /**
@@ -176,14 +181,40 @@ export class TaskSpaceManager {
      * Initialize manager by loading data from storage
      */
     async initialize(): Promise<void> {
-        // Load task spaces from JSON (migration from 2.0 → 3.0 happens during load)
+        // Load task spaces from JSON (migration from 2.0 → 3.0 → 4.0 happens during load)
         this.data = await this.storage.loadTaskSpaces();
-        // Set initial checksum so we don't treat first load as external change
-        this.lastSavedChecksum = this.computeChecksum(this.data);
+
+        // Persist migration to disk so the version doesn't stay stale
+        if (this.storage.didMigrate()) {
+            await this.save();
+        } else {
+            // Set initial checksum so we don't treat first load as external change
+            this.lastSavedChecksum = this.computeChecksum(this.data);
+        }
 
         // Load activeTaskSpaceId from workspaceState (per-instance)
-        // Note: If migrating from 2.0, the value was written to workspaceState during load
         this.activeTaskSpaceId = this.storage.getActiveTaskSpaceId();
+
+        // Dashboard Workflow: Discover unlinked task files on startup
+        await this.discoverUnlinkedTaskFiles();
+    }
+
+    /**
+     * Discover any .md files in the task/ directory that are not yet linked to a Task Space
+     * and automatically create Task Spaces for them in the Next Queue.
+     */
+    async discoverUnlinkedTaskFiles(): Promise<void> {
+        const unlinkedFiles = await this.getUnlinkedTaskFiles();
+        if (unlinkedFiles.length === 0) return;
+
+        console.log(
+            `Found ${unlinkedFiles.length} unlinked task files, auto-picking up...`,
+        );
+
+        for (const file of unlinkedFiles) {
+            // Use handleFileCreate to reuse existing logic for pickup
+            await this.handleFileCreate(file);
+        }
     }
 
     /**
@@ -241,26 +272,60 @@ export class TaskSpaceManager {
     }
 
     /**
-     * Create a new task space with current open tabs
+     * Create a new task space.
+     * In Dashboard Workflow, every task space MUST have an associated .md file.
+     * If taskFile is not provided, one will be automatically generated.
+     * @param name - Name of the task space
+     * @param taskFile - Optional relative path to task file
      * @param setAsActive - If true, sets this as the active task space immediately
+     * @param tabs - Optional tabs to initialize with. If not provided, uses currently open tabs.
      */
     async createTaskSpace(
         name: string,
         taskFile?: string,
         setAsActive: boolean = false,
+        tabs?: TabInfo[],
     ): Promise<TaskSpace> {
         // Validate name is unique
         if (this.data.taskSpaces.some((ts) => ts.name === name)) {
             throw new Error(`Task space "${name}" already exists`);
         }
 
-        const currentTabs = await this.getCurrentOpenTabs();
-        const activeTab = this.getActiveTab();
+        const workspaceFolder = this.getWorkspaceFolder();
+
+        // Ensure taskFile exists (1:1 mapping)
+        if (!taskFile && workspaceFolder) {
+            const safeName = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            let fileName = `task_${safeName}.md`;
+            taskFile = `task/${fileName}`;
+            let fileUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile);
+
+            // Handle filename collisions
+            let counter = 1;
+            while (true) {
+                try {
+                    await vscode.workspace.fs.stat(fileUri);
+                    counter++;
+                    fileName = `task_${safeName}_${counter}.md`;
+                    taskFile = `task/${fileName}`;
+                    fileUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile);
+                } catch {
+                    break;
+                }
+            }
+
+            // Write initial content
+            const content = `# ${name}\n\n- [ ] Task created via Dashboard Workflow\n`;
+            await vscode.workspace.fs.writeFile(fileUri, Buffer.from(content, 'utf8'));
+        }
+
+        const finalTabs = tabs ?? (await this.getCurrentOpenTabs());
+        const activeTab = tabs ? undefined : this.getActiveTab();
 
         const taskSpace: TaskSpace = {
             name,
             id: randomUUID(),
-            tabs: currentTabs,
+            tabs: finalTabs,
             taskFile,
             activeTab,
             createdAt: Date.now(),
@@ -270,6 +335,12 @@ export class TaskSpaceManager {
 
         // Set as active if requested (atomically with creation)
         if (setAsActive) {
+            // Push previous active to Previous Stack
+            const previousActiveId = this.getActiveTaskSpaceId();
+            if (previousActiveId) {
+                await this.addToPreviousStack(previousActiveId, false); // Don't save yet
+            }
+
             this.activeTaskSpaceId = taskSpace.id;
             await this.storage.setActiveTaskSpaceId(taskSpace.id);
         }
@@ -299,6 +370,16 @@ export class TaskSpaceManager {
         }
 
         this.data.taskSpaces.splice(index, 1);
+
+        // Remove from queues
+        if (this.data.nextQueueIds) {
+            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id);
+        }
+        if (this.data.previousStackIds) {
+            this.data.previousStackIds = this.data.previousStackIds.filter(
+                (sid) => sid !== id,
+            );
+        }
 
         // Clear active if we deleted the active task space
         if (this.activeTaskSpaceId === id) {
@@ -384,16 +465,231 @@ export class TaskSpaceManager {
      * Saves the change to persist user's intent.
      * Suppresses auto-save during the switch to prevent race conditions.
      */
-    async switchToTaskSpaceFromUserAction(id: string): Promise<void> {
+    async switchToTaskSpaceFromUserAction(
+        id: string,
+        additive: boolean = false,
+    ): Promise<void> {
         // Suppress auto-save during switch to prevent saving partial state
         // or saving old tabs to the new task space
         this.pendingFileWatcherSyncs++;
         try {
-            await this.diffSwitchToTaskSpace(id);
+            await this.diffSwitchToTaskSpace(id, additive);
         } finally {
             this.pendingFileWatcherSyncs--;
         }
         await this.save();
+    }
+
+    /**
+     * Add a task space to the Next Queue
+     */
+    async addToNextQueue(id: string): Promise<void> {
+        if (!this.data.nextQueueIds) {
+            this.data.nextQueueIds = [];
+        }
+        if (!this.data.nextQueueIds.includes(id)) {
+            this.data.nextQueueIds.push(id);
+            // Move from Previous Stack if it's there
+            if (this.data.previousStackIds) {
+                this.data.previousStackIds = this.data.previousStackIds.filter(
+                    (sid) => sid !== id,
+                );
+            }
+            await this.save();
+        }
+    }
+
+    /**
+     * Remove from Next Queue
+     */
+    async removeFromNextQueue(id: string): Promise<void> {
+        if (!this.data.nextQueueIds) return;
+        this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id);
+        await this.save();
+    }
+
+    /**
+     * Add a task space to the Previous Stack
+     * @param id The task space ID
+     * @param shouldSave Whether to save to disk immediately (default: true)
+     */
+    async addToPreviousStack(id: string, shouldSave: boolean = true): Promise<void> {
+        if (!this.data.previousStackIds) {
+            this.data.previousStackIds = [];
+        }
+        // Move to top (end of array)
+        this.data.previousStackIds = this.data.previousStackIds.filter(
+            (sid) => sid !== id,
+        );
+        this.data.previousStackIds.push(id);
+
+        // Remove from Next Queue if it's there
+        if (this.data.nextQueueIds) {
+            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id);
+        }
+
+        if (shouldSave) {
+            await this.save();
+        }
+    }
+
+    /**
+     * Remove from Previous Stack
+     */
+    async removeFromPreviousStack(id: string): Promise<void> {
+        if (!this.data.previousStackIds) return;
+        this.data.previousStackIds = this.data.previousStackIds.filter(
+            (sid) => sid !== id,
+        );
+        await this.save();
+    }
+
+    /**
+     * Get task spaces in the Next Queue
+     */
+    getNextQueue(): TaskSpace[] {
+        if (!this.data.nextQueueIds) return [];
+        return this.data.nextQueueIds
+            .map((id) => this.data.taskSpaces.find((ts) => ts.id === id))
+            .filter((ts): ts is TaskSpace => !!ts);
+    }
+
+    /**
+     * Get task spaces in the Previous Stack
+     */
+    getPreviousStack(): TaskSpace[] {
+        if (!this.data.previousStackIds) return [];
+        return this.data.previousStackIds
+            .map((id) => this.data.taskSpaces.find((ts) => ts.id === id))
+            .filter((ts): ts is TaskSpace => !!ts);
+    }
+
+    /**
+     * Jump to a specific task space.
+     * Automatically pushes current active task to Previous Stack.
+     * Removes target task from Next Queue if present.
+     */
+    async jumpToTask(id: string): Promise<void> {
+        const activeId = this.getActiveTaskSpaceId();
+        // Use getActiveTaskSpace() to check existence, not just the raw ID —
+        // workspaceState can hold a stale ID that no longer maps to a task space
+        const comingFromNoTask = !this.getActiveTaskSpace();
+
+        if (activeId && activeId !== id) {
+            await this.addToPreviousStack(activeId, false); // Don't save yet
+        }
+
+        // Remove target from all queues (it's becoming active)
+        if (this.data.nextQueueIds) {
+            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id);
+        }
+        if (this.data.previousStackIds) {
+            this.data.previousStackIds = this.data.previousStackIds.filter(
+                (sid) => sid !== id,
+            );
+        }
+
+        // Seed empty task spaces with their task file so there's something to open
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        if (taskSpace && taskSpace.tabs.length === 0 && taskSpace.taskFile) {
+            taskSpace.tabs = [{ path: taskSpace.taskFile, isPinned: true }];
+        }
+
+        // If coming from no task space, don't close pre-existing tabs (additive switch)
+        await this.switchToTaskSpaceFromUserAction(id, comingFromNoTask);
+    }
+
+    /**
+     * Finish current task: archive it and jump to next available task.
+     * Priority: 1. Next from Next Queue, 2. Top from Previous Stack.
+     */
+    async finishCurrentTask(): Promise<void> {
+        const activeId = this.getActiveTaskSpaceId();
+        if (!activeId) return;
+
+        // Archive and delete current
+        await this.deleteTaskSpace(activeId, true);
+
+        // Find next task
+        let nextId: string | undefined;
+        if (this.data.nextQueueIds && this.data.nextQueueIds.length > 0) {
+            nextId = this.data.nextQueueIds.shift();
+        } else if (this.data.previousStackIds && this.data.previousStackIds.length > 0) {
+            nextId = this.data.previousStackIds.pop();
+        }
+
+        if (nextId) {
+            await this.switchToTaskSpaceFromUserAction(nextId);
+        } else {
+            await this.save();
+        }
+    }
+
+    /**
+     * Move a task to the Backlog (task/pending/)
+     */
+    async moveToBacklog(id: string): Promise<void> {
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        if (!taskSpace || !taskSpace.taskFile) {
+            throw new Error('Task space not found or has no linked file');
+        }
+
+        const workspaceFolder = this.getWorkspaceFolder();
+        if (workspaceFolder) {
+            const sourceUri = vscode.Uri.joinPath(
+                workspaceFolder.uri,
+                taskSpace.taskFile,
+            );
+            const pendingDir = vscode.Uri.joinPath(
+                workspaceFolder.uri,
+                'task',
+                'pending',
+            );
+            const fileName = path.basename(taskSpace.taskFile);
+            const targetUri = vscode.Uri.joinPath(pendingDir, fileName);
+
+            // Ensure pending/ exists
+            try {
+                await vscode.workspace.fs.createDirectory(pendingDir);
+            } catch {}
+
+            // Move file
+            await vscode.workspace.fs.rename(sourceUri, targetUri, { overwrite: true });
+        }
+
+        // Delete the task space state (it will be auto-picked up if moved back to task/)
+        await this.deleteTaskSpace(id, false); // false = don't move to done/
+    }
+
+    /**
+     * Handle auto-pickup when a new .md file is created in task/
+     */
+    async handleFileCreate(taskFile: string): Promise<void> {
+        // Skip if already linked
+        if (this.hasLinkedTaskSpace(taskFile)) return;
+
+        // Skip if in pending/ or done/ (should be handled by watcher pattern, but double check)
+        if (taskFile.includes('/pending/') || taskFile.includes('/done/')) return;
+
+        const fileName = path.basename(taskFile, '.md');
+        const name = fileName.replace(/^task_/, '').replace(/_/g, ' ');
+
+        // Create the task space with NO tabs (empty)
+        const taskSpace = await this.createTaskSpace(name, taskFile, false, []);
+
+        // Add to Next Queue
+        await this.addToNextQueue(taskSpace.id);
+    }
+
+    /**
+     * Handle auto-cleanup when an .md file is deleted from task/
+     */
+    async handleFileDelete(taskFile: string): Promise<void> {
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.taskFile === taskFile);
+        if (taskSpace) {
+            // Delete task space but don't move the file (it's already gone)
+            await this.deleteTaskSpace(taskSpace.id, false);
+        }
     }
 
     /**
@@ -682,7 +978,14 @@ export class TaskSpaceManager {
      * Only closes/opens/reorders/pins what's necessary
      * NOTE: Does not save - caller is responsible for saving if needed
      */
-    private async diffSwitchToTaskSpace(id: string): Promise<void> {
+    /**
+     * @param additive - If true, skip closing tabs not in the target (used when
+     *   switching from "no task space" so pre-existing tabs are preserved).
+     */
+    private async diffSwitchToTaskSpace(
+        id: string,
+        additive: boolean = false,
+    ): Promise<void> {
         const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
         if (!taskSpace) {
             throw new Error('Task space not found');
@@ -696,10 +999,12 @@ export class TaskSpaceManager {
         const currentPaths = new Set(currentTabs.map((t) => t.path));
         const savedPaths = new Set(savedTabs.map((t) => t.path));
 
-        // 1. Close tabs that should be removed
-        const tabsToClose = currentTabs.filter((t) => !savedPaths.has(t.path));
-        for (const tab of tabsToClose) {
-            await this.closeTabByPath(tab.path, workspaceFolder);
+        // 1. Close tabs that should be removed (skip if additive)
+        if (!additive) {
+            const tabsToClose = currentTabs.filter((t) => !savedPaths.has(t.path));
+            for (const tab of tabsToClose) {
+                await this.closeTabByPath(tab.path, workspaceFolder);
+            }
         }
 
         // 2. Open tabs that should be added (at end initially)

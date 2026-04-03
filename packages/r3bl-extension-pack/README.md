@@ -73,6 +73,8 @@ Keyboard Shortcuts settings.
 | Shortcut        | Extension       | Action                                             |
 | --------------- | --------------- | -------------------------------------------------- |
 | `Alt+Shift+T`   | Task Management | Open task spaces dialog                            |
+| `Alt+Shift+F`   | Task Management | Finish current task (archive and jump to next)     |
+| `Alt+Shift+J`   | Task Management | Pause current task and jump to next in queue       |
 | `Alt+Shift+D`   | Fuzzy Search    | Start interactive fuzzy search                     |
 | `Ctrl+Shift+G`  | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits)  |
 | `Ctrl+R`        | Fuzzy Search    | Refresh Git Diff Search Editor (while tab focused) |
