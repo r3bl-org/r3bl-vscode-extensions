@@ -54,12 +54,12 @@ etc.) by checking for `.gemini`, `.claude`, and `.agent` folders.
         - `r3bl-extension-pack`: `1.2.11` -> `1.2.12` (or increment if already bumped by
           another task)
 
-### 4. Support for `AGENT.md`
+### 4. Support for `AGENTS.md`
 
-- Update `TaskSpaceManager.getTaskFiles()` to exclude `AGENT.md` (similar to `CLAUDE.md`
+- Update `TaskSpaceManager.getTaskFiles()` to exclude `AGENTS.md` (similar to `CLAUDE.md`
   and `README.md`).
 - Update any logic that searches for project-level documentation to also consider
-  `AGENT.md`.
+  `AGENTS.md`.
 
 ## Verification Plan
 

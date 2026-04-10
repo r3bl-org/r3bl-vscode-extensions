@@ -870,7 +870,7 @@ export class TaskSpaceManager {
         const taskFiles: string[] = [];
 
         // Files to exclude from task file list
-        const excludeFiles = ['CLAUDE.md', 'README.md', 'AGENT.md', 'GEMINI.md'];
+        const excludeFiles = ['CLAUDE.md', 'README.md', 'AGENTS.md', 'GEMINI.md'];
 
         try {
             const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, 'task');

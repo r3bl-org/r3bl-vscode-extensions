@@ -238,7 +238,7 @@ adheres to [Semantic Versioning](http://semver.org/).
       directories.
     - Updated all UI labels, notifications, and documentation to use generic "AI Agent"
       terminology.
-    - Excluded `AGENT.md` from task file discovery (similar to `CLAUDE.md` and
+    - Excluded `AGENTS.md` from task file discovery (similar to `CLAUDE.md` and
       `README.md`).
     - Added "gemini cli" and "ai coding agent" keywords for better marketplace
       discoverability.
