@@ -195,9 +195,8 @@ export class SearchPanel {
             }
 
             // Generate search editor content
-            const { generateSearchEditorContent } = await import(
-                './searchEditorGenerator'
-            );
+            const { generateSearchEditorContent } =
+                await import('./searchEditorGenerator');
             const content = generateSearchEditorContent(input, results);
 
             // Save to /tmp/

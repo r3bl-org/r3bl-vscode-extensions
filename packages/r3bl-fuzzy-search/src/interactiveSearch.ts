@@ -143,9 +143,8 @@ export async function executeInteractiveSearch(workspaceRoot: string): Promise<v
             quickPick.hide();
 
             // Generate search editor content
-            const { generateSearchEditorContent } = await import(
-                './searchEditorGenerator'
-            );
+            const { generateSearchEditorContent } =
+                await import('./searchEditorGenerator');
             const input: SearchInput = {
                 query: currentQuery,
                 excludePatterns: currentExcludes,

@@ -87,6 +87,7 @@ Keyboard Shortcuts settings.
 | `Ctrl+R`        | Semantic Config | Run Flycheck (manual debounced `cargo check`)      |
 | `Ctrl+-`        | Semantic Config | Fold all Rustdocs in current file                  |
 | `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file                |
+| `Ctrl+M`        | Semantic Config | Scroll current line to top                         |
 | `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                 |
 
 ## Configuration Highlights

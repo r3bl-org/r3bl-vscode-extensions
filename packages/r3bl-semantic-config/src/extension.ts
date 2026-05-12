@@ -145,6 +145,12 @@ export function activate(context: vscode.ExtensionContext) {
         navigateRustdocs,
     );
 
+    // Command to scroll current line to top
+    const scrollToTopCommand = vscode.commands.registerCommand(
+        'r3bl-semantic-config.scrollToTop',
+        scrollToTop,
+    );
+
     // Register FoldingRangeProvider for rustdoc comments
     const rustdocFoldingProvider = vscode.languages.registerFoldingRangeProvider(
         { language: 'rust' },
@@ -184,10 +190,25 @@ export function activate(context: vscode.ExtensionContext) {
         foldRustdocsCommand,
         unfoldRustdocsCommand,
         navigateRustdocsCommand,
+        scrollToTopCommand,
         rustdocFoldingProvider,
         useStatementsFoldingProvider,
         themeWatcher,
     );
+}
+
+/**
+ * Scrolls the editor so that the current cursor line is at the top of the viewport.
+ */
+async function scrollToTop(): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+
+    const position = editor.selection.active;
+    const range = new vscode.Range(position, position);
+    editor.revealRange(range, vscode.TextEditorRevealType.AtTop);
 }
 
 // Auto-fold rustdocs when opening Rust files

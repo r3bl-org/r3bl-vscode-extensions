@@ -149,6 +149,20 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-05-12] - Scroll Current Line to Top Feature
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.8 → 1.2.9
+- **R3BL Extension Pack**: 1.3.5 → 1.3.6
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.9**: New editor utility
+    - Added "Scroll Current Line to Top" feature (Ctrl+M)
+    - Quickly scrolls the editor viewport so that the current line is at the top
+    - Works in any file type (general editor utility)
+
 ## [2026-04-03] - Extension Pack Metadata Update and Search Feature Discovery
 
 ### Package Versions

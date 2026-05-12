@@ -5,29 +5,33 @@ changes—slow, steady, and careful work beats fast and careless.
 
 ## Standard Workflow (Alignment -> Plan -> Execute)
 
-To ensure safety and alignment, always start by clarifying the scope of work. Ask the user: 
-"Are we starting:
-1. a **new task**, 
-2. continuing an **existing task**, or 
-3. doing **one-off work**? 
-(Please respond with 1, 2, or 3)"
+To ensure safety and alignment, always start by clarifying the scope of work. Ask the
+user: "Are we starting:
+
+1. a **new task**,
+2. continuing an **existing task**, or
+3. doing **one-off work**? (Please respond with 1, 2, or 3)"
 
 ### 1. New Task (Plan -> Task File -> Execute)
+
 Follow this "slow and steady" workflow for all non-trivial changes:
-- **In-Chat Planning:** Research the problem and present a comprehensive plan in chat for 
+
+- **In-Chat Planning:** Research the problem and present a comprehensive plan in chat for
   refinement. Use code examples and specifics.
-- **Task File Creation:** Once approved, formalize it by creating a new Markdown file in the 
-  `task/` directory of this repo.
-- **Manual Review:** Wait for the user to manually review and **explicitly approve** the task 
-  file before starting implementation.
+- **Task File Creation:** Once approved, formalize it by creating a new Markdown file in
+  the `task/` directory of this repo.
+- **Manual Review:** Wait for the user to manually review and **explicitly approve** the
+  task file before starting implementation.
 - **Iterative Implementation:** Implement step-by-step, keeping the task file updated.
 
 ### 2. Existing Task
+
 - **Load Task:** Identify the active task in the `task/` directory and load it.
 - **Resume:** Resume work from the next unchecked step after confirming with the user.
 
 ### 3. One-off Work
-- For simple, isolated changes that do not require formal planning or task tracking, 
+
+- For simple, isolated changes that do not require formal planning or task tracking,
   proceed directly to research and implementation.
 
 ---
@@ -58,7 +62,8 @@ install a stale bundle.
 You do not have the full codebase in memory. Actively use search and file-reading tools to
 gather local context. If a request requires system-wide knowledge, global refactoring, or
 sweeping architectural changes, **DO NOT GUESS**. Stop and ask the user to provide broader
-context. Always follow the **Standard Workflow** and do not skip the alignment or approval steps.
+context. Always follow the **Standard Workflow** and do not skip the alignment or approval
+steps.
 
 ## Skills, Agents & Commands Location
 

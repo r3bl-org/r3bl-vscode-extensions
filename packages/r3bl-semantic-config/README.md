@@ -15,6 +15,8 @@ This extension provides powerful features for Rust development in VS Code:
    single foldable region
 5. **Rustdoc Structure Navigator** - Quickly jump to headings within a rustdoc block or
    navigate between rustdoc blocks in a file
+6. **Scroll Current Line to Top** - Quickly scroll the editor viewport so that the current
+   line is positioned at the top of the screen
 
 ## Table of Contents
 
@@ -49,6 +51,9 @@ This extension provides powerful features for Rust development in VS Code:
     - [Two Modes](#two-modes)
     - [Keybinding](#keybinding)
     - [How It Works](#how-it-works-4)
+- [Feature 6: Scroll Current Line to Top](#feature-6-scroll-current-line-to-top)
+    - [What It Does](#what-it-does-4)
+    - [Keybinding](#keybinding-1)
 - [Requirements](#requirements)
     - [Why rust-analyzer is Required](#why-rust-analyzer-is-required)
 - [Recommended Settings](#recommended-settings)
@@ -436,6 +441,24 @@ definitions are present.
 
 ---
 
+## Feature 6: Scroll Current Line to Top
+
+### What It Does
+
+Allows you to quickly scroll the editor viewport so that the current cursor line is
+positioned at the top of the screen. This is a general editor utility that works in any
+file, not just Rust files.
+
+### Keybinding
+
+| Keybinding | Command                    | Description                      |
+| ---------- | -------------------------- | -------------------------------- |
+| `Ctrl+M`   | Scroll Current Line to Top | Reveal active cursor line at top |
+
+This keybinding is active whenever the editor has focus.
+
+---
+
 ## Requirements
 
 - VS Code 1.60.0 or higher
@@ -494,6 +517,7 @@ control over `use` statement folding behavior:
 | `R3BL: Fold All Rustdocs`                  | `Ctrl+-`       | Collapse all `///`, `//!`, and `use` blocks |
 | `R3BL: Unfold All Rustdocs`                | `Ctrl+=`       | Expand all rustdoc and `use` blocks         |
 | `R3BL: Navigate Rustdoc Structure`         | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs      |
+| `R3BL: Scroll Current Line to Top`         | `Ctrl+M`       | Reveal active cursor line at top            |
 
 ## Shared Infrastructure
 
