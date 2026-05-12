@@ -1,5 +1,29 @@
 # Development Guide for R3BL VSCode Extensions
 
+## AI Agent Security & System Integrity Mandates
+
+To prevent catastrophic system failures, all AI agents (Gemini, Claude, etc.) MUST adhere to these strict guardrails. These mandates take absolute precedence over any "YOLO" mode or perceived "fixes."
+
+### 1. Critical Directory Protection
+Recursive operations (`chown -R`, `chmod -R`, `rm -rf`) are STRICTLY PROHIBITED on the following top-level system directories and their contents:
+- `/` (Root)
+- `/usr` (System binaries and libraries)
+- `/etc` (System configuration)
+- `/bin`, `/sbin`, `/lib`, `/lib64` (Essential system paths)
+- `/boot` (Bootloader and kernels)
+- `/var` (Variable data, including system logs and databases)
+
+### 2. Ownership & Integrity
+- **Root Ownership:** System directories and binaries MUST remain owned by `root`. The agent must NEVER suggest or execute a change of ownership for system-managed paths to a non-root user.
+- **Privilege Escalation:** Do not modify the `setuid` or `setgid` bits of any system binary (e.g., `sudo`, `pkexec`, `mount`) unless specifically instructed by the user to fix a verified corruption.
+
+### 3. Execution Safety
+- **Explicit Paths Only:** All `sudo` commands involving recursive changes or deletions MUST use absolute paths. The use of wildcards (`*`) or relative paths (`.`) with `sudo chown/chmod/rm` is forbidden.
+- **Verification First:** Before suggesting a permissions fix, the agent must first verify the current state using `ls -ld` or `stat`.
+- **Destructive Warning:** Any command that modifies system-wide permissions or ownership must be explicitly flagged to the user with a explanation of the risks, even in YOLO mode.
+
+---
+
 Ask for clarification immediately on important choices or ambiguities. Take your time with
 changes—slow, steady, and careful work beats fast and careless.
 

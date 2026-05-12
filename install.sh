@@ -13,6 +13,7 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "  • code-insiders (VSCode Insiders)"
     echo "  • codium (VSCodium)"
     echo "  • codium-insiders (VSCodium Insiders)"
+    echo "  • antigravity-ide (Antigravity IDE)"
     echo ""
     echo "Run ./build.sh first to generate .vsix artifacts."
     exit 0
@@ -44,6 +45,9 @@ install_extension() {
     fi
     if command -v codium-insiders &> /dev/null; then
         codium-insiders --install-extension "$vsix_path" --force
+    fi
+    if command -v antigravity-ide &> /dev/null; then
+        antigravity-ide --install-extension "$vsix_path" --force
     fi
 }
 
@@ -124,6 +128,18 @@ else
     echo -e "${YELLOW}VSCodium Insiders not found, skipping installation for VSCodium Insiders${NC}"
 fi
 
+# Install for Antigravity IDE
+if command -v antigravity-ide &> /dev/null; then
+    echo -e "${BLUE}Installing R3BL Extension Pack for Antigravity IDE...${NC}"
+    if antigravity-ide --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
+        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for Antigravity IDE!${NC}"
+    else
+        echo -e "${RED}✗ Failed to install R3BL Extension Pack for Antigravity IDE${NC}"
+    fi
+else
+    echo -e "${YELLOW}Antigravity IDE not found, skipping installation for Antigravity IDE${NC}"
+fi
+
 echo ""
 echo -e "${GREEN}🎉 Installation complete!${NC}"
 echo ""
@@ -138,7 +154,7 @@ echo "  • R3BL Fuzzy Search - Fuzzy search in files using fzf"
 echo "  • rust-analyzer - Official Rust language server"
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
-echo "1. Restart VSCode/Insiders/Codium"
+echo "1. Restart VSCode/Insiders/Codium/Antigravity IDE"
 echo "2. Select 'R3BL Theme' from Color Theme picker (Ctrl+K Ctrl+T)"
 echo "3. Configure copyright settings in VSCode preferences if needed"
 echo ""

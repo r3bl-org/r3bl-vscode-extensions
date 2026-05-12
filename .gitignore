@@ -37,3 +37,6 @@ temp/
 
 # Local secrets (never commit!)
 .secrets.json
+
+# Google Antigravity CLI
+.antigravitycli/
