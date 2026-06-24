@@ -13,6 +13,7 @@ import {
     RustUseStatementsFoldingProvider,
     findImportBlock,
 } from './rustUseStatementsFolding';
+import { insertRustdocLinkDef } from './rustdocLinkDefs';
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined;
@@ -151,6 +152,12 @@ export function activate(context: vscode.ExtensionContext) {
         scrollToTop,
     );
 
+    // Command to insert rustdoc link reference definition
+    const insertRustdocLinkDefCommand = vscode.commands.registerCommand(
+        'r3bl-semantic-config.insertRustdocLinkDef',
+        insertRustdocLinkDef,
+    );
+
     // Register FoldingRangeProvider for rustdoc comments
     const rustdocFoldingProvider = vscode.languages.registerFoldingRangeProvider(
         { language: 'rust' },
@@ -191,6 +198,7 @@ export function activate(context: vscode.ExtensionContext) {
         unfoldRustdocsCommand,
         navigateRustdocsCommand,
         scrollToTopCommand,
+        insertRustdocLinkDefCommand,
         rustdocFoldingProvider,
         useStatementsFoldingProvider,
         themeWatcher,

@@ -49,14 +49,14 @@ echo -e "${BLUE}Building R3BL Shared...${NC}"
 cd packages/r3bl-shared
 npm install
 npm run build
-vsce package --no-dependencies
+vsce package --no-dependencies --skip-license
 cleanup_old_versions "r3bl-shared" "$SHARED_VERSION" "."
 cd ../..
 
 # Build R3BL Theme
 echo -e "${BLUE}Building R3BL Theme...${NC}"
 cd packages/r3bl-theme
-vsce package --no-dependencies
+vsce package --no-dependencies --skip-license
 cleanup_old_versions "r3bl-theme" "$THEME_VERSION" "."
 cd ../..
 
@@ -65,7 +65,7 @@ echo -e "${BLUE}Building R3BL Auto Insert Copyright...${NC}"
 cd packages/r3bl-auto-insert-copyright
 npm install
 npm run compile
-vsce package --no-dependencies
+vsce package --no-dependencies --skip-license
 cleanup_old_versions "r3bl-auto-insert-copyright" "$COPYRIGHT_VERSION" "."
 cd ../..
 
@@ -75,7 +75,7 @@ cd packages/r3bl-semantic-config
 npm install
 npm run compile
 npm test
-vsce package --no-dependencies
+vsce package --no-dependencies --skip-license
 cleanup_old_versions "r3bl-semantic-config" "$SEMANTIC_VERSION" "."
 cd ../..
 
@@ -84,7 +84,7 @@ echo -e "${BLUE}Building R3BL Task Management...${NC}"
 cd packages/r3bl-task-management
 npm install
 npm run compile
-vsce package --no-dependencies
+vsce package --no-dependencies --skip-license
 cleanup_old_versions "r3bl-task-management" "$TASK_MANAGEMENT_VERSION" "."
 cd ../..
 
@@ -93,7 +93,7 @@ echo -e "${BLUE}Building R3BL Copy Selection Path and Range...${NC}"
 cd packages/r3bl-copy-selection-path-and-range
 npm install
 npm run build
-vsce package --no-dependencies
+vsce package --no-dependencies --skip-license
 cleanup_old_versions "r3bl-copy-selection-path-and-range" "$COPY_SELECTION_VERSION" "."
 cd ../..
 
@@ -103,7 +103,7 @@ cd packages/r3bl-fuzzy-search
 npm install
 npm run compile
 npm test
-vsce package --no-dependencies
+vsce package --no-dependencies --skip-license
 cleanup_old_versions "r3bl-fuzzy-search" "$FUZZY_SEARCH_VERSION" "."
 cd ../..
 
@@ -112,7 +112,7 @@ echo ""
 echo -e "${BLUE}Building R3BL Extension Pack...${NC}"
 cd packages/r3bl-extension-pack
 
-vsce package --no-dependencies
+vsce package --no-dependencies --skip-license
 
 # Clean up old versions of the extension pack
 cleanup_old_versions "r3bl-extension-pack" "$EXTENSION_PACK_VERSION" "."

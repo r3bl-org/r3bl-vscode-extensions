@@ -1,40 +1,40 @@
 {
-    "version": "4.0",
-    "taskSpaces": [
-        {
-            "name": "fuzzy-add-git-history-for-a-file",
-            "id": "2c27359b-945b-4561-9aa1-9278afeeeb98",
-            "tabs": [],
-            "taskFile": "task/fuzzy-add-git-history-for-a-file.md",
-            "createdAt": 1775229686775
-        },
-        {
-            "name": "global-task-dashboard",
-            "id": "30a22f74-176a-41f0-a215-a08020a844ad",
-            "tabs": [],
-            "taskFile": "task/global-task-dashboard.md",
-            "createdAt": 1775230000530
-        },
-        {
-            "name": "add-md-folding",
-            "id": "63cab490-cd6e-4849-93a8-f412c325b3d9",
-            "tabs": [],
-            "taskFile": "task/add-md-folding.md",
-            "createdAt": 1775311925712
-        },
-        {
-            "name": "add-scroll-to-top-feature",
-            "id": "6bbc7e88-a8b2-4167-bc5b-9f88b890ca1f",
-            "tabs": [],
-            "taskFile": "task/add-scroll-to-top-feature.md",
-            "createdAt": 1778610737576
-        }
-    ],
-    "nextQueueIds": [
-        "2c27359b-945b-4561-9aa1-9278afeeeb98",
-        "30a22f74-176a-41f0-a215-a08020a844ad",
-        "63cab490-cd6e-4849-93a8-f412c325b3d9",
-        "6bbc7e88-a8b2-4167-bc5b-9f88b890ca1f"
-    ],
-    "previousStackIds": []
+  "version": "4.0",
+  "taskSpaces": [
+    {
+      "name": "fuzzy-add-git-history-for-a-file",
+      "id": "2c27359b-945b-4561-9aa1-9278afeeeb98",
+      "tabs": [],
+      "taskFile": "task/fuzzy-add-git-history-for-a-file.md",
+      "createdAt": 1775229686775
+    },
+    {
+      "name": "global-task-dashboard",
+      "id": "30a22f74-176a-41f0-a215-a08020a844ad",
+      "tabs": [],
+      "taskFile": "task/global-task-dashboard.md",
+      "createdAt": 1775230000530
+    },
+    {
+      "name": "add-md-folding",
+      "id": "63cab490-cd6e-4849-93a8-f412c325b3d9",
+      "tabs": [],
+      "taskFile": "task/add-md-folding.md",
+      "createdAt": 1775311925712
+    },
+    {
+      "name": "add-scroll-to-top-feature",
+      "id": "6bbc7e88-a8b2-4167-bc5b-9f88b890ca1f",
+      "tabs": [],
+      "taskFile": "task/add-scroll-to-top-feature.md",
+      "createdAt": 1778610737576
+    }
+  ],
+  "nextQueueIds": [
+    "2c27359b-945b-4561-9aa1-9278afeeeb98",
+    "30a22f74-176a-41f0-a215-a08020a844ad",
+    "63cab490-cd6e-4849-93a8-f412c325b3d9",
+    "6bbc7e88-a8b2-4167-bc5b-9f88b890ca1f"
+  ],
+  "previousStackIds": []
 }

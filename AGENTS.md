@@ -2,10 +2,15 @@
 
 ## AI Agent Security & System Integrity Mandates
 
-To prevent catastrophic system failures, all AI agents (Gemini, Claude, etc.) MUST adhere to these strict guardrails. These mandates take absolute precedence over any "YOLO" mode or perceived "fixes."
+To prevent catastrophic system failures, all AI agents (Gemini, Claude, etc.) MUST adhere
+to these strict guardrails. These mandates take absolute precedence over any "YOLO" mode
+or perceived "fixes."
 
 ### 1. Critical Directory Protection
-Recursive operations (`chown -R`, `chmod -R`, `rm -rf`) are STRICTLY PROHIBITED on the following top-level system directories and their contents:
+
+Recursive operations (`chown -R`, `chmod -R`, `rm -rf`) are STRICTLY PROHIBITED on the
+following top-level system directories and their contents:
+
 - `/` (Root)
 - `/usr` (System binaries and libraries)
 - `/etc` (System configuration)
@@ -14,13 +19,24 @@ Recursive operations (`chown -R`, `chmod -R`, `rm -rf`) are STRICTLY PROHIBITED 
 - `/var` (Variable data, including system logs and databases)
 
 ### 2. Ownership & Integrity
-- **Root Ownership:** System directories and binaries MUST remain owned by `root`. The agent must NEVER suggest or execute a change of ownership for system-managed paths to a non-root user.
-- **Privilege Escalation:** Do not modify the `setuid` or `setgid` bits of any system binary (e.g., `sudo`, `pkexec`, `mount`) unless specifically instructed by the user to fix a verified corruption.
+
+- **Root Ownership:** System directories and binaries MUST remain owned by `root`. The
+  agent must NEVER suggest or execute a change of ownership for system-managed paths to a
+  non-root user.
+- **Privilege Escalation:** Do not modify the `setuid` or `setgid` bits of any system
+  binary (e.g., `sudo`, `pkexec`, `mount`) unless specifically instructed by the user to
+  fix a verified corruption.
 
 ### 3. Execution Safety
-- **Explicit Paths Only:** All `sudo` commands involving recursive changes or deletions MUST use absolute paths. The use of wildcards (`*`) or relative paths (`.`) with `sudo chown/chmod/rm` is forbidden.
-- **Verification First:** Before suggesting a permissions fix, the agent must first verify the current state using `ls -ld` or `stat`.
-- **Destructive Warning:** Any command that modifies system-wide permissions or ownership must be explicitly flagged to the user with a explanation of the risks, even in YOLO mode.
+
+- **Explicit Paths Only:** All `sudo` commands involving recursive changes or deletions
+  MUST use absolute paths. The use of wildcards (`*`) or relative paths (`.`) with
+  `sudo chown/chmod/rm` is forbidden.
+- **Verification First:** Before suggesting a permissions fix, the agent must first verify
+  the current state using `ls -ld` or `stat`.
+- **Destructive Warning:** Any command that modifies system-wide permissions or ownership
+  must be explicitly flagged to the user with a explanation of the risks, even in YOLO
+  mode.
 
 ---
 
@@ -80,6 +96,14 @@ Always use `./build.sh` to build extensions, not direct `npx webpack` or `npm ru
 commands. `build.sh` compiles, runs tests, and packages the `.vsix` files. Running webpack
 directly only updates `dist/` but does not repackage the `.vsix`, so `./install.sh` will
 install a stale bundle.
+
+## Installing Extensions
+
+Always use `./install.sh` to install all built extensions locally. **Note on Antigravity
+IDE**: The standard `antigravity-ide --install-extension` command does not work correctly
+(it launches the IDE instead of installing headlessly). To bypass this, `install.sh` is
+customized to manually unzip the `.vsix` files and copy their contents directly into
+`~/.antigravity-ide/extensions/`.
 
 ## Context Guardrail
 

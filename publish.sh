@@ -143,7 +143,7 @@ for ext in "$@"; do
 
     # Publish to VS Marketplace
     echo -e "  ${BLUE}→ VS Marketplace${NC}"
-    vsce_output=$(npx vsce publish --packagePath "$vsix_path" -p "$VSCE_PAT" 2>&1) || true
+    vsce_output=$(npx --yes vsce publish --packagePath "$vsix_path" -p "$VSCE_PAT" 2>&1) || true
     if echo "$vsce_output" | grep -q "already exists"; then
         echo -e "  ${YELLOW}⚠ Version already exists (may be in verification queue)${NC}"
     elif echo "$vsce_output" | grep -qE "(Successfully published|DONE.*Published)"; then
@@ -155,7 +155,7 @@ for ext in "$@"; do
 
     # Publish to Open VSX
     echo -e "  ${BLUE}→ Open VSX${NC}"
-    ovsx_output=$(npx ovsx publish "$vsix_path" -p "$OVSX_PAT" 2>&1) || true
+    ovsx_output=$(npx --yes ovsx publish "$vsix_path" -p "$OVSX_PAT" 2>&1) || true
     if echo "$ovsx_output" | grep -q "already published"; then
         echo -e "  ${YELLOW}⚠ Version already exists (may be in verification queue)${NC}"
     elif echo "$ovsx_output" | grep -q "Published"; then

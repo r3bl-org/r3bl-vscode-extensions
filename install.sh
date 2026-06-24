@@ -47,7 +47,14 @@ install_extension() {
         codium-insiders --install-extension "$vsix_path" --force
     fi
     if command -v antigravity-ide &> /dev/null; then
-        antigravity-ide --install-extension "$vsix_path" --force
+        local ext_name=$(basename "$vsix_path" .vsix)
+        local dest_dir="$HOME/.antigravity-ide/extensions/R3BL.${ext_name}"
+        rm -rf "$dest_dir"
+        mkdir -p "$dest_dir"
+        local tmp_dir=$(mktemp -d)
+        unzip -q "$vsix_path" -d "$tmp_dir"
+        cp -a "$tmp_dir/extension/." "$dest_dir/"
+        rm -rf "$tmp_dir"
     fi
 }
 
@@ -131,11 +138,20 @@ fi
 # Install for Antigravity IDE
 if command -v antigravity-ide &> /dev/null; then
     echo -e "${BLUE}Installing R3BL Extension Pack for Antigravity IDE...${NC}"
-    if antigravity-ide --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
+    vsix_path="packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix"
+    ext_name=$(basename "$vsix_path" .vsix)
+    dest_dir="$HOME/.antigravity-ide/extensions/R3BL.${ext_name}"
+    rm -rf "$dest_dir"
+    mkdir -p "$dest_dir"
+    tmp_dir=$(mktemp -d)
+    
+    if unzip -q "$vsix_path" -d "$tmp_dir"; then
+        cp -a "$tmp_dir/extension/." "$dest_dir/"
         echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for Antigravity IDE!${NC}"
     else
         echo -e "${RED}✗ Failed to install R3BL Extension Pack for Antigravity IDE${NC}"
     fi
+    rm -rf "$tmp_dir"
 else
     echo -e "${YELLOW}Antigravity IDE not found, skipping installation for Antigravity IDE${NC}"
 fi

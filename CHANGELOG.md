@@ -2,6 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
+    - [[2026-06-24] - Rustdoc Link Reference Definition Auto-Insertion](#2026-06-24---rustdoc-link-reference-definition-auto-insertion)
+        - [Package Versions](#package-versions)
+        - [Changes](#changes)
     - [[2026-04-02] - Dashboard Workflow and Extension Stabilization](#2026-04-02---dashboard-workflow-and-extension-stabilization)
         - [Package Versions](#package-versions)
         - [Changes](#changes)
@@ -148,6 +151,27 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2026-06-24] - Rustdoc Link Reference Definition Auto-Insertion
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.9 → 1.2.10
+- **R3BL Extension Pack**: 1.3.6 → 1.3.7
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.10**: Added automatic rustdoc link reference
+  definition insertion
+    - New command "Insert Rustdoc Link Definition" (default: `Ctrl+Shift+L` in Rust files)
+    - Places cursor in or on a link like ``[`OSC`]`` and automatically fetches and inserts
+      its definition from the workspace
+    - Smart selection automatically extracts the term under the cursor if no text is
+      explicitly selected
+    - Fast ripgrep-powered codebase search for existing definitions (`//!` or `///`)
+    - Shows a QuickPick menu of unique definitions found in the workspace
+    - Automatically appends the chosen definition to the end of the current rustdoc block
+      with the correct `///` or `//!` prefix
 
 ## [2026-05-12] - Scroll Current Line to Top Feature
 

@@ -88,6 +88,7 @@ Keyboard Shortcuts settings.
 | `Ctrl+-`        | Semantic Config | Fold all Rustdocs in current file                  |
 | `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file                |
 | `Ctrl+M`        | Semantic Config | Scroll current line to top                         |
+| `Ctrl+Shift+L`  | Semantic Config | Insert Rustdoc Link Definition                     |
 | `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                 |
 
 ## Configuration Highlights
@@ -115,7 +116,8 @@ Enhanced defaults for the R3BL Semantic Configuration.
 {
     "r3bl-semantic-config.autoFoldRustdocsOnOpen": false, // Auto-hide /// comments
     "r3bl-semantic-config.autoFoldUseStatementsOnOpen": false, // Auto-hide use imports
-    "r3bl-semantic-config.debouncedFlycheck.enabled": true // Run cargo check on idle
+    "r3bl-semantic-config.debouncedFlycheck.enabled": true, // Run cargo check on idle
+    "r3bl-semantic-config.insertRustdocLinkDef.maxResults": 5 // Max link definitions to show
 }
 ```
 

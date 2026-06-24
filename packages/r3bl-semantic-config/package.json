@@ -2,7 +2,7 @@
     "name": "r3bl-semantic-config",
     "displayName": "R3BL Semantic Configuration",
     "description": "Companion to R3BL Theme - automatically applies enhanced semantic highlighting for Rust development",
-    "version": "1.2.9",
+    "version": "1.2.10",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"
@@ -67,6 +67,11 @@
                 "command": "r3bl-semantic-config.scrollToTop",
                 "title": "Scroll Current Line to Top",
                 "category": "R3BL"
+            },
+            {
+                "command": "r3bl-semantic-config.insertRustdocLinkDef",
+                "title": "Insert Rustdoc Link Definition",
+                "category": "R3BL"
             }
         ],
         "keybindings": [
@@ -94,6 +99,11 @@
                 "command": "r3bl-semantic-config.scrollToTop",
                 "key": "ctrl+m",
                 "when": "editorTextFocus"
+            },
+            {
+                "command": "r3bl-semantic-config.insertRustdocLinkDef",
+                "key": "ctrl+shift+l",
+                "when": "editorTextFocus && editorLangId == rust"
             }
         ],
         "configuration": {
@@ -130,6 +140,13 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Automatically fold all rustdoc comments (/// and //!) when opening a Rust file."
+                },
+                "r3bl-semantic-config.insertRustdocLinkDef.maxResults": {
+                    "type": "number",
+                    "default": 5,
+                    "minimum": 1,
+                    "maximum": 50,
+                    "description": "The maximum number of unique link definitions to show in the QuickPick menu when auto-inserting."
                 },
                 "r3bl-semantic-config.autoFoldUseStatementsOnOpen": {
                     "type": "boolean",

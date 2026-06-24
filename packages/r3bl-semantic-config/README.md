@@ -17,6 +17,8 @@ This extension provides powerful features for Rust development in VS Code:
    navigate between rustdoc blocks in a file
 6. **Scroll Current Line to Top** - Quickly scroll the editor viewport so that the current
    line is positioned at the top of the screen
+7. **Rustdoc Link Auto-Insertion** - Automatically fetch and insert repeating link
+   reference definitions in rustdoc comments
 
 ## Table of Contents
 
@@ -54,6 +56,10 @@ This extension provides powerful features for Rust development in VS Code:
 - [Feature 6: Scroll Current Line to Top](#feature-6-scroll-current-line-to-top)
     - [What It Does](#what-it-does-4)
     - [Keybinding](#keybinding-1)
+- [Feature 7: Rustdoc Link Auto-Insertion](#feature-7-rustdoc-link-auto-insertion)
+    - [What It Does](#what-it-does-5)
+    - [Keybinding](#keybinding-2)
+    - [How It Works](#how-it-works-5)
 - [Requirements](#requirements)
     - [Why rust-analyzer is Required](#why-rust-analyzer-is-required)
 - [Recommended Settings](#recommended-settings)
@@ -459,6 +465,53 @@ This keybinding is active whenever the editor has focus.
 
 ---
 
+## Feature 7: Rustdoc Link Auto-Insertion
+
+### What It Does
+
+When writing Rust documentation, you often reuse markdown link references across multiple
+files (e.g., ``[`SIGWINCH`]``). This feature saves you from having to hunt down the
+definition URL. It automatically searches your workspace for an existing definition and
+inserts it at the bottom of your current rustdoc block.
+
+### Keybinding
+
+By default, the shortcut is `Ctrl+Shift+L` (or `Cmd+Shift+L` on macOS) when the editor is
+focused and the language is Rust.
+
+```json
+{
+    "command": "r3bl-semantic-config.insertRustdocLinkDef",
+    "key": "ctrl+shift+l",
+    "mac": "cmd+shift+l",
+    "when": "editorTextFocus && editorLangId == 'rust'"
+}
+```
+
+### How It Works
+
+1. **Smart Selection**: Place your cursor inside a link reference (like ``[`OSC`]``) or
+   highlight the term.
+2. **Search**: Press the shortcut. The extension uses Ripgrep to rapidly scan your
+   workspace for an existing `///` or `//!` definition for that term.
+3. **Insert**: If it finds a unique definition, it automatically appends it to the bottom
+   of the rustdoc block your cursor is currently in, matching the block's comment style
+   (`///` or `//!`).
+4. **Choose**: If multiple different definitions are found, it prompts you with a
+   QuickPick menu so you can choose the correct one.
+
+### Configuration
+
+You can configure the maximum number of unique definitions shown in the QuickPick menu:
+
+```json
+{
+    "r3bl-semantic-config.insertRustdocLinkDef.maxResults": 5 // Default is 5
+}
+```
+
+---
+
 ## Requirements
 
 - VS Code 1.60.0 or higher
@@ -518,6 +571,7 @@ control over `use` statement folding behavior:
 | `R3BL: Unfold All Rustdocs`                | `Ctrl+=`       | Expand all rustdoc and `use` blocks         |
 | `R3BL: Navigate Rustdoc Structure`         | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs      |
 | `R3BL: Scroll Current Line to Top`         | `Ctrl+M`       | Reveal active cursor line at top            |
+| `R3BL: Insert Rustdoc Link Definition`     | `Ctrl+Shift+L` | Auto-insert link reference definitions      |
 
 ## Shared Infrastructure
 
