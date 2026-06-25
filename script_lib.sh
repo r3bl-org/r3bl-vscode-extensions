@@ -61,7 +61,7 @@ check_requirements() {
     fi
 
     # Check for vsce (required for building)
-    if ! command -v vsce &> /dev/null; then
+    if ! npx --no vsce --version &> /dev/null; then
         missing_tools+=("vsce (@vscode/vsce)")
     fi
 

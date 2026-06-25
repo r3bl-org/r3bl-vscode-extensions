@@ -18,7 +18,7 @@
         "build:copyright": "npm run build --workspace=packages/r3bl-auto-insert-copyright",
         "build:task-management": "npm run compile --workspace=packages/r3bl-task-management",
         "build:copy-selection": "npm run build --workspace=packages/r3bl-copy-selection-path-and-range",
-        "package": "npm run package --workspaces",
+        "package": "npm run package --workspaces --if-present",
         "package:theme": "npm run package --workspace=packages/r3bl-theme",
         "package:copyright": "npm run package --workspace=packages/r3bl-auto-insert-copyright",
         "package:task-management": "npm run package --workspace=packages/r3bl-task-management",
@@ -35,6 +35,7 @@
         "@types/vscode": "^1.95.0",
         "@typescript-eslint/eslint-plugin": "^8.10.0",
         "@typescript-eslint/parser": "^8.7.0",
+        "@vscode/vsce": "^3.9.2",
         "eslint": "^9.13.0",
         "prettier": "^3.6.2",
         "typescript": "^5.6.3"
