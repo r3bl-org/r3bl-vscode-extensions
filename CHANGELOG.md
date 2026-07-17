@@ -152,17 +152,17 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
-## [2026-07-16] - R3BL 2026 Theme and Documentation Updates
+## [2026-07-16] - R3BL 2026 Theme, Documentation Updates, and Color Fix
 
 ### Package Versions
 
-- **R3BL Theme**: 1.0.18 → 1.0.20
-- **R3BL Semantic Configuration**: 1.2.10 → 1.2.12
-- **R3BL Extension Pack**: 1.3.7 → 1.3.9
+- **R3BL Theme**: 1.0.18 → 1.0.22
+- **R3BL Semantic Configuration**: 1.2.10 → 1.2.13
+- **R3BL Extension Pack**: 1.3.7 → 1.3.11
 
 ### Changes
 
-- **R3BL Theme 1.0.20**: Documentation updates and new theme
+- **R3BL Theme 1.0.22**: Theme, documentation, and color fixes
     - Added R3BL 2026 Theme. Derived from the VS Code built-in Dark 2026 theme with
       customized comment colors.
     - Added precise R3BL Theme color choices for selection highlights, current line
@@ -170,8 +170,12 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Fully standalone without internal VS Code dependencies.
     - Updated marketplace descriptions and documentation to properly highlight both
       available themes.
+    - **Fixed**: Synchronized base `tokenColors` from `R3BL Theme` into `R3BL 2026 Theme`
+      to eliminate the orange syntax flash before semantic highlighting loads.
+    - **Fixed**: Synchronized `statusBar` and notification colors from `R3BL Theme` into
+      `R3BL 2026 Theme` for consistent R3BL Task Management integration.
 
-- **R3BL Semantic Configuration 1.2.12**: Support for R3BL 2026 Theme
+- **R3BL Semantic Configuration 1.2.13**: Support for R3BL 2026 Theme
     - Added automated semantic highlight injection for the new R3BL 2026 Theme.
     - Updated marketplace descriptions.
 
