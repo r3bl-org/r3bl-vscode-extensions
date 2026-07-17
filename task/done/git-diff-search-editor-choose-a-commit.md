@@ -98,21 +98,21 @@ folders open in a single window.
 
 ```typescript
 interface CommitInfo {
-    hash: string; // Full SHA
-    shortHash: string; // Abbreviated SHA
-    subject: string; // Commit message first line
-    author: string; // Author name
-    relativeDate: string; // e.g. "2 days ago"
-    timestamp: number; // Unix timestamp for sorting (%ct)
-    cwd: string; // Workspace folder path
-    folderName: string; // Workspace folder display name
+    hash: string // Full SHA
+    shortHash: string // Abbreviated SHA
+    subject: string // Commit message first line
+    author: string // Author name
+    relativeDate: string // e.g. "2 days ago"
+    timestamp: number // Unix timestamp for sorting (%ct)
+    cwd: string // Workspace folder path
+    folderName: string // Workspace folder display name
 }
 ```
 
 **New function `getRecentCommits`:**
 
 ```typescript
-async function getRecentCommits(cwd: string, limit: number): Promise<CommitInfo[]>;
+async function getRecentCommits(cwd: string, limit: number): Promise<CommitInfo[]>
 ```
 
 - Uses
@@ -131,7 +131,7 @@ async function getRecentCommits(cwd: string, limit: number): Promise<CommitInfo[
 async function runGitShow(
     cwd: string,
     hash: string,
-): Promise<{ stdout: string; stderr: string; exitCode: number }>;
+): Promise<{ stdout: string; stderr: string; exitCode: number }>
 ```
 
 - Uses `git show --first-parent -U3 --no-color --patch <hash>`.
@@ -181,8 +181,8 @@ async function runGitShow(
 
 ```typescript
 interface CommitQuickPickItem extends vscode.QuickPickItem {
-    type: 'uncommitted' | 'commit';
-    commitInfo?: CommitInfo; // Present when type === 'commit'
+    type: "uncommitted" | "commit"
+    commitInfo?: CommitInfo // Present when type === 'commit'
 }
 ```
 

@@ -8,13 +8,13 @@ export enum FoldingRangeKind {
 }
 
 export class FoldingRange {
-    start: number;
-    end: number;
-    kind?: FoldingRangeKind;
+    start: number
+    end: number
+    kind?: FoldingRangeKind
 
     constructor(start: number, end: number, kind?: FoldingRangeKind) {
-        this.start = start;
-        this.end = end;
-        this.kind = kind;
+        this.start = start
+        this.end = end
+        this.kind = kind
     }
 }

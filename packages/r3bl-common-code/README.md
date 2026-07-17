@@ -32,12 +32,12 @@ This package is used as a local file dependency in R3BL extensions:
 Type-safe wrapper for displaying status bar messages via r3bl-shared extension.
 
 ```typescript
-import { showStatusBarMessage } from 'r3bl-common-code';
+import { showStatusBarMessage } from "r3bl-common-code"
 
-showStatusBarMessage('Task created!', 'success');
-showStatusBarMessage('Please check your settings', 'warning');
-showStatusBarMessage('File not found', 'error');
-showStatusBarMessage('Operation completed', 'info');
+showStatusBarMessage("Task created!", "success")
+showStatusBarMessage("Please check your settings", "warning")
+showStatusBarMessage("File not found", "error")
+showStatusBarMessage("Operation completed", "info")
 ```
 
 **Available message types:** `'info'`, `'success'`, `'warning'`, `'error'`
@@ -56,10 +56,10 @@ showStatusBarMessage('Operation completed', 'info');
 Generic function for calling r3bl-shared extension APIs with automatic error handling.
 
 ```typescript
-import { callSharedAPI } from 'r3bl-common-code';
+import { callSharedAPI } from "r3bl-common-code"
 
 // Returns true if successful, false if extension not active
-const success = callSharedAPI('showStatusBarMessage', 'Hello', 'info');
+const success = callSharedAPI("showStatusBarMessage", "Hello", "info")
 ```
 
 **Returns:** `true` if API call succeeded, `false` if r3bl-shared is not available
@@ -71,7 +71,7 @@ const success = callSharedAPI('showStatusBarMessage', 'Hello', 'info');
 Type definition for status bar message types:
 
 ```typescript
-type StatusBarMessageType = 'info' | 'success' | 'warning' | 'error';
+type StatusBarMessageType = "info" | "success" | "warning" | "error"
 ```
 
 ## Architecture

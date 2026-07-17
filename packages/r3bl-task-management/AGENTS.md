@@ -183,11 +183,11 @@ A saves → B's watcher fires → B applies → B saves → A's watcher fires �
 
 ```typescript
 // On save:
-this.lastSavedChecksum = computeChecksum(this.data);
+this.lastSavedChecksum = computeChecksum(this.data)
 
 // On file watcher:
 if (computeChecksum(loadedData) === this.lastSavedChecksum) {
-    return; // Own save, skip
+    return // Own save, skip
 }
 ```
 
@@ -204,15 +204,15 @@ A saves → B syncs → B's tabs change → B auto-saves → A syncs → ...
 
 ```typescript
 // Before sync:
-this.pendingFileWatcherSyncs++;
+this.pendingFileWatcherSyncs++
 try {
-    await this.diffSwitchToTaskSpace(id);
+    await this.diffSwitchToTaskSpace(id)
 } finally {
-    this.pendingFileWatcherSyncs--;
+    this.pendingFileWatcherSyncs--
 }
 
 // In auto-save handler:
-if (manager.isSyncingFromFileWatcher()) return;
+if (manager.isSyncingFromFileWatcher()) return
 ```
 
 Uses a counter (not boolean) to handle theoretical overlapping syncs.
@@ -264,12 +264,12 @@ Migration happens during `loadTaskSpaces()` before data is returned to the calle
 2. Register handler in `extension.ts`:
     ```typescript
     const myCommand = vscode.commands.registerCommand(
-        'r3bl-task-management.myCommand',
+        "r3bl-task-management.myCommand",
         async () => {
             /* handler */
         },
-    );
-    context.subscriptions.push(myCommand);
+    )
+    context.subscriptions.push(myCommand)
     ```
 
 ### Adding a New Setting
@@ -277,8 +277,8 @@ Migration happens during `loadTaskSpaces()` before data is returned to the calle
 1. Add to `package.json` under `contributes.configuration.properties`
 2. Read in code:
     ```typescript
-    const config = vscode.workspace.getConfiguration('r3bl-task-management');
-    const value = config.get<boolean>('mySetting', defaultValue);
+    const config = vscode.workspace.getConfiguration("r3bl-task-management")
+    const value = config.get<boolean>("mySetting", defaultValue)
     ```
 
 ### Adding Data to task-spaces.json
@@ -309,9 +309,9 @@ In `extension.ts`, the `onDidChangeTabs` handler already exists. If you need to 
 ```typescript
 // Look for this in extension.ts:
 const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async () => {
-    if (manager.isSyncingFromFileWatcher()) return; // Don't forget this check!
+    if (manager.isSyncingFromFileWatcher()) return // Don't forget this check!
     // Your logic here
-});
+})
 ```
 
 ### Hooking into External File Changes
@@ -320,10 +320,10 @@ In `extension.ts`, the file watcher handler already exists:
 
 ```typescript
 fileWatcher.onDidChange(async () => {
-    const loadedData = await manager.reloadFromDisk();
-    if (manager.isOwnSave(loadedData)) return;
+    const loadedData = await manager.reloadFromDisk()
+    if (manager.isOwnSave(loadedData)) return
     // Your logic here (runs only for external changes)
-});
+})
 ```
 
 ## Testing Multi-Instance Behavior

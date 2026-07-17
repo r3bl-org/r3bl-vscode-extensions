@@ -39,13 +39,13 @@ Tests use Mocha and the Node.js assert module.
 Example:
 
 ```typescript
-import * as assert from 'assert';
+import * as assert from "assert"
 
-suite('My Test Suite', () => {
-    test('My test case', () => {
-        assert.strictEqual(1 + 1, 2);
-    });
-});
+suite("My Test Suite", () => {
+    test("My test case", () => {
+        assert.strictEqual(1 + 1, 2)
+    })
+})
 ```
 
 ## VSCode Extension Testing

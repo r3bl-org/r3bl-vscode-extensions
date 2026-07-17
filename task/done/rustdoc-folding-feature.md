@@ -37,9 +37,9 @@ Parse document line-by-line to identify rustdoc blocks:
 
 ```typescript
 interface RustdocBlock {
-    startLine: number;
-    endLine: number;
-    type: 'module' | 'item'; // //! vs ///
+    startLine: number
+    endLine: number
+    type: "module" | "item" // //! vs ///
 }
 ```
 
@@ -70,24 +70,24 @@ VSCode's folding approach:
 
 ```typescript
 async function foldAllRustdocs(): Promise<void> {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor || editor.document.languageId !== 'rust') {
-        showStatusBarMessage('Not a Rust file', 'warning');
-        return;
+    const editor = vscode.window.activeTextEditor
+    if (!editor || editor.document.languageId !== "rust") {
+        showStatusBarMessage("Not a Rust file", "warning")
+        return
     }
 
-    const blocks = findRustdocBlocks(editor.document);
+    const blocks = findRustdocBlocks(editor.document)
     if (blocks.length === 0) {
-        showStatusBarMessage('No rustdocs found', 'info');
-        return;
+        showStatusBarMessage("No rustdocs found", "info")
+        return
     }
 
     // Fold from bottom to top to preserve line numbers
     for (const block of blocks.reverse()) {
-        await foldRange(editor, block.startLine);
+        await foldRange(editor, block.startLine)
     }
 
-    showStatusBarMessage(`Folded ${blocks.length} rustdoc blocks`, 'success');
+    showStatusBarMessage(`Folded ${blocks.length} rustdoc blocks`, "success")
 }
 ```
 

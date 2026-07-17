@@ -1,17 +1,17 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
-'use strict';
+"use strict"
 
-import { Copyright } from '../copyright';
+import { Copyright } from "../copyright"
 
 export class Apache2OneLine extends Copyright {
     constructor() {
-        super();
+        super()
     }
 
     public header(): string {
         let template = `// Copyright (c) ${this.year} ${this.author}. Licensed under Apache License, Version 2.0.
-`;
-        return template;
+`
+        return template
     }
 }

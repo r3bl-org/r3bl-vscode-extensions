@@ -1,13 +1,13 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode"
 
 /**
  * Represents a block of `use` statements at the top of a Rust file.
  */
 export interface ImportBlock {
-    startLine: number;
-    endLine: number;
+    startLine: number
+    endLine: number
 }
 
 /**
@@ -26,96 +26,96 @@ export interface ImportBlock {
  * test blocks are ignored.
  */
 export function findImportBlock(document: vscode.TextDocument): ImportBlock | null {
-    let importStart: number | null = null;
-    let importEnd: number | null = null;
-    let braceDepth = 0;
-    let insideMultiLineUse = false;
-    let seenUse = false;
+    let importStart: number | null = null
+    let importEnd: number | null = null
+    let braceDepth = 0
+    let insideMultiLineUse = false
+    let seenUse = false
 
     for (let i = 0; i < document.lineCount; i++) {
-        const line = document.lineAt(i).text;
-        const trimmed = line.trimStart();
+        const line = document.lineAt(i).text
+        const trimmed = line.trimStart()
 
         // Inside a multi-line use statement — track braces until closed
         if (insideMultiLineUse) {
-            importEnd = i;
+            importEnd = i
             for (const ch of trimmed) {
-                if (ch === '{') braceDepth++;
-                if (ch === '}') braceDepth--;
+                if (ch === "{") braceDepth++
+                if (ch === "}") braceDepth--
             }
             if (braceDepth <= 0) {
-                insideMultiLineUse = false;
-                braceDepth = 0;
+                insideMultiLineUse = false
+                braceDepth = 0
             }
-            continue;
+            continue
         }
 
         // Preamble: skip these before any `use` is seen, and also between use groups
-        if (trimmed === '') {
+        if (trimmed === "") {
             // Blank lines are allowed in preamble and between use groups
-            continue;
+            continue
         }
-        if (trimmed.startsWith('//!') || trimmed.startsWith('///')) {
+        if (trimmed.startsWith("//!") || trimmed.startsWith("///")) {
             // Doc comments: only skip in preamble (before first use)
-            if (!seenUse) continue;
+            if (!seenUse) continue
             // After first use, a doc comment means we've left the import block
-            break;
+            break
         }
-        if (trimmed.startsWith('//')) {
+        if (trimmed.startsWith("//")) {
             // Regular comments: allowed in preamble and between use groups
-            continue;
+            continue
         }
-        if (trimmed.startsWith('#![') || trimmed.startsWith('#![ ')) {
+        if (trimmed.startsWith("#![") || trimmed.startsWith("#![ ")) {
             // Inner attributes: only in preamble
-            if (!seenUse) continue;
-            break;
+            if (!seenUse) continue
+            break
         }
 
         // Check for `use` statement
         if (
-            trimmed.startsWith('use ') ||
-            trimmed === 'use{' ||
-            trimmed.startsWith('use{')
+            trimmed.startsWith("use ") ||
+            trimmed === "use{" ||
+            trimmed.startsWith("use{")
         ) {
             if (importStart === null) {
-                importStart = i;
+                importStart = i
             }
-            importEnd = i;
-            seenUse = true;
+            importEnd = i
+            seenUse = true
 
             // Check if this is a multi-line use (open brace without close)
-            braceDepth = 0;
+            braceDepth = 0
             for (const ch of trimmed) {
-                if (ch === '{') braceDepth++;
-                if (ch === '}') braceDepth--;
+                if (ch === "{") braceDepth++
+                if (ch === "}") braceDepth--
             }
             if (braceDepth > 0) {
-                insideMultiLineUse = true;
+                insideMultiLineUse = true
             } else {
-                braceDepth = 0;
+                braceDepth = 0
             }
-            continue;
+            continue
         }
 
         // Any other non-use line after we've seen use statements — block ends
         if (seenUse) {
-            break;
+            break
         }
 
         // Non-use, non-preamble line before any use — no top-of-file imports
-        break;
+        break
     }
 
     if (importStart === null || importEnd === null) {
-        return null;
+        return null
     }
 
     // Minimum 2 lines to be worth folding
     if (importEnd - importStart < 1) {
-        return null;
+        return null
     }
 
-    return { startLine: importStart, endLine: importEnd };
+    return { startLine: importStart, endLine: importEnd }
 }
 
 /**
@@ -128,9 +128,9 @@ export class RustUseStatementsFoldingProvider implements vscode.FoldingRangeProv
         _context: vscode.FoldingContext,
         _token: vscode.CancellationToken,
     ): vscode.FoldingRange[] {
-        const block = findImportBlock(document);
+        const block = findImportBlock(document)
         if (!block) {
-            return [];
+            return []
         }
         return [
             new vscode.FoldingRange(
@@ -138,6 +138,6 @@ export class RustUseStatementsFoldingProvider implements vscode.FoldingRangeProv
                 block.endLine,
                 vscode.FoldingRangeKind.Imports,
             ),
-        ];
+        ]
     }
 }

@@ -110,13 +110,13 @@ README.md:
 Each line parsed from `git diff` output becomes a `DiffLine` entry:
 
 ```typescript
-type DiffLineType = 'added' | 'context';
+type DiffLineType = "added" | "context"
 
 interface DiffLine {
-    file: string; // relative path from workspace root
-    line: number; // new-side line number (current file on disk)
-    content: string; // the actual text content (without +/- prefix)
-    type: DiffLineType; // 'added' or 'context'
+    file: string // relative path from workspace root
+    line: number // new-side line number (current file on disk)
+    content: string // the actual text content (without +/- prefix)
+    type: DiffLineType // 'added' or 'context'
 }
 ```
 

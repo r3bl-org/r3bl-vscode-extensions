@@ -1,12 +1,12 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
-'use strict';
+"use strict"
 
-import { Copyright } from '../copyright';
+import { Copyright } from "../copyright"
 
 export class Apache2 extends Copyright {
     constructor() {
-        super();
+        super()
     }
 
     public header(): string {
@@ -26,7 +26,7 @@ export class Apache2 extends Copyright {
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-\n`;
-        return template;
+\n`
+        return template
     }
 }

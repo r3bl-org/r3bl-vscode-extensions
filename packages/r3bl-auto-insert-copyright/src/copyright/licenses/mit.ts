@@ -1,12 +1,12 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
-'use strict';
+"use strict"
 
-import { Copyright } from '../copyright';
+import { Copyright } from "../copyright"
 
 export class Mit extends Copyright {
     constructor() {
-        super();
+        super()
     }
 
     public header(): string {
@@ -33,7 +33,7 @@ export class Mit extends Copyright {
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *   SOFTWARE.
  */
-\n`;
-        return template;
+\n`
+        return template
     }
 }

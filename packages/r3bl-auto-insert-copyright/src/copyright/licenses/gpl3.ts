@@ -1,12 +1,12 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
-'use strict';
+"use strict"
 
-import { Copyright } from '../copyright';
+import { Copyright } from "../copyright"
 
 export class Gpl extends Copyright {
     constructor() {
-        super();
+        super()
     }
 
     public header(): string {
@@ -26,7 +26,7 @@ export class Gpl extends Copyright {
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-\n`;
-        return template;
+\n`
+        return template
     }
 }

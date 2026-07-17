@@ -1,15 +1,15 @@
-import * as vscode from 'vscode';
-import { showStatusBarMessage } from 'r3bl-common-code';
-import { findRustdocBlocks, RustdocBlock } from './rustdocFolding';
+import * as vscode from "vscode"
+import { showStatusBarMessage } from "r3bl-common-code"
+import { findRustdocBlocks, RustdocBlock } from "./rustdocFolding"
 
 export interface RustdocHeading {
-    line: number;
-    level: number;
-    text: string;
+    line: number
+    level: number
+    text: string
 }
 
 interface RustdocQuickPickItem extends vscode.QuickPickItem {
-    targetLine: number;
+    targetLine: number
 }
 
 /**
@@ -20,32 +20,32 @@ export function findHeadingsInBlock(
     document: vscode.TextDocument,
     block: RustdocBlock,
 ): RustdocHeading[] {
-    const headings: RustdocHeading[] = [];
-    const prefix = block.type === 'module' ? '//!' : '///';
+    const headings: RustdocHeading[] = []
+    const prefix = block.type === "module" ? "//!" : "///"
 
     for (let i = block.startLine; i <= block.endLine; i++) {
-        const line = document.lineAt(i).text;
-        const trimmed = line.trimStart();
+        const line = document.lineAt(i).text
+        const trimmed = line.trimStart()
 
         // Strip the rustdoc prefix
-        if (!trimmed.startsWith(prefix)) continue;
-        const afterPrefix = trimmed.slice(prefix.length);
+        if (!trimmed.startsWith(prefix)) continue
+        const afterPrefix = trimmed.slice(prefix.length)
 
         // Strip leading whitespace after prefix
-        const content = afterPrefix.replace(/^\s+/, '');
+        const content = afterPrefix.replace(/^\s+/, "")
 
         // Match heading: one or more # followed by a space and text
-        const match = content.match(/^(#{1,6})\s+(.+)/);
+        const match = content.match(/^(#{1,6})\s+(.+)/)
         if (match) {
             headings.push({
                 line: i,
                 level: match[1].length,
                 text: match[2].trim(),
-            });
+            })
         }
     }
 
-    return headings;
+    return headings
 }
 
 /**
@@ -56,26 +56,25 @@ export function getBlockLabel(
     document: vscode.TextDocument,
     block: RustdocBlock,
 ): string {
-    const prefix = block.type === 'module' ? '//!' : '///';
-    const headings = findHeadingsInBlock(document, block);
+    const prefix = block.type === "module" ? "//!" : "///"
+    const headings = findHeadingsInBlock(document, block)
 
     if (headings.length > 0) {
-        return `${prefix} ${'#'.repeat(headings[0].level)} ${headings[0].text}`;
+        return `${prefix} ${"#".repeat(headings[0].level)} ${headings[0].text}`
     }
 
     // Fall back to first non-empty content line
     for (let i = block.startLine; i <= block.endLine; i++) {
-        const line = document.lineAt(i).text.trimStart();
-        if (!line.startsWith(prefix)) continue;
-        const content = line.slice(prefix.length).trim();
+        const line = document.lineAt(i).text.trimStart()
+        if (!line.startsWith(prefix)) continue
+        const content = line.slice(prefix.length).trim()
         if (content.length > 0) {
-            const truncated =
-                content.length > 60 ? content.slice(0, 57) + '...' : content;
-            return `${prefix} ${truncated}`;
+            const truncated = content.length > 60 ? content.slice(0, 57) + "..." : content
+            return `${prefix} ${truncated}`
         }
     }
 
-    return `${prefix} (empty block)`;
+    return `${prefix} (empty block)`
 }
 
 /**
@@ -87,35 +86,35 @@ export function findLinkRefDefsStart(
     document: vscode.TextDocument,
     block: RustdocBlock,
 ): number | undefined {
-    const prefix = block.type === 'module' ? '//!' : '///';
-    let firstLinkRefDefLine: number | undefined = undefined;
+    const prefix = block.type === "module" ? "//!" : "///"
+    let firstLinkRefDefLine: number | undefined = undefined
 
     // Scan from bottom up to find the contiguous link ref def section
     for (let i = block.endLine; i >= block.startLine; i--) {
-        const line = document.lineAt(i).text.trimStart();
-        if (!line.startsWith(prefix)) break;
+        const line = document.lineAt(i).text.trimStart()
+        if (!line.startsWith(prefix)) break
 
-        const afterPrefix = line.slice(prefix.length);
-        const content = afterPrefix.trim();
+        const afterPrefix = line.slice(prefix.length)
+        const content = afterPrefix.trim()
 
         if (/^\[.*\]:/.test(content)) {
             // Link ref def line: [label]: ...
-            firstLinkRefDefLine = i;
+            firstLinkRefDefLine = i
         } else if (firstLinkRefDefLine !== undefined) {
             // We've already found link ref defs below; check if this is a
             // continuation (indented) or empty line within the section
-            if (content === '' || /^\s{4}/.test(afterPrefix)) {
-                continue;
+            if (content === "" || /^\s{4}/.test(afterPrefix)) {
+                continue
             } else {
-                break;
+                break
             }
         } else {
             // Haven't found any link ref defs yet, stop
-            break;
+            break
         }
     }
 
-    return firstLinkRefDefLine;
+    return firstLinkRefDefLine
 }
 
 /**
@@ -127,16 +126,16 @@ export function findContainingBlock(
 ): RustdocBlock | undefined {
     return blocks.find(
         (block) => cursorLine >= block.startLine && cursorLine <= block.endLine,
-    );
+    )
 }
 
 /**
  * Moves the cursor to the given line and centers it in the viewport.
  */
 function navigateToLine(editor: vscode.TextEditor, line: number): void {
-    const pos = new vscode.Position(line, 0);
-    editor.selection = new vscode.Selection(pos, pos);
-    editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter);
+    const pos = new vscode.Position(line, 0)
+    editor.selection = new vscode.Selection(pos, pos)
+    editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter)
 }
 
 /**
@@ -146,110 +145,110 @@ function navigateToLine(editor: vscode.TextEditor, line: number): void {
  * - Cursor outside any rustdoc block: shows all rustdoc blocks in the file.
  */
 export async function navigateRustdocs(): Promise<void> {
-    const editor = vscode.window.activeTextEditor;
+    const editor = vscode.window.activeTextEditor
 
     if (!editor) {
-        showStatusBarMessage('No active editor', 'warning');
-        return;
+        showStatusBarMessage("No active editor", "warning")
+        return
     }
 
-    if (editor.document.languageId !== 'rust') {
-        showStatusBarMessage('Not a Rust file', 'warning');
-        return;
+    if (editor.document.languageId !== "rust") {
+        showStatusBarMessage("Not a Rust file", "warning")
+        return
     }
 
-    const blocks = findRustdocBlocks(editor.document);
+    const blocks = findRustdocBlocks(editor.document)
 
     if (blocks.length === 0) {
-        showStatusBarMessage('No rustdoc blocks found', 'info');
-        return;
+        showStatusBarMessage("No rustdoc blocks found", "info")
+        return
     }
 
-    const cursorLine = editor.selection.active.line;
-    const containingBlock = findContainingBlock(blocks, cursorLine);
+    const cursorLine = editor.selection.active.line
+    const containingBlock = findContainingBlock(blocks, cursorLine)
 
     if (containingBlock) {
         // Mode A: cursor inside a rustdoc block — show TOC with TOP/BOTTOM/LINK REFS
-        const headings = findHeadingsInBlock(editor.document, containingBlock);
-        const linkRefDefsStart = findLinkRefDefsStart(editor.document, containingBlock);
+        const headings = findHeadingsInBlock(editor.document, containingBlock)
+        const linkRefDefsStart = findLinkRefDefsStart(editor.document, containingBlock)
 
-        const items: RustdocQuickPickItem[] = [];
+        const items: RustdocQuickPickItem[] = []
 
         // <TOP>
         items.push({
-            label: '<TOP>',
+            label: "<TOP>",
             description: `line ${containingBlock.startLine + 1}`,
             targetLine: containingBlock.startLine,
-        });
+        })
 
         // Separator before headings
         if (headings.length > 0) {
             items.push({
-                label: 'Headings',
+                label: "Headings",
                 kind: vscode.QuickPickItemKind.Separator,
                 targetLine: -1,
-            });
+            })
         }
 
         // Headings
         for (const h of headings) {
             items.push({
-                label: `${'  '.repeat(h.level - 1)}${'#'.repeat(h.level)} ${h.text}`,
+                label: `${"  ".repeat(h.level - 1)}${"#".repeat(h.level)} ${h.text}`,
                 description: `line ${h.line + 1}`,
                 targetLine: h.line,
-            });
+            })
         }
 
         // Separator before navigation targets
         items.push({
-            label: '',
+            label: "",
             kind: vscode.QuickPickItemKind.Separator,
             targetLine: -1,
-        });
+        })
 
         // <LINK REF DEFS> (only if they exist)
         if (linkRefDefsStart !== undefined) {
             items.push({
-                label: '<LINK REF DEFS>',
+                label: "<LINK REF DEFS>",
                 description: `line ${linkRefDefsStart + 1}`,
                 targetLine: linkRefDefsStart,
-            });
+            })
         }
 
         // <BOTTOM>
         items.push({
-            label: '<BOTTOM>',
+            label: "<BOTTOM>",
             description: `line ${containingBlock.endLine + 1}`,
             targetLine: containingBlock.endLine,
-        });
+        })
 
         const selected = await vscode.window.showQuickPick(items, {
-            placeHolder: 'Navigate to heading in this rustdoc block',
+            placeHolder: "Navigate to heading in this rustdoc block",
             matchOnDescription: true,
-        });
+        })
 
         if (selected) {
-            navigateToLine(editor, selected.targetLine);
+            navigateToLine(editor, selected.targetLine)
         }
     } else {
         // Mode B: cursor outside any rustdoc block — show all blocks
         const items: RustdocQuickPickItem[] = blocks.map((block) => {
-            const lineCount = block.endLine - block.startLine + 1;
+            const lineCount = block.endLine - block.startLine + 1
             return {
                 label: getBlockLabel(editor.document, block),
                 description: `line ${block.startLine + 1}`,
-                detail: `${block.type === 'module' ? '//!' : '///'} block, ${lineCount} lines`,
+                detail: `${block.type === "module" ? "//!" : "///"} block, ${lineCount} lines`,
                 targetLine: block.startLine,
-            };
-        });
+            }
+        })
 
         const selected = await vscode.window.showQuickPick(items, {
-            placeHolder: 'Navigate to rustdoc block',
+            placeHolder: "Navigate to rustdoc block",
             matchOnDescription: true,
-        });
+        })
 
         if (selected) {
-            navigateToLine(editor, selected.targetLine);
+            navigateToLine(editor, selected.targetLine)
         }
     }
 }

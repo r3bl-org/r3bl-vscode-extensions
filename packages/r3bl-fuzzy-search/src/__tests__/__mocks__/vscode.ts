@@ -2,19 +2,19 @@
 // Minimal vscode module mock for unit testing pure functions.
 
 export interface QuickPickItem {
-    label: string;
-    description?: string;
-    detail?: string;
-    picked?: boolean;
-    alwaysShow?: boolean;
+    label: string
+    description?: string
+    detail?: string
+    picked?: boolean
+    alwaysShow?: boolean
 }
 
 export const Uri = {
-    file: (path: string) => ({ fsPath: path, scheme: 'file' }),
-};
+    file: (path: string) => ({ fsPath: path, scheme: "file" }),
+}
 
 export const workspace = {
     fs: {
         writeFile: async () => {},
     },
-};
+}

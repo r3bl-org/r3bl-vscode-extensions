@@ -1,7 +1,7 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
-import * as vscode from 'vscode';
-import * as configuration from '../configuration';
+import * as vscode from "vscode"
+import * as configuration from "../configuration"
 
 export function handleCopyrightCheck(editor: vscode.TextEditor | undefined) {
     if (
@@ -10,7 +10,7 @@ export function handleCopyrightCheck(editor: vscode.TextEditor | undefined) {
         !hasCopyright(editor.document) &&
         (configuration.getNewFilesOnly() ? isNewDocument(editor.document) : true)
     ) {
-        insertCopyright(editor);
+        insertCopyright(editor)
     }
 }
 
@@ -22,10 +22,10 @@ export function handleManualCopyrightCheck(
         isSupportedLanguage(editor.document.languageId) &&
         !hasCopyright(editor.document)
     ) {
-        insertCopyright(editor);
-        return true;
+        insertCopyright(editor)
+        return true
     } else {
-        return false;
+        return false
     }
 }
 
@@ -45,56 +45,56 @@ export function handleManualCopyrightCheck(
  */
 function hasCopyright(document: vscode.TextDocument): Boolean {
     if (isNewDocument(document)) {
-        return false;
+        return false
     }
 
-    const firstLine = document.lineAt(0);
+    const firstLine = document.lineAt(0)
 
     // Check for single-line copyright (Apache2OneLine: "// Copyright...")
     if (
         !firstLine.isEmptyOrWhitespace &&
-        firstLine.text.trim().startsWith('//') &&
-        firstLine.text.includes('Copyright')
+        firstLine.text.trim().startsWith("//") &&
+        firstLine.text.includes("Copyright")
     ) {
-        return true;
+        return true
     }
 
     // Check for multi-line copyright block (MIT, Apache2, GPL3)
-    if (!firstLine.isEmptyOrWhitespace && firstLine.text.trim().startsWith('/*')) {
+    if (!firstLine.isEmptyOrWhitespace && firstLine.text.trim().startsWith("/*")) {
         // Scan first 30 lines for copyright/license keywords
-        const linesToCheck = Math.min(30, document.lineCount);
+        const linesToCheck = Math.min(30, document.lineCount)
         for (let i = 0; i < linesToCheck; i++) {
-            const line = document.lineAt(i).text.toLowerCase();
+            const line = document.lineAt(i).text.toLowerCase()
             if (
-                line.includes('copyright') ||
-                line.includes('license') ||
-                line.includes('licensed')
+                line.includes("copyright") ||
+                line.includes("license") ||
+                line.includes("licensed")
             ) {
-                return true;
+                return true
             }
             // Stop at end of comment block
-            if (line.includes('*/')) {
-                break;
+            if (line.includes("*/")) {
+                break
             }
         }
     }
 
-    return false;
+    return false
 }
 
 function insertCopyright(editor: vscode.TextEditor) {
-    const documentStartPosition = new vscode.Position(0, 0);
-    const copyright = configuration.getCopyright().header();
+    const documentStartPosition = new vscode.Position(0, 0)
+    const copyright = configuration.getCopyright().header()
 
     editor.edit((document) => {
-        document.insert(documentStartPosition, copyright);
-    });
+        document.insert(documentStartPosition, copyright)
+    })
 }
 
 function isNewDocument(document: vscode.TextDocument): Boolean {
-    return document.lineCount <= 1;
+    return document.lineCount <= 1
 }
 
 function isSupportedLanguage(languageId: string): Boolean {
-    return configuration.configuredLanguages.has(languageId);
+    return configuration.configuredLanguages.has(languageId)
 }

@@ -70,42 +70,42 @@ User Input → Ripgrep (content search) → FZF (fuzzy filter) → Parse Results
 
 ```typescript
 interface SearchInput {
-    query: string; // The fuzzy search pattern
-    excludePatterns: string; // Comma-separated globs
+    query: string // The fuzzy search pattern
+    excludePatterns: string // Comma-separated globs
 }
 
 async function collectSearchInput(): Promise<SearchInput | undefined> {
     // Step 1: Search query
     const query = await vscode.window.showInputBox({
-        prompt: 'Enter search query (fuzzy pattern)',
-        placeHolder: 'e.g., console.log, function, import',
+        prompt: "Enter search query (fuzzy pattern)",
+        placeHolder: "e.g., console.log, function, import",
         ignoreFocusOut: true,
-    });
+    })
 
     if (!query) {
-        return undefined; // User cancelled
+        return undefined // User cancelled
     }
 
     // Step 2: Files to exclude
-    const config = vscode.workspace.getConfiguration('r3blFuzzySearch');
+    const config = vscode.workspace.getConfiguration("r3blFuzzySearch")
     const defaultExcludes = config.get<string>(
-        'defaultExcludePattern',
-        '**/node_modules/**,**/.git/**,**/.vscode/**',
-    );
+        "defaultExcludePattern",
+        "**/node_modules/**,**/.git/**,**/.vscode/**",
+    )
 
     const excludePatterns = await vscode.window.showInputBox({
-        prompt: 'Files to exclude (optional, comma-separated globs)',
-        placeHolder: 'e.g., **/test/**, **/dist/**',
+        prompt: "Files to exclude (optional, comma-separated globs)",
+        placeHolder: "e.g., **/test/**, **/dist/**",
         value: defaultExcludes,
         ignoreFocusOut: true,
-    });
+    })
 
     // User can press Enter with empty value to exclude nothing
     if (excludePatterns === undefined) {
-        return undefined; // User cancelled
+        return undefined // User cancelled
     }
 
-    return { query, excludePatterns: excludePatterns || '' };
+    return { query, excludePatterns: excludePatterns || "" }
 }
 ```
 
@@ -114,61 +114,61 @@ async function collectSearchInput(): Promise<SearchInput | undefined> {
 ### 2. Search Execution
 
 ```typescript
-import { spawn } from 'child_process';
-import * as path from 'path';
+import { spawn } from "child_process"
+import * as path from "path"
 
 interface SearchResult {
-    file: string; // Relative path
-    line: number; // 1-based
-    content: string; // Line content
+    file: string // Relative path
+    line: number // 1-based
+    content: string // Line content
 }
 
 async function executeSearch(
     input: SearchInput,
     workspaceRoot: string,
 ): Promise<SearchResult[]> {
-    const config = vscode.workspace.getConfiguration('r3blFuzzySearch');
-    const rgPath = config.get<string>('ripgrepPath', 'rg');
-    const fzfPath = config.get<string>('fzfPath', 'fzf');
-    const resultLimit = config.get<number>('resultLimit', 500);
+    const config = vscode.workspace.getConfiguration("r3blFuzzySearch")
+    const rgPath = config.get<string>("ripgrepPath", "rg")
+    const fzfPath = config.get<string>("fzfPath", "fzf")
+    const resultLimit = config.get<number>("resultLimit", 500)
 
     // Build ripgrep arguments
     const rgArgs = [
-        '--line-number',
-        '--color=always',
-        '--no-heading',
-        '--no-messages', // Suppress error messages
-    ];
+        "--line-number",
+        "--color=always",
+        "--no-heading",
+        "--no-messages", // Suppress error messages
+    ]
 
     // Add exclude patterns
     const excludes = input.excludePatterns
-        .split(',')
+        .split(",")
         .map((p) => p.trim())
-        .filter((p) => p.length > 0);
+        .filter((p) => p.length > 0)
 
     for (const exclude of excludes) {
-        rgArgs.push('--glob', `!${exclude}`);
+        rgArgs.push("--glob", `!${exclude}`)
     }
 
     // Search all content
-    rgArgs.push('.', workspaceRoot);
+    rgArgs.push(".", workspaceRoot)
 
     // Build fzf arguments
-    const fzfArgs = ['--ansi', '--filter', input.query, '--no-sort', '--delimiter', ':'];
+    const fzfArgs = ["--ansi", "--filter", input.query, "--no-sort", "--delimiter", ":"]
 
     // Execute pipeline: rg | fzf
     const results = await executePipeline(
         { command: rgPath, args: rgArgs },
         { command: fzfPath, args: fzfArgs },
         resultLimit,
-    );
+    )
 
-    return parseResults(results, workspaceRoot);
+    return parseResults(results, workspaceRoot)
 }
 
 interface ProcessConfig {
-    command: string;
-    args: string[];
+    command: string
+    args: string[]
 }
 
 async function executePipeline(
@@ -177,64 +177,64 @@ async function executePipeline(
     resultLimit: number,
 ): Promise<string> {
     return new Promise((resolve, reject) => {
-        const rg = spawn(first.command, first.args);
-        const fzf = spawn(second.command, second.args);
+        const rg = spawn(first.command, first.args)
+        const fzf = spawn(second.command, second.args)
 
-        let output = '';
-        let lineCount = 0;
-        let limitReached = false;
+        let output = ""
+        let lineCount = 0
+        let limitReached = false
 
         // Pipe rg stdout to fzf stdin
-        rg.stdout.pipe(fzf.stdin);
+        rg.stdout.pipe(fzf.stdin)
 
         // Collect fzf output
-        fzf.stdout.on('data', (data) => {
-            const chunk = data.toString();
-            const lines = chunk.split('\n');
+        fzf.stdout.on("data", (data) => {
+            const chunk = data.toString()
+            const lines = chunk.split("\n")
 
             for (const line of lines) {
                 if (line.trim() && lineCount < resultLimit) {
-                    output += line + '\n';
-                    lineCount++;
+                    output += line + "\n"
+                    lineCount++
                 } else if (lineCount >= resultLimit) {
-                    limitReached = true;
-                    break;
+                    limitReached = true
+                    break
                 }
             }
 
             if (limitReached) {
-                rg.kill();
-                fzf.kill();
+                rg.kill()
+                fzf.kill()
             }
-        });
+        })
 
-        let errorOutput = '';
-        fzf.stderr.on('data', (data) => {
-            errorOutput += data.toString();
-        });
+        let errorOutput = ""
+        fzf.stderr.on("data", (data) => {
+            errorOutput += data.toString()
+        })
 
-        fzf.on('close', (code) => {
+        fzf.on("close", (code) => {
             if (code === 0 || code === 1) {
                 // 0 = matches, 1 = no matches
                 if (limitReached) {
                     vscode.window.showWarningMessage(
                         `Search limited to ${resultLimit} results. Consider narrowing your query.`,
-                    );
+                    )
                 }
-                resolve(output);
+                resolve(output)
             } else {
-                reject(new Error(`Search failed: ${errorOutput}`));
+                reject(new Error(`Search failed: ${errorOutput}`))
             }
-        });
+        })
 
-        rg.on('error', (err) => {
-            reject(new Error(`ripgrep error: ${err.message}`));
-        });
+        rg.on("error", (err) => {
+            reject(new Error(`ripgrep error: ${err.message}`))
+        })
 
-        fzf.on('error', (err) => {
-            reject(new Error(`fzf error: ${err.message}`));
-        });
-    });
+        fzf.on("error", (err) => {
+            reject(new Error(`fzf error: ${err.message}`))
+        })
+    })
 }
 ```
 
@@ -244,30 +244,30 @@ async function executePipeline(
 
 ```typescript
 function parseResults(output: string, workspaceRoot: string): SearchResult[] {
-    const lines = output.trim().split('\n');
-    const results: SearchResult[] = [];
+    const lines = output.trim().split("\n")
+    const results: SearchResult[] = []
 
     for (const line of lines) {
-        if (!line.trim()) continue;
+        if (!line.trim()) continue
 
         // Format from rg: file:line:content
         // We need to handle files with colons carefully
-        const match = line.match(/^(.+?):(\d+):(.*)$/);
-        if (!match) continue;
+        const match = line.match(/^(.+?):(\d+):(.*)$/)
+        if (!match) continue
 
-        const [, filePath, lineNum, content] = match;
+        const [, filePath, lineNum, content] = match
 
         // Make path relative to workspace
-        const relativePath = path.relative(workspaceRoot, filePath);
+        const relativePath = path.relative(workspaceRoot, filePath)
 
         results.push({
             file: relativePath,
             line: parseInt(lineNum, 10),
             content: content,
-        });
+        })
     }
 
-    return results;
+    return results
 }
 ```
 
@@ -281,62 +281,62 @@ function generateSearchEditorContent(
     results: SearchResult[],
 ): string {
     // Generate header
-    const header = generateHeader(input, results);
+    const header = generateHeader(input, results)
 
     // Generate body
-    const body = generateBody(results);
+    const body = generateBody(results)
 
-    return `${header}\n\n${body}`;
+    return `${header}\n\n${body}`
 }
 
 function generateHeader(input: SearchInput, results: SearchResult[]): string {
-    const lines: string[] = [];
+    const lines: string[] = []
 
-    lines.push(`# Query: ${input.query}`);
-    lines.push(`# Flags: FuzzyMatch`);
+    lines.push(`# Query: ${input.query}`)
+    lines.push(`# Flags: FuzzyMatch`)
 
     if (input.excludePatterns) {
-        lines.push(`# Excluding: ${input.excludePatterns}`);
+        lines.push(`# Excluding: ${input.excludePatterns}`)
     }
 
     // Count unique files
-    const uniqueFiles = new Set(results.map((r) => r.file)).size;
-    lines.push(`#`);
-    lines.push(`# ${results.length} results - ${uniqueFiles} files`);
+    const uniqueFiles = new Set(results.map((r) => r.file)).size
+    lines.push(`#`)
+    lines.push(`# ${results.length} results - ${uniqueFiles} files`)
 
-    return lines.join('\n');
+    return lines.join("\n")
 }
 
 function generateBody(results: SearchResult[]): string {
     // Group results by file
-    const byFile = new Map<string, SearchResult[]>();
+    const byFile = new Map<string, SearchResult[]>()
 
     for (const result of results) {
         if (!byFile.has(result.file)) {
-            byFile.set(result.file, []);
+            byFile.set(result.file, [])
         }
-        byFile.get(result.file)!.push(result);
+        byFile.get(result.file)!.push(result)
     }
 
-    const sections: string[] = [];
+    const sections: string[] = []
 
     for (const [file, fileResults] of byFile) {
-        sections.push(`${file}:`);
+        sections.push(`${file}:`)
 
         // Sort by line number
-        fileResults.sort((a, b) => a.line - b.line);
+        fileResults.sort((a, b) => a.line - b.line)
 
         for (const result of fileResults) {
             // Format: "  line: content"
             // Remove ANSI color codes
-            const cleanContent = result.content.replace(/\x1b\[[0-9;]*m/g, '');
-            sections.push(`  ${result.line}: ${cleanContent.trim()}`);
+            const cleanContent = result.content.replace(/\x1b\[[0-9;]*m/g, "")
+            sections.push(`  ${result.line}: ${cleanContent.trim()}`)
         }
 
-        sections.push(''); // Blank line between files
+        sections.push("") // Blank line between files
     }
 
-    return sections.join('\n');
+    return sections.join("\n")
 }
 ```
 
@@ -348,13 +348,13 @@ function generateBody(results: SearchResult[]): string {
 async function displayResults(content: string) {
     const doc = await vscode.workspace.openTextDocument({
         content: content,
-        language: 'search-result',
-    });
+        language: "search-result",
+    })
 
     await vscode.window.showTextDocument(doc, {
         preview: false,
         viewColumn: vscode.ViewColumn.Active,
-    });
+    })
 }
 ```
 
@@ -364,70 +364,70 @@ async function displayResults(content: string) {
 
 ```typescript
 async function checkDependencies(): Promise<boolean> {
-    const config = vscode.workspace.getConfiguration('r3blFuzzySearch');
-    const rgPath = config.get<string>('ripgrepPath', 'rg');
-    const fzfPath = config.get<string>('fzfPath', 'fzf');
+    const config = vscode.workspace.getConfiguration("r3blFuzzySearch")
+    const rgPath = config.get<string>("ripgrepPath", "rg")
+    const fzfPath = config.get<string>("fzfPath", "fzf")
 
     const [rgInstalled, fzfInstalled] = await Promise.all([
         checkCommand(rgPath),
         checkCommand(fzfPath),
-    ]);
+    ])
 
     if (!rgInstalled) {
         vscode.window
             .showErrorMessage(
-                'ripgrep (rg) is not installed. Please install it:\n\n' +
-                    'macOS: brew install ripgrep\n' +
-                    'Linux: sudo apt install ripgrep (Debian/Ubuntu)\n' +
-                    '       sudo dnf install ripgrep (Fedora)\n\n' +
-                    'https://github.com/BurntSushi/ripgrep#installation',
-                'Open Installation Guide',
+                "ripgrep (rg) is not installed. Please install it:\n\n" +
+                    "macOS: brew install ripgrep\n" +
+                    "Linux: sudo apt install ripgrep (Debian/Ubuntu)\n" +
+                    "       sudo dnf install ripgrep (Fedora)\n\n" +
+                    "https://github.com/BurntSushi/ripgrep#installation",
+                "Open Installation Guide",
             )
             .then((choice) => {
                 if (choice) {
                     vscode.env.openExternal(
                         vscode.Uri.parse(
-                            'https://github.com/BurntSushi/ripgrep#installation',
+                            "https://github.com/BurntSushi/ripgrep#installation",
                         ),
-                    );
+                    )
                 }
-            });
-        return false;
+            })
+        return false
     }
 
     if (!fzfInstalled) {
         vscode.window
             .showErrorMessage(
-                'fzf is not installed. Please install it:\n\n' +
-                    'macOS: brew install fzf\n' +
-                    'Linux: sudo apt install fzf (Debian/Ubuntu)\n' +
-                    '       sudo dnf install fzf (Fedora)\n\n' +
-                    'https://github.com/junegunn/fzf#installation',
-                'Open Installation Guide',
+                "fzf is not installed. Please install it:\n\n" +
+                    "macOS: brew install fzf\n" +
+                    "Linux: sudo apt install fzf (Debian/Ubuntu)\n" +
+                    "       sudo dnf install fzf (Fedora)\n\n" +
+                    "https://github.com/junegunn/fzf#installation",
+                "Open Installation Guide",
             )
             .then((choice) => {
                 if (choice) {
                     vscode.env.openExternal(
-                        vscode.Uri.parse('https://github.com/junegunn/fzf#installation'),
-                    );
+                        vscode.Uri.parse("https://github.com/junegunn/fzf#installation"),
+                    )
                 }
-            });
-        return false;
+            })
+        return false
     }
 
-    return true;
+    return true
 }
 
 async function checkCommand(command: string): Promise<boolean> {
     return new Promise((resolve) => {
-        const proc = spawn('which', [command]);
-        proc.on('close', (code) => {
-            resolve(code === 0);
-        });
-        proc.on('error', () => {
-            resolve(false);
-        });
-    });
+        const proc = spawn("which", [command])
+        proc.on("close", (code) => {
+            resolve(code === 0)
+        })
+        proc.on("error", () => {
+            resolve(false)
+        })
+    })
 }
 ```
 
@@ -561,24 +561,24 @@ packages/r3bl-fuzzy-search/
 
 export async function executeSearchCommand() {
     // 1. Check dependencies
-    const depsOk = await checkDependencies();
+    const depsOk = await checkDependencies()
     if (!depsOk) {
-        return;
+        return
     }
 
     // 2. Get workspace root
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0]
     if (!workspaceFolder) {
-        vscode.window.showErrorMessage('Please open a folder first');
-        return;
+        vscode.window.showErrorMessage("Please open a folder first")
+        return
     }
 
-    const workspaceRoot = workspaceFolder.uri.fsPath;
+    const workspaceRoot = workspaceFolder.uri.fsPath
 
     // 3. Collect input
-    const input = await collectSearchInput();
+    const input = await collectSearchInput()
     if (!input) {
-        return; // User cancelled
+        return // User cancelled
     }
 
     // 4. Execute search
@@ -586,36 +586,36 @@ export async function executeSearchCommand() {
         vscode.window.withProgress(
             {
                 location: vscode.ProgressLocation.Notification,
-                title: 'Searching with fzf...',
+                title: "Searching with fzf...",
                 cancellable: false,
             },
             async () => {
-                const results = await executeSearch(input, workspaceRoot);
+                const results = await executeSearch(input, workspaceRoot)
 
                 if (results.length === 0) {
                     vscode.window.showInformationMessage(
                         `No results found for "${input.query}"`,
-                    );
-                    return;
+                    )
+                    return
                 }
 
                 // 5. Generate Search Editor content
-                const content = generateSearchEditorContent(input, results);
+                const content = generateSearchEditorContent(input, results)
 
                 // 6. Display results
-                await displayResults(content);
+                await displayResults(content)
 
                 // 7. Show summary
-                const uniqueFiles = new Set(results.map((r) => r.file)).size;
+                const uniqueFiles = new Set(results.map((r) => r.file)).size
                 vscode.window.showInformationMessage(
                     `Found ${results.length} results in ${uniqueFiles} files`,
-                );
+                )
             },
-        );
+        )
     } catch (error) {
         vscode.window.showErrorMessage(
             `Search failed: ${error instanceof Error ? error.message : String(error)}`,
-        );
+        )
     }
 }
 ```

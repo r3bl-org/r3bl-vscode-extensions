@@ -79,20 +79,20 @@ Create a new shared utility module that all extensions can use:
 **File**: `packages/shared/statusBarMessage.ts` (new file)
 
 ```typescript
-import * as vscode from 'vscode';
+import * as vscode from "vscode"
 
 export enum StatusBarMessageType {
-    Info = 'info',
-    Success = 'success',
-    Warning = 'warning',
-    Error = 'error',
+    Info = "info",
+    Success = "success",
+    Warning = "warning",
+    Error = "error",
 }
 
-export type FeedbackMechanism = 'none' | 'notification' | 'statusbar';
+export type FeedbackMechanism = "none" | "notification" | "statusbar"
 
 export class StatusBarMessage {
-    private static statusBarItem: vscode.StatusBarItem | undefined;
-    private static hideTimeout: NodeJS.Timeout | undefined;
+    private static statusBarItem: vscode.StatusBarItem | undefined
+    private static hideTimeout: NodeJS.Timeout | undefined
 
     /**
      * Show a dismissable feedback message using the user's preferred mechanism
@@ -106,29 +106,29 @@ export class StatusBarMessage {
         durationMs: number = 3000,
     ): void {
         // Read user preferences (shared across all R3BL extensions)
-        const config = vscode.workspace.getConfiguration('r3bl');
+        const config = vscode.workspace.getConfiguration("r3bl")
         const feedbackMechanism = config.get<FeedbackMechanism>(
-            'transientFeedbackMechanism',
-            'statusbar',
-        );
+            "transientFeedbackMechanism",
+            "statusbar",
+        )
 
         // Handle based on user preference
         switch (feedbackMechanism) {
-            case 'none':
+            case "none":
                 // Don't show any feedback
-                return;
+                return
 
-            case 'notification':
+            case "notification":
                 // Use classic notification behavior
-                this.showAsNotification(message, type);
-                break;
+                this.showAsNotification(message, type)
+                break
 
-            case 'statusbar':
+            case "statusbar":
             default:
                 // Use status bar (default)
-                const maxLength = config.get<number>('statusbarMessageMaxLength', 50);
-                this.showInStatusBar(message, type, durationMs, maxLength);
-                break;
+                const maxLength = config.get<number>("statusbarMessageMaxLength", 50)
+                this.showInStatusBar(message, type, durationMs, maxLength)
+                break
         }
     }
 
@@ -138,16 +138,16 @@ export class StatusBarMessage {
     private static showAsNotification(message: string, type: StatusBarMessageType): void {
         switch (type) {
             case StatusBarMessageType.Error:
-                vscode.window.showErrorMessage(message);
-                break;
+                vscode.window.showErrorMessage(message)
+                break
             case StatusBarMessageType.Warning:
-                vscode.window.showWarningMessage(message);
-                break;
+                vscode.window.showWarningMessage(message)
+                break
             case StatusBarMessageType.Success:
             case StatusBarMessageType.Info:
             default:
-                vscode.window.showInformationMessage(message);
-                break;
+                vscode.window.showInformationMessage(message)
+                break
         }
     }
 
@@ -162,7 +162,7 @@ export class StatusBarMessage {
     ): void {
         // Clear any existing timeout
         if (this.hideTimeout) {
-            clearTimeout(this.hideTimeout);
+            clearTimeout(this.hideTimeout)
         }
 
         // Create status bar item if it doesn't exist
@@ -170,25 +170,25 @@ export class StatusBarMessage {
             this.statusBarItem = vscode.window.createStatusBarItem(
                 vscode.StatusBarAlignment.Left,
                 100,
-            );
+            )
         }
 
         // Truncate message if needed
-        const displayMessage = this.truncateMessage(message, maxLength);
+        const displayMessage = this.truncateMessage(message, maxLength)
 
         // Set icon based on type
-        const icon = this.getIcon(type);
-        const color = this.getColor(type);
+        const icon = this.getIcon(type)
+        const color = this.getColor(type)
 
-        this.statusBarItem.text = `${icon} ${displayMessage}`;
-        this.statusBarItem.color = color;
-        this.statusBarItem.tooltip = message; // Full message in tooltip
-        this.statusBarItem.show();
+        this.statusBarItem.text = `${icon} ${displayMessage}`
+        this.statusBarItem.color = color
+        this.statusBarItem.tooltip = message // Full message in tooltip
+        this.statusBarItem.show()
 
         // Auto-hide after duration
         this.hideTimeout = setTimeout(() => {
-            this.hide();
-        }, durationMs);
+            this.hide()
+        }, durationMs)
     }
 
     /**
@@ -196,9 +196,9 @@ export class StatusBarMessage {
      */
     private static truncateMessage(message: string, maxLength: number): string {
         if (message.length <= maxLength) {
-            return message;
+            return message
         }
-        return message.substring(0, maxLength - 3) + '...';
+        return message.substring(0, maxLength - 3) + "..."
     }
 
     /**
@@ -206,11 +206,11 @@ export class StatusBarMessage {
      */
     static hide(): void {
         if (this.statusBarItem) {
-            this.statusBarItem.hide();
+            this.statusBarItem.hide()
         }
         if (this.hideTimeout) {
-            clearTimeout(this.hideTimeout);
-            this.hideTimeout = undefined;
+            clearTimeout(this.hideTimeout)
+            this.hideTimeout = undefined
         }
     }
 
@@ -218,37 +218,37 @@ export class StatusBarMessage {
      * Dispose of the status bar item (call on extension deactivation)
      */
     static dispose(): void {
-        this.hide();
+        this.hide()
         if (this.statusBarItem) {
-            this.statusBarItem.dispose();
-            this.statusBarItem = undefined;
+            this.statusBarItem.dispose()
+            this.statusBarItem = undefined
         }
     }
 
     private static getIcon(type: StatusBarMessageType): string {
         switch (type) {
             case StatusBarMessageType.Success:
-                return '$(check)';
+                return "$(check)"
             case StatusBarMessageType.Warning:
-                return '$(warning)';
+                return "$(warning)"
             case StatusBarMessageType.Error:
-                return '$(error)';
+                return "$(error)"
             case StatusBarMessageType.Info:
             default:
-                return '$(info)';
+                return "$(info)"
         }
     }
 
     private static getColor(type: StatusBarMessageType): string | undefined {
         switch (type) {
             case StatusBarMessageType.Error:
-                return new vscode.ThemeColor('errorForeground');
+                return new vscode.ThemeColor("errorForeground")
             case StatusBarMessageType.Warning:
-                return new vscode.ThemeColor('editorWarning.foreground');
+                return new vscode.ThemeColor("editorWarning.foreground")
             case StatusBarMessageType.Success:
-                return new vscode.ThemeColor('terminal.ansiGreen');
+                return new vscode.ThemeColor("terminal.ansiGreen")
             default:
-                return undefined; // Use default color
+                return undefined // Use default color
         }
     }
 }
@@ -543,21 +543,21 @@ Or alternatively, copy the utility file into each extension's `src/utils/` direc
 
 ```typescript
 // packages/r3bl-auto-insert-copyright/src/extension.ts
-vscode.window.showInformationMessage('Copyright Added');
+vscode.window.showInformationMessage("Copyright Added")
 ```
 
 ### After (With Configurable Feedback)
 
 ```typescript
 // packages/r3bl-auto-insert-copyright/src/extension.ts
-import { StatusBarMessage, StatusBarMessageType } from './utils/statusBarMessage';
+import { StatusBarMessage, StatusBarMessageType } from "./utils/statusBarMessage"
 
 // In extension code - simple and consistent across all R3BL extensions
-StatusBarMessage.show('Copyright Added', StatusBarMessageType.Success, 3000);
+StatusBarMessage.show("Copyright Added", StatusBarMessageType.Success, 3000)
 
 // In extension deactivation
 export function deactivate() {
-    StatusBarMessage.dispose();
+    StatusBarMessage.dispose()
 }
 ```
 
@@ -567,27 +567,27 @@ All R3BL extensions use the same simple pattern (no config prefix needed):
 
 ```typescript
 // R3BL Auto Insert Copyright
-StatusBarMessage.show('Copyright Added', StatusBarMessageType.Success, 3000);
+StatusBarMessage.show("Copyright Added", StatusBarMessageType.Success, 3000)
 
 // R3BL Copy Selection Path and Range
-StatusBarMessage.show(`Copied: ${output}`, StatusBarMessageType.Success, 3000);
+StatusBarMessage.show(`Copied: ${output}`, StatusBarMessageType.Success, 3000)
 
 // R3BL Semantic Config
 StatusBarMessage.show(
-    'R3BL Semantic Highlighting enabled',
+    "R3BL Semantic Highlighting enabled",
     StatusBarMessageType.Success,
     3000,
-);
+)
 
 // R3BL Task Management
-StatusBarMessage.show(`Task space "${name}" created`, StatusBarMessageType.Success, 3000);
+StatusBarMessage.show(`Task space "${name}" created`, StatusBarMessageType.Success, 3000)
 
 // R3BL Fuzzy Search
 StatusBarMessage.show(
     `Found ${results.length} results`,
     StatusBarMessageType.Success,
     4000,
-);
+)
 ```
 
 ---
@@ -777,10 +777,10 @@ Keep status bar messages brief (useful for narrow monitors or minimal UI).
 
     ```typescript
     // OLD CODE
-    vscode.window.showInformationMessage('Task space created');
+    vscode.window.showInformationMessage("Task space created")
 
     // NEW CODE (simple and consistent)
-    StatusBarMessage.show('Task space created', StatusBarMessageType.Success, 3000);
+    StatusBarMessage.show("Task space created", StatusBarMessageType.Success, 3000)
     ```
 
 9. **Don't Migrate These**

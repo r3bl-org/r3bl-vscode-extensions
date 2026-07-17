@@ -51,22 +51,22 @@ In `package.json`:
 ### 2. Call the API
 
 ```typescript
-const sharedExt = vscode.extensions.getExtension('R3BL.r3bl-shared');
+const sharedExt = vscode.extensions.getExtension("R3BL.r3bl-shared")
 if (sharedExt?.isActive && sharedExt.exports?.showStatusBarMessage) {
-    sharedExt.exports.showStatusBarMessage('Task created!', 'success');
+    sharedExt.exports.showStatusBarMessage("Task created!", "success")
 } else {
     vscode.window
         .showErrorMessage(
-            'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
-            'Install Extension',
+            "R3BL Shared extension is not active. Please ensure it is installed and enabled.",
+            "Install Extension",
         )
         .then((choice) => {
-            if (choice === 'Install Extension') {
+            if (choice === "Install Extension") {
                 vscode.env.openExternal(
-                    vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared'),
-                );
+                    vscode.Uri.parse("vscode:extension/R3BL.r3bl-shared"),
+                )
             }
-        });
+        })
 }
 ```
 
@@ -81,10 +81,10 @@ For a simplified approach, you can use the **r3bl-common-code** package which pr
 utilities that wrap the extension API calls:
 
 ```typescript
-import { showStatusBarMessage } from 'r3bl-common-code';
+import { showStatusBarMessage } from "r3bl-common-code"
 
 // Simple, clean API call (includes automatic error handling)
-showStatusBarMessage('Task created!', 'success');
+showStatusBarMessage("Task created!", "success")
 ```
 
 **Benefits:**

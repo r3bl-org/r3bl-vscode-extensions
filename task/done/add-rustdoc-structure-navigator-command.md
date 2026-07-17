@@ -58,15 +58,15 @@ This is the core of the feature. The module will contain:
 
 ```typescript
 interface RustdocHeading {
-    line: number; // Line number in the document
-    level: number; // 1 for #, 2 for ##, etc.
-    text: string; // The heading text (without # prefix)
+    line: number // Line number in the document
+    level: number // 1 for #, 2 for ##, etc.
+    text: string // The heading text (without # prefix)
 }
 
 function findHeadingsInBlock(
     document: vscode.TextDocument,
     block: RustdocBlock,
-): RustdocHeading[];
+): RustdocHeading[]
 ```
 
 **Logic:**
@@ -88,7 +88,7 @@ function findHeadingsInBlock(
 ### 2b. Block label generator
 
 ```typescript
-function getBlockLabel(document: vscode.TextDocument, block: RustdocBlock): string;
+function getBlockLabel(document: vscode.TextDocument, block: RustdocBlock): string
 ```
 
 **Logic:**
@@ -113,7 +113,7 @@ function getBlockLabel(document: vscode.TextDocument, block: RustdocBlock): stri
 function findContainingBlock(
     blocks: RustdocBlock[],
     cursorLine: number,
-): RustdocBlock | undefined;
+): RustdocBlock | undefined
 ```
 
 **Logic:**
@@ -125,7 +125,7 @@ function findContainingBlock(
 ### 2d. Main navigator function
 
 ```typescript
-export async function navigateRustdocs(): Promise<void>;
+export async function navigateRustdocs(): Promise<void>
 ```
 
 **Logic:**
@@ -162,7 +162,7 @@ export async function navigateRustdocs(): Promise<void>;
 
 ```typescript
 interface RustdocQuickPickItem extends vscode.QuickPickItem {
-    targetLine: number;
+    targetLine: number
 }
 ```
 
@@ -175,7 +175,7 @@ interface RustdocQuickPickItem extends vscode.QuickPickItem {
 ### 2f. Navigation action (shared by both modes)
 
 ```typescript
-function navigateToLine(editor: vscode.TextEditor, line: number): void;
+function navigateToLine(editor: vscode.TextEditor, line: number): void
 ```
 
 **Logic:**
@@ -192,19 +192,19 @@ function navigateToLine(editor: vscode.TextEditor, line: number): void;
 Add to the `activate()` function:
 
 ```typescript
-import { navigateRustdocs } from './rustdocNavigator';
+import { navigateRustdocs } from "./rustdocNavigator"
 
 // In activate():
 const navigateRustdocsCommand = vscode.commands.registerCommand(
-    'r3bl-semantic-config.navigateRustdocs',
+    "r3bl-semantic-config.navigateRustdocs",
     navigateRustdocs,
-);
+)
 
 // Add to context.subscriptions.push(...)
 context.subscriptions.push(
     // ... existing commands ...
     navigateRustdocsCommand,
-);
+)
 ```
 
 ---

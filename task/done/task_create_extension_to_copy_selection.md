@@ -228,72 +228,72 @@ Create `packages/r3bl-copy-selection-path-and-range/src/extension.ts` with the b
 extension structure:
 
 ```typescript
-import * as vscode from 'vscode';
-import * as path from 'path';
+import * as vscode from "vscode"
+import * as path from "path"
 
 export function activate(context: vscode.ExtensionContext) {
     const copyCommand = vscode.commands.registerCommand(
-        'r3bl-copy-selection-path-and-range.copyPathAndRange',
+        "r3bl-copy-selection-path-and-range.copyPathAndRange",
         handleCopyPathAndRange,
-    );
+    )
 
-    context.subscriptions.push(copyCommand);
+    context.subscriptions.push(copyCommand)
 }
 
 export function deactivate() {}
 
 async function handleCopyPathAndRange() {
-    const editor = vscode.window.activeTextEditor;
+    const editor = vscode.window.activeTextEditor
     if (!editor) {
-        vscode.window.showErrorMessage('No active editor');
-        return;
+        vscode.window.showErrorMessage("No active editor")
+        return
     }
 
-    const document = editor.document;
-    const selection = editor.selection;
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+    const document = editor.document
+    const selection = editor.selection
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
 
     if (!workspaceFolder) {
-        vscode.window.showErrorMessage('No workspace folder found');
-        return;
+        vscode.window.showErrorMessage("No workspace folder found")
+        return
     }
 
     // Calculate relative path from workspace root
-    const absolutePath = document.uri.fsPath;
-    const relativePath = path.relative(workspaceFolder.uri.fsPath, absolutePath);
+    const absolutePath = document.uri.fsPath
+    const relativePath = path.relative(workspaceFolder.uri.fsPath, absolutePath)
 
     // Calculate line range
-    const lineRange = calculateLineRange(selection);
+    const lineRange = calculateLineRange(selection)
 
     // Format the output (no #file: prefix, just relative path + line range)
-    const output = `${relativePath}${lineRange}`;
+    const output = `${relativePath}${lineRange}`
 
     // Copy to clipboard
-    await vscode.env.clipboard.writeText(output);
+    await vscode.env.clipboard.writeText(output)
 
     // Show confirmation message
-    vscode.window.showInformationMessage(`Copied: ${output}`);
+    vscode.window.showInformationMessage(`Copied: ${output}`)
 }
 
 function calculateLineRange(selection: vscode.Selection): string {
-    const startLine = selection.start.line + 1; // Convert to 1-based line numbers
-    const endLine = selection.end.line + 1;
+    const startLine = selection.start.line + 1 // Convert to 1-based line numbers
+    const endLine = selection.end.line + 1
 
     // Check if there's actually a selection (not just cursor position)
-    const hasSelection = !selection.isEmpty;
+    const hasSelection = !selection.isEmpty
 
     if (!hasSelection) {
         // No selection - return empty string (just file path)
-        return '';
+        return ""
     }
 
     // If selection is on a single line
     if (startLine === endLine) {
-        return `:${startLine}`;
+        return `:${startLine}`
     }
 
     // If selection spans multiple lines - use Claude Code format
-    return `#L${startLine}-${endLine}`;
+    return `#L${startLine}-${endLine}`
 }
 ```
 
@@ -310,7 +310,7 @@ The path calculation should:
 This is implemented in the `handleCopyPathAndRange` function with:
 
 ```typescript
-const relativePath = path.relative(workspaceFolder.uri.fsPath, absolutePath);
+const relativePath = path.relative(workspaceFolder.uri.fsPath, absolutePath)
 ```
 
 ### Step 1.2: Implement Selection Handling

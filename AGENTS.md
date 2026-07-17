@@ -217,22 +217,22 @@ available.
 **Usage example:**
 
 ```typescript
-const sharedExt = vscode.extensions.getExtension('R3BL.r3bl-shared');
+const sharedExt = vscode.extensions.getExtension("R3BL.r3bl-shared")
 if (sharedExt?.isActive && sharedExt.exports?.showStatusBarMessage) {
-    sharedExt.exports.showStatusBarMessage('Task created!', 'success');
+    sharedExt.exports.showStatusBarMessage("Task created!", "success")
 } else {
     vscode.window
         .showErrorMessage(
-            'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
-            'Install Extension',
+            "R3BL Shared extension is not active. Please ensure it is installed and enabled.",
+            "Install Extension",
         )
         .then((choice) => {
-            if (choice === 'Install Extension') {
+            if (choice === "Install Extension") {
                 vscode.env.openExternal(
-                    vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared'),
-                );
+                    vscode.Uri.parse("vscode:extension/R3BL.r3bl-shared"),
+                )
             }
-        });
+        })
 }
 ```
 
@@ -269,11 +269,11 @@ All R3BL extensions that use common utilities must declare their dependency in
 **Simplified usage with r3bl-common-code:**
 
 ```typescript
-import { showStatusBarMessage } from 'r3bl-common-code';
+import { showStatusBarMessage } from "r3bl-common-code"
 
 // Simple, clean API call
-showStatusBarMessage('Task created!', 'success');
-showStatusBarMessage('Please check your settings', 'warning');
+showStatusBarMessage("Task created!", "success")
+showStatusBarMessage("Please check your settings", "warning")
 ```
 
 **Benefits:**
@@ -669,11 +669,11 @@ When you need cross-extension state sharing (queues, caches, coordination):
 // packages/r3bl-shared/src/myServiceQueue.ts
 
 export class MyServiceQueue {
-    private static state: Map<string, any> = new Map();
+    private static state: Map<string, any> = new Map()
 
     static doSomething(key: string, value: any): void {
         // Actual implementation with shared state
-        this.state.set(key, value);
+        this.state.set(key, value)
     }
 }
 ```
@@ -683,22 +683,22 @@ export class MyServiceQueue {
 ```typescript
 // packages/r3bl-shared/src/extension.ts
 
-import { MyServiceQueue } from './myServiceQueue';
+import { MyServiceQueue } from "./myServiceQueue"
 
 export interface R3BLSharedAPI {
-    showStatusBarMessage(message: string, type: StatusBarMessageType): void;
-    myServiceDoSomething(key: string, value: any): void; // Add new API
+    showStatusBarMessage(message: string, type: StatusBarMessageType): void
+    myServiceDoSomething(key: string, value: any): void // Add new API
 }
 
 export function activate(context: vscode.ExtensionContext): R3BLSharedAPI {
     return {
         showStatusBarMessage(message, type) {
-            StatusBarMessageQueue.show(message, type);
+            StatusBarMessageQueue.show(message, type)
         },
         myServiceDoSomething(key, value) {
-            MyServiceQueue.doSomething(key, value);
+            MyServiceQueue.doSomething(key, value)
         },
-    };
+    }
 }
 ```
 
@@ -706,22 +706,22 @@ export function activate(context: vscode.ExtensionContext): R3BLSharedAPI {
 
 ```typescript
 // In any R3BL extension
-const sharedExt = vscode.extensions.getExtension('R3BL.r3bl-shared');
+const sharedExt = vscode.extensions.getExtension("R3BL.r3bl-shared")
 if (sharedExt?.isActive && sharedExt.exports?.myServiceDoSomething) {
-    sharedExt.exports.myServiceDoSomething('key', 'value');
+    sharedExt.exports.myServiceDoSomething("key", "value")
 } else {
     vscode.window
         .showErrorMessage(
-            'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
-            'Install Extension',
+            "R3BL Shared extension is not active. Please ensure it is installed and enabled.",
+            "Install Extension",
         )
         .then((choice) => {
-            if (choice === 'Install Extension') {
+            if (choice === "Install Extension") {
                 vscode.env.openExternal(
-                    vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared'),
-                );
+                    vscode.Uri.parse("vscode:extension/R3BL.r3bl-shared"),
+                )
             }
-        });
+        })
 }
 ```
 

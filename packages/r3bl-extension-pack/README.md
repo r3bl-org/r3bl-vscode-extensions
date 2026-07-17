@@ -15,7 +15,7 @@ These extensions are maintained and published by R3BL.
 
 | Extension                                                                                                                                          | Description                                                              |
 | :------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark theme optimized for Rust and Markdown with eye comfort              |
+| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark themes (R3BL Theme, R3BL 2026 Theme) optimized for Rust and Markdown with eye comfort              |
 | **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation       |
 | **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization |
 | **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes       |
@@ -64,7 +64,7 @@ These extensions are required for full functionality and are automatically insta
 
 ## Quick Start
 
-1. **Activate the theme**: Press `Ctrl+K Ctrl+T` → Select "R3BL Theme"
+1. **Activate the theme**: Press `Ctrl+K Ctrl+T` → Select "R3BL Theme" or "R3BL 2026 Theme"
 2. **Enable semantic highlighting**: Click "Yes" when prompted
 3. Start coding with the full R3BL experience!
 

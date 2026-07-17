@@ -3,7 +3,7 @@
 [![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-theme?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-theme)
 [![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)
 
-A carefully crafted dark theme for VS Code, optimized for Rust and Markdown development
+A pair of carefully crafted dark themes for VS Code—**R3BL Theme** and **R3BL 2026 Theme**—optimized for Rust and Markdown development
 with enhanced readability and visual appeal.
 
 ## Features
@@ -79,12 +79,12 @@ code --install-extension r3bl-theme-x.x.x.vsix
 1. Open Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
 2. Type "Color Theme"
 3. Select "Preferences: Color Theme"
-4. Choose "R3BL Theme"
+4. Choose "R3BL Theme" or "R3BL 2026 Theme"
 
 **Or use the keyboard shortcut:**
 
 - Press `Ctrl+K Ctrl+T` (or `Cmd+K Cmd+T` on macOS)
-- Select "R3BL Theme"
+- Select "R3BL Theme" or "R3BL 2026 Theme"
 
 ### Enhanced Semantic Highlighting
 
@@ -94,7 +94,7 @@ color palette.
 
 The semantic configuration extension:
 
-- Automatically detects when R3BL Theme is active
+- Automatically detects when either "R3BL Theme" or "R3BL 2026 Theme" is active
 - Applies optimized semantic highlighting for Rust (functions, methods, structs, enums,
   etc.)
 - Can be enabled/disabled via commands: `R3BL: Enable/Disable Semantic Highlighting`

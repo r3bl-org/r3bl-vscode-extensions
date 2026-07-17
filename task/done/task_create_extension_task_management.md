@@ -96,18 +96,18 @@ When working on multiple features or tasks simultaneously, developers need a way
 
 ```typescript
 interface TaskSpace {
-    name: string; // Display name for the task space
-    id: string; // Unique identifier (UUID)
-    tabs: string[]; // Array of relative file paths (from workspace root)
-    taskFile?: string; // Optional: relative path to task/*.md file
-    createdAt: number; // Timestamp
-    lastAccessed: number; // Timestamp
+    name: string // Display name for the task space
+    id: string // Unique identifier (UUID)
+    tabs: string[] // Array of relative file paths (from workspace root)
+    taskFile?: string // Optional: relative path to task/*.md file
+    createdAt: number // Timestamp
+    lastAccessed: number // Timestamp
 }
 
 interface TaskSpaceStorage {
-    version: string; // Schema version (for future migrations)
-    taskSpaces: TaskSpace[];
-    activeTaskSpaceId?: string; // Currently active task space
+    version: string // Schema version (for future migrations)
+    taskSpaces: TaskSpace[]
+    activeTaskSpaceId?: string // Currently active task space
 }
 ```
 
@@ -342,18 +342,18 @@ Define TypeScript interfaces for task spaces and storage:
 
 ```typescript
 export interface TaskSpace {
-    name: string;
-    id: string;
-    tabs: string[]; // Relative paths from workspace root
-    taskFile?: string; // Optional relative path to task/*.md
-    createdAt: number;
-    lastAccessed: number;
+    name: string
+    id: string
+    tabs: string[] // Relative paths from workspace root
+    taskFile?: string // Optional relative path to task/*.md
+    createdAt: number
+    lastAccessed: number
 }
 
 export interface TaskSpaceStorage {
-    version: string; // For future schema migrations
-    taskSpaces: TaskSpace[];
-    activeTaskSpaceId?: string;
+    version: string // For future schema migrations
+    taskSpaces: TaskSpace[]
+    activeTaskSpaceId?: string
 }
 ```
 
@@ -362,12 +362,12 @@ export interface TaskSpaceStorage {
 Implement storage abstraction that reads/writes `.vscode/task-spaces.json`:
 
 ```typescript
-import * as vscode from 'vscode';
-import * as path from 'path';
-import { TaskSpace, TaskSpaceStorage } from './types';
+import * as vscode from "vscode"
+import * as path from "path"
+import { TaskSpace, TaskSpaceStorage } from "./types"
 
-const STORAGE_FILE = '.vscode/task-spaces.json';
-const CURRENT_VERSION = '1.0';
+const STORAGE_FILE = ".vscode/task-spaces.json"
+const CURRENT_VERSION = "1.0"
 
 export class Storage {
     constructor(private context: vscode.ExtensionContext) {}
@@ -377,24 +377,24 @@ export class Storage {
      * Falls back to globalState if no workspace is open
      */
     async loadTaskSpaces(): Promise<TaskSpaceStorage> {
-        const workspaceFolder = this.getWorkspaceFolder();
+        const workspaceFolder = this.getWorkspaceFolder()
 
         if (workspaceFolder) {
             // Try to load from .vscode/task-spaces.json
-            const storageUri = vscode.Uri.joinPath(workspaceFolder.uri, STORAGE_FILE);
+            const storageUri = vscode.Uri.joinPath(workspaceFolder.uri, STORAGE_FILE)
 
             try {
-                const content = await vscode.workspace.fs.readFile(storageUri);
-                const data = JSON.parse(content.toString()) as TaskSpaceStorage;
-                return this.migrateIfNeeded(data);
+                const content = await vscode.workspace.fs.readFile(storageUri)
+                const data = JSON.parse(content.toString()) as TaskSpaceStorage
+                return this.migrateIfNeeded(data)
             } catch (error) {
                 // File doesn't exist or is invalid, return empty storage
-                return this.createEmptyStorage();
+                return this.createEmptyStorage()
             }
         } else {
             // No workspace, use globalState
-            const data = this.context.globalState.get<TaskSpaceStorage>('taskSpaces');
-            return data ? this.migrateIfNeeded(data) : this.createEmptyStorage();
+            const data = this.context.globalState.get<TaskSpaceStorage>("taskSpaces")
+            return data ? this.migrateIfNeeded(data) : this.createEmptyStorage()
         }
     }
 
@@ -403,24 +403,24 @@ export class Storage {
      * Falls back to globalState if no workspace is open
      */
     async saveTaskSpaces(data: TaskSpaceStorage): Promise<void> {
-        const workspaceFolder = this.getWorkspaceFolder();
+        const workspaceFolder = this.getWorkspaceFolder()
 
         if (workspaceFolder) {
             // Ensure .vscode directory exists
-            const vscodeDir = vscode.Uri.joinPath(workspaceFolder.uri, '.vscode');
+            const vscodeDir = vscode.Uri.joinPath(workspaceFolder.uri, ".vscode")
             try {
-                await vscode.workspace.fs.createDirectory(vscodeDir);
+                await vscode.workspace.fs.createDirectory(vscodeDir)
             } catch {
                 // Directory might already exist, ignore error
             }
 
             // Write to .vscode/task-spaces.json
-            const storageUri = vscode.Uri.joinPath(workspaceFolder.uri, STORAGE_FILE);
-            const content = JSON.stringify(data, null, 2);
-            await vscode.workspace.fs.writeFile(storageUri, Buffer.from(content, 'utf8'));
+            const storageUri = vscode.Uri.joinPath(workspaceFolder.uri, STORAGE_FILE)
+            const content = JSON.stringify(data, null, 2)
+            await vscode.workspace.fs.writeFile(storageUri, Buffer.from(content, "utf8"))
         } else {
             // No workspace, use globalState
-            await this.context.globalState.update('taskSpaces', data);
+            await this.context.globalState.update("taskSpaces", data)
         }
     }
 
@@ -429,8 +429,8 @@ export class Storage {
      * Returns undefined if no workspace is open
      */
     private getWorkspaceFolder(): vscode.WorkspaceFolder | undefined {
-        const folders = vscode.workspace.workspaceFolders;
-        return folders && folders.length > 0 ? folders[0] : undefined;
+        const folders = vscode.workspace.workspaceFolders
+        return folders && folders.length > 0 ? folders[0] : undefined
     }
 
     /**
@@ -441,7 +441,7 @@ export class Storage {
             version: CURRENT_VERSION,
             taskSpaces: [],
             activeTaskSpaceId: undefined,
-        };
+        }
     }
 
     /**
@@ -450,9 +450,9 @@ export class Storage {
     private migrateIfNeeded(data: TaskSpaceStorage): TaskSpaceStorage {
         // Future-proofing: handle schema migrations here
         if (!data.version) {
-            data.version = CURRENT_VERSION;
+            data.version = CURRENT_VERSION
         }
-        return data;
+        return data
     }
 }
 ```
@@ -475,54 +475,54 @@ export class Storage {
 Core class that manages all task space operations:
 
 ```typescript
-import * as vscode from 'vscode';
-import * as path from 'path';
-import { TaskSpace, TaskSpaceStorage } from './types';
-import { Storage } from './storage';
-import { randomUUID } from 'crypto';
+import * as vscode from "vscode"
+import * as path from "path"
+import { TaskSpace, TaskSpaceStorage } from "./types"
+import { Storage } from "./storage"
+import { randomUUID } from "crypto"
 
 export class TaskSpaceManager {
-    private storage: Storage;
-    private data: TaskSpaceStorage;
+    private storage: Storage
+    private data: TaskSpaceStorage
 
     constructor(context: vscode.ExtensionContext) {
-        this.storage = new Storage(context);
-        this.data = { version: '1.0', taskSpaces: [], activeTaskSpaceId: undefined };
+        this.storage = new Storage(context)
+        this.data = { version: "1.0", taskSpaces: [], activeTaskSpaceId: undefined }
     }
 
     /**
      * Initialize manager by loading data from storage
      */
     async initialize(): Promise<void> {
-        this.data = await this.storage.loadTaskSpaces();
+        this.data = await this.storage.loadTaskSpaces()
     }
 
     /**
      * Save current state to storage
      */
     private async save(): Promise<void> {
-        await this.storage.saveTaskSpaces(this.data);
+        await this.storage.saveTaskSpaces(this.data)
     }
 
     /**
      * Get all task spaces
      */
     getTaskSpaces(): TaskSpace[] {
-        return [...this.data.taskSpaces];
+        return [...this.data.taskSpaces]
     }
 
     /**
      * Get active task space
      */
     getActiveTaskSpace(): TaskSpace | undefined {
-        return this.data.taskSpaces.find((ts) => ts.id === this.data.activeTaskSpaceId);
+        return this.data.taskSpaces.find((ts) => ts.id === this.data.activeTaskSpaceId)
     }
 
     /**
      * Get active task space ID
      */
     getActiveTaskSpaceId(): string | undefined {
-        return this.data.activeTaskSpaceId;
+        return this.data.activeTaskSpaceId
     }
 
     /**
@@ -531,10 +531,10 @@ export class TaskSpaceManager {
     async createTaskSpace(name: string, taskFile?: string): Promise<TaskSpace> {
         // Validate name is unique
         if (this.data.taskSpaces.some((ts) => ts.name === name)) {
-            throw new Error(`Task space "${name}" already exists`);
+            throw new Error(`Task space "${name}" already exists`)
         }
 
-        const currentTabs = await this.getCurrentOpenTabs();
+        const currentTabs = await this.getCurrentOpenTabs()
 
         const taskSpace: TaskSpace = {
             name,
@@ -543,91 +543,91 @@ export class TaskSpaceManager {
             taskFile,
             createdAt: Date.now(),
             lastAccessed: Date.now(),
-        };
+        }
 
-        this.data.taskSpaces.push(taskSpace);
-        await this.save();
+        this.data.taskSpaces.push(taskSpace)
+        await this.save()
 
-        return taskSpace;
+        return taskSpace
     }
 
     /**
      * Delete a task space
      */
     async deleteTaskSpace(id: string): Promise<void> {
-        const index = this.data.taskSpaces.findIndex((ts) => ts.id === id);
+        const index = this.data.taskSpaces.findIndex((ts) => ts.id === id)
         if (index === -1) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
-        this.data.taskSpaces.splice(index, 1);
+        this.data.taskSpaces.splice(index, 1)
 
         // Clear active if we deleted the active task space
         if (this.data.activeTaskSpaceId === id) {
-            this.data.activeTaskSpaceId = undefined;
+            this.data.activeTaskSpaceId = undefined
         }
 
-        await this.save();
+        await this.save()
     }
 
     /**
      * Switch to a different task space
      */
     async switchToTaskSpace(id: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (!taskSpace) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
         // Save current task space tabs before switching (if there's an active one)
-        const currentActive = this.getActiveTaskSpace();
+        const currentActive = this.getActiveTaskSpace()
         if (currentActive) {
-            const currentTabs = await this.getCurrentOpenTabs();
-            await this.updateTaskSpaceTabs(currentActive.id, currentTabs);
+            const currentTabs = await this.getCurrentOpenTabs()
+            await this.updateTaskSpaceTabs(currentActive.id, currentTabs)
         }
 
         // Close all current tabs
-        await this.closeAllTabs();
+        await this.closeAllTabs()
 
         // Open tabs from target task space
-        await this.openTabs(taskSpace.tabs, taskSpace.taskFile);
+        await this.openTabs(taskSpace.tabs, taskSpace.taskFile)
 
         // Update active task space
-        this.data.activeTaskSpaceId = id;
-        taskSpace.lastAccessed = Date.now();
+        this.data.activeTaskSpaceId = id
+        taskSpace.lastAccessed = Date.now()
 
-        await this.save();
+        await this.save()
     }
 
     /**
      * Rename a task space
      */
     async renameTaskSpace(id: string, newName: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (!taskSpace) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
         // Validate new name is unique
         if (this.data.taskSpaces.some((ts) => ts.name === newName && ts.id !== id)) {
-            throw new Error(`Task space "${newName}" already exists`);
+            throw new Error(`Task space "${newName}" already exists`)
         }
 
-        taskSpace.name = newName;
-        await this.save();
+        taskSpace.name = newName
+        await this.save()
     }
 
     /**
      * Update tabs for a task space
      */
     async updateTaskSpaceTabs(id: string, tabs: string[]): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (!taskSpace) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
-        taskSpace.tabs = tabs;
-        await this.save();
+        taskSpace.tabs = tabs
+        await this.save()
     }
 
     // Tab management methods implemented in next step...
@@ -799,129 +799,129 @@ The main dialog uses `vscode.window.createQuickPick()` for a rich, interactive U
 
 ```typescript
 interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
-    taskSpace?: TaskSpace;
-    action?: 'create' | 'switch';
+    taskSpace?: TaskSpace
+    action?: "create" | "switch"
 }
 
 async function showTaskSpacesDialog(
     manager: TaskSpaceManager,
     statusBar: vscode.StatusBarItem,
 ) {
-    const quickPick = vscode.window.createQuickPick<TaskSpaceQuickPickItem>();
-    quickPick.placeholder = 'Select a task space or create a new one';
-    quickPick.matchOnDescription = true;
-    quickPick.matchOnDetail = true;
+    const quickPick = vscode.window.createQuickPick<TaskSpaceQuickPickItem>()
+    quickPick.placeholder = "Select a task space or create a new one"
+    quickPick.matchOnDescription = true
+    quickPick.matchOnDetail = true
 
     // Populate items
-    const items: TaskSpaceQuickPickItem[] = [];
+    const items: TaskSpaceQuickPickItem[] = []
 
     // Add "Create New" option at the top
     items.push({
-        label: '$(add) Create New Task Space',
-        description: '',
-        action: 'create',
-    });
+        label: "$(add) Create New Task Space",
+        description: "",
+        action: "create",
+    })
 
     // Add separator
     items.push({
-        label: '',
+        label: "",
         kind: vscode.QuickPickItemKind.Separator,
-    });
+    })
 
     // Add existing task spaces
-    const taskSpaces = manager.getTaskSpaces();
-    const activeId = manager.getActiveTaskSpaceId();
+    const taskSpaces = manager.getTaskSpaces()
+    const activeId = manager.getActiveTaskSpaceId()
 
     // Sort by last accessed (most recent first)
-    const sortedSpaces = [...taskSpaces].sort((a, b) => b.lastAccessed - a.lastAccessed);
+    const sortedSpaces = [...taskSpaces].sort((a, b) => b.lastAccessed - a.lastAccessed)
 
     for (const ts of sortedSpaces) {
-        const isActive = ts.id === activeId;
+        const isActive = ts.id === activeId
         items.push({
-            label: `${isActive ? '$(arrow-right) ' : '$(book) '}${ts.name}`,
-            description: `${ts.tabs.length} tabs${ts.taskFile ? ' 📄' : ''}`,
+            label: `${isActive ? "$(arrow-right) " : "$(book) "}${ts.name}`,
+            description: `${ts.tabs.length} tabs${ts.taskFile ? " 📄" : ""}`,
             detail: `Last accessed: ${formatRelativeTime(ts.lastAccessed)}`,
             taskSpace: ts,
-            action: 'switch',
+            action: "switch",
             buttons: [
                 {
-                    iconPath: new vscode.ThemeIcon('edit'),
-                    tooltip: 'Rename',
+                    iconPath: new vscode.ThemeIcon("edit"),
+                    tooltip: "Rename",
                 },
                 {
-                    iconPath: new vscode.ThemeIcon('trash'),
-                    tooltip: 'Delete',
+                    iconPath: new vscode.ThemeIcon("trash"),
+                    tooltip: "Delete",
                 },
             ],
-        });
+        })
     }
 
-    quickPick.items = items;
+    quickPick.items = items
 
     // Handle selection (Enter key)
     quickPick.onDidAccept(async () => {
-        const selected = quickPick.selectedItems[0];
+        const selected = quickPick.selectedItems[0]
         if (!selected) {
-            return;
+            return
         }
 
-        quickPick.hide();
+        quickPick.hide()
 
-        if (selected.action === 'create') {
-            await handleCreateTaskSpace(manager, statusBar);
-        } else if (selected.action === 'switch' && selected.taskSpace) {
-            await handleSwitchTaskSpace(manager, selected.taskSpace, statusBar);
+        if (selected.action === "create") {
+            await handleCreateTaskSpace(manager, statusBar)
+        } else if (selected.action === "switch" && selected.taskSpace) {
+            await handleSwitchTaskSpace(manager, selected.taskSpace, statusBar)
         }
-    });
+    })
 
     // Handle button clicks
     quickPick.onDidTriggerItemButton(async (e) => {
-        const item = e.item as TaskSpaceQuickPickItem;
+        const item = e.item as TaskSpaceQuickPickItem
         if (!item.taskSpace) {
-            return;
+            return
         }
 
-        const button = e.button;
+        const button = e.button
 
-        if (button.tooltip === 'Rename') {
-            quickPick.hide();
-            await handleRenameTaskSpace(manager, item.taskSpace, statusBar);
+        if (button.tooltip === "Rename") {
+            quickPick.hide()
+            await handleRenameTaskSpace(manager, item.taskSpace, statusBar)
             // Re-show dialog after rename
-            await showTaskSpacesDialog(manager, statusBar);
-        } else if (button.tooltip === 'Delete') {
-            quickPick.hide();
-            await handleDeleteTaskSpace(manager, item.taskSpace, statusBar);
+            await showTaskSpacesDialog(manager, statusBar)
+        } else if (button.tooltip === "Delete") {
+            quickPick.hide()
+            await handleDeleteTaskSpace(manager, item.taskSpace, statusBar)
             // Re-show dialog after delete
-            await showTaskSpacesDialog(manager, statusBar);
+            await showTaskSpacesDialog(manager, statusBar)
         }
-    });
+    })
 
-    quickPick.onDidHide(() => quickPick.dispose());
-    quickPick.show();
+    quickPick.onDidHide(() => quickPick.dispose())
+    quickPick.show()
 }
 
 /**
  * Format timestamp as relative time (e.g., "2 hours ago")
  */
 function formatRelativeTime(timestamp: number): string {
-    const now = Date.now();
-    const diff = now - timestamp;
+    const now = Date.now()
+    const diff = now - timestamp
 
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+    const seconds = Math.floor(diff / 1000)
+    const minutes = Math.floor(seconds / 60)
+    const hours = Math.floor(minutes / 60)
+    const days = Math.floor(hours / 24)
 
     if (days > 0) {
-        return `${days} day${days === 1 ? '' : 's'} ago`;
+        return `${days} day${days === 1 ? "" : "s"} ago`
     }
     if (hours > 0) {
-        return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+        return `${hours} hour${hours === 1 ? "" : "s"} ago`
     }
     if (minutes > 0) {
-        return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+        return `${minutes} minute${minutes === 1 ? "" : "s"} ago`
     }
-    return 'Just now';
+    return "Just now"
 }
 ```
 
@@ -944,93 +944,93 @@ async function handleCreateTaskSpace(
 ) {
     // Step 1: Get task space name
     const name = await vscode.window.showInputBox({
-        prompt: 'Enter task space name',
-        placeHolder: 'e.g., Feature: User Authentication',
+        prompt: "Enter task space name",
+        placeHolder: "e.g., Feature: User Authentication",
         validateInput: (value) => {
             if (!value || value.trim().length === 0) {
-                return 'Task space name cannot be empty';
+                return "Task space name cannot be empty"
             }
 
             // Check for duplicate names
-            const taskSpaces = manager.getTaskSpaces();
+            const taskSpaces = manager.getTaskSpaces()
             if (taskSpaces.some((ts) => ts.name === value)) {
-                return `Task space "${value}" already exists`;
+                return `Task space "${value}" already exists`
             }
 
-            return null;
+            return null
         },
-    });
+    })
 
     if (!name) {
-        return; // User cancelled
+        return // User cancelled
     }
 
     // Step 2: Optionally link a task file
     const linkTaskFile = await vscode.window.showQuickPick(
         [
-            { label: 'Yes', description: 'Link a task/*.md file' },
-            { label: 'No', description: 'Create without task file' },
+            { label: "Yes", description: "Link a task/*.md file" },
+            { label: "No", description: "Create without task file" },
         ],
-        { placeHolder: 'Link a task file?' },
-    );
+        { placeHolder: "Link a task file?" },
+    )
 
-    let taskFile: string | undefined;
+    let taskFile: string | undefined
 
-    if (linkTaskFile?.label === 'Yes') {
+    if (linkTaskFile?.label === "Yes") {
         // Show files from task/ directory
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]
         if (workspaceFolder) {
-            const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, 'task');
+            const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, "task")
 
             try {
-                const files = await vscode.workspace.fs.readDirectory(taskDir);
+                const files = await vscode.workspace.fs.readDirectory(taskDir)
                 const mdFiles = files
                     .filter(
                         ([name, type]) =>
-                            type === vscode.FileType.File && name.endsWith('.md'),
+                            type === vscode.FileType.File && name.endsWith(".md"),
                     )
                     .map(([name]) => ({
                         label: name,
-                        description: 'task/' + name,
-                    }));
+                        description: "task/" + name,
+                    }))
 
                 if (mdFiles.length > 0) {
                     const selected = await vscode.window.showQuickPick(
-                        [{ label: 'None', description: 'No task file' }, ...mdFiles],
-                        { placeHolder: 'Select a task file' },
-                    );
+                        [{ label: "None", description: "No task file" }, ...mdFiles],
+                        { placeHolder: "Select a task file" },
+                    )
 
-                    if (selected && selected.label !== 'None') {
-                        taskFile = 'task/' + selected.label;
+                    if (selected && selected.label !== "None") {
+                        taskFile = "task/" + selected.label
                     }
                 } else {
                     vscode.window.showInformationMessage(
-                        'No .md files found in task/ directory',
-                    );
+                        "No .md files found in task/ directory",
+                    )
                 }
             } catch {
                 // task/ directory doesn't exist
-                vscode.window.showInformationMessage('task/ directory not found');
+                vscode.window.showInformationMessage("task/ directory not found")
             }
         }
     }
 
     // Step 3: Create task space with current tabs
     try {
-        const taskSpace = await manager.createTaskSpace(name, taskFile);
+        const taskSpace = await manager.createTaskSpace(name, taskFile)
 
         // Switch to the new task space
-        await manager.switchToTaskSpace(taskSpace.id);
+        await manager.switchToTaskSpace(taskSpace.id)
 
         // Update status bar
-        updateStatusBar(statusBar, manager);
+        updateStatusBar(statusBar, manager)
 
         // Show confirmation
         vscode.window.showInformationMessage(
             `Task space "${name}" created with ${taskSpace.tabs.length} tab(s)`,
-        );
+        )
     } catch (error) {
-        vscode.window.showErrorMessage(`Failed to create task space: ${error}`);
+        vscode.window.showErrorMessage(`Failed to create task space: ${error}`)
     }
 }
 ```
@@ -1045,25 +1045,25 @@ async function handleSwitchTaskSpace(
 ) {
     // Check if already active
     if (manager.getActiveTaskSpaceId() === taskSpace.id) {
-        vscode.window.showInformationMessage(`Already in task space "${taskSpace.name}"`);
-        return;
+        vscode.window.showInformationMessage(`Already in task space "${taskSpace.name}"`)
+        return
     }
 
     // Optional: Confirm before switching (if configured)
-    const config = vscode.workspace.getConfiguration('r3bl-task-management');
-    const confirmBeforeSwitch = config.get<boolean>('confirmBeforeSwitch', false);
+    const config = vscode.workspace.getConfiguration("r3bl-task-management")
+    const confirmBeforeSwitch = config.get<boolean>("confirmBeforeSwitch", false)
 
     if (confirmBeforeSwitch) {
         const confirm = await vscode.window.showQuickPick(
             [
-                { label: 'Yes', description: 'Switch task space' },
-                { label: 'No', description: 'Cancel' },
+                { label: "Yes", description: "Switch task space" },
+                { label: "No", description: "Cancel" },
             ],
             { placeHolder: `Switch to task space "${taskSpace.name}"?` },
-        );
+        )
 
-        if (confirm?.label !== 'Yes') {
-            return;
+        if (confirm?.label !== "Yes") {
+            return
         }
     }
 
@@ -1076,25 +1076,25 @@ async function handleSwitchTaskSpace(
         },
         async (progress) => {
             try {
-                progress.report({ increment: 0 });
+                progress.report({ increment: 0 })
 
                 // Switch task space
-                await manager.switchToTaskSpace(taskSpace.id);
+                await manager.switchToTaskSpace(taskSpace.id)
 
-                progress.report({ increment: 100 });
+                progress.report({ increment: 100 })
 
                 // Update status bar
-                updateStatusBar(statusBar, manager);
+                updateStatusBar(statusBar, manager)
 
                 // Show confirmation
                 vscode.window.showInformationMessage(
                     `Switched to "${taskSpace.name}" (${taskSpace.tabs.length} tabs)`,
-                );
+                )
             } catch (error) {
-                vscode.window.showErrorMessage(`Failed to switch task space: ${error}`);
+                vscode.window.showErrorMessage(`Failed to switch task space: ${error}`)
             }
         },
-    );
+    )
 }
 ```
 
@@ -1110,23 +1110,23 @@ async function handleDeleteTaskSpace(
     const confirm = await vscode.window.showWarningMessage(
         `Delete task space "${taskSpace.name}"? This cannot be undone.`,
         { modal: true },
-        'Delete',
-    );
+        "Delete",
+    )
 
-    if (confirm !== 'Delete') {
-        return;
+    if (confirm !== "Delete") {
+        return
     }
 
     try {
-        await manager.deleteTaskSpace(taskSpace.id);
+        await manager.deleteTaskSpace(taskSpace.id)
 
         // Update status bar
-        updateStatusBar(statusBar, manager);
+        updateStatusBar(statusBar, manager)
 
         // Show confirmation
-        vscode.window.showInformationMessage(`Task space "${taskSpace.name}" deleted`);
+        vscode.window.showInformationMessage(`Task space "${taskSpace.name}" deleted`)
     } catch (error) {
-        vscode.window.showErrorMessage(`Failed to delete task space: ${error}`);
+        vscode.window.showErrorMessage(`Failed to delete task space: ${error}`)
     }
 }
 ```
@@ -1140,38 +1140,38 @@ async function handleRenameTaskSpace(
     statusBar: vscode.StatusBarItem,
 ) {
     const newName = await vscode.window.showInputBox({
-        prompt: 'Enter new task space name',
+        prompt: "Enter new task space name",
         value: taskSpace.name,
         placeHolder: taskSpace.name,
         validateInput: (value) => {
             if (!value || value.trim().length === 0) {
-                return 'Task space name cannot be empty';
+                return "Task space name cannot be empty"
             }
 
             // Check for duplicate names (excluding current task space)
-            const taskSpaces = manager.getTaskSpaces();
+            const taskSpaces = manager.getTaskSpaces()
             if (taskSpaces.some((ts) => ts.name === value && ts.id !== taskSpace.id)) {
-                return `Task space "${value}" already exists`;
+                return `Task space "${value}" already exists`
             }
 
-            return null;
+            return null
         },
-    });
+    })
 
     if (!newName || newName === taskSpace.name) {
-        return; // User cancelled or no change
+        return // User cancelled or no change
     }
 
     try {
-        await manager.renameTaskSpace(taskSpace.id, newName);
+        await manager.renameTaskSpace(taskSpace.id, newName)
 
         // Update status bar
-        updateStatusBar(statusBar, manager);
+        updateStatusBar(statusBar, manager)
 
         // Show confirmation
-        vscode.window.showInformationMessage(`Task space renamed to "${newName}"`);
+        vscode.window.showInformationMessage(`Task space renamed to "${newName}"`)
     } catch (error) {
-        vscode.window.showErrorMessage(`Failed to rename task space: ${error}`);
+        vscode.window.showErrorMessage(`Failed to rename task space: ${error}`)
     }
 }
 ```
@@ -1189,12 +1189,12 @@ function createStatusBarItem(): vscode.StatusBarItem {
     const statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Left,
         100, // Priority (higher = more left)
-    );
+    )
 
-    statusBarItem.command = 'r3bl-task-management.showTaskSpaces';
-    statusBarItem.tooltip = 'Click to manage task spaces (Alt+Shift+T)';
+    statusBarItem.command = "r3bl-task-management.showTaskSpaces"
+    statusBarItem.tooltip = "Click to manage task spaces (Alt+Shift+T)"
 
-    return statusBarItem;
+    return statusBarItem
 }
 ```
 
@@ -1203,26 +1203,26 @@ function createStatusBarItem(): vscode.StatusBarItem {
 ```typescript
 function updateStatusBar(statusBarItem: vscode.StatusBarItem, manager: TaskSpaceManager) {
     // Check if status bar is enabled in settings
-    const config = vscode.workspace.getConfiguration('r3bl-task-management');
-    const showStatusBar = config.get<boolean>('showStatusBar', true);
+    const config = vscode.workspace.getConfiguration("r3bl-task-management")
+    const showStatusBar = config.get<boolean>("showStatusBar", true)
 
     if (!showStatusBar) {
-        statusBarItem.hide();
-        return;
+        statusBarItem.hide()
+        return
     }
 
-    const activeTaskSpace = manager.getActiveTaskSpace();
+    const activeTaskSpace = manager.getActiveTaskSpace()
 
     if (activeTaskSpace) {
-        statusBarItem.text = `$(book) ${activeTaskSpace.name} (${activeTaskSpace.tabs.length})`;
-        statusBarItem.backgroundColor = undefined; // Default background
-        statusBarItem.show();
+        statusBarItem.text = `$(book) ${activeTaskSpace.name} (${activeTaskSpace.tabs.length})`
+        statusBarItem.backgroundColor = undefined // Default background
+        statusBarItem.show()
     } else {
-        statusBarItem.text = '$(book) No Task Space';
+        statusBarItem.text = "$(book) No Task Space"
         statusBarItem.backgroundColor = new vscode.ThemeColor(
-            'statusBarItem.warningBackground',
-        );
-        statusBarItem.show();
+            "statusBarItem.warningBackground",
+        )
+        statusBarItem.show()
     }
 }
 ```
@@ -1243,42 +1243,42 @@ function updateStatusBar(statusBarItem: vscode.StatusBarItem, manager: TaskSpace
 Register listener in extension activation:
 
 ```typescript
-let autoSaveTimeout: NodeJS.Timeout | undefined;
+let autoSaveTimeout: NodeJS.Timeout | undefined
 
 const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async (e) => {
     // Check if auto-save is enabled
-    const config = vscode.workspace.getConfiguration('r3bl-task-management');
-    const autoSave = config.get<boolean>('autoSaveCurrentTaskSpace', true);
+    const config = vscode.workspace.getConfiguration("r3bl-task-management")
+    const autoSave = config.get<boolean>("autoSaveCurrentTaskSpace", true)
 
     if (!autoSave) {
-        return;
+        return
     }
 
     // Only auto-save if we have an active task space
-    const activeTaskSpace = manager.getActiveTaskSpace();
+    const activeTaskSpace = manager.getActiveTaskSpace()
     if (!activeTaskSpace) {
-        return;
+        return
     }
 
     // Debounce: wait 500ms after last change before saving
     if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout);
+        clearTimeout(autoSaveTimeout)
     }
 
     autoSaveTimeout = setTimeout(async () => {
         try {
-            const currentTabs = await manager.getCurrentOpenTabs();
-            await manager.updateTaskSpaceTabs(activeTaskSpace.id, currentTabs);
+            const currentTabs = await manager.getCurrentOpenTabs()
+            await manager.updateTaskSpaceTabs(activeTaskSpace.id, currentTabs)
 
             // Update status bar (tab count might have changed)
-            updateStatusBar(statusBarItem, manager);
+            updateStatusBar(statusBarItem, manager)
         } catch (error) {
-            console.error('Failed to auto-save task space:', error);
+            console.error("Failed to auto-save task space:", error)
         }
-    }, 500);
-});
+    }, 500)
+})
 
-context.subscriptions.push(tabChangeDisposable);
+context.subscriptions.push(tabChangeDisposable)
 ```
 
 ### Step 5.1: Debounce Tab Updates
@@ -1307,80 +1307,80 @@ The debouncing logic (shown above) prevents excessive writes:
 Main extension entry point that ties everything together:
 
 ```typescript
-import * as vscode from 'vscode';
-import { TaskSpaceManager } from './taskSpaceManager';
+import * as vscode from "vscode"
+import { TaskSpaceManager } from "./taskSpaceManager"
 
-let manager: TaskSpaceManager;
-let statusBarItem: vscode.StatusBarItem;
-let autoSaveTimeout: NodeJS.Timeout | undefined;
+let manager: TaskSpaceManager
+let statusBarItem: vscode.StatusBarItem
+let autoSaveTimeout: NodeJS.Timeout | undefined
 
 export async function activate(context: vscode.ExtensionContext) {
-    console.log('R3BL Task Management extension is now active');
+    console.log("R3BL Task Management extension is now active")
 
     // Initialize manager
-    manager = new TaskSpaceManager(context);
-    await manager.initialize();
+    manager = new TaskSpaceManager(context)
+    await manager.initialize()
 
     // Create status bar item
-    statusBarItem = createStatusBarItem();
-    updateStatusBar(statusBarItem, manager);
-    context.subscriptions.push(statusBarItem);
+    statusBarItem = createStatusBarItem()
+    updateStatusBar(statusBarItem, manager)
+    context.subscriptions.push(statusBarItem)
 
     // Register main command
     const showCommand = vscode.commands.registerCommand(
-        'r3bl-task-management.showTaskSpaces',
+        "r3bl-task-management.showTaskSpaces",
         async () => {
-            await showTaskSpacesDialog(manager, statusBarItem);
+            await showTaskSpacesDialog(manager, statusBarItem)
         },
-    );
-    context.subscriptions.push(showCommand);
+    )
+    context.subscriptions.push(showCommand)
 
     // Register auto-save listener
     const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async (e) => {
         // Check if auto-save is enabled
-        const config = vscode.workspace.getConfiguration('r3bl-task-management');
-        const autoSave = config.get<boolean>('autoSaveCurrentTaskSpace', true);
+        const config = vscode.workspace.getConfiguration("r3bl-task-management")
+        const autoSave = config.get<boolean>("autoSaveCurrentTaskSpace", true)
 
         if (!autoSave) {
-            return;
+            return
         }
 
         // Only auto-save if we have an active task space
-        const activeTaskSpace = manager.getActiveTaskSpace();
+        const activeTaskSpace = manager.getActiveTaskSpace()
         if (!activeTaskSpace) {
-            return;
+            return
         }
 
         // Debounce: wait 500ms after last change
         if (autoSaveTimeout) {
-            clearTimeout(autoSaveTimeout);
+            clearTimeout(autoSaveTimeout)
         }
 
         autoSaveTimeout = setTimeout(async () => {
             try {
-                const currentTabs = await manager.getCurrentOpenTabs();
-                await manager.updateTaskSpaceTabs(activeTaskSpace.id, currentTabs);
-                updateStatusBar(statusBarItem, manager);
+                const currentTabs = await manager.getCurrentOpenTabs()
+                await manager.updateTaskSpaceTabs(activeTaskSpace.id, currentTabs)
+                updateStatusBar(statusBarItem, manager)
             } catch (error) {
-                console.error('Failed to auto-save task space:', error);
+                console.error("Failed to auto-save task space:", error)
             }
-        }, 500);
-    });
-    context.subscriptions.push(tabChangeDisposable);
+        }, 500)
+    })
+    context.subscriptions.push(tabChangeDisposable)
 
     // Listen for configuration changes (e.g., status bar visibility)
     const configChangeDisposable = vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration('r3bl-task-management.showStatusBar')) {
-            updateStatusBar(statusBarItem, manager);
+        if (e.affectsConfiguration("r3bl-task-management.showStatusBar")) {
+            updateStatusBar(statusBarItem, manager)
         }
-    });
-    context.subscriptions.push(configChangeDisposable);
+    })
+    context.subscriptions.push(configChangeDisposable)
 }
 
 export function deactivate() {
     // Clear any pending auto-save
     if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout);
+        clearTimeout(autoSaveTimeout)
     }
 }
 
@@ -1432,8 +1432,8 @@ async function showTaskSpacesDialog(
     // In TaskSpaceManager
     if (!vscode.workspace.workspaceFolders) {
         vscode.window.showWarningMessage(
-            'Task Management works best with a workspace. Consider opening a folder.',
-        );
+            "Task Management works best with a workspace. Consider opening a folder.",
+        )
         // Fall back to globalState storage with absolute paths
     }
     ```
@@ -1465,7 +1465,7 @@ async function showTaskSpacesDialog(
     // Optional: Check for dirty editors before switching
     const dirtyEditors = vscode.window.visibleTextEditors.filter(
         (e) => e.document.isDirty,
-    );
+    )
     if (dirtyEditors.length > 0 && confirmBeforeSwitch) {
         // Show warning
     }
@@ -1490,29 +1490,29 @@ Ensure all operations provide feedback:
 
 ```typescript
 // Success messages (informational)
-vscode.window.showInformationMessage('Task space "Feature" created');
-vscode.window.showInformationMessage('Switched to "Bugfix" (7 tabs)');
-vscode.window.showInformationMessage('Task space renamed to "New Name"');
+vscode.window.showInformationMessage('Task space "Feature" created')
+vscode.window.showInformationMessage('Switched to "Bugfix" (7 tabs)')
+vscode.window.showInformationMessage('Task space renamed to "New Name"')
 
 // Warning messages (non-critical issues)
-vscode.window.showWarningMessage('Failed to open 2 file(s): deleted.ts, old.ts');
-vscode.window.showWarningMessage('Task Management works best with a workspace');
+vscode.window.showWarningMessage("Failed to open 2 file(s): deleted.ts, old.ts")
+vscode.window.showWarningMessage("Task Management works best with a workspace")
 
 // Error messages (critical failures)
-vscode.window.showErrorMessage('Failed to create task space: Invalid name');
-vscode.window.showErrorMessage('Failed to switch task space: Storage error');
+vscode.window.showErrorMessage("Failed to create task space: Invalid name")
+vscode.window.showErrorMessage("Failed to switch task space: Storage error")
 
 // Progress indicators (long-running operations)
 await vscode.window.withProgress(
     {
         location: vscode.ProgressLocation.Notification,
-        title: 'Switching task space...',
+        title: "Switching task space...",
         cancellable: false,
     },
     async () => {
         /* ... */
     },
-);
+)
 ```
 
 ### Step 7.2: Add Configuration Options

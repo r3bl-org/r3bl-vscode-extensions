@@ -11,5 +11,5 @@ export function mockDocument(lines: string[]) {
     return {
         lineCount: lines.length,
         lineAt: (i: number) => ({ text: lines[i] }),
-    } as any;
+    } as any
 }

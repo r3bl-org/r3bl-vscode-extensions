@@ -107,26 +107,26 @@ Add `onLanguage:markdown` to ensure features work immediately upon opening a `.m
 // Register Markdown Folding
 context.subscriptions.push(
     vscode.languages.registerFoldingRangeProvider(
-        { language: 'markdown' },
+        { language: "markdown" },
         new MarkdownFoldingProvider(),
     ),
-);
+)
 
 // Register Commands
 context.subscriptions.push(
     vscode.commands.registerCommand(
-        'r3bl-semantic-config.foldMarkdownHeadings',
+        "r3bl-semantic-config.foldMarkdownHeadings",
         foldAllMarkdownHeadings,
     ),
     vscode.commands.registerCommand(
-        'r3bl-semantic-config.unfoldMarkdownHeadings',
+        "r3bl-semantic-config.unfoldMarkdownHeadings",
         unfoldAllMarkdownHeadings,
     ),
     vscode.commands.registerCommand(
-        'r3bl-semantic-config.navigateMarkdown',
+        "r3bl-semantic-config.navigateMarkdown",
         navigateMarkdownHeadings,
     ),
-);
+)
 ```
 
 ---

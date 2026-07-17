@@ -107,17 +107,17 @@
  * around the async operation.
  */
 
-import * as vscode from 'vscode';
-import * as path from 'path';
-import { showStatusBarMessage } from 'r3bl-common-code';
-import { TabInfo, TaskSpace, TaskSpaceStorage } from './types';
-import { Storage } from './storage';
-import { randomUUID, createHash } from 'crypto';
+import * as vscode from "vscode"
+import * as path from "path"
+import { showStatusBarMessage } from "r3bl-common-code"
+import { TabInfo, TaskSpace, TaskSpaceStorage } from "./types"
+import { Storage } from "./storage"
+import { randomUUID, createHash } from "crypto"
 
 export class TaskSpaceManager {
-    private storage: Storage;
-    private data: TaskSpaceStorage;
-    private lastSavedChecksum: string | null = null;
+    private storage: Storage
+    private data: TaskSpaceStorage
+    private lastSavedChecksum: string | null = null
 
     /**
      * Counter tracking active file watcher sync operations.
@@ -131,38 +131,38 @@ export class TaskSpaceManager {
      *
      * Uses a counter (not boolean) to handle theoretical edge case of overlapping syncs.
      */
-    private pendingFileWatcherSyncs: number = 0;
+    private pendingFileWatcherSyncs: number = 0
 
     /**
      * Active task space ID for THIS VSCode instance.
      * Stored in workspaceState (per-instance), not in task-spaces.json (shared).
      * This allows multiple VSCode windows to have different task spaces active.
      */
-    private activeTaskSpaceId: string | undefined;
+    private activeTaskSpaceId: string | undefined
 
     constructor(context: vscode.ExtensionContext) {
-        this.storage = new Storage(context);
+        this.storage = new Storage(context)
         this.data = {
-            version: '4.0',
+            version: "4.0",
             taskSpaces: [],
             nextQueueIds: [],
             previousStackIds: [],
-        };
+        }
     }
 
     /**
      * Check if currently syncing from file watcher (to suppress auto-save)
      */
     isSyncingFromFileWatcher(): boolean {
-        return this.pendingFileWatcherSyncs > 0;
+        return this.pendingFileWatcherSyncs > 0
     }
 
     /**
      * Compute SHA256 checksum of task space data for change detection
      */
     private computeChecksum(data: TaskSpaceStorage): string {
-        const json = JSON.stringify(data);
-        return createHash('sha256').update(json).digest('hex');
+        const json = JSON.stringify(data)
+        return createHash("sha256").update(json).digest("hex")
     }
 
     /**
@@ -171,10 +171,10 @@ export class TaskSpaceManager {
      */
     isOwnSave(loadedData: TaskSpaceStorage): boolean {
         if (this.lastSavedChecksum === null) {
-            return false; // Never saved, must be external
+            return false // Never saved, must be external
         }
-        const loadedChecksum = this.computeChecksum(loadedData);
-        return loadedChecksum === this.lastSavedChecksum;
+        const loadedChecksum = this.computeChecksum(loadedData)
+        return loadedChecksum === this.lastSavedChecksum
     }
 
     /**
@@ -182,21 +182,21 @@ export class TaskSpaceManager {
      */
     async initialize(): Promise<void> {
         // Load task spaces from JSON (migration from 2.0 → 3.0 → 4.0 happens during load)
-        this.data = await this.storage.loadTaskSpaces();
+        this.data = await this.storage.loadTaskSpaces()
 
         // Persist migration to disk so the version doesn't stay stale
         if (this.storage.didMigrate()) {
-            await this.save();
+            await this.save()
         } else {
             // Set initial checksum so we don't treat first load as external change
-            this.lastSavedChecksum = this.computeChecksum(this.data);
+            this.lastSavedChecksum = this.computeChecksum(this.data)
         }
 
         // Load activeTaskSpaceId from workspaceState (per-instance)
-        this.activeTaskSpaceId = this.storage.getActiveTaskSpaceId();
+        this.activeTaskSpaceId = this.storage.getActiveTaskSpaceId()
 
         // Dashboard Workflow: Discover unlinked task files on startup
-        await this.discoverUnlinkedTaskFiles();
+        await this.discoverUnlinkedTaskFiles()
     }
 
     /**
@@ -204,16 +204,16 @@ export class TaskSpaceManager {
      * and automatically create Task Spaces for them in the Next Queue.
      */
     async discoverUnlinkedTaskFiles(): Promise<void> {
-        const unlinkedFiles = await this.getUnlinkedTaskFiles();
-        if (unlinkedFiles.length === 0) return;
+        const unlinkedFiles = await this.getUnlinkedTaskFiles()
+        if (unlinkedFiles.length === 0) return
 
         console.log(
             `Found ${unlinkedFiles.length} unlinked task files, auto-picking up...`,
-        );
+        )
 
         for (const file of unlinkedFiles) {
             // Use handleFileCreate to reuse existing logic for pickup
-            await this.handleFileCreate(file);
+            await this.handleFileCreate(file)
         }
     }
 
@@ -222,37 +222,37 @@ export class TaskSpaceManager {
      * Returns the loaded data for checksum comparison
      */
     async reloadFromDisk(): Promise<TaskSpaceStorage> {
-        this.data = await this.storage.loadTaskSpaces();
-        return this.data;
+        this.data = await this.storage.loadTaskSpaces()
+        return this.data
     }
 
     /**
      * Save current state to storage and update checksum
      */
     private async save(): Promise<void> {
-        await this.storage.saveTaskSpaces(this.data);
-        this.lastSavedChecksum = this.computeChecksum(this.data);
+        await this.storage.saveTaskSpaces(this.data)
+        this.lastSavedChecksum = this.computeChecksum(this.data)
     }
 
     /**
      * Get all task spaces
      */
     getTaskSpaces(): TaskSpace[] {
-        return [...this.data.taskSpaces];
+        return [...this.data.taskSpaces]
     }
 
     /**
      * Get active task space
      */
     getActiveTaskSpace(): TaskSpace | undefined {
-        return this.data.taskSpaces.find((ts) => ts.id === this.activeTaskSpaceId);
+        return this.data.taskSpaces.find((ts) => ts.id === this.activeTaskSpaceId)
     }
 
     /**
      * Get active task space ID
      */
     getActiveTaskSpaceId(): string | undefined {
-        return this.activeTaskSpaceId;
+        return this.activeTaskSpaceId
     }
 
     /**
@@ -263,10 +263,10 @@ export class TaskSpaceManager {
         if (this.activeTaskSpaceId) {
             const exists = this.data.taskSpaces.some(
                 (ts) => ts.id === this.activeTaskSpaceId,
-            );
+            )
             if (!exists) {
-                this.activeTaskSpaceId = undefined;
-                await this.storage.setActiveTaskSpaceId(undefined);
+                this.activeTaskSpaceId = undefined
+                await this.storage.setActiveTaskSpaceId(undefined)
             }
         }
     }
@@ -288,39 +288,39 @@ export class TaskSpaceManager {
     ): Promise<TaskSpace> {
         // Validate name is unique
         if (this.data.taskSpaces.some((ts) => ts.name === name)) {
-            throw new Error(`Task space "${name}" already exists`);
+            throw new Error(`Task space "${name}" already exists`)
         }
 
-        const workspaceFolder = this.getWorkspaceFolder();
+        const workspaceFolder = this.getWorkspaceFolder()
 
         // Ensure taskFile exists (1:1 mapping)
         if (!taskFile && workspaceFolder) {
-            const safeName = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            let fileName = `task_${safeName}.md`;
-            taskFile = `task/${fileName}`;
-            let fileUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile);
+            const safeName = name.toLowerCase().replace(/[^a-z0-9]/g, "_")
+            let fileName = `task_${safeName}.md`
+            taskFile = `task/${fileName}`
+            let fileUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile)
 
             // Handle filename collisions
-            let counter = 1;
+            let counter = 1
             while (true) {
                 try {
-                    await vscode.workspace.fs.stat(fileUri);
-                    counter++;
-                    fileName = `task_${safeName}_${counter}.md`;
-                    taskFile = `task/${fileName}`;
-                    fileUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile);
+                    await vscode.workspace.fs.stat(fileUri)
+                    counter++
+                    fileName = `task_${safeName}_${counter}.md`
+                    taskFile = `task/${fileName}`
+                    fileUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile)
                 } catch {
-                    break;
+                    break
                 }
             }
 
             // Write initial content
-            const content = `# ${name}\n\n- [ ] Task created via Dashboard Workflow\n`;
-            await vscode.workspace.fs.writeFile(fileUri, Buffer.from(content, 'utf8'));
+            const content = `# ${name}\n\n- [ ] Task created via Dashboard Workflow\n`
+            await vscode.workspace.fs.writeFile(fileUri, Buffer.from(content, "utf8"))
         }
 
-        const finalTabs = tabs ?? (await this.getCurrentOpenTabs());
-        const activeTab = tabs ? undefined : this.getActiveTab();
+        const finalTabs = tabs ?? (await this.getCurrentOpenTabs())
+        const activeTab = tabs ? undefined : this.getActiveTab()
 
         const taskSpace: TaskSpace = {
             name,
@@ -329,68 +329,68 @@ export class TaskSpaceManager {
             taskFile,
             activeTab,
             createdAt: Date.now(),
-        };
+        }
 
-        this.data.taskSpaces.push(taskSpace);
+        this.data.taskSpaces.push(taskSpace)
 
         // Set as active if requested (atomically with creation)
         if (setAsActive) {
             // Push previous active to Previous Stack
-            const previousActiveId = this.getActiveTaskSpaceId();
+            const previousActiveId = this.getActiveTaskSpaceId()
             if (previousActiveId) {
-                await this.addToPreviousStack(previousActiveId, false); // Don't save yet
+                await this.addToPreviousStack(previousActiveId, false) // Don't save yet
             }
 
-            this.activeTaskSpaceId = taskSpace.id;
-            await this.storage.setActiveTaskSpaceId(taskSpace.id);
+            this.activeTaskSpaceId = taskSpace.id
+            await this.storage.setActiveTaskSpaceId(taskSpace.id)
         }
 
         // Set lastAccessed in workspace state (stored separately to avoid git noise)
-        await this.storage.setLastAccessed(taskSpace.id, Date.now());
+        await this.storage.setLastAccessed(taskSpace.id, Date.now())
 
-        await this.save();
+        await this.save()
 
-        return taskSpace;
+        return taskSpace
     }
 
     /**
      * Delete a task space
      */
     async deleteTaskSpace(id: string, moveTaskFile: boolean = true): Promise<void> {
-        const index = this.data.taskSpaces.findIndex((ts) => ts.id === id);
+        const index = this.data.taskSpaces.findIndex((ts) => ts.id === id)
         if (index === -1) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
-        const taskSpace = this.data.taskSpaces[index];
+        const taskSpace = this.data.taskSpaces[index]
 
         // Move associated task file if it exists and moveTaskFile is true
         if (taskSpace.taskFile && moveTaskFile) {
-            await this.moveTaskFileToDone(taskSpace.taskFile);
+            await this.moveTaskFileToDone(taskSpace.taskFile)
         }
 
-        this.data.taskSpaces.splice(index, 1);
+        this.data.taskSpaces.splice(index, 1)
 
         // Remove from queues
         if (this.data.nextQueueIds) {
-            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id);
+            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id)
         }
         if (this.data.previousStackIds) {
             this.data.previousStackIds = this.data.previousStackIds.filter(
                 (sid) => sid !== id,
-            );
+            )
         }
 
         // Clear active if we deleted the active task space
         if (this.activeTaskSpaceId === id) {
-            this.activeTaskSpaceId = undefined;
-            await this.storage.setActiveTaskSpaceId(undefined);
+            this.activeTaskSpaceId = undefined
+            await this.storage.setActiveTaskSpaceId(undefined)
         }
 
         // Clean up lastAccessed metadata from workspace state to prevent memory leaks
-        await this.storage.removeLastAccessed(id);
+        await this.storage.removeLastAccessed(id)
 
-        await this.save();
+        await this.save()
     }
 
     /**
@@ -398,65 +398,65 @@ export class TaskSpaceManager {
      * If a file with the same name exists, add numeric suffix (_2, _3, etc.)
      */
     private async moveTaskFileToDone(taskFile: string): Promise<void> {
-        const workspaceFolder = this.getWorkspaceFolder();
+        const workspaceFolder = this.getWorkspaceFolder()
         if (!workspaceFolder) {
             // No workspace, can't move files
-            return;
+            return
         }
 
         try {
             // Construct paths
             // taskFile format: "task/task_name.md"
-            const fileName = path.basename(taskFile); // "task_name.md"
-            const fileExt = path.extname(fileName); // ".md"
-            const fileBase = path.basename(fileName, fileExt); // "task_name"
+            const fileName = path.basename(taskFile) // "task_name.md"
+            const fileExt = path.extname(fileName) // ".md"
+            const fileBase = path.basename(fileName, fileExt) // "task_name"
 
-            const sourceUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile);
-            const doneDir = vscode.Uri.joinPath(workspaceFolder.uri, 'task', 'done');
+            const sourceUri = vscode.Uri.joinPath(workspaceFolder.uri, taskFile)
+            const doneDir = vscode.Uri.joinPath(workspaceFolder.uri, "task", "done")
 
             // Check if source file exists
             try {
-                await vscode.workspace.fs.stat(sourceUri);
+                await vscode.workspace.fs.stat(sourceUri)
             } catch {
                 // Source file doesn't exist, nothing to move (this is OK)
-                return;
+                return
             }
 
             // Ensure task/done/ directory exists
             try {
-                await vscode.workspace.fs.createDirectory(doneDir);
+                await vscode.workspace.fs.createDirectory(doneDir)
             } catch {
                 // Directory might already exist, ignore error
             }
 
             // Find a unique filename in task/done/
-            let targetFileName = fileName;
-            let targetUri = vscode.Uri.joinPath(doneDir, targetFileName);
-            let counter = 2;
+            let targetFileName = fileName
+            let targetUri = vscode.Uri.joinPath(doneDir, targetFileName)
+            let counter = 2
 
             while (true) {
                 try {
-                    await vscode.workspace.fs.stat(targetUri);
+                    await vscode.workspace.fs.stat(targetUri)
                     // File exists, try next number
-                    targetFileName = `${fileBase}_${counter}${fileExt}`;
-                    targetUri = vscode.Uri.joinPath(doneDir, targetFileName);
-                    counter++;
+                    targetFileName = `${fileBase}_${counter}${fileExt}`
+                    targetUri = vscode.Uri.joinPath(doneDir, targetFileName)
+                    counter++
                 } catch {
                     // File doesn't exist, we can use this name
-                    break;
+                    break
                 }
             }
 
             // Move file
             await vscode.workspace.fs.rename(sourceUri, targetUri, {
                 overwrite: false,
-            });
+            })
         } catch (error) {
             // Log error but don't throw - we still want to delete the task space
-            console.error(`Failed to move task file ${taskFile} to done/:`, error);
+            console.error(`Failed to move task file ${taskFile} to done/:`, error)
 
             // Show warning to user
-            showStatusBarMessage(`Task space deleted but file move failed`, 'warning');
+            showStatusBarMessage(`Task space deleted but file move failed`, "warning")
         }
     }
 
@@ -471,13 +471,13 @@ export class TaskSpaceManager {
     ): Promise<void> {
         // Suppress auto-save during switch to prevent saving partial state
         // or saving old tabs to the new task space
-        this.pendingFileWatcherSyncs++;
+        this.pendingFileWatcherSyncs++
         try {
-            await this.diffSwitchToTaskSpace(id, additive);
+            await this.diffSwitchToTaskSpace(id, additive)
         } finally {
-            this.pendingFileWatcherSyncs--;
+            this.pendingFileWatcherSyncs--
         }
-        await this.save();
+        await this.save()
     }
 
     /**
@@ -485,17 +485,17 @@ export class TaskSpaceManager {
      */
     async addToNextQueue(id: string): Promise<void> {
         if (!this.data.nextQueueIds) {
-            this.data.nextQueueIds = [];
+            this.data.nextQueueIds = []
         }
         if (!this.data.nextQueueIds.includes(id)) {
-            this.data.nextQueueIds.push(id);
+            this.data.nextQueueIds.push(id)
             // Move from Previous Stack if it's there
             if (this.data.previousStackIds) {
                 this.data.previousStackIds = this.data.previousStackIds.filter(
                     (sid) => sid !== id,
-                );
+                )
             }
-            await this.save();
+            await this.save()
         }
     }
 
@@ -503,9 +503,9 @@ export class TaskSpaceManager {
      * Remove from Next Queue
      */
     async removeFromNextQueue(id: string): Promise<void> {
-        if (!this.data.nextQueueIds) return;
-        this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id);
-        await this.save();
+        if (!this.data.nextQueueIds) return
+        this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id)
+        await this.save()
     }
 
     /**
@@ -515,21 +515,21 @@ export class TaskSpaceManager {
      */
     async addToPreviousStack(id: string, shouldSave: boolean = true): Promise<void> {
         if (!this.data.previousStackIds) {
-            this.data.previousStackIds = [];
+            this.data.previousStackIds = []
         }
         // Move to top (end of array)
         this.data.previousStackIds = this.data.previousStackIds.filter(
             (sid) => sid !== id,
-        );
-        this.data.previousStackIds.push(id);
+        )
+        this.data.previousStackIds.push(id)
 
         // Remove from Next Queue if it's there
         if (this.data.nextQueueIds) {
-            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id);
+            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id)
         }
 
         if (shouldSave) {
-            await this.save();
+            await this.save()
         }
     }
 
@@ -537,31 +537,31 @@ export class TaskSpaceManager {
      * Remove from Previous Stack
      */
     async removeFromPreviousStack(id: string): Promise<void> {
-        if (!this.data.previousStackIds) return;
+        if (!this.data.previousStackIds) return
         this.data.previousStackIds = this.data.previousStackIds.filter(
             (sid) => sid !== id,
-        );
-        await this.save();
+        )
+        await this.save()
     }
 
     /**
      * Get task spaces in the Next Queue
      */
     getNextQueue(): TaskSpace[] {
-        if (!this.data.nextQueueIds) return [];
+        if (!this.data.nextQueueIds) return []
         return this.data.nextQueueIds
             .map((id) => this.data.taskSpaces.find((ts) => ts.id === id))
-            .filter((ts): ts is TaskSpace => !!ts);
+            .filter((ts): ts is TaskSpace => !!ts)
     }
 
     /**
      * Get task spaces in the Previous Stack
      */
     getPreviousStack(): TaskSpace[] {
-        if (!this.data.previousStackIds) return [];
+        if (!this.data.previousStackIds) return []
         return this.data.previousStackIds
             .map((id) => this.data.taskSpaces.find((ts) => ts.id === id))
-            .filter((ts): ts is TaskSpace => !!ts);
+            .filter((ts): ts is TaskSpace => !!ts)
     }
 
     /**
@@ -570,33 +570,33 @@ export class TaskSpaceManager {
      * Removes target task from Next Queue if present.
      */
     async jumpToTask(id: string): Promise<void> {
-        const activeId = this.getActiveTaskSpaceId();
+        const activeId = this.getActiveTaskSpaceId()
         // Use getActiveTaskSpace() to check existence, not just the raw ID —
         // workspaceState can hold a stale ID that no longer maps to a task space
-        const comingFromNoTask = !this.getActiveTaskSpace();
+        const comingFromNoTask = !this.getActiveTaskSpace()
 
         if (activeId && activeId !== id) {
-            await this.addToPreviousStack(activeId, false); // Don't save yet
+            await this.addToPreviousStack(activeId, false) // Don't save yet
         }
 
         // Remove target from all queues (it's becoming active)
         if (this.data.nextQueueIds) {
-            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id);
+            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id)
         }
         if (this.data.previousStackIds) {
             this.data.previousStackIds = this.data.previousStackIds.filter(
                 (sid) => sid !== id,
-            );
+            )
         }
 
         // Seed empty task spaces with their task file so there's something to open
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (taskSpace && taskSpace.tabs.length === 0 && taskSpace.taskFile) {
-            taskSpace.tabs = [{ path: taskSpace.taskFile, isPinned: true }];
+            taskSpace.tabs = [{ path: taskSpace.taskFile, isPinned: true }]
         }
 
         // If coming from no task space, don't close pre-existing tabs (additive switch)
-        await this.switchToTaskSpaceFromUserAction(id, comingFromNoTask);
+        await this.switchToTaskSpaceFromUserAction(id, comingFromNoTask)
     }
 
     /**
@@ -604,24 +604,24 @@ export class TaskSpaceManager {
      * Priority: 1. Next from Next Queue, 2. Top from Previous Stack.
      */
     async finishCurrentTask(): Promise<void> {
-        const activeId = this.getActiveTaskSpaceId();
-        if (!activeId) return;
+        const activeId = this.getActiveTaskSpaceId()
+        if (!activeId) return
 
         // Archive and delete current
-        await this.deleteTaskSpace(activeId, true);
+        await this.deleteTaskSpace(activeId, true)
 
         // Find next task
-        let nextId: string | undefined;
+        let nextId: string | undefined
         if (this.data.nextQueueIds && this.data.nextQueueIds.length > 0) {
-            nextId = this.data.nextQueueIds.shift();
+            nextId = this.data.nextQueueIds.shift()
         } else if (this.data.previousStackIds && this.data.previousStackIds.length > 0) {
-            nextId = this.data.previousStackIds.pop();
+            nextId = this.data.previousStackIds.pop()
         }
 
         if (nextId) {
-            await this.switchToTaskSpaceFromUserAction(nextId);
+            await this.switchToTaskSpaceFromUserAction(nextId)
         } else {
-            await this.save();
+            await this.save()
         }
     }
 
@@ -629,36 +629,29 @@ export class TaskSpaceManager {
      * Move a task to the Backlog (task/pending/)
      */
     async moveToBacklog(id: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (!taskSpace || !taskSpace.taskFile) {
-            throw new Error('Task space not found or has no linked file');
+            throw new Error("Task space not found or has no linked file")
         }
 
-        const workspaceFolder = this.getWorkspaceFolder();
+        const workspaceFolder = this.getWorkspaceFolder()
         if (workspaceFolder) {
-            const sourceUri = vscode.Uri.joinPath(
-                workspaceFolder.uri,
-                taskSpace.taskFile,
-            );
-            const pendingDir = vscode.Uri.joinPath(
-                workspaceFolder.uri,
-                'task',
-                'pending',
-            );
-            const fileName = path.basename(taskSpace.taskFile);
-            const targetUri = vscode.Uri.joinPath(pendingDir, fileName);
+            const sourceUri = vscode.Uri.joinPath(workspaceFolder.uri, taskSpace.taskFile)
+            const pendingDir = vscode.Uri.joinPath(workspaceFolder.uri, "task", "pending")
+            const fileName = path.basename(taskSpace.taskFile)
+            const targetUri = vscode.Uri.joinPath(pendingDir, fileName)
 
             // Ensure pending/ exists
             try {
-                await vscode.workspace.fs.createDirectory(pendingDir);
+                await vscode.workspace.fs.createDirectory(pendingDir)
             } catch {}
 
             // Move file
-            await vscode.workspace.fs.rename(sourceUri, targetUri, { overwrite: true });
+            await vscode.workspace.fs.rename(sourceUri, targetUri, { overwrite: true })
         }
 
         // Delete the task space state (it will be auto-picked up if moved back to task/)
-        await this.deleteTaskSpace(id, false); // false = don't move to done/
+        await this.deleteTaskSpace(id, false) // false = don't move to done/
     }
 
     /**
@@ -666,29 +659,29 @@ export class TaskSpaceManager {
      */
     async handleFileCreate(taskFile: string): Promise<void> {
         // Skip if already linked
-        if (this.hasLinkedTaskSpace(taskFile)) return;
+        if (this.hasLinkedTaskSpace(taskFile)) return
 
         // Skip if in pending/ or done/ (should be handled by watcher pattern, but double check)
-        if (taskFile.includes('/pending/') || taskFile.includes('/done/')) return;
+        if (taskFile.includes("/pending/") || taskFile.includes("/done/")) return
 
-        const fileName = path.basename(taskFile, '.md');
-        const name = fileName.replace(/^task_/, '').replace(/_/g, ' ');
+        const fileName = path.basename(taskFile, ".md")
+        const name = fileName.replace(/^task_/, "").replace(/_/g, " ")
 
         // Create the task space with NO tabs (empty)
-        const taskSpace = await this.createTaskSpace(name, taskFile, false, []);
+        const taskSpace = await this.createTaskSpace(name, taskFile, false, [])
 
         // Add to Next Queue
-        await this.addToNextQueue(taskSpace.id);
+        await this.addToNextQueue(taskSpace.id)
     }
 
     /**
      * Handle auto-cleanup when an .md file is deleted from task/
      */
     async handleFileDelete(taskFile: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.taskFile === taskFile);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.taskFile === taskFile)
         if (taskSpace) {
             // Delete task space but don't move the file (it's already gone)
-            await this.deleteTaskSpace(taskSpace.id, false);
+            await this.deleteTaskSpace(taskSpace.id, false)
         }
     }
 
@@ -699,162 +692,162 @@ export class TaskSpaceManager {
      * Returns true if changes were made, false if tabs already matched.
      */
     async switchToTaskSpaceFromFileWatcher(id: string): Promise<boolean> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (!taskSpace) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
         // Check if current tabs already match saved state
-        const tabsMatch = await this.tabsMatchSavedState(taskSpace);
+        const tabsMatch = await this.tabsMatchSavedState(taskSpace)
 
         if (!tabsMatch) {
             // Increment counter to suppress auto-save during sync
-            this.pendingFileWatcherSyncs++;
+            this.pendingFileWatcherSyncs++
             try {
                 // Use diff-based restore for minimal UI disruption
-                await this.diffSwitchToTaskSpace(id);
+                await this.diffSwitchToTaskSpace(id)
             } finally {
-                this.pendingFileWatcherSyncs--;
+                this.pendingFileWatcherSyncs--
             }
-            return true;
+            return true
         }
 
-        return false;
+        return false
     }
 
     /**
      * Rename a task space
      */
     async renameTaskSpace(id: string, newName: string): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (!taskSpace) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
         // Validate new name is unique
         if (this.data.taskSpaces.some((ts) => ts.name === newName && ts.id !== id)) {
-            throw new Error(`Task space "${newName}" already exists`);
+            throw new Error(`Task space "${newName}" already exists`)
         }
 
-        taskSpace.name = newName;
-        await this.save();
+        taskSpace.name = newName
+        await this.save()
     }
 
     /**
      * Update tabs for a task space
      */
     async updateTaskSpaceTabs(id: string, tabs: TabInfo[]): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (!taskSpace) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
-        taskSpace.tabs = tabs;
-        taskSpace.activeTab = this.getActiveTab();
-        await this.save();
+        taskSpace.tabs = tabs
+        taskSpace.activeTab = this.getActiveTab()
+        await this.save()
     }
 
     /**
      * Get currently open tabs with their pinned state
      */
     async getCurrentOpenTabs(): Promise<TabInfo[]> {
-        const workspaceFolder = this.getWorkspaceFolder();
+        const workspaceFolder = this.getWorkspaceFolder()
         if (!workspaceFolder) {
             // No workspace, return absolute paths
-            return this.getOpenTabsAbsolute();
+            return this.getOpenTabsAbsolute()
         }
 
-        const tabs: TabInfo[] = [];
-        const workspaceRoot = workspaceFolder.uri.fsPath;
-        const seenPaths = new Set<string>();
+        const tabs: TabInfo[] = []
+        const workspaceRoot = workspaceFolder.uri.fsPath
+        const seenPaths = new Set<string>()
 
         for (const tabGroup of vscode.window.tabGroups.all) {
             for (const tab of tabGroup.tabs) {
-                const input = tab.input;
+                const input = tab.input
 
                 // Only include file tabs (not settings, output, etc.)
                 if (input instanceof vscode.TabInputText) {
-                    const filePath = input.uri.fsPath;
+                    const filePath = input.uri.fsPath
 
                     // Convert to relative path from workspace root
-                    const relativePath = path.relative(workspaceRoot, filePath);
+                    const relativePath = path.relative(workspaceRoot, filePath)
 
                     // Only include files within workspace and avoid duplicates
-                    if (!relativePath.startsWith('..') && !seenPaths.has(relativePath)) {
-                        seenPaths.add(relativePath);
+                    if (!relativePath.startsWith("..") && !seenPaths.has(relativePath)) {
+                        seenPaths.add(relativePath)
                         tabs.push({
                             path: relativePath,
                             isPinned: tab.isPinned,
-                        });
+                        })
                     }
                 }
             }
         }
 
-        return tabs;
+        return tabs
     }
 
     /**
      * Get the currently active tab's relative path
      */
     private getActiveTab(): string | undefined {
-        const workspaceFolder = this.getWorkspaceFolder();
-        const activeEditor = vscode.window.activeTextEditor;
+        const workspaceFolder = this.getWorkspaceFolder()
+        const activeEditor = vscode.window.activeTextEditor
 
         if (!activeEditor) {
-            return undefined;
+            return undefined
         }
 
         if (!workspaceFolder) {
             // No workspace, return absolute path
-            return activeEditor.document.uri.fsPath;
+            return activeEditor.document.uri.fsPath
         }
 
-        const filePath = activeEditor.document.uri.fsPath;
-        const workspaceRoot = workspaceFolder.uri.fsPath;
-        const relativePath = path.relative(workspaceRoot, filePath);
+        const filePath = activeEditor.document.uri.fsPath
+        const workspaceRoot = workspaceFolder.uri.fsPath
+        const relativePath = path.relative(workspaceRoot, filePath)
 
         // Only return if file is within workspace
-        if (!relativePath.startsWith('..')) {
-            return relativePath;
+        if (!relativePath.startsWith("..")) {
+            return relativePath
         }
 
-        return undefined;
+        return undefined
     }
 
     /**
      * Get currently open tabs as absolute paths with pinned state (fallback when no workspace)
      */
     private getOpenTabsAbsolute(): TabInfo[] {
-        const tabs: TabInfo[] = [];
-        const seenPaths = new Set<string>();
+        const tabs: TabInfo[] = []
+        const seenPaths = new Set<string>()
 
         for (const tabGroup of vscode.window.tabGroups.all) {
             for (const tab of tabGroup.tabs) {
-                const input = tab.input;
+                const input = tab.input
 
                 if (input instanceof vscode.TabInputText) {
-                    const filePath = input.uri.fsPath;
+                    const filePath = input.uri.fsPath
                     if (!seenPaths.has(filePath)) {
-                        seenPaths.add(filePath);
+                        seenPaths.add(filePath)
                         tabs.push({
                             path: filePath,
                             isPinned: tab.isPinned,
-                        });
+                        })
                     }
                 }
             }
         }
 
-        return tabs;
+        return tabs
     }
 
     /**
      * Get workspace folder (first one if multiple)
      */
     private getWorkspaceFolder(): vscode.WorkspaceFolder | undefined {
-        const folders = vscode.workspace.workspaceFolders;
-        return folders && folders.length > 0 ? folders[0] : undefined;
+        const folders = vscode.workspace.workspaceFolders
+        return folders && folders.length > 0 ? folders[0] : undefined
     }
 
     /**
@@ -862,61 +855,61 @@ export class TaskSpaceManager {
      * Returns relative paths like "task/task_foo.md"
      */
     async getTaskFiles(): Promise<string[]> {
-        const workspaceFolder = this.getWorkspaceFolder();
+        const workspaceFolder = this.getWorkspaceFolder()
         if (!workspaceFolder) {
-            return [];
+            return []
         }
 
-        const taskFiles: string[] = [];
+        const taskFiles: string[] = []
 
         // Files to exclude from task file list
-        const excludeFiles = ['CLAUDE.md', 'README.md', 'AGENTS.md', 'GEMINI.md'];
+        const excludeFiles = ["CLAUDE.md", "README.md", "AGENTS.md", "GEMINI.md"]
 
         try {
-            const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, 'task');
+            const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, "task")
 
             // Check if task directory exists
             try {
-                await vscode.workspace.fs.stat(taskDir);
+                await vscode.workspace.fs.stat(taskDir)
             } catch {
                 // task/ directory doesn't exist
-                return [];
+                return []
             }
 
             // Read task/ directory contents - all .md files except excluded ones
-            const files = await vscode.workspace.fs.readDirectory(taskDir);
+            const files = await vscode.workspace.fs.readDirectory(taskDir)
             for (const [name, type] of files) {
                 if (
                     type === vscode.FileType.File &&
-                    name.endsWith('.md') &&
+                    name.endsWith(".md") &&
                     !excludeFiles.includes(name)
                 ) {
-                    taskFiles.push(`task/${name}`);
+                    taskFiles.push(`task/${name}`)
                 }
             }
 
             // Read task/pending/ directory if it exists
-            const pendingDir = vscode.Uri.joinPath(taskDir, 'pending');
+            const pendingDir = vscode.Uri.joinPath(taskDir, "pending")
             try {
-                await vscode.workspace.fs.stat(pendingDir);
-                const pendingFiles = await vscode.workspace.fs.readDirectory(pendingDir);
+                await vscode.workspace.fs.stat(pendingDir)
+                const pendingFiles = await vscode.workspace.fs.readDirectory(pendingDir)
                 for (const [name, type] of pendingFiles) {
                     if (
                         type === vscode.FileType.File &&
-                        name.endsWith('.md') &&
+                        name.endsWith(".md") &&
                         !excludeFiles.includes(name)
                     ) {
-                        taskFiles.push(`task/pending/${name}`);
+                        taskFiles.push(`task/pending/${name}`)
                     }
                 }
             } catch {
                 // task/pending/ directory doesn't exist, skip
             }
 
-            return taskFiles.sort();
+            return taskFiles.sort()
         } catch (error) {
-            console.error('Failed to get task files:', error);
-            return [];
+            console.error("Failed to get task files:", error)
+            return []
         }
     }
 
@@ -925,19 +918,19 @@ export class TaskSpaceManager {
      * Returns array of relative paths like "task/task_foo.md"
      */
     async getUnlinkedTaskFiles(): Promise<string[]> {
-        const allTaskFiles = await this.getTaskFiles();
+        const allTaskFiles = await this.getTaskFiles()
         const linkedFiles = new Set(
             this.data.taskSpaces.filter((ts) => ts.taskFile).map((ts) => ts.taskFile!),
-        );
+        )
 
-        return allTaskFiles.filter((file) => !linkedFiles.has(file));
+        return allTaskFiles.filter((file) => !linkedFiles.has(file))
     }
 
     /**
      * Check if a task file has a linked task space
      */
     hasLinkedTaskSpace(taskFile: string): boolean {
-        return this.data.taskSpaces.some((ts) => ts.taskFile === taskFile);
+        return this.data.taskSpaces.some((ts) => ts.taskFile === taskFile)
     }
 
     /**
@@ -945,32 +938,32 @@ export class TaskSpaceManager {
      * Compares paths, order, and pinned state
      */
     async tabsMatchSavedState(taskSpace: TaskSpace): Promise<boolean> {
-        const currentTabs = await this.getCurrentOpenTabs();
-        const savedTabs = taskSpace.tabs;
+        const currentTabs = await this.getCurrentOpenTabs()
+        const savedTabs = taskSpace.tabs
 
         // Different number of tabs
         if (currentTabs.length !== savedTabs.length) {
-            return false;
+            return false
         }
 
         // Compare each tab in order
         for (let i = 0; i < currentTabs.length; i++) {
-            const current = currentTabs[i];
-            const saved = savedTabs[i];
+            const current = currentTabs[i]
+            const saved = savedTabs[i]
 
             // Different path or pinned state
             if (current.path !== saved.path || current.isPinned !== saved.isPinned) {
-                return false;
+                return false
             }
         }
 
         // Compare active tab
-        const currentActiveTab = this.getActiveTab();
+        const currentActiveTab = this.getActiveTab()
         if (taskSpace.activeTab !== currentActiveTab) {
-            return false;
+            return false
         }
 
-        return true;
+        return true
     }
 
     /**
@@ -986,50 +979,50 @@ export class TaskSpaceManager {
         id: string,
         additive: boolean = false,
     ): Promise<void> {
-        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id);
+        const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (!taskSpace) {
-            throw new Error('Task space not found');
+            throw new Error("Task space not found")
         }
 
-        const workspaceFolder = this.getWorkspaceFolder();
-        const currentTabs = await this.getCurrentOpenTabs();
-        const savedTabs = taskSpace.tabs;
+        const workspaceFolder = this.getWorkspaceFolder()
+        const currentTabs = await this.getCurrentOpenTabs()
+        const savedTabs = taskSpace.tabs
 
         // Build sets for quick lookup
-        const currentPaths = new Set(currentTabs.map((t) => t.path));
-        const savedPaths = new Set(savedTabs.map((t) => t.path));
+        const currentPaths = new Set(currentTabs.map((t) => t.path))
+        const savedPaths = new Set(savedTabs.map((t) => t.path))
 
         // 1. Close tabs that should be removed (skip if additive)
         if (!additive) {
-            const tabsToClose = currentTabs.filter((t) => !savedPaths.has(t.path));
+            const tabsToClose = currentTabs.filter((t) => !savedPaths.has(t.path))
             for (const tab of tabsToClose) {
-                await this.closeTabByPath(tab.path, workspaceFolder);
+                await this.closeTabByPath(tab.path, workspaceFolder)
             }
         }
 
         // 2. Open tabs that should be added (at end initially)
-        const tabsToOpen = savedTabs.filter((t) => !currentPaths.has(t.path));
+        const tabsToOpen = savedTabs.filter((t) => !currentPaths.has(t.path))
         for (const tab of tabsToOpen) {
-            await this.openSingleTab(tab.path, workspaceFolder);
+            await this.openSingleTab(tab.path, workspaceFolder)
         }
 
         // 3. Reorder tabs to match saved order
-        await this.reorderTabsToMatch(savedTabs, workspaceFolder);
+        await this.reorderTabsToMatch(savedTabs, workspaceFolder)
 
         // 4. Fix pin states
-        await this.syncPinStates(savedTabs, workspaceFolder);
+        await this.syncPinStates(savedTabs, workspaceFolder)
 
         // 5. Focus the active tab
         if (taskSpace.activeTab) {
-            await this.focusTab(taskSpace.activeTab, workspaceFolder);
+            await this.focusTab(taskSpace.activeTab, workspaceFolder)
         }
 
         // Update active task space ID (per-instance, stored in workspaceState)
-        this.activeTaskSpaceId = id;
-        await this.storage.setActiveTaskSpaceId(id);
+        this.activeTaskSpaceId = id
+        await this.storage.setActiveTaskSpaceId(id)
 
         // Update lastAccessed in workspace state (stored separately to avoid git noise)
-        await this.storage.setLastAccessed(id, Date.now());
+        await this.storage.setLastAccessed(id, Date.now())
     }
 
     /**
@@ -1039,19 +1032,19 @@ export class TaskSpaceManager {
         relativePath: string,
         workspaceFolder: vscode.WorkspaceFolder | undefined,
     ): Promise<void> {
-        const absolutePath = this.toAbsolutePath(relativePath, workspaceFolder);
-        const uri = vscode.Uri.file(absolutePath);
+        const absolutePath = this.toAbsolutePath(relativePath, workspaceFolder)
+        const uri = vscode.Uri.file(absolutePath)
 
         // Find the tab
         for (const tabGroup of vscode.window.tabGroups.all) {
             for (const tab of tabGroup.tabs) {
-                const input = tab.input;
+                const input = tab.input
                 if (
                     input instanceof vscode.TabInputText &&
                     input.uri.fsPath === absolutePath
                 ) {
-                    await vscode.window.tabGroups.close(tab);
-                    return;
+                    await vscode.window.tabGroups.close(tab)
+                    return
                 }
             }
         }
@@ -1065,14 +1058,14 @@ export class TaskSpaceManager {
         workspaceFolder: vscode.WorkspaceFolder | undefined,
     ): Promise<void> {
         try {
-            const absolutePath = this.toAbsolutePath(relativePath, workspaceFolder);
-            const uri = vscode.Uri.file(absolutePath);
+            const absolutePath = this.toAbsolutePath(relativePath, workspaceFolder)
+            const uri = vscode.Uri.file(absolutePath)
             await vscode.window.showTextDocument(uri, {
                 preview: false,
                 preserveFocus: true,
-            });
+            })
         } catch (error) {
-            console.log(`Failed to open tab: ${relativePath}`);
+            console.log(`Failed to open tab: ${relativePath}`)
         }
     }
 
@@ -1084,12 +1077,12 @@ export class TaskSpaceManager {
         workspaceFolder: vscode.WorkspaceFolder | undefined,
     ): Promise<void> {
         try {
-            const absolutePath = this.toAbsolutePath(relativePath, workspaceFolder);
-            const uri = vscode.Uri.file(absolutePath);
+            const absolutePath = this.toAbsolutePath(relativePath, workspaceFolder)
+            const uri = vscode.Uri.file(absolutePath)
             await vscode.window.showTextDocument(uri, {
                 preview: false,
                 preserveFocus: false,
-            });
+            })
         } catch (error) {
             // Tab might not exist
         }
@@ -1104,59 +1097,59 @@ export class TaskSpaceManager {
     ): Promise<void> {
         // Get current tab order
         const getCurrentOrder = (): string[] => {
-            const paths: string[] = [];
-            const workspaceRoot = workspaceFolder?.uri.fsPath;
+            const paths: string[] = []
+            const workspaceRoot = workspaceFolder?.uri.fsPath
 
             for (const tabGroup of vscode.window.tabGroups.all) {
                 for (const tab of tabGroup.tabs) {
-                    const input = tab.input;
+                    const input = tab.input
                     if (input instanceof vscode.TabInputText) {
-                        const filePath = input.uri.fsPath;
+                        const filePath = input.uri.fsPath
                         if (workspaceRoot) {
-                            const relativePath = path.relative(workspaceRoot, filePath);
-                            if (!relativePath.startsWith('..')) {
-                                paths.push(relativePath);
+                            const relativePath = path.relative(workspaceRoot, filePath)
+                            if (!relativePath.startsWith("..")) {
+                                paths.push(relativePath)
                             }
                         } else {
-                            paths.push(filePath);
+                            paths.push(filePath)
                         }
                     }
                 }
             }
-            return paths;
-        };
+            return paths
+        }
 
-        const targetOrder = targetTabs.map((t) => t.path);
+        const targetOrder = targetTabs.map((t) => t.path)
 
         // Use insertion sort approach: for each position, move the correct tab there
         for (let targetPos = 0; targetPos < targetOrder.length; targetPos++) {
-            const targetPath = targetOrder[targetPos];
-            const currentOrder = getCurrentOrder();
-            const currentPos = currentOrder.indexOf(targetPath);
+            const targetPath = targetOrder[targetPos]
+            const currentOrder = getCurrentOrder()
+            const currentPos = currentOrder.indexOf(targetPath)
 
             if (currentPos === -1 || currentPos === targetPos) {
-                continue; // Tab not found or already in position
+                continue // Tab not found or already in position
             }
 
             // Focus the tab we want to move
-            await this.focusTab(targetPath, workspaceFolder);
+            await this.focusTab(targetPath, workspaceFolder)
 
             // Move it to the target position
             if (currentPos > targetPos) {
                 // Need to move left
-                const moves = currentPos - targetPos;
+                const moves = currentPos - targetPos
                 for (let i = 0; i < moves; i++) {
                     await vscode.commands.executeCommand(
-                        'workbench.action.moveEditorLeftInGroup',
-                    );
+                        "workbench.action.moveEditorLeftInGroup",
+                    )
                 }
             } else {
                 // Need to move right
-                const moves = targetPos - currentPos;
+                const moves = targetPos - currentPos
                 for (let i = 0; i < moves; i++) {
                     await vscode.commands.executeCommand(
-                        'workbench.action.moveEditorRightInGroup',
-                    );
+                        "workbench.action.moveEditorRightInGroup",
+                    )
                 }
             }
         }
@@ -1169,33 +1162,33 @@ export class TaskSpaceManager {
         savedTabs: TabInfo[],
         workspaceFolder: vscode.WorkspaceFolder | undefined,
     ): Promise<void> {
-        const workspaceRoot = workspaceFolder?.uri.fsPath;
+        const workspaceRoot = workspaceFolder?.uri.fsPath
 
         for (const savedTab of savedTabs) {
-            const absolutePath = this.toAbsolutePath(savedTab.path, workspaceFolder);
+            const absolutePath = this.toAbsolutePath(savedTab.path, workspaceFolder)
 
             // Find the tab and check its current pin state
             for (const tabGroup of vscode.window.tabGroups.all) {
                 for (const tab of tabGroup.tabs) {
-                    const input = tab.input;
+                    const input = tab.input
                     if (
                         input instanceof vscode.TabInputText &&
                         input.uri.fsPath === absolutePath
                     ) {
                         if (tab.isPinned !== savedTab.isPinned) {
                             // Focus the tab and toggle pin
-                            await this.focusTab(savedTab.path, workspaceFolder);
+                            await this.focusTab(savedTab.path, workspaceFolder)
                             if (savedTab.isPinned) {
                                 await vscode.commands.executeCommand(
-                                    'workbench.action.pinEditor',
-                                );
+                                    "workbench.action.pinEditor",
+                                )
                             } else {
                                 await vscode.commands.executeCommand(
-                                    'workbench.action.unpinEditor',
-                                );
+                                    "workbench.action.unpinEditor",
+                                )
                             }
                         }
-                        break;
+                        break
                     }
                 }
             }
@@ -1210,12 +1203,12 @@ export class TaskSpaceManager {
         workspaceFolder: vscode.WorkspaceFolder | undefined,
     ): string {
         if (path.isAbsolute(relativePath)) {
-            return relativePath;
+            return relativePath
         }
         if (workspaceFolder) {
-            return path.join(workspaceFolder.uri.fsPath, relativePath);
+            return path.join(workspaceFolder.uri.fsPath, relativePath)
         }
-        return relativePath;
+        return relativePath
     }
 
     /**
@@ -1223,7 +1216,7 @@ export class TaskSpaceManager {
      * This is stored in workspace state separately from task-spaces.json to avoid git noise
      */
     async getLastAccessed(taskSpaceId: string): Promise<number | undefined> {
-        return await this.storage.getLastAccessed(taskSpaceId);
+        return await this.storage.getLastAccessed(taskSpaceId)
     }
 
     /**
@@ -1231,6 +1224,6 @@ export class TaskSpaceManager {
      * This is stored in workspace state separately from task-spaces.json to avoid git noise
      */
     async getAllLastAccessed(): Promise<Record<string, number>> {
-        return await this.storage.getAllLastAccessed();
+        return await this.storage.getAllLastAccessed()
     }
 }

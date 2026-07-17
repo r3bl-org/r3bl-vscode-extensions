@@ -1,11 +1,11 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode"
 
 /**
  * Status bar message types supported by r3bl-shared extension.
  */
-export type StatusBarMessageType = 'info' | 'success' | 'warning' | 'error';
+export type StatusBarMessageType = "info" | "success" | "warning" | "error"
 
 /**
  * Call a method on the r3bl-shared extension API with automatic error handling.
@@ -20,26 +20,26 @@ export type StatusBarMessageType = 'info' | 'success' | 'warning' | 'error';
  * ```
  */
 export function callSharedAPI(apiMethod: string, ...args: any[]): boolean {
-    const sharedExt = vscode.extensions.getExtension('R3BL.r3bl-shared');
+    const sharedExt = vscode.extensions.getExtension("R3BL.r3bl-shared")
 
     if (sharedExt?.isActive && sharedExt.exports?.[apiMethod]) {
-        sharedExt.exports[apiMethod](...args);
-        return true;
+        sharedExt.exports[apiMethod](...args)
+        return true
     } else {
         // Show error with option to install r3bl-shared
         vscode.window
             .showErrorMessage(
-                'R3BL Shared extension is not active. Please ensure it is installed and enabled.',
-                'Install Extension',
+                "R3BL Shared extension is not active. Please ensure it is installed and enabled.",
+                "Install Extension",
             )
             .then((choice) => {
-                if (choice === 'Install Extension') {
+                if (choice === "Install Extension") {
                     vscode.env.openExternal(
-                        vscode.Uri.parse('vscode:extension/R3BL.r3bl-shared'),
-                    );
+                        vscode.Uri.parse("vscode:extension/R3BL.r3bl-shared"),
+                    )
                 }
-            });
-        return false;
+            })
+        return false
     }
 }
 
@@ -60,7 +60,7 @@ export function callSharedAPI(apiMethod: string, ...args: any[]): boolean {
  */
 export function showStatusBarMessage(
     message: string,
-    type: StatusBarMessageType = 'info',
+    type: StatusBarMessageType = "info",
 ): void {
-    callSharedAPI('showStatusBarMessage', message, type);
+    callSharedAPI("showStatusBarMessage", message, type)
 }
