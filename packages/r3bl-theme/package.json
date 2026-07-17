@@ -1,8 +1,8 @@
 {
     "name": "r3bl-theme",
     "displayName": "R3BL Theme",
-    "description": "Dark theme optimized for Rust and Markdown with enhanced semantic highlighting and eye comfort",
-    "version": "1.0.19",
+    "description": "Dark themes (R3BL Theme and R3BL 2026 Theme) optimized for Rust and Markdown with enhanced semantic highlighting and eye comfort",
+    "version": "1.0.20",
     "publisher": "R3BL",
     "extensionDependencies": [
         "R3BL.r3bl-semantic-config"

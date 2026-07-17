@@ -3,8 +3,8 @@
 [![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-extension-pack?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-extension-pack)
 [![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack)
 
-The complete R3BL development experience in one install. Get a carefully crafted dark
-theme, enhanced Rust syntax highlighting, task management, and productivity tools - all
+The complete R3BL development experience in one install. Get carefully crafted dark
+themes, enhanced Rust syntax highlighting, task management, and productivity tools - all
 configured to work together seamlessly.
 
 ## Included Extensions
@@ -13,15 +13,15 @@ configured to work together seamlessly.
 
 These extensions are maintained and published by R3BL.
 
-| Extension                                                                                                                                          | Description                                                              |
-| :------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark themes (R3BL Theme, R3BL 2026 Theme) optimized for Rust and Markdown with eye comfort              |
-| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation       |
-| **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization |
-| **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes       |
-| **[R3BL Copy Selection Path and Range](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Coding Agents                       |
-| **[R3BL Auto Insert Copyright](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates     |
-| **[R3BL Shared](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)            |
+| Extension                                                                                                                                          | Description                                                                                |
+| :------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
+| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark themes (R3BL Theme, R3BL 2026 Theme) optimized for Rust and Markdown with eye comfort |
+| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation                         |
+| **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization                   |
+| **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes                         |
+| **[R3BL Copy Selection Path and Range](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Coding Agents                                         |
+| **[R3BL Auto Insert Copyright](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates                       |
+| **[R3BL Shared](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)                              |
 
 ### Third-Party Dependencies
 
@@ -33,8 +33,8 @@ These extensions are required for full functionality and are automatically insta
 
 ## What You Get
 
-- **Beautiful Dark Theme**: Carefully crafted theme optimized for long coding sessions and
-  high-contrast syntax highlighting.
+- **Beautiful Dark Themes**: Carefully crafted themes optimized for long coding sessions
+  and high-contrast syntax highlighting.
 - **Enhanced Rust Experience**: Beyond syntax highlighting, get auto-folding for `use`
   statements and `rustdoc`, plus a dedicated Structure Navigator for large files.
 - **Task Space Management**: Organize multiple work contexts, save/restore open tabs, and
@@ -64,7 +64,8 @@ These extensions are required for full functionality and are automatically insta
 
 ## Quick Start
 
-1. **Activate the theme**: Press `Ctrl+K Ctrl+T` → Select "R3BL Theme" or "R3BL 2026 Theme"
+1. **Activate the theme**: Press `Ctrl+K Ctrl+T` → Select "R3BL Theme" or "R3BL 2026
+   Theme"
 2. **Enable semantic highlighting**: Click "Yes" when prompted
 3. Start coding with the full R3BL experience!
 

@@ -152,24 +152,28 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
-## [2026-07-16] - R3BL 2026 Theme
+## [2026-07-16] - R3BL 2026 Theme and Documentation Updates
 
 ### Package Versions
 
-- **R3BL Theme**: 1.0.18 → 1.0.19
-- **R3BL Semantic Configuration**: 1.2.10 → 1.2.11
-- **R3BL Extension Pack**: 1.3.7 → 1.3.8
+- **R3BL Theme**: 1.0.18 → 1.0.20
+- **R3BL Semantic Configuration**: 1.2.10 → 1.2.12
+- **R3BL Extension Pack**: 1.3.7 → 1.3.9
 
 ### Changes
 
-- **R3BL Theme 1.0.19**: Added R3BL 2026 Theme
-    - Derived from the VS Code built-in Dark 2026 theme with customized comment colors.
+- **R3BL Theme 1.0.20**: Documentation updates and new theme
+    - Added R3BL 2026 Theme. Derived from the VS Code built-in Dark 2026 theme with
+      customized comment colors.
     - Added precise R3BL Theme color choices for selection highlights, current line
       highlights, and inlay hints.
     - Fully standalone without internal VS Code dependencies.
+    - Updated marketplace descriptions and documentation to properly highlight both
+      available themes.
 
-- **R3BL Semantic Configuration 1.2.11**: Support for R3BL 2026 Theme
+- **R3BL Semantic Configuration 1.2.12**: Support for R3BL 2026 Theme
     - Added automated semantic highlight injection for the new R3BL 2026 Theme.
+    - Updated marketplace descriptions.
 
 ## [2026-06-24] - Rustdoc Link Reference Definition Auto-Insertion
 

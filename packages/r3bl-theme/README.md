@@ -1,10 +1,11 @@
-# R3BL Theme
+# R3BL Themes
 
 [![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-theme?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-theme)
 [![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)
 
-A pair of carefully crafted dark themes for VS Code—**R3BL Theme** and **R3BL 2026 Theme**—optimized for Rust and Markdown development
-with enhanced readability and visual appeal.
+A pair of carefully crafted dark themes for VS Code—**R3BL Theme** and **R3BL 2026
+Theme**—optimized for Rust and Markdown development with enhanced readability and visual
+appeal.
 
 ## Features
 
@@ -99,12 +100,12 @@ The semantic configuration extension:
   etc.)
 - Can be enabled/disabled via commands: `R3BL: Enable/Disable Semantic Highlighting`
 
-**No additional setup required** - just activate the R3BL Theme and enjoy enhanced syntax
-highlighting!
+**No additional setup required** - just activate either of the R3BL themes and enjoy
+enhanced syntax highlighting!
 
 ### Color Palette
 
-The theme uses a carefully selected color palette:
+The themes use a carefully selected color palette:
 
 | Element       | Color              | Usage                           |
 | ------------- | ------------------ | ------------------------------- |
@@ -118,7 +119,7 @@ The theme uses a carefully selected color palette:
 
 ### Recommended Settings
 
-For the best experience with this theme:
+For the best experience with these themes:
 
 ```json
 {
@@ -149,7 +150,7 @@ For the best experience with this theme:
 
 ### Rust-First Design
 
-Unlike generic themes, R3BL Theme is built specifically for Rust developers:
+Unlike generic themes, R3BL themes are built specifically for Rust developers:
 
 - Distinct colors for `pub`, `fn`, `impl`, `trait`, and other Rust keywords
 - Clear visual distinction between owned types, references, and lifetimes
@@ -179,7 +180,7 @@ language server's understanding of your code, not just regex patterns.
 
 ## Customization
 
-Want to tweak the theme? Add to your `settings.json`:
+Want to tweak the themes? Add to your `settings.json`:
 
 ```json
 {
@@ -187,10 +188,24 @@ Want to tweak the theme? Add to your `settings.json`:
         "[R3BL Theme]": {
             "editor.background": "#1e1e1e",
             "editor.foreground": "#d4d4d4"
+        },
+        "[R3BL 2026 Theme]": {
+            "editor.background": "#1e1e1e",
+            "editor.foreground": "#d4d4d4"
         }
     },
     "editor.tokenColorCustomizations": {
         "[R3BL Theme]": {
+            "textMateRules": [
+                {
+                    "scope": "keyword.control.rust",
+                    "settings": {
+                        "foreground": "#YOUR_COLOR"
+                    }
+                }
+            ]
+        },
+        "[R3BL 2026 Theme]": {
             "textMateRules": [
                 {
                     "scope": "keyword.control.rust",

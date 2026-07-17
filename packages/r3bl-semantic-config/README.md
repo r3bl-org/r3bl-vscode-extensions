@@ -108,18 +108,18 @@ _Semantic highlighting in action_
 
 #### Auto-Activation
 
-When installed with R3BL Theme active, the extension automatically:
+When installed with one of the R3BL themes active, the extension automatically:
 
-1. Detects R3BL Theme is active
+1. Detects an R3BL theme is active
 2. Applies semantic highlighting to global configuration
 3. Shows a success notification
 
 #### Theme Watcher
 
-Monitors theme changes. When you switch to R3BL Theme:
+Monitors theme changes. When you switch to an R3BL theme:
 
-1. Detects the change
-2. Prompts: "R3BL Theme detected! Apply enhanced semantic highlighting?"
+1. Checks if settings need applying
+2. Prompts: "R3BL theme detected! Apply enhanced semantic highlighting?"
 3. Applies settings on confirmation
 
 #### Manual Control
