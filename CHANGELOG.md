@@ -152,6 +152,21 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-07-18] - R3BL 2026 Theme Editor Tab Update
+
+### Package Versions
+
+- **R3BL Theme**: 1.0.22 → 1.0.23
+- **R3BL Semantic Configuration**: 1.2.13 → 1.2.14
+- **R3BL Extension Pack**: 1.3.11 → 1.3.12
+
+### Changes
+
+- **R3BL Theme 1.0.23**: Tab style update
+    - Synchronized editor tab styling (active background, active foreground, unfocused
+      states) from the original `R3BL Theme` into `R3BL 2026 Theme` for a consistent R3BL
+      aesthetic.
+
 ## [2026-07-16] - R3BL 2026 Theme, Documentation Updates, and Color Fix
 
 ### Package Versions
