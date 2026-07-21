@@ -855,3 +855,22 @@ The following files automatically read versions from `package.json`:
 
 Do NOT manually edit version numbers in scripts or .vsix filenames. The scripts handle
 this automatically based on the `package.json` version fields.
+
+## Release Workflow ("prepare release" or "release")
+
+When the user prompts to "prepare release", "release", or perform a release workflow, execute these steps systematically:
+
+1. **Bump Versions:**
+   - Update the `version` field in the `package.json` of the extension(s) being updated.
+   - Update the `version` field in the `packages/r3bl-extension-pack/package.json` to match.
+2. **Update CHANGELOG and READMEs:**
+   - Prepend a new release entry in `CHANGELOG.md` with the date, updated versions, and a summary of changes.
+   - Update any relevant documentation or screenshots in the `README.md` files if shortcuts, configurations, or features changed.
+3. **Compile, Build, and Install:**
+   - Run `./build.sh` to generate the `.vsix` files and verify tests pass.
+   - Run `./install.sh` to test locally.
+4. **Commit Changes:**
+   - Stage all updated files (`git add packages/ext-name/package.json packages/r3bl-extension-pack/package.json CHANGELOG.md ...`).
+   - Create a commit detailing the release (e.g., `git commit -m "[extension-name] Release version X.Y.Z"`). Ensure no AI attribution is in the message.
+5. **Publish to Marketplaces:**
+   - Request to execute `./publish.sh <extension-name> r3bl-extension-pack` via `run_command` so the user can explicitly grant execution permission for the network publish.

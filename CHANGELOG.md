@@ -194,6 +194,20 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Added automated semantic highlight injection for the new R3BL 2026 Theme.
     - Updated marketplace descriptions.
 
+## [2026-07-21] - Peek View Colors Update for R3BL 2026 Theme
+
+### Package Versions
+
+- **R3BL Theme**: 1.0.23 → 1.0.28
+- **R3BL Extension Pack**: 1.3.12 → 1.3.17
+
+### Changes
+
+- **R3BL Theme 1.0.28**: Updated peek view colors for better contrast
+    - Updated `peekViewEditor.background` to deep GitHub dark blue (`#0d1117`)
+    - Updated `peekViewResult.background` to GitHub's darkest shade (`#010409`)
+    - Enhanced contrast between the main editor and the two vertical panels in the peek view
+
 ## [2026-06-24] - Rustdoc Link Reference Definition Auto-Insertion
 
 ### Package Versions
