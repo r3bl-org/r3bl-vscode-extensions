@@ -75,7 +75,7 @@
         "editorGroup.border": "#bd93f9",
         "editorGroup.dropBackground": "#44475a70",
         "editorGroupHeader.tabsBackground": "#1a1f26",
-        "editorGroupHeader.tabsBorder": "#574473",
+        "editorGroupHeader.tabsBorder": "#253340",
         "editorGutter.addedBackground": "#4488ff80",
         "editorGutter.deletedBackground": "#ff555580",
         "editorGutter.modifiedBackground": "#ffb86c80",
@@ -106,8 +106,8 @@
         "editorOverviewRuler.warningForeground": "#f1fa8c80",
         "editorOverviewRuler.wordHighlightForeground": "#8be9fd99",
         "editorOverviewRuler.wordHighlightStrongForeground": "#50fa7b99",
-        "editorStickyScroll.background": "#744790aa",
-        "editorStickyScrollHover.background": "#744790aa",
+        "editorStickyScroll.background": "#744790",
+        "editorStickyScrollHover.background": "#744790",
         "editorSuggestWidget.background": "#0e1419",
         "editorSuggestWidget.border": "#6272a4",
         "editorSuggestWidget.foreground": "#f8f8f2",
@@ -170,7 +170,7 @@
         "peekViewEditor.background": "#1a2b6575",
         "peekViewEditor.matchHighlightBackground": "#ff00ee44",
         "peekViewEditor.matchHighlightBorder": "#ff00ee44",
-        "peekViewEditorStickyScroll.background": "#744790aa",
+        "peekViewEditorStickyScroll.background": "#744790",
         "peekViewResult.background": "#0e1419",
         "peekViewResult.fileForeground": "#f8f8f2",
         "peekViewResult.lineForeground": "#f8f8f2",
@@ -203,8 +203,24 @@
         "statusBarItem.warningBackground": "#0d2643",
         "statusBarItem.warningForeground": "#0cbff9",
         "statusBarItem.warningHoverForeground": "#8be9fd",
-        "tab.activeBackground": "#744790aa",
+        "tab.activeBackground": "#15393a",
         "tab.activeForeground": "#f8f8f2",
+        "tab.activeBorderTop": "#e9c940",
+        "tab.activeBorder": "#00000000",
+        "tab.activeFocusedBorder": "#00000000",
+        "tab.focusedHoverBorder": "#00000000",
+        "tab.unfocusedActiveBorder": "#00000000",
+        "tab.unfocusedHoverBorder": "#00000000",
+        "tab.selectedBackground": "#15393a",
+        "tab.selectedForeground": "#f8f8f2",
+        "tab.selectedBorder": "#00000000",
+        "tab.hoverBackground": "#121314",
+        "tab.hoverForeground": "#bfbfbf",
+        "tab.unfocusedActiveBackground": "#122729",
+        "tab.unfocusedActiveForeground": "#f8f8f280",
+        "tab.unfocusedHoverBackground": "#1F1F1F",
+        "tab.unfocusedInactiveBackground": "#191A1B",
+        "tab.unfocusedInactiveForeground": "#444444",
         "tab.border": "#202530",
         "tab.inactiveBackground": "#202530",
         "tab.inactiveForeground": "#6272a4",
@@ -246,10 +262,39 @@
         "textSeparator.foreground": "#ff6edb",
 
         // Contrast color for selected items (subtle)
-        "contrastActiveBorder": "#ff6edb55",
+        "contrastActiveBorder": "#00000000",
 
         // Tree indent guide colors
-        "tree.indentGuidesStroke": "#b58fa399"
+        "tree.indentGuidesStroke": "#b58fa399",
+
+        // Widget, Dialog & Popup borders
+        "widget.border": "#6272a4",
+        "quickInput.border": "#6272a4",
+        "menu.border": "#6272a4",
+        "menu.selectionBorder": "#6272a4",
+        "commandCenter.border": "#253340",
+        "commandCenter.activeBorder": "#6272a4",
+
+        // Form controls & inputs
+        "checkbox.border": "#6272a4",
+        "button.border": "#6272a4",
+        "button.secondaryBorder": "#253340",
+        "settings.dropdownBorder": "#6272a4",
+        "panelInput.border": "#253340",
+
+        // AI / Agent / Chat Widgets
+        "agentsPanel.border": "#253340",
+        "agentsChatInput.border": "#253340",
+        "agentsChatInput.focusBorder": "#6272a4",
+        "agentsNewSessionButton.border": "#6272a4",
+
+        // Structural & Section borders
+        "sideBar.border": "#253340",
+        "sideBarSectionHeader.border": "#253340",
+        "titleBar.border": "#253340",
+        "terminal.border": "#253340",
+        "editorStickyScroll.border": "#253340",
+        "tab.lastPinnedBorder": "#253340"
     },
     "tokenColors": [
         {

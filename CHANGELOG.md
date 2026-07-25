@@ -152,6 +152,43 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-07-25] - R3BL Theme Dialog & Popup Borders Update
+
+### Package Versions
+
+- **R3BL Theme**: 1.0.28 → 1.0.35
+- **R3BL Extension Pack**: 1.3.17 → 1.3.24
+
+### Changes
+
+- **R3BL Theme 1.0.35**: Zeroed contrastActiveBorder & synced tab selection tokens
+    - Set `contrastActiveBorder: "#00000000"` (previously `#ff6edb55` magenta/purple
+      outline), eliminating the high-contrast purple border box around active selected
+      tabs in `R3BL Theme`.
+    - Synchronized all `tab.selectedBackground`, `tab.selectedForeground`,
+      `tab.hoverBackground`, and unfocused tab tokens from `R3BL 2026 Theme`.
+    - Changed `editorGroupHeader.tabsBorder` from purple (`#574473`) to dark slate cyan
+      (`#253340`).
+    - Explicitly set `tab.activeBorder`, `tab.activeFocusedBorder`,
+      `tab.focusedHoverBorder`, `tab.unfocusedActiveBorder`, `tab.unfocusedHoverBorder`,
+      and `tab.selectedBorder` to `#00000000`.
+    - Synchronized `tab.activeBackground` to the current line highlight dark cyan/teal
+      color (`#15393a`) and `tab.activeBorderTop` to `#e9c940`.
+    - Restored `tab.activeForeground` to `#f8f8f2` for optimal contrast and legibility
+      over the dark teal active tab background.
+    - Converted translucent tab backgrounds (`tab.activeBackground`,
+      `tab.selectedBackground`, `editorStickyScroll.background`) to 100% solid, opaque
+      colors (`#744790`) for improved contrast, sharp text, and consistent rendering
+      across displays.
+    - Added popup/dialog border definitions (`widget.border`, `quickInput.border`,
+      `menu.border`, `commandCenter.border`) tailored to R3BL Theme's `#6272a4` palette.
+    - Added form control borders (`checkbox.border`, `button.border`,
+      `button.secondaryBorder`, `settings.dropdownBorder`, `panelInput.border`).
+    - Added AI/Agent widget borders (`agentsPanel.border`, `agentsChatInput.border`,
+      `agentsChatInput.focusBorder`, `agentsNewSessionButton.border`).
+    - Added structural section borders (`sideBar.border`, `sideBarSectionHeader.border`,
+      `titleBar.border`, `terminal.border`, `editorStickyScroll.border`).
+
 ## [2026-07-18] - R3BL 2026 Theme Editor Tab Update
 
 ### Package Versions
@@ -206,7 +243,8 @@ adheres to [Semantic Versioning](http://semver.org/).
 - **R3BL Theme 1.0.28**: Updated peek view colors for better contrast
     - Updated `peekViewEditor.background` to deep GitHub dark blue (`#0d1117`)
     - Updated `peekViewResult.background` to GitHub's darkest shade (`#010409`)
-    - Enhanced contrast between the main editor and the two vertical panels in the peek view
+    - Enhanced contrast between the main editor and the two vertical panels in the peek
+      view
 
 ## [2026-06-24] - Rustdoc Link Reference Definition Auto-Insertion
 
