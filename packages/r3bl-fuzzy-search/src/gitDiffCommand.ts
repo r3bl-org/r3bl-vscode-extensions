@@ -2,6 +2,8 @@
 
 import * as vscode from "vscode"
 import { spawn } from "child_process"
+import * as fs from "fs"
+import * as path from "path"
 import { showStatusBarMessage } from "r3bl-common-code"
 import { parseUnifiedDiff, DiffLine } from "./gitDiffParser"
 
@@ -70,13 +72,67 @@ function runGitDiff(
     })
 }
 
+export async function getUntrackedFiles(
+    cwd: string,
+    folderName: string,
+    isMultiRoot: boolean,
+    maxLinesPerFile: number,
+): Promise<DiffLine[]> {
+    return new Promise((resolve) => {
+        const proc = spawn("git", ["ls-files", "--others", "--exclude-standard"], { cwd })
+        let stdout = ""
+        proc.stdout.on("data", (data: Buffer) => {
+            stdout += data.toString()
+        })
+        proc.on("close", async (code) => {
+            if (code !== 0 || !stdout.trim()) {
+                resolve([])
+                return
+            }
+            const filePaths = stdout
+                .split("\n")
+                .map((l) => l.trim())
+                .filter((l) => l.length > 0)
+
+            const result: DiffLine[] = []
+            for (const relPath of filePaths) {
+                const fullPath = path.join(cwd, relPath)
+                try {
+                    const fileBuffer = await fs.promises.readFile(fullPath)
+                    // Skip binary files (containing null bytes)
+                    if (fileBuffer.includes(0)) {
+                        continue
+                    }
+                    const text = fileBuffer.toString("utf-8")
+                    const lines = text.split("\n")
+                    const fileLabel = isMultiRoot ? `${folderName}/${relPath}` : relPath
+                    const limit = Math.min(lines.length, maxLinesPerFile)
+
+                    for (let i = 0; i < limit; i++) {
+                        result.push({
+                            file: fileLabel,
+                            line: i + 1,
+                            content: lines[i],
+                            type: "added",
+                        })
+                    }
+                } catch {
+                    continue
+                }
+            }
+            resolve(result)
+        })
+        proc.on("error", () => resolve([]))
+    })
+}
+
 function formatTimestamp(): string {
     const now = new Date()
     const pad = (n: number) => n.toString().padStart(2, "0")
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`
 }
 
-interface SectionData {
+export interface SectionData {
     label: string
     lines: DiffLine[]
 }
@@ -170,13 +226,6 @@ async function getRecentCommits(
     limit: number,
 ): Promise<CommitInfo[]> {
     return new Promise((resolve) => {
-        // %H  - Full hash
-        // %h  - Abbreviated hash
-        // %s  - Subject (first line of commit message)
-        // %an - Author name
-        // %ar - Relative date
-        // %ct - Author date, UNIX timestamp
-        // Using \0 as delimiter because commit subjects can contain pipes or commas.
         const args = [
             "log",
             `-n${limit}`,
@@ -195,7 +244,6 @@ async function getRecentCommits(
         })
         proc.on("close", (code) => {
             if (code !== 0) {
-                // If it's not a git repo or has no commits, resolve with empty array
                 resolve([])
                 return
             }
@@ -212,8 +260,6 @@ function runGitShow(
     hash: string,
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
     return new Promise((resolve) => {
-        // --first-parent ensures merge commits produce a normal unified diff (not combined format),
-        // which is compatible with the existing parseUnifiedDiff() parser.
         const args = ["show", "--first-parent", "-U3", "--no-color", "--patch", hash]
         const proc = spawn("git", args, { cwd })
         let stdout = ""
@@ -234,15 +280,18 @@ function runGitShow(
     })
 }
 
-function formatSection(section: SectionData): string {
+export function formatSection(
+    section: SectionData,
+    maxLinesPerFile?: number,
+): { lines: string[]; text: string; fileHeaderLineIndexes: number[] } {
     const uniqueFiles = new Set(section.lines.map((l) => l.file)).size
     const addedCount = section.lines.filter((l) => l.type === "added").length
     const output: string[] = []
+    const fileHeaderLineIndexes: number[] = []
 
     output.push(`# ── ${section.label} (${addedCount} changes - ${uniqueFiles} files) ──`)
     output.push("")
 
-    // Group by file, preserving order of first appearance
     const byFile = new Map<string, DiffLine[]>()
     for (const line of section.lines) {
         if (!byFile.has(line.file)) {
@@ -251,9 +300,14 @@ function formatSection(section: SectionData): string {
         byFile.get(line.file)!.push(line)
     }
 
+    const limit = maxLinesPerFile ?? Infinity
+
     for (const [file, fileLines] of byFile) {
+        fileHeaderLineIndexes.push(output.length)
         output.push(`${file}:`)
-        for (const dl of fileLines) {
+
+        const cappedLines = fileLines.slice(0, limit)
+        for (const dl of cappedLines) {
             if (dl.type === "added") {
                 output.push(`  ${dl.line}: ${dl.content}`)
             } else {
@@ -263,7 +317,134 @@ function formatSection(section: SectionData): string {
         output.push("")
     }
 
-    return output.join("\n")
+    return {
+        lines: output,
+        text: output.join("\n"),
+        fileHeaderLineIndexes,
+    }
+}
+
+export interface BuildDocumentOptions {
+    selectionType: "uncommitted" | "commit"
+    commitInfo?: CommitInfo
+    allUnstaged: DiffLine[]
+    allStaged: DiffLine[]
+    allUntracked: DiffLine[]
+    isMultiRoot: boolean
+    maxLinesPerFile: number
+}
+
+export interface BuildDocumentResult {
+    content: string
+    collapsedFileHeaderLineIndexes: number[]
+    // Backwards compatibility alias
+    stagedFileHeaderLineIndexes: number[]
+}
+
+export function buildGitDiffDocumentContent(
+    options: BuildDocumentOptions,
+): BuildDocumentResult {
+    const {
+        selectionType,
+        commitInfo,
+        allUnstaged,
+        allStaged,
+        allUntracked,
+        isMultiRoot,
+        maxLinesPerFile,
+    } = options
+
+    const totalAdded =
+        allUnstaged.filter((l) => l.type === "added").length +
+        allStaged.filter((l) => l.type === "added").length +
+        allUntracked.filter((l) => l.type === "added").length
+
+    const totalFiles = new Set([
+        ...allUnstaged.map((l) => l.file),
+        ...allStaged.map((l) => l.file),
+        ...allUntracked.map((l) => l.file),
+    ]).size
+
+    const outputLines: string[] = []
+    const collapsedFileHeaderLineIndexes: number[] = []
+
+    if (selectionType === "commit" && commitInfo) {
+        outputLines.push(
+            formatCommitHeader(commitInfo, totalAdded, totalFiles, isMultiRoot),
+        )
+    } else {
+        outputLines.push("# Git Diff: Workspace Changes")
+    }
+
+    const contextLine = formatGitDiffContext(selectionType, commitInfo)
+    outputLines.push(`# Context: ${contextLine}`)
+
+    if (selectionType !== "commit") {
+        outputLines.push(`# ${totalAdded} changes - ${totalFiles} files`)
+        outputLines.push("#")
+    }
+
+    if (selectionType === "uncommitted") {
+        if (allUnstaged.length > 0) {
+            const formatted = formatSection(
+                { label: "Unstaged Changes", lines: allUnstaged },
+                maxLinesPerFile,
+            )
+            outputLines.push(...formatted.lines)
+        }
+        if (allStaged.length > 0) {
+            const baseLine = outputLines.length
+            const formatted = formatSection(
+                { label: "Staged Changes", lines: allStaged },
+                maxLinesPerFile,
+            )
+            for (const relIdx of formatted.fileHeaderLineIndexes) {
+                collapsedFileHeaderLineIndexes.push(baseLine + relIdx)
+            }
+            outputLines.push(...formatted.lines)
+        }
+        if (allUntracked.length > 0) {
+            const formatted = formatSection(
+                { label: "Untracked Files", lines: allUntracked },
+                maxLinesPerFile,
+            )
+            outputLines.push(...formatted.lines)
+        }
+    } else {
+        const formatted = formatSection(
+            { label: `Commit ${commitInfo?.shortHash ?? ""}`, lines: allUnstaged },
+            maxLinesPerFile,
+        )
+        outputLines.push(...formatted.lines)
+    }
+
+    return {
+        content: outputLines.join("\n"),
+        collapsedFileHeaderLineIndexes,
+        stagedFileHeaderLineIndexes: collapsedFileHeaderLineIndexes,
+    }
+}
+
+export async function foldLineIndexes(
+    editor: vscode.TextEditor,
+    lineIndexes: number[],
+): Promise<void> {
+    if (lineIndexes.length === 0) {
+        return
+    }
+    try {
+        for (const idx of lineIndexes) {
+            const pos = new vscode.Position(idx, 0)
+            editor.selection = new vscode.Selection(pos, pos)
+            await vscode.commands.executeCommand("editor.fold")
+        }
+    } catch {
+        // Ignore errors
+    } finally {
+        // Position cursor at top of document (line 0, col 0) so VS Code does not auto-unfold the region under cursor
+        const topPos = new vscode.Position(0, 0)
+        editor.selection = new vscode.Selection(topPos, topPos)
+    }
 }
 
 export async function showGitDiffSearchEditor(): Promise<void> {
@@ -275,11 +456,10 @@ export async function showGitDiffSearchEditor(): Promise<void> {
 
     const isMultiRoot = workspaceFolders.length > 1
 
-    // 1. Get the commit history limit from configuration
     const config = vscode.workspace.getConfiguration("r3blFuzzySearch")
     const limit = config.get<number>("commitHistoryLimit") ?? 10
+    const maxLinesPerFile = config.get<number>("gitDiffMaxLinesPerFile") ?? 5
 
-    // 2. Collect recent commits from all workspace folders
     const allCommits: CommitInfo[] = []
     for (const folder of workspaceFolders) {
         const cwd = folder.uri.fsPath
@@ -287,10 +467,8 @@ export async function showGitDiffSearchEditor(): Promise<void> {
         allCommits.push(...commits)
     }
 
-    // 3. Build QuickPick items (sorts by timestamp, caps at limit)
     const items = buildQuickPickItems(allCommits, isMultiRoot, limit)
 
-    // 4. Show QuickPick
     const selection = await vscode.window.showQuickPick(items, {
         placeHolder: "Select uncommitted changes or a recent commit",
         matchOnDescription: true,
@@ -303,18 +481,18 @@ export async function showGitDiffSearchEditor(): Promise<void> {
 
     let allUnstaged: DiffLine[] = []
     let allStaged: DiffLine[] = []
+    let allUntracked: DiffLine[] = []
     const timestamp = formatTimestamp()
 
     if (selection.type === "uncommitted") {
-        // Handle uncommitted changes (existing logic)
         for (const folder of workspaceFolders) {
             const cwd = folder.uri.fsPath
-            const [unstagedResult, stagedResult] = await Promise.all([
+            const [unstagedResult, stagedResult, untrackedFiles] = await Promise.all([
                 runGitDiff(cwd, false),
                 runGitDiff(cwd, true),
+                getUntrackedFiles(cwd, folder.name, isMultiRoot, maxLinesPerFile),
             ])
 
-            // Check for "not a git repo" error
             if (
                 unstagedResult.stderr.includes("not a git repository") ||
                 stagedResult.stderr.includes("not a git repository")
@@ -339,14 +517,18 @@ export async function showGitDiffSearchEditor(): Promise<void> {
 
             allUnstaged.push(...unstaged)
             allStaged.push(...staged)
+            allUntracked.push(...untrackedFiles)
         }
 
-        if (allUnstaged.length === 0 && allStaged.length === 0) {
+        if (
+            allUnstaged.length === 0 &&
+            allStaged.length === 0 &&
+            allUntracked.length === 0
+        ) {
             showStatusBarMessage("No uncommitted changes", "info")
             return
         }
     } else if (selection.type === "commit" && selection.commitInfo) {
-        // Handle a specific commit
         const commit = selection.commitInfo
         const result = await runGitShow(commit.cwd, commit.hash)
 
@@ -372,61 +554,30 @@ export async function showGitDiffSearchEditor(): Promise<void> {
             }))
         }
 
-        allUnstaged = commitChanges // We'll put commit changes in the "unstaged" bucket for formatting
+        allUnstaged = commitChanges
     }
 
-    // 6. Build document content
-    const totalAdded =
-        allUnstaged.filter((l) => l.type === "added").length +
-        allStaged.filter((l) => l.type === "added").length
-    const totalFiles = new Set([
-        ...allUnstaged.map((l) => l.file),
-        ...allStaged.map((l) => l.file),
-    ]).size
+    const docResult = buildGitDiffDocumentContent({
+        selectionType: selection.type,
+        commitInfo: selection.commitInfo,
+        allUnstaged,
+        allStaged,
+        allUntracked,
+        isMultiRoot,
+        maxLinesPerFile,
+    })
 
-    const output: string[] = []
-    if (selection.type === "commit" && selection.commitInfo) {
-        output.push(
-            formatCommitHeader(selection.commitInfo, totalAdded, totalFiles, isMultiRoot),
-        )
-    } else {
-        output.push("# Git Diff: Workspace Changes")
-    }
-
-    const contextLine = formatGitDiffContext(selection.type, selection.commitInfo)
-    output.push(`# Context: ${contextLine}`)
-
-    if (selection.type !== "commit") {
-        output.push(`# ${totalAdded} changes - ${totalFiles} files`)
-        output.push("#")
-    }
-
-    if (selection.type === "uncommitted") {
-        if (allUnstaged.length > 0) {
-            output.push(formatSection({ label: "Unstaged Changes", lines: allUnstaged }))
-        }
-        if (allStaged.length > 0) {
-            output.push(formatSection({ label: "Staged Changes", lines: allStaged }))
-        }
-    } else {
-        // For commits, we just show one section
-        output.push(
-            formatSection({
-                label: `Commit ${selection.commitInfo?.shortHash}`,
-                lines: allUnstaged,
-            }),
-        )
-    }
-
-    const content = output.join("\n")
-
-    // 7. Write to timestamped file in /tmp/
     const filePath = `/tmp/git-diff-${timestamp}.code-search`
     const fileUri = vscode.Uri.file(filePath)
-    await vscode.workspace.fs.writeFile(fileUri, Buffer.from(content, "utf-8"))
+    await vscode.workspace.fs.writeFile(fileUri, Buffer.from(docResult.content, "utf-8"))
 
     const doc = await vscode.workspace.openTextDocument(fileUri)
-    await vscode.window.showTextDocument(doc, { preview: false })
+    const editor = await vscode.window.showTextDocument(doc, { preview: false })
+
+    if (docResult.collapsedFileHeaderLineIndexes.length > 0) {
+        await new Promise((r) => setTimeout(r, 100))
+        await foldLineIndexes(editor, docResult.collapsedFileHeaderLineIndexes)
+    }
 }
 
 export async function refreshGitDiffSearchEditor(): Promise<void> {
@@ -440,7 +591,8 @@ export async function refreshGitDiffSearchEditor(): Promise<void> {
         return
     }
 
-    const firstLines = doc.getText(new vscode.Range(0, 0, 5, 0)).split("\n")
+    // Scan top 20 lines for # Context:
+    const firstLines = doc.getText(new vscode.Range(0, 0, 20, 0)).split("\n")
     const contextHeader = firstLines.find((l) => l.startsWith("# Context:"))
 
     if (!contextHeader) {
@@ -454,10 +606,13 @@ export async function refreshGitDiffSearchEditor(): Promise<void> {
         return
     }
 
+    const config = vscode.workspace.getConfiguration("r3blFuzzySearch")
+    const maxLinesPerFile = config.get<number>("gitDiffMaxLinesPerFile") ?? 5
+
     let allUnstaged: DiffLine[] = []
     let allStaged: DiffLine[] = []
-    let headerLines: string[] = []
-    let isCommit = false
+    let allUntracked: DiffLine[] = []
+    let commitInfo: CommitInfo | undefined
 
     const workspaceFolders = vscode.workspace.workspaceFolders
     if (!workspaceFolders) {
@@ -468,9 +623,10 @@ export async function refreshGitDiffSearchEditor(): Promise<void> {
     if (context.type === "uncommitted") {
         for (const folder of workspaceFolders) {
             const cwd = folder.uri.fsPath
-            const [unstagedResult, stagedResult] = await Promise.all([
+            const [unstagedResult, stagedResult, untrackedFiles] = await Promise.all([
                 runGitDiff(cwd, false),
                 runGitDiff(cwd, true),
+                getUntrackedFiles(cwd, folder.name, isMultiRoot, maxLinesPerFile),
             ])
 
             if (
@@ -491,23 +647,9 @@ export async function refreshGitDiffSearchEditor(): Promise<void> {
 
             allUnstaged.push(...unstaged)
             allStaged.push(...staged)
+            allUntracked.push(...untrackedFiles)
         }
-
-        const totalAdded =
-            allUnstaged.filter((l) => l.type === "added").length +
-            allStaged.filter((l) => l.type === "added").length
-        const totalFiles = new Set([
-            ...allUnstaged.map((l) => l.file),
-            ...allStaged.map((l) => l.file),
-        ]).size
-
-        headerLines.push("# Git Diff: Workspace Changes")
-        headerLines.push(`# Context: ${contextLine}`)
-        headerLines.push(`# ${totalAdded} changes - ${totalFiles} files`)
-        headerLines.push("#")
     } else if (context.type === "commit") {
-        isCommit = true
-
         const result = await runGitShow(context.cwd, context.hash)
         if (result.exitCode !== 0) {
             showStatusBarMessage(`Refresh failed: ${result.stderr}`, "error")
@@ -522,42 +664,40 @@ export async function refreshGitDiffSearchEditor(): Promise<void> {
             }))
         }
         allUnstaged = commitChanges
-
-        // We need some info for the header, let's try to reconstruct it or just use simple header
-        headerLines.push(`# Git Commit: ${context.hash.substring(0, 7)} (Refreshed)`)
-        headerLines.push(`# Context: ${contextLine}`)
-        headerLines.push(
-            `# ${allUnstaged.filter((l) => l.type === "added").length} changes - ${new Set(allUnstaged.map((l) => l.file)).size} files`,
-        )
-        headerLines.push("#")
+        commitInfo = {
+            hash: context.hash,
+            shortHash: context.hash.substring(0, 7),
+            subject: "Refreshed Commit",
+            author: "",
+            relativeDate: "",
+            timestamp: Date.now(),
+            cwd: context.cwd,
+            folderName: context.folder,
+        }
     }
 
-    const output: string[] = [...headerLines]
-
-    if (!isCommit) {
-        if (allUnstaged.length > 0) {
-            output.push(formatSection({ label: "Unstaged Changes", lines: allUnstaged }))
-        }
-        if (allStaged.length > 0) {
-            output.push(formatSection({ label: "Staged Changes", lines: allStaged }))
-        }
-    } else {
-        output.push(
-            formatSection({
-                label: `Commit Changes`,
-                lines: allUnstaged,
-            }),
-        )
-    }
-
-    const newContent = output.join("\n")
+    const docResult = buildGitDiffDocumentContent({
+        selectionType: context.type,
+        commitInfo,
+        allUnstaged,
+        allStaged,
+        allUntracked,
+        isMultiRoot,
+        maxLinesPerFile,
+    })
 
     const edit = new vscode.WorkspaceEdit()
     const fullRange = new vscode.Range(
         doc.lineAt(0).range.start,
         doc.lineAt(doc.lineCount - 1).range.end,
     )
-    edit.replace(doc.uri, fullRange, newContent)
+    edit.replace(doc.uri, fullRange, docResult.content)
     await vscode.workspace.applyEdit(edit)
+
+    if (docResult.collapsedFileHeaderLineIndexes.length > 0) {
+        await new Promise((r) => setTimeout(r, 100))
+        await foldLineIndexes(editor, docResult.collapsedFileHeaderLineIndexes)
+    }
+
     showStatusBarMessage("Git diff refreshed", "success")
 }

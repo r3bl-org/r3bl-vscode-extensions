@@ -152,6 +152,32 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-07-28] - Git Diff Search Editor Enhancements and Label Cleanups
+
+### Package Versions
+
+- **R3BL Fuzzy Search**: 1.4.2 → 1.4.3
+- **R3BL Extension Pack**: 1.3.24 → 1.3.25
+
+### Changes
+
+- **R3BL Fuzzy Search 1.4.3**: Git Diff Search Editor enhancements and command label
+  cleanups
+    - Updated command titles in Command Palette to avoid redundant "R3BL" prefixes
+      (`R3BL: Fuzzy Search: Interactive Search`,
+      `R3BL: Fuzzy Search: Git Diff Search Editor`,
+      `R3BL: Fuzzy Search: Refresh Git Diff Search Editor`).
+    - Added support for untracked workspace files in Git Diff Search Editor, previewing up
+      to `<n>` lines for text files.
+    - Added automatic folding/collapsing of `Staged Changes` file entries upon document
+      open and refresh.
+    - Added `r3blFuzzySearch.gitDiffMaxLinesPerFile` configuration setting (default 5) to
+      cap diff and preview lines output per file hunk.
+    - Standardized section ordering: `Unstaged Changes` → `Staged Changes` →
+      `Untracked Files`.
+    - Unified document content builder and expanded context line scan to top 20 lines for
+      reliable refresh behavior.
+
 ## [2026-07-25] - R3BL Theme Dialog & Popup Borders Update
 
 ### Package Versions

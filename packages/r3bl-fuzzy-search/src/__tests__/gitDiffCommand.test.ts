@@ -7,7 +7,10 @@ import {
     CommitInfo,
     formatGitDiffContext,
     parseGitDiffContext,
+    formatSection,
+    buildGitDiffDocumentContent,
 } from "../gitDiffCommand"
+import { DiffLine } from "../gitDiffParser"
 
 describe("formatGitDiffContext", () => {
     it('returns "uncommitted" for uncommitted type', () => {
@@ -162,7 +165,6 @@ describe("buildQuickPickItems", () => {
         )
         const items = buildQuickPickItems(commits, false, 5)
 
-        // 1 uncommitted + 5 commits = 6 total
         expect(items).toHaveLength(6)
     })
 
@@ -174,7 +176,6 @@ describe("buildQuickPickItems", () => {
         ]
         const items = buildQuickPickItems(commits, false, 10)
 
-        // Skip index 0 (Uncommitted Changes)
         expect(items[1].label).toContain("newest")
         expect(items[2].label).toContain("middle")
         expect(items[3].label).toContain("oldest")
@@ -216,5 +217,119 @@ describe("formatCommitHeader", () => {
         expect(header).toContain(
             "# Git Commit: [my-repo] abc1234 — Fix the bug (John, 2 days ago)",
         )
+    })
+})
+
+describe("formatSection", () => {
+    it("caps lines per file to maxLinesPerFile", () => {
+        const lines: DiffLine[] = Array.from({ length: 10 }, (_, i) => ({
+            file: "src/test.ts",
+            line: i + 1,
+            content: `line ${i + 1}`,
+            type: "added",
+        }))
+
+        const result = formatSection({ label: "Unstaged Changes", lines }, 3)
+
+        expect(result.text).toContain("src/test.ts:")
+        expect(result.text).toContain("  1: line 1")
+        expect(result.text).toContain("  3: line 3")
+        expect(result.text).not.toContain("  4: line 4")
+    })
+})
+
+describe("buildGitDiffDocumentContent", () => {
+    it("orders sections as Unstaged Changes -> Staged Changes -> Untracked Files", () => {
+        const unstaged: DiffLine[] = [
+            { file: "a.ts", line: 1, content: "unstaged line", type: "added" },
+        ]
+        const staged: DiffLine[] = [
+            { file: "b.ts", line: 1, content: "staged line", type: "added" },
+        ]
+        const untracked: DiffLine[] = [
+            { file: "c.ts", line: 1, content: "untracked line", type: "added" },
+        ]
+
+        const docResult = buildGitDiffDocumentContent({
+            selectionType: "uncommitted",
+            allUnstaged: unstaged,
+            allStaged: staged,
+            allUntracked: untracked,
+            isMultiRoot: false,
+            maxLinesPerFile: 5,
+        })
+
+        const text = docResult.content
+        const unstagedIdx = text.indexOf("Unstaged Changes")
+        const stagedIdx = text.indexOf("Staged Changes")
+        const untrackedIdx = text.indexOf("Untracked Files")
+
+        expect(unstagedIdx).toBeGreaterThan(-1)
+        expect(stagedIdx).toBeGreaterThan(unstagedIdx)
+        expect(untrackedIdx).toBeGreaterThan(stagedIdx)
+    })
+
+    it("calculates stagedFileHeaderLineIndexes correctly", () => {
+        const unstaged: DiffLine[] = [
+            { file: "a.ts", line: 1, content: "unstaged line", type: "added" },
+        ]
+        const staged: DiffLine[] = [
+            { file: "staged1.ts", line: 1, content: "staged line 1", type: "added" },
+            { file: "staged2.ts", line: 1, content: "staged line 2", type: "added" },
+        ]
+
+        const docResult = buildGitDiffDocumentContent({
+            selectionType: "uncommitted",
+            allUnstaged: unstaged,
+            allStaged: staged,
+            allUntracked: [],
+            isMultiRoot: false,
+            maxLinesPerFile: 5,
+        })
+
+        const lines = docResult.content.split("\n")
+        expect(docResult.stagedFileHeaderLineIndexes.length).toBe(2)
+
+        for (const idx of docResult.stagedFileHeaderLineIndexes) {
+            expect(lines[idx]).toMatch(/staged\d\.ts:/)
+        }
+    })
+
+    it("renders historical commit view without untracked section", () => {
+        const commitChanges: DiffLine[] = [
+            { file: "commit_file.ts", line: 1, content: "commit line", type: "added" },
+        ]
+        const commitInfo: CommitInfo = {
+            hash: "1234567890abcdef",
+            shortHash: "1234567",
+            subject: "Initial commit",
+            author: "Author",
+            relativeDate: "1 day ago",
+            timestamp: 1000,
+            cwd: "/repo",
+            folderName: "repo",
+        }
+
+        const docResult = buildGitDiffDocumentContent({
+            selectionType: "commit",
+            commitInfo,
+            allUnstaged: commitChanges,
+            allStaged: [],
+            allUntracked: [
+                {
+                    file: "untracked.ts",
+                    line: 1,
+                    content: "should ignore",
+                    type: "added",
+                },
+            ],
+            isMultiRoot: false,
+            maxLinesPerFile: 5,
+        })
+
+        expect(docResult.content).toContain("# Git Commit: 1234567 — Initial commit")
+        expect(docResult.content).toContain("commit_file.ts:")
+        expect(docResult.content).not.toContain("Untracked Files")
+        expect(docResult.collapsedFileHeaderLineIndexes.length).toBe(0)
     })
 })

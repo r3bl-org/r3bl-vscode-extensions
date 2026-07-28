@@ -2,7 +2,7 @@
     "name": "r3bl-fuzzy-search",
     "displayName": "R3BL Fuzzy Search",
     "description": "Interactive fuzzy search powered by fzf/ripgrep and an integrated Git Diff Search Editor for reviewing git changes and recent commits.",
-    "version": "1.4.2",
+    "version": "1.4.3",
     "publisher": "R3BL",
     "license": "MIT",
     "engines": {
@@ -14,27 +14,18 @@
     "keywords": [
         "search",
         "fzf",
-        "fuzzy",
         "ripgrep",
-        "find",
-        "file search",
-        "fuzzy finder",
-        "grep",
-        "git",
-        "diff",
-        "unstaged",
-        "code review",
-        "git diff",
-        "git history",
-        "coding agent",
-        "claude code",
-        "gemini cli"
+        "vscode",
+        "fuzzy"
     ],
     "icon": "r3bl-cube-logo.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
-        "directory": "packages/r3bl-fuzzy-search"
+        "url": "https://github.com/r3bl-org/r3bl-open-core"
+    },
+    "homepage": "https://r3bl.com",
+    "bugs": {
+        "url": "https://github.com/r3bl-org/r3bl-open-core/issues"
     },
     "activationEvents": [],
     "extensionDependencies": [
@@ -45,17 +36,17 @@
         "commands": [
             {
                 "command": "r3bl-fuzzy-search.searchInFiles",
-                "title": "R3BL Fuzzy Search: Interactive Search",
+                "title": "Interactive Search",
                 "category": "R3BL"
             },
             {
                 "command": "r3bl-fuzzy-search.showUnstagedChanges",
-                "title": "R3BL Fuzzy Search: Git Diff Search Editor",
+                "title": "Git Diff Search Editor",
                 "category": "R3BL"
             },
             {
                 "command": "r3bl-fuzzy-search.refreshGitDiff",
-                "title": "R3BL Fuzzy Search: Refresh Git Diff Search Editor",
+                "title": "Refresh Git Diff Search Editor",
                 "category": "R3BL"
             }
         ],
@@ -115,6 +106,13 @@
                     "minimum": 1,
                     "maximum": 50,
                     "description": "Maximum number of recent commits to show in the Git Diff Search Editor picker"
+                },
+                "r3blFuzzySearch.gitDiffMaxLinesPerFile": {
+                    "type": "number",
+                    "default": 5,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of changed lines/preview lines displayed per file in the Git Diff Search Editor"
                 }
             }
         }

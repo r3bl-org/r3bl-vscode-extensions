@@ -124,6 +124,8 @@ This extension requires the following command-line tools to be installed:
 - `r3blFuzzySearch.respectGitignore`: Respect .gitignore files by default (default: true).
 - `r3blFuzzySearch.commitHistoryLimit`: Number of recent commits to show in picker
   (default: 10).
+- `r3blFuzzySearch.gitDiffMaxLinesPerFile`: Maximum number of diff/preview lines displayed
+  per file in Git Diff Search Editor (default: 5).
 
 ## Advantages Over Built-in Search
 
