@@ -127,4 +127,4 @@ routines:
 - [x] `./install.sh` installs the extension pack locally for final manual testing.
 - [x] Move `task/git-diff-search-editor-enhancements.md` to `done/` folder.
 - [x] Make a commit
-- [ ] Publish the 2 changed extensions
+- [x] Publish the 2 changed extensions
