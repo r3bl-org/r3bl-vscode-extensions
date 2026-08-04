@@ -2,7 +2,7 @@
     "name": "r3bl-extension-pack",
     "displayName": "R3BL Development Pack",
     "description": "Complete R3BL development experience with theme, semantic highlighting, and task management",
-    "version": "1.3.25",
+    "version": "1.3.26",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"

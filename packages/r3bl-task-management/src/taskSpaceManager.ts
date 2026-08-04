@@ -626,6 +626,32 @@ export class TaskSpaceManager {
     }
 
     /**
+     * Close current task space (if active): saves current tabs, clears active task space state, and closes open editor tabs.
+     */
+    async closeCurrentTaskSpace(): Promise<TaskSpace | undefined> {
+        const activeTaskSpace = this.getActiveTaskSpace()
+        if (!activeTaskSpace) {
+            return undefined
+        }
+
+        // Save current open tabs for the active task space before closing
+        const currentTabs = await this.getCurrentOpenTabs()
+        await this.updateTaskSpaceTabs(activeTaskSpace.id, currentTabs)
+
+        // Clear active task space ID
+        this.activeTaskSpaceId = undefined
+        await this.storage.setActiveTaskSpaceId(undefined)
+
+        // Close all open editor tabs (including pinned tabs)
+        const allTabs = vscode.window.tabGroups.all.flatMap((group) => group.tabs)
+        if (allTabs.length > 0) {
+            await vscode.window.tabGroups.close(allTabs)
+        }
+
+        return activeTaskSpace
+    }
+
+    /**
      * Move a task to the Backlog (task/pending/)
      */
     async moveToBacklog(id: string): Promise<void> {

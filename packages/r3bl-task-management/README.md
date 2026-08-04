@@ -432,6 +432,8 @@ not the recommended workflow for most users.
   (Alt+Shift+F)
 - `R3BL Task Management: Pause and Jump to Next Task` - Context switch to Next
   (Alt+Shift+J)
+- `R3BL Task Management: Close Current Task Space` - Save and close active task space
+  (Alt+Shift+C)
 - `R3BL Task Management: Move Current Task to Backlog` - Relegate to task/pending/
 - `R3BL Task Management: Install Coding Agent Integration` - Install /r3bl-task command
 - `R3BL Task Management: Create Task Space from Task File` - Create from existing task
@@ -439,11 +441,12 @@ not the recommended workflow for most users.
 
 ### Keyboard Shortcuts
 
-| Shortcut      | Command ID                                | When            |
-| ------------- | ----------------------------------------- | --------------- |
-| `Alt+Shift+T` | `r3bl-task-management.showTaskSpaces`     | Not in terminal |
-| `Alt+Shift+F` | `r3bl-task-management.finishCurrentTask`  | Not in terminal |
-| `Alt+Shift+J` | `r3bl-task-management.pauseAndJumpToNext` | Not in terminal |
+| Shortcut      | Command ID                                   | When            |
+| ------------- | -------------------------------------------- | --------------- |
+| `Alt+Shift+T` | `r3bl-task-management.showTaskSpaces`        | Not in terminal |
+| `Alt+Shift+F` | `r3bl-task-management.finishCurrentTask`     | Not in terminal |
+| `Alt+Shift+J` | `r3bl-task-management.pauseAndJumpToNext`    | Not in terminal |
+| `Alt+Shift+C` | `r3bl-task-management.closeCurrentTaskSpace` | Not in terminal |
 
 You can customize this shortcut in VS Code's Keyboard Shortcuts settings by searching for
 the command ID above.

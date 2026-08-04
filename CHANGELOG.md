@@ -178,6 +178,23 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Unified document content builder and expanded context line scan to top 20 lines for
       reliable refresh behavior.
 
+## [2026-08-04] - Close Current Task Space Command
+
+### Package Versions
+
+- **R3BL Task Management**: 1.4.1 → 1.4.2
+- **R3BL Extension Pack**: 1.3.25 → 1.3.26
+
+### Changes
+
+- **R3BL Task Management 1.4.2**: Added Close Current Task Space command
+    - Introduced `r3bl-task-management.closeCurrentTaskSpace` command bound to
+      `Alt+Shift+C`.
+    - Automatically saves open tabs for the active task space before deactivating.
+    - Clears active task space state and closes open editor tabs to leave a clean
+      workspace slate.
+    - Added QuickPick option in `Alt+Shift+T` dialog to close active task space.
+
 ## [2026-07-25] - R3BL Theme Dialog & Popup Borders Update
 
 ### Package Versions

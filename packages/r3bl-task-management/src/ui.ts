@@ -9,7 +9,7 @@ import { promptToInstallCodingAgentIntegration } from "./codingAgentIntegration"
 
 interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
     taskSpace?: TaskSpace
-    action?: "create" | "switch" | "finish"
+    action?: "create" | "switch" | "finish" | "close"
 }
 
 /**
@@ -30,12 +30,17 @@ export async function showTaskSpacesDialog(
 
     const activeTaskSpace = manager.getActiveTaskSpace()
 
-    // 1. [Action] Finish Current Task
+    // 1. [Action] Finish Current Task & Close Current Task Space
     if (activeTaskSpace) {
         items.push({
             label: `$(check) Finish Current Task: ${activeTaskSpace.name}`,
             description: "Archive current task and jump to next",
             action: "finish",
+        })
+        items.push({
+            label: `$(close) Close Current Task Space: ${activeTaskSpace.name}`,
+            description: "Save and close current task space tabs",
+            action: "close",
         })
         items.push({
             label: "",
@@ -118,6 +123,10 @@ export async function showTaskSpacesDialog(
             await handleCreateTaskSpace(manager, statusBar, context)
         } else if (selected.action === "finish") {
             await vscode.commands.executeCommand("r3bl-task-management.finishCurrentTask")
+        } else if (selected.action === "close") {
+            await vscode.commands.executeCommand(
+                "r3bl-task-management.closeCurrentTaskSpace",
+            )
         } else if (selected.taskSpace) {
             await handleJumpToTask(manager, selected.taskSpace, statusBar)
         }

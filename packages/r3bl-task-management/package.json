@@ -2,7 +2,7 @@
     "name": "r3bl-task-management",
     "displayName": "R3BL Task Management",
     "description": "Manage task spaces - collections of open tabs for different work contexts",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "publisher": "R3BL",
     "license": "MIT",
     "engines": {
@@ -41,7 +41,7 @@
         "commands": [
             {
                 "command": "r3bl-task-management.showTaskSpaces",
-                "title": "Manage Task Spaces",
+                "title": "Task Management: Manage Task Spaces",
                 "category": "R3BL"
             },
             {
@@ -73,6 +73,11 @@
                 "command": "r3bl-task-management.moveTaskToBacklog",
                 "title": "Task Management: Move Current Task to Backlog",
                 "category": "R3BL"
+            },
+            {
+                "command": "r3bl-task-management.closeCurrentTaskSpace",
+                "title": "Task Management: Close Current Task Space",
+                "category": "R3BL"
             }
         ],
         "keybindings": [
@@ -89,6 +94,11 @@
             {
                 "command": "r3bl-task-management.pauseAndJumpToNext",
                 "key": "alt+shift+j",
+                "when": "!terminalFocus"
+            },
+            {
+                "command": "r3bl-task-management.closeCurrentTaskSpace",
+                "key": "alt+shift+c",
                 "when": "!terminalFocus"
             }
         ],

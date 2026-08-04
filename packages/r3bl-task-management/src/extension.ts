@@ -274,6 +274,30 @@ export async function activate(context: vscode.ExtensionContext) {
     )
     context.subscriptions.push(moveTaskToBacklogCommand)
 
+    // Register Close Current Task Space command
+    const closeTaskSpaceCommand = vscode.commands.registerCommand(
+        "r3bl-task-management.closeCurrentTaskSpace",
+        async () => {
+            const activeTaskSpace = manager.getActiveTaskSpace()
+            if (!activeTaskSpace) {
+                showStatusBarMessage("No active task space to close", "info")
+                return
+            }
+
+            try {
+                await manager.closeCurrentTaskSpace()
+                updateStatusBar(statusBarItem, manager)
+                showStatusBarMessage(
+                    `Closed task space "${activeTaskSpace.name}"`,
+                    "success",
+                )
+            } catch (error) {
+                showStatusBarMessage(`Failed to close task space: ${error}`, "error")
+            }
+        },
+    )
+    context.subscriptions.push(closeTaskSpaceCommand)
+
     // Register auto-save listener
     const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async () => {
         // Skip auto-save if tabs changed due to file watcher sync

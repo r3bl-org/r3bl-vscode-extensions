@@ -112,7 +112,8 @@ routines:
 - [x] Unit tests pass via `npm test`.
 - [x] User manually tests the extension in VSCode and confirms that all new features and
       fixes work as expected before moving any further.
-    - [x] Command Palette titles show `R3BL: Git Diff Search Editor` and `R3BL: Interactive Search` cleanly without double R3BL.
+    - [x] Command Palette titles show `R3BL: Git Diff Search Editor` and
+          `R3BL: Interactive Search` cleanly without double R3BL.
     - [x] Section order for uncommitted changes is `Unstaged Changes` -> `Staged Changes`
           -> `Untracked Files`.
     - [x] Staged file entries are automatically collapsed upon editor open and refresh.
