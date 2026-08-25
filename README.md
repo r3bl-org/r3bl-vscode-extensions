@@ -1,7 +1,11 @@
 # R3BL VSCode Extensions
 
-[![Visual Studio Marketplace](https://img.shields.io/badge/VS_Code_Marketplace-R3BL_Extension_Pack-007ACC?logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack)
-[![Open VSX Registry](https://img.shields.io/badge/Open_VSX-R3BL_Extension_Pack-purple?logo=openvsx&logoColor=white)](https://open-vsx.org/extension/R3BL/r3bl-extension-pack)
+> 📦 **Install the Extension Pack:**
+> - [**VS Code Marketplace**](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack) (VS Code, Cursor)
+> - [**Open VSX Registry**](https://open-vsx.org/extension/R3BL/r3bl-extension-pack) (VSCodium, Gitpod)
+
+[![Install from VS Code Marketplace](https://img.shields.io/badge/Install_from-VS_Code_Marketplace-007ACC?logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack)
+[![Install from Open VSX](https://img.shields.io/badge/Install_from-Open_VSX-purple?logo=openvsx&logoColor=white)](https://open-vsx.org/extension/R3BL/r3bl-extension-pack)
 
 A monorepo containing R3BL VSCode extensions for Rust development, task management, and
 productivity.
