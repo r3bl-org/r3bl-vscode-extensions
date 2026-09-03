@@ -1,0 +1,78 @@
+{
+    "name": "r3bl-opened-editors",
+    "displayName": "R3BL Opened Editors",
+    "description": "Fast opened editors dropdown switcher with Alt+E / Cmd+E and vertical sidebar navigation",
+    "version": "1.0.0",
+    "publisher": "R3BL",
+    "license": "MIT",
+    "engines": {
+        "vscode": "^1.70.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "opened editors",
+        "switcher",
+        "dropdown",
+        "r3bl",
+        "productivity",
+        "shortcuts"
+    ],
+    "icon": "r3bl-cube-logo.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/r3bl-org/r3bl-vscode-extensions.git",
+        "directory": "packages/r3bl-opened-editors"
+    },
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "extensionDependencies": [
+        "R3BL.r3bl-shared"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "r3bl-opened-editors.openedEditors",
+                "title": "R3BL Opened Editors: Show Opened Editors",
+                "category": "R3BL"
+            },
+            {
+                "command": "r3bl-opened-editors.focusOpenEditorsView",
+                "title": "R3BL Opened Editors: Focus Open Editors in Sidebar",
+                "category": "R3BL"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "r3bl-opened-editors.openedEditors",
+                "key": "alt+e",
+                "mac": "cmd+e"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run build",
+        "compile": "webpack",
+        "watch": "webpack --watch",
+        "build": "webpack --mode production --devtool hidden-source-map",
+        "package": "vsce package --no-dependencies",
+        "test": "jest"
+    },
+    "dependencies": {
+        "r3bl-common-code": "file:../r3bl-common-code"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.14",
+        "@types/node": "20.x",
+        "@types/vscode": "^1.70.0",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.2.5",
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.6.3",
+        "webpack": "^5.95.0",
+        "webpack-cli": "^5.1.4"
+    }
+}

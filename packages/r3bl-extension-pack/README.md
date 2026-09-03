@@ -19,6 +19,7 @@ These extensions are maintained and published by R3BL.
 | **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation                         |
 | **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization                   |
 | **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes                         |
+| **[R3BL Opened Editors](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-opened-editors)**                               | Fast opened editors dropdown switcher (`Alt+E`) and vertical sidebar panel navigation      |
 | **[R3BL Copy Selection Path and Range](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Coding Agents                                         |
 | **[R3BL Auto Insert Copyright](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates                       |
 | **[R3BL Shared](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)                              |
@@ -43,6 +44,9 @@ These extensions are required for full functionality and are automatically insta
   changes or recent commits in a single, searchable tab—perfect for AI-generated diffs.
 - **Fast Fuzzy Search**: Lightning-fast file content search powered by `rg` and `fzf` with
   live preview.
+- **Instant Opened Editors Switcher**: Single-stroke switcher (`Alt+E` on Linux/Windows,
+  `Cmd+E` on macOS) to instantly pop open a searchable list of all open files, or navigate
+  active tabs vertically in the sidebar.
 - **AI-Ready Copying**: Quick file path copying with line ranges in `@path#L1-10` format
   for AI assistant prompts. Supports both relative paths (within workspace) and absolute
   paths (outside workspace).
@@ -91,6 +95,7 @@ Keyboard Shortcuts settings.
 | `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file                |
 | `Ctrl+M`        | Semantic Config | Scroll current line to top                         |
 | `Ctrl+Shift+L`  | Semantic Config | Insert Rustdoc Link Definition                     |
+| `Alt+E`         | Opened Editors  | Show dropdown of all open editors (Cmd+E on Mac)   |
 | `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                 |
 
 ## Configuration Highlights

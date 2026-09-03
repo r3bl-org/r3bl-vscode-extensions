@@ -107,6 +107,16 @@ npx --no vsce package --no-dependencies --skip-license
 cleanup_old_versions "r3bl-fuzzy-search" "$FUZZY_SEARCH_VERSION" "."
 cd ../..
 
+# Build R3BL Opened Editors
+echo -e "${BLUE}Building R3BL Opened Editors...${NC}"
+cd packages/r3bl-opened-editors
+npm install
+npm run compile
+npm test
+npx --no vsce package --no-dependencies --skip-license
+cleanup_old_versions "r3bl-opened-editors" "$OPENED_EDITORS_VERSION" "."
+cd ../..
+
 # Build the extension pack
 echo ""
 echo -e "${BLUE}Building R3BL Extension Pack...${NC}"

@@ -1,8 +1,11 @@
 # R3BL VSCode Extensions
 
 > 📦 **Install the Extension Pack:**
-> - [**VS Code Marketplace**](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack) (VS Code, Cursor)
-> - [**Open VSX Registry**](https://open-vsx.org/extension/R3BL/r3bl-extension-pack) (VSCodium, Gitpod)
+>
+> - [**VS Code Marketplace**](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-extension-pack)
+>   (VS Code, Cursor)
+> - [**Open VSX Registry**](https://open-vsx.org/extension/R3BL/r3bl-extension-pack)
+>   (VSCodium, Gitpod)
 
 A monorepo containing R3BL VSCode extensions for Rust development, task management, and
 productivity.
@@ -14,19 +17,19 @@ Table of contents:
 
 - [Quick Start](#quick-start)
 - [Extensions](#extensions)
-  - [R3BL Extension Pack (Recommended)](#r3bl-extension-pack-recommended)
-  - [Individual Extensions](#individual-extensions)
-  - [Infrastructure Packages](#infrastructure-packages)
-    - [Architecture Overview](#architecture-overview)
+    - [R3BL Extension Pack (Recommended)](#r3bl-extension-pack-recommended)
+    - [Individual Extensions](#individual-extensions)
+    - [Infrastructure Packages](#infrastructure-packages)
+        - [Architecture Overview](#architecture-overview)
 - [Installation](#installation)
-  - [From Marketplace (Recommended)](#from-marketplace-recommended)
-  - [From Source](#from-source)
+    - [From Marketplace (Recommended)](#from-marketplace-recommended)
+    - [From Source](#from-source)
 - [Development](#development)
-  - [Setup](#setup)
-  - [Modifying Extensions](#modifying-extensions)
-  - [Creating New Extensions](#creating-new-extensions)
-  - [Building](#building)
-  - [For Maintainers](#for-maintainers)
+    - [Setup](#setup)
+    - [Modifying Extensions](#modifying-extensions)
+    - [Creating New Extensions](#creating-new-extensions)
+    - [Building](#building)
+    - [For Maintainers](#for-maintainers)
 - [Structure](#structure)
 - [Changelog](#changelog)
 - [License](#license)
@@ -55,14 +58,15 @@ zero configuration.
 
 ### Individual Extensions
 
-| Extension                              | Description                                        | Links                                                                                                                   |
-| -------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **R3BL Theme**                         | Dark theme optimized for Rust and Markdown         | [Docs][dark_theme-readme] · [Open VSX][dark_theme-ovsx] · [Microsoft][dark_theme-msft]                                  |
-| **R3BL Semantic Configuration**        | Enhanced semantic highlighting for Rust            | [Docs][semantic_config-readme] · [Open VSX][semantic_config-ovsx] · [Microsoft][semantic_config-msft]                   |
-| **R3BL Task Management**               | Task space management for context switching        | [Docs][task_mgmt-readme] · [Open VSX][task_mgmt-ovsx] · [Microsoft][task_mgmt-msft]                                     |
-| **R3BL Fuzzy Search**                  | Interactive fuzzy search & Git Diff Search Editor  | [Docs][fuzzy_search_and_git-readme] · [Open VSX][fuzzy_search_and_git-ovsx] · [Microsoft][fuzzy_search_and_git-msft]    |
-| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges for Coding Agents | [Docs][copy_selection-readme] · [Open VSX][copy_selection-ovsx] · [Microsoft][copy_selection-msft]                      |
-| **R3BL Auto Insert Copyright**         | Automatic copyright header insertion               | [Docs][auto_insert_copyright-readme] · [Open VSX][auto_insert_copyright-ovsx] · [Microsoft][auto_insert_copyright-msft] |
+| Extension                              | Description                                                          | Links                                                                                                                   |
+| -------------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **R3BL Theme**                         | Dark theme optimized for Rust and Markdown                           | [Docs][dark_theme-readme] · [Open VSX][dark_theme-ovsx] · [Microsoft][dark_theme-msft]                                  |
+| **R3BL Semantic Configuration**        | Enhanced semantic highlighting for Rust                              | [Docs][semantic_config-readme] · [Open VSX][semantic_config-ovsx] · [Microsoft][semantic_config-msft]                   |
+| **R3BL Task Management**               | Task space management for context switching                          | [Docs][task_mgmt-readme] · [Open VSX][task_mgmt-ovsx] · [Microsoft][task_mgmt-msft]                                     |
+| **R3BL Fuzzy Search**                  | Interactive fuzzy search & Git Diff Search Editor                    | [Docs][fuzzy_search_and_git-readme] · [Open VSX][fuzzy_search_and_git-ovsx] · [Microsoft][fuzzy_search_and_git-msft]    |
+| **R3BL Opened Editors**                | Opened editors dropdown switcher & vertical sidebar panel navigation | [Docs][opened_editors-readme] · [Open VSX][opened_editors-ovsx] · [Microsoft][opened_editors-msft]                      |
+| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges for Coding Agents                   | [Docs][copy_selection-readme] · [Open VSX][copy_selection-ovsx] · [Microsoft][copy_selection-msft]                      |
+| **R3BL Auto Insert Copyright**         | Automatic copyright header insertion                                 | [Docs][auto_insert_copyright-readme] · [Open VSX][auto_insert_copyright-ovsx] · [Microsoft][auto_insert_copyright-msft] |
 
 ### Infrastructure Packages
 
@@ -211,6 +215,7 @@ packages/
 ├── r3bl-semantic-config/                 # Semantic highlighting
 ├── r3bl-task-management/                 # Task spaces
 ├── r3bl-fuzzy-search/                    # Fuzzy search
+├── r3bl-opened-editors/                  # Opened editors dropdown switcher
 ├── r3bl-copy-selection-path-and-range/   # Copy file paths
 ├── r3bl-auto-insert-copyright/           # Copyright headers
 ├── r3bl-shared/                          # Shared services (infrastructure)
@@ -258,3 +263,7 @@ MIT - See individual extension LICENSE files for details.
     https://open-vsx.org/extension/R3BL/r3bl-auto-insert-copyright
 [auto_insert_copyright-msft]:
     https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-auto-insert-copyright
+[opened_editors-readme]: packages/r3bl-opened-editors/README.md
+[opened_editors-ovsx]: https://open-vsx.org/extension/R3BL/r3bl-opened-editors
+[opened_editors-msft]:
+    https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-opened-editors

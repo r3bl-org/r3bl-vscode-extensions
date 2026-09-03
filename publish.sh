@@ -29,6 +29,7 @@ declare -A EXT_VERSIONS=(
     ["r3bl-auto-insert-copyright"]="${COPYRIGHT_VERSION}"
     ["r3bl-copy-selection-path-and-range"]="${COPY_SELECTION_VERSION}"
     ["r3bl-fuzzy-search"]="${FUZZY_SEARCH_VERSION}"
+    ["r3bl-opened-editors"]="${OPENED_EDITORS_VERSION}"
     ["r3bl-task-management"]="${TASK_MANAGEMENT_VERSION}"
     ["r3bl-extension-pack"]="${EXTENSION_PACK_VERSION}"
 )

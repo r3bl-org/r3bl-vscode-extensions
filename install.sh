@@ -58,6 +58,32 @@ install_extension() {
     fi
 }
 
+# Helper function to purge untrusted extensions from all available editors
+purge_untrusted_extension() {
+    local ext_id="$1"
+    echo -e "${YELLOW}Purging untrusted extension ${ext_id}...${NC}"
+    if command -v code &> /dev/null; then
+        code --uninstall-extension "$ext_id" 2>/dev/null || true
+    fi
+    if command -v code-insiders &> /dev/null; then
+        code-insiders --uninstall-extension "$ext_id" 2>/dev/null || true
+    fi
+    if command -v codium &> /dev/null; then
+        codium --uninstall-extension "$ext_id" 2>/dev/null || true
+    fi
+    if command -v codium-insiders &> /dev/null; then
+        codium-insiders --uninstall-extension "$ext_id" 2>/dev/null || true
+    fi
+    # Wipe leftover directories from local extension directories
+    rm -rf "$HOME/.vscode/extensions/${ext_id}"* 2>/dev/null || true
+    rm -rf "$HOME/.vscode-insiders/extensions/${ext_id}"* 2>/dev/null || true
+    rm -rf "$HOME/.vscode-oss/extensions/${ext_id}"* 2>/dev/null || true
+    rm -rf "$HOME/.antigravity-ide/extensions/${ext_id}"* 2>/dev/null || true
+}
+
+# Purge untrusted third-party extension
+purge_untrusted_extension "nicholashsiang.vscode-opened-editors"
+
 # Install all individual extensions first (required for extension pack to work)
 echo ""
 echo -e "${BLUE}Installing individual extensions...${NC}"
@@ -82,6 +108,9 @@ install_extension "packages/r3bl-copy-selection-path-and-range/r3bl-copy-selecti
 
 # Install R3BL Fuzzy Search
 install_extension "packages/r3bl-fuzzy-search/r3bl-fuzzy-search-${FUZZY_SEARCH_VERSION}.vsix"
+
+# Install R3BL Opened Editors
+install_extension "packages/r3bl-opened-editors/r3bl-opened-editors-${OPENED_EDITORS_VERSION}.vsix"
 
 # Install the extension pack
 echo ""
