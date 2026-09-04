@@ -542,9 +542,10 @@ This feature provides:
     - `Custom Target...` (prompt to enter any arbitrary target triple)
 - **Active Target Badge**: Highlights the currently active target with `$(check)` and
   `(Current)`.
-- **Status Bar Item**: Displays clean, concise platform labels like `$(chip) Linux x64`,
-  `$(chip) macOS ARM`, `$(chip) Win-GNU x64`, or `$(chip) Host` in the status bar for
-  quick reference and one-click target switching. Hovering displays the full triple.
+- **Status Bar Item**: Displays dynamic platform icons and concise labels like
+  `🐧 Linux x64`, `🍎 macOS ARM`, `🪟 Win-GNU x64`, `🌐 Wasm32`, or `$(chip) Host` in the
+  status bar for quick reference and one-click target switching. Hovering displays the
+  full triple.
 - **Automatic Workspace Reload**: Automatically executes `rust-analyzer.reloadWorkspace`
   after changing targets so the IDE updates immediately.
 
@@ -573,6 +574,24 @@ assign your preferred key combination.
     "r3bl-semantic-config.rustTarget.showInStatusBar": true
 }
 ```
+
+### Project-Scoped Configuration & Safety
+
+To prevent accidental machine-wide changes, compilation target switching is **strictly
+project-scoped**:
+
+- **Saved to `.vscode/settings.json`**: When you pick a target, it is written exclusively
+  to the active workspace's `.vscode/settings.json` (`ConfigurationTarget.Workspace`). It
+  is **never** written to your global User settings (`settings.json`).
+- **No Cross-Project Contamination**: Setting a Windows or WebAssembly target in one
+  repository will never leak into or break other Rust projects on your machine.
+- **Requires an Open Workspace**: Target switching requires an open project folder or
+  workspace. If invoked in an empty window, the extension notifies you to open a project
+  folder first.
+- **Clean Reset on Host / Default**: Selecting **Host / Default** removes
+  `"rust-analyzer.cargo.target"` from `.vscode/settings.json` (and clears any legacy
+  user-level setting), ensuring `rust-analyzer` and Cargo revert to your machine's native
+  host target.
 
 ---
 

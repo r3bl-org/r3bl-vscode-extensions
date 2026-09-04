@@ -122,11 +122,40 @@ export function getHumanReadableTargetLabel(target: string | undefined): string 
 }
 
 /**
- * Pure function to format the status bar label with human-readable text.
+ * Pure function to map a target triple to a status bar icon.
+ * - Apple / macOS -> 🍎
+ * - Linux -> 🐧
+ * - Windows -> 🪟
+ * - WebAssembly -> 🌐
+ * - Default / Host / fallback -> $(chip)
+ */
+export function getTargetIcon(target: string | undefined): string {
+    const trimmed = target?.trim().toLowerCase()
+    if (!trimmed) {
+        return "$(chip)"
+    }
+    if (trimmed.includes("apple") || trimmed.includes("darwin")) {
+        return "🍎"
+    }
+    if (trimmed.includes("linux")) {
+        return "🐧"
+    }
+    if (trimmed.includes("windows")) {
+        return "🪟"
+    }
+    if (trimmed.includes("wasm")) {
+        return "🌐"
+    }
+    return "$(chip)"
+}
+
+/**
+ * Pure function to format the status bar label with human-readable text and target icon.
  */
 export function formatStatusBarText(target: string | undefined): string {
+    const icon = getTargetIcon(target)
     const humanLabel = getHumanReadableTargetLabel(target)
-    return `$(chip) ${humanLabel}`
+    return `${icon} ${humanLabel}`
 }
 
 /**
@@ -143,14 +172,18 @@ export function formatStatusBarTooltip(target: string | undefined): string {
 }
 
 /**
- * Determine configuration target scope (Workspace if folder open, else Global).
+ * Checks whether at least one workspace folder is currently open.
+ */
+export function hasOpenWorkspace(): boolean {
+    const workspaceFolders = vscode.workspace.workspaceFolders
+    return Boolean(workspaceFolders && workspaceFolders.length > 0)
+}
+
+/**
+ * Determine configuration target scope (always Workspace since targets are project-scoped).
  */
 export function getTargetConfigurationScope(): vscode.ConfigurationTarget {
-    const workspaceFolders = vscode.workspace.workspaceFolders
-    if (workspaceFolders && workspaceFolders.length > 0) {
-        return vscode.ConfigurationTarget.Workspace
-    }
-    return vscode.ConfigurationTarget.Global
+    return vscode.ConfigurationTarget.Workspace
 }
 
 /**
@@ -163,7 +196,50 @@ export async function applyRustTarget(
     const rustAnalyzerConfig = vscode.workspace.getConfiguration("rust-analyzer")
 
     try {
-        await rustAnalyzerConfig.update("cargo.target", newTarget, scope)
+        if (newTarget === undefined) {
+            // When resetting to Host / Default, clear cargo.target from all configuration scopes
+            // (WorkspaceFolder, Workspace, Global) so that a user-level setting does not shadow the reset.
+            const inspect = rustAnalyzerConfig.inspect<string>("cargo.target")
+            if (inspect?.workspaceFolderValue !== undefined) {
+                await rustAnalyzerConfig.update(
+                    "cargo.target",
+                    undefined,
+                    vscode.ConfigurationTarget.WorkspaceFolder,
+                )
+            }
+            if (inspect?.workspaceValue !== undefined) {
+                await rustAnalyzerConfig.update(
+                    "cargo.target",
+                    undefined,
+                    vscode.ConfigurationTarget.Workspace,
+                )
+            }
+            if (inspect?.globalValue !== undefined) {
+                await rustAnalyzerConfig.update(
+                    "cargo.target",
+                    undefined,
+                    vscode.ConfigurationTarget.Global,
+                )
+            }
+            // Always ensure the target scope is cleared if inspect didn't detect any specific scope
+            if (
+                !inspect?.workspaceFolderValue &&
+                !inspect?.workspaceValue &&
+                !inspect?.globalValue
+            ) {
+                await rustAnalyzerConfig.update("cargo.target", undefined, scope)
+            }
+        } else {
+            // Target switching is strictly project-scoped. Never write to Global.
+            if (!hasOpenWorkspace()) {
+                const msg =
+                    "Cannot switch Rust target: Please open a project folder or workspace first."
+                vscode.window.showWarningMessage(msg)
+                showStatusBarMessage(msg, "warning")
+                return
+            }
+            await rustAnalyzerConfig.update("cargo.target", newTarget, scope)
+        }
 
         // Inform user via shared status bar message
         if (newTarget) {
@@ -171,6 +247,9 @@ export async function applyRustTarget(
         } else {
             showStatusBarMessage("Rust target reset to Host / Default", "info")
         }
+
+        // Force immediate update of the status bar item
+        updateTargetStatusBarItem()
 
         // Trigger rust-analyzer reload to re-read cargo metadata
         try {
@@ -187,6 +266,14 @@ export async function applyRustTarget(
  * Interactive command to switch the active Rust target.
  */
 export async function switchRustTarget(): Promise<void> {
+    if (!hasOpenWorkspace()) {
+        const msg =
+            "Cannot switch Rust target: Please open a project folder or workspace first."
+        vscode.window.showWarningMessage(msg)
+        showStatusBarMessage(msg, "warning")
+        return
+    }
+
     const config = vscode.workspace.getConfiguration("rust-analyzer")
     const currentTarget = config.get<string>("cargo.target") || undefined
 

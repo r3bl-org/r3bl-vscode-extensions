@@ -3,11 +3,14 @@
 import * as vscode from "vscode"
 import {
     CURATED_TARGETS,
+    applyRustTarget,
     buildTargetQuickPickItems,
     formatStatusBarText,
     formatStatusBarTooltip,
     getHumanReadableTargetLabel,
     getTargetConfigurationScope,
+    getTargetIcon,
+    hasOpenWorkspace,
 } from "../rustTargetSwitcher"
 
 describe("rustTargetSwitcher", () => {
@@ -131,25 +134,66 @@ describe("rustTargetSwitcher", () => {
         })
     })
 
+    describe("getTargetIcon", () => {
+        it("returns chip icon for undefined, empty, or whitespace target", () => {
+            expect(getTargetIcon(undefined)).toBe("$(chip)")
+            expect(getTargetIcon("")).toBe("$(chip)")
+            expect(getTargetIcon("   ")).toBe("$(chip)")
+        })
+
+        it("returns apple emoji for macOS / Apple targets", () => {
+            expect(getTargetIcon("aarch64-apple-darwin")).toBe("🍎")
+            expect(getTargetIcon("x86_64-apple-darwin")).toBe("🍎")
+            expect(getTargetIcon("AARCH64-APPLE-DARWIN")).toBe("🍎")
+        })
+
+        it("returns penguin emoji for Linux targets", () => {
+            expect(getTargetIcon("x86_64-unknown-linux-gnu")).toBe("🐧")
+            expect(getTargetIcon("aarch64-unknown-linux-gnu")).toBe("🐧")
+            expect(getTargetIcon("x86_64-unknown-linux-musl")).toBe("🐧")
+            expect(getTargetIcon("armv7-unknown-linux-gnueabihf")).toBe("🐧")
+        })
+
+        it("returns window emoji for Windows targets", () => {
+            expect(getTargetIcon("x86_64-pc-windows-gnu")).toBe("🪟")
+            expect(getTargetIcon("x86_64-pc-windows-msvc")).toBe("🪟")
+            expect(getTargetIcon("i686-pc-windows-msvc")).toBe("🪟")
+        })
+
+        it("returns globe emoji for WebAssembly targets", () => {
+            expect(getTargetIcon("wasm32-unknown-unknown")).toBe("🌐")
+            expect(getTargetIcon("wasm32-wasip1")).toBe("🌐")
+            expect(getTargetIcon("wasm32-wasi")).toBe("🌐")
+        })
+
+        it("returns chip icon for unrecognized or other targets", () => {
+            expect(getTargetIcon("thumbv7em-none-eabihf")).toBe("$(chip)")
+            expect(getTargetIcon("riscv32imac-unknown-none-elf")).toBe("$(chip)")
+        })
+    })
+
     describe("formatStatusBarText", () => {
-        it("returns Host for undefined or empty targets", () => {
+        it("returns Host with chip icon for undefined or empty targets", () => {
             expect(formatStatusBarText(undefined)).toBe("$(chip) Host")
             expect(formatStatusBarText("")).toBe("$(chip) Host")
             expect(formatStatusBarText("   ")).toBe("$(chip) Host")
         })
 
-        it("returns short human-readable target label when specified", () => {
-            expect(formatStatusBarText("x86_64-unknown-linux-gnu")).toBe(
-                "$(chip) Linux x64",
+        it("returns dynamic icon and short label for known targets", () => {
+            expect(formatStatusBarText("x86_64-unknown-linux-gnu")).toBe("🐧 Linux x64")
+            expect(formatStatusBarText("aarch64-apple-darwin")).toBe("🍎 macOS ARM")
+            expect(formatStatusBarText("x86_64-pc-windows-gnu")).toBe("🪟 Win-GNU x64")
+            expect(formatStatusBarText("x86_64-pc-windows-msvc")).toBe("🪟 Win-MSVC x64")
+            expect(formatStatusBarText("wasm32-unknown-unknown")).toBe("🌐 Wasm32")
+        })
+
+        it("returns dynamic icon for custom targets", () => {
+            expect(formatStatusBarText("aarch64-unknown-linux-gnu")).toBe(
+                "🐧 aarch64-unknown-linux-gnu",
             )
-            expect(formatStatusBarText("aarch64-apple-darwin")).toBe("$(chip) macOS ARM")
-            expect(formatStatusBarText("x86_64-pc-windows-gnu")).toBe(
-                "$(chip) Win-GNU x64",
+            expect(formatStatusBarText("thumbv7em-none-eabihf")).toBe(
+                "$(chip) thumbv7em-none-eabihf",
             )
-            expect(formatStatusBarText("x86_64-pc-windows-msvc")).toBe(
-                "$(chip) Win-MSVC x64",
-            )
-            expect(formatStatusBarText("wasm32-unknown-unknown")).toBe("$(chip) Wasm32")
         })
     })
 
@@ -169,26 +213,99 @@ describe("rustTargetSwitcher", () => {
     })
 
     describe("getTargetConfigurationScope", () => {
+        it("always returns Workspace since targets are project-scoped", () => {
+            expect(getTargetConfigurationScope()).toBe(
+                vscode.ConfigurationTarget.Workspace,
+            )
+        })
+    })
+
+    describe("hasOpenWorkspace", () => {
         const originalWorkspaceFolders = (vscode.workspace as any).workspaceFolders
 
         afterEach(() => {
             ;(vscode.workspace as any).workspaceFolders = originalWorkspaceFolders
         })
 
-        it("returns Global when no workspace folders are open", () => {
+        it("returns false when no workspace folders are open", () => {
             ;(vscode.workspace as any).workspaceFolders = undefined
-            expect(getTargetConfigurationScope()).toBe(vscode.ConfigurationTarget.Global)
+            expect(hasOpenWorkspace()).toBe(false)
             ;(vscode.workspace as any).workspaceFolders = []
-            expect(getTargetConfigurationScope()).toBe(vscode.ConfigurationTarget.Global)
+            expect(hasOpenWorkspace()).toBe(false)
         })
 
-        it("returns Workspace when workspace folders are present", () => {
+        it("returns true when workspace folders are present", () => {
             ;(vscode.workspace as any).workspaceFolders = [
                 { uri: { fsPath: "/path/to/project" }, name: "project", index: 0 },
             ]
-            expect(getTargetConfigurationScope()).toBe(
-                vscode.ConfigurationTarget.Workspace,
-            )
+            expect(hasOpenWorkspace()).toBe(true)
+        })
+    })
+
+    describe("applyRustTarget", () => {
+        let updateCalls: Array<{ section: string; value: any; scope: any }>
+        let inspectReturn: any
+        const originalWorkspaceFolders = (vscode.workspace as any).workspaceFolders
+
+        beforeEach(() => {
+            updateCalls = []
+            inspectReturn = undefined
+            ;(vscode.workspace as any).workspaceFolders = [
+                { uri: { fsPath: "/path/to/project" }, name: "project", index: 0 },
+            ]
+
+            jest.spyOn(vscode.workspace, "getConfiguration").mockReturnValue({
+                get: jest.fn(),
+                update: jest.fn(async (section: string, value: any, scope: any) => {
+                    updateCalls.push({ section, value, scope })
+                }),
+                inspect: jest.fn(() => inspectReturn),
+            } as any)
+        })
+
+        afterEach(() => {
+            jest.restoreAllMocks()
+            ;(vscode.workspace as any).workspaceFolders = originalWorkspaceFolders
+        })
+
+        it("updates cargo.target with target string at Workspace scope when workspace is open", async () => {
+            await applyRustTarget("x86_64-unknown-linux-gnu")
+
+            expect(updateCalls).toContainEqual({
+                section: "cargo.target",
+                value: "x86_64-unknown-linux-gnu",
+                scope: vscode.ConfigurationTarget.Workspace,
+            })
+        })
+
+        it("does not update target when no workspace is open", async () => {
+            ;(vscode.workspace as any).workspaceFolders = undefined
+
+            await applyRustTarget("x86_64-unknown-linux-gnu")
+
+            expect(updateCalls.length).toBe(0)
+        })
+
+        it("clears all active configuration scopes when newTarget is undefined (Host / Default)", async () => {
+            inspectReturn = {
+                key: "rust-analyzer.cargo.target",
+                globalValue: "x86_64-pc-windows-gnu",
+                workspaceValue: "aarch64-apple-darwin",
+                workspaceFolderValue: undefined,
+            }
+
+            await applyRustTarget(undefined)
+
+            expect(updateCalls).toContainEqual({
+                section: "cargo.target",
+                value: undefined,
+                scope: vscode.ConfigurationTarget.Workspace,
+            })
+            expect(updateCalls).toContainEqual({
+                section: "cargo.target",
+                value: undefined,
+                scope: vscode.ConfigurationTarget.Global,
+            })
         })
     })
 })
