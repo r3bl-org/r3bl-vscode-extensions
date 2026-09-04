@@ -172,6 +172,8 @@ The pack is a power-user's dream for Rust. It enhances `rust-analyzer` with:
   blocks in large files.
 - **Live Diagnostics**: Debounced Flycheck runs `cargo check` in the background after you
   stop typing, without the "save to check" friction.
+- **Target Switcher**: Switch `rust-analyzer.cargo.target` on the fly from a curated
+  dropdown or status bar item (Windows, Linux, macOS, or custom).
 
 ### Multi-Task Workflows (Context Switching)
 

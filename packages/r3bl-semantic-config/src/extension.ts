@@ -14,6 +14,11 @@ import {
     findImportBlock,
 } from "./rustUseStatementsFolding"
 import { insertRustdocLinkDef } from "./rustdocLinkDefs"
+import {
+    switchRustTarget,
+    initializeRustTargetStatusBar,
+    disposeRustTargetStatusBar,
+} from "./rustTargetSwitcher"
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined
@@ -158,6 +163,12 @@ export function activate(context: vscode.ExtensionContext) {
         insertRustdocLinkDef,
     )
 
+    // Command to switch rust-analyzer cargo target
+    const switchRustTargetCommand = vscode.commands.registerCommand(
+        "r3bl-semantic-config.switchRustTarget",
+        switchRustTarget,
+    )
+
     // Register FoldingRangeProvider for rustdoc comments
     const rustdocFoldingProvider = vscode.languages.registerFoldingRangeProvider(
         { language: "rust" },
@@ -179,6 +190,9 @@ export function activate(context: vscode.ExtensionContext) {
     // Initialize debounced flycheck
     initializeDebouncedFlycheck(context)
 
+    // Initialize Rust target status bar item
+    initializeRustTargetStatusBar(context)
+
     // Watch for theme changes and auto-apply semantic config
     const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration("workbench.colorTheme")) {
@@ -197,6 +211,7 @@ export function activate(context: vscode.ExtensionContext) {
         navigateRustdocsCommand,
         scrollToTopCommand,
         insertRustdocLinkDefCommand,
+        switchRustTargetCommand,
         rustdocFoldingProvider,
         useStatementsFoldingProvider,
         themeWatcher,
@@ -643,4 +658,5 @@ export function deactivate() {
         statusBarItem.hide()
         statusBarItem.dispose()
     }
+    disposeRustTargetStatusBar()
 }

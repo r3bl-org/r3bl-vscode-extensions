@@ -2,7 +2,7 @@
     "name": "r3bl-semantic-config",
     "displayName": "R3BL Semantic Configuration",
     "description": "Companion to R3BL themes - automatically applies enhanced semantic highlighting for Rust development",
-    "version": "1.2.14",
+    "version": "1.2.15",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"
@@ -71,6 +71,11 @@
             {
                 "command": "r3bl-semantic-config.insertRustdocLinkDef",
                 "title": "Insert Rustdoc Link Definition",
+                "category": "R3BL"
+            },
+            {
+                "command": "r3bl-semantic-config.switchRustTarget",
+                "title": "Switch Rust Target (rust-analyzer)",
                 "category": "R3BL"
             }
         ],
@@ -152,6 +157,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Automatically fold all Rust 'use' statements at the top of a file when opening a Rust file."
+                },
+                "r3bl-semantic-config.rustTarget.showInStatusBar": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show the active rust-analyzer cargo target in the status bar."
                 }
             }
         }

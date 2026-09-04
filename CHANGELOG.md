@@ -2,9 +2,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
-    - [[2026-09-03] - Add R3BL Opened Editors and Update Extension Pack](#2026-09-03---add-r3bl-opened-editors-and-update-extension-pack)
+    - [[2026-09-03] - Switch rust-analyzer Cargo Target Feature](#2026-09-03---switch-rust-analyzer-cargo-target-feature)
         - [Package Versions](#package-versions)
         - [Changes](#changes)
+    - [[2026-09-03] - Add R3BL Opened Editors and Update Extension Pack](#2026-09-03---add-r3bl-opened-editors-and-update-extension-pack)
+        - [Package Versions](#package-versions-1)
+        - [Changes](#changes-1)
     - [[2026-07-28] - Git Diff Search Editor Enhancements and Label Cleanups](#2026-07-28---git-diff-search-editor-enhancements-and-label-cleanups)
         - [Package Versions](#package-versions-1)
         - [Changes](#changes-1)
@@ -192,6 +195,33 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2026-09-03] - Switch rust-analyzer Cargo Target Feature
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.14 → 1.2.15
+- **R3BL Extension Pack**: 1.3.27 → 1.3.28
+
+### Changes
+
+- **R3BL Semantic Configuration 1.2.15**: Switch rust-analyzer Cargo Target
+    - Added `r3bl-semantic-config.switchRustTarget` command to switch active
+      `rust-analyzer.cargo.target` via a curated QuickPick dropdown.
+    - Curated target options include Host/Default (clears setting), macOS Apple Silicon
+      (`aarch64-apple-darwin`), Linux 64-bit (`x86_64-unknown-linux-gnu`), Windows
+      MinGW/GNU (`x86_64-pc-windows-gnu`), Windows MSVC (`x86_64-pc-windows-msvc`), and
+      custom target input prompt.
+    - Highlights current active target with `$(check)` and `(Current)` indicators.
+    - Added clickable status bar item showing active compilation target
+      (`$(chip) <Platform>`) with instant access to target switching.
+    - Configurable status bar visibility via
+      `r3bl-semantic-config.rustTarget.showInStatusBar`.
+    - Automatically executes `rust-analyzer.reloadWorkspace` upon target change.
+
+- **R3BL Extension Pack 1.3.28**: Updated dependencies
+    - Updated `r3bl-semantic-config` dependency to 1.2.15.
+    - Updated documentation for Rust development target switcher.
 
 ## [2026-09-03] - Add R3BL Opened Editors and Update Extension Pack
 

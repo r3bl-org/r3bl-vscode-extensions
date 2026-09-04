@@ -19,6 +19,8 @@ This extension provides powerful features for Rust development in VS Code:
    line is positioned at the top of the screen
 7. **Rustdoc Link Auto-Insertion** - Automatically fetch and insert repeating link
    reference definitions in rustdoc comments
+8. **Switch rust-analyzer Cargo Target** - Quickly switch between common compilation
+   targets from a dropdown or status bar item
 
 ## Table of Contents
 
@@ -58,6 +60,10 @@ This extension provides powerful features for Rust development in VS Code:
     - [Keybinding](#keybinding-1)
 - [Feature 7: Rustdoc Link Auto-Insertion](#feature-7-rustdoc-link-auto-insertion)
     - [What It Does](#what-it-does-5)
+- [Feature 8: Switch rust-analyzer Cargo Target](#feature-8-switch-rust-analyzer-cargo-target)
+    - [What It Does](#what-it-does-6)
+    - [Curated Targets](#curated-targets)
+    - [Configuration](#configuration-3)
     - [Keybinding](#keybinding-2)
     - [How It Works](#how-it-works-5)
 - [Requirements](#requirements)
@@ -512,6 +518,64 @@ You can configure the maximum number of unique definitions shown in the QuickPic
 
 ---
 
+## Feature 8: Switch rust-analyzer Cargo Target
+
+Quickly change `"rust-analyzer.cargo.target"` from an interactive dropdown menu or
+directly from the status bar, making cross-compilation target switching fast and
+effortless.
+
+### What It Does
+
+When working with cross-platform Rust projects (e.g. compiling for Windows GNU/MSVC,
+Linux, or macOS Apple Silicon), you often need to point `rust-analyzer` to a specific
+compilation target so that target-specific `cfg` blocks, dependencies, and types are
+correctly analyzed.
+
+This feature provides:
+
+- **Curated Dropdown**:
+    - `Host / Default` (clears the setting to use your machine's native target)
+    - `aarch64-apple-darwin` (macOS Apple Silicon)
+    - `x86_64-unknown-linux-gnu` (Linux 64-bit)
+    - `x86_64-pc-windows-gnu` (Windows MinGW / GNU)
+    - `x86_64-pc-windows-msvc` (Windows Visual Studio / MSVC)
+    - `Custom Target...` (prompt to enter any arbitrary target triple)
+- **Active Target Badge**: Highlights the currently active target with `$(check)` and
+  `(Current)`.
+- **Status Bar Item**: Displays clean, concise platform labels like `$(chip) Linux x64`,
+  `$(chip) macOS ARM`, `$(chip) Win-GNU x64`, or `$(chip) Host` in the status bar for
+  quick reference and one-click target switching. Hovering displays the full triple.
+- **Automatic Workspace Reload**: Automatically executes `rust-analyzer.reloadWorkspace`
+  after changing targets so the IDE updates immediately.
+
+### Command & Keybinding
+
+- **Command Title**: `R3BL: Switch Rust Target (rust-analyzer)`
+- **Command ID**: `r3bl-semantic-config.switchRustTarget`
+
+You can bind a keyboard shortcut to this command in your `keybindings.json`:
+
+```json
+{
+    "key": "ctrl+alt+t",
+    "command": "r3bl-semantic-config.switchRustTarget",
+    "when": "editorLangId == rust"
+}
+```
+
+Or open the Keyboard Shortcuts UI (`Ctrl+K Ctrl+S`), search for `Switch Rust Target`, and
+assign your preferred key combination.
+
+### Configuration
+
+```json
+{
+    "r3bl-semantic-config.rustTarget.showInStatusBar": true
+}
+```
+
+---
+
 ## Requirements
 
 - VS Code 1.60.0 or higher
@@ -562,16 +626,17 @@ control over `use` statement folding behavior:
 
 ## Commands
 
-| Command                                    | Keybinding     | Description                                 |
-| ------------------------------------------ | -------------- | ------------------------------------------- |
-| `R3BL: Enable R3BL Semantic Highlighting`  | -              | Apply semantic highlighting settings        |
-| `R3BL: Disable R3BL Semantic Highlighting` | -              | Remove semantic highlighting settings       |
-| `R3BL: Run Flycheck (Debounced)`           | `Ctrl+R`       | Manually trigger flycheck, cancels pending  |
-| `R3BL: Fold All Rustdocs`                  | `Ctrl+-`       | Collapse all `///`, `//!`, and `use` blocks |
-| `R3BL: Unfold All Rustdocs`                | `Ctrl+=`       | Expand all rustdoc and `use` blocks         |
-| `R3BL: Navigate Rustdoc Structure`         | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs      |
-| `R3BL: Scroll Current Line to Top`         | `Ctrl+M`       | Reveal active cursor line at top            |
-| `R3BL: Insert Rustdoc Link Definition`     | `Ctrl+Shift+L` | Auto-insert link reference definitions      |
+| Command                                    | Command ID                                  | Keybinding     | Description                                 |
+| ------------------------------------------ | ------------------------------------------- | -------------- | ------------------------------------------- |
+| `R3BL: Enable R3BL Semantic Highlighting`  | `r3bl-semantic-config.enable`               | -              | Apply semantic highlighting settings        |
+| `R3BL: Disable R3BL Semantic Highlighting` | `r3bl-semantic-config.disable`              | -              | Remove semantic highlighting settings       |
+| `R3BL: Run Flycheck (Debounced)`           | `r3bl-semantic-config.runFlycheck`          | `Ctrl+R`       | Manually trigger flycheck, cancels pending  |
+| `R3BL: Fold All Rustdocs`                  | `r3bl-semantic-config.foldRustdocs`         | `Ctrl+-`       | Collapse all `///`, `//!`, and `use` blocks |
+| `R3BL: Unfold All Rustdocs`                | `r3bl-semantic-config.unfoldRustdocs`       | `Ctrl+=`       | Expand all rustdoc and `use` blocks         |
+| `R3BL: Navigate Rustdoc Structure`         | `r3bl-semantic-config.navigateRustdocs`     | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs      |
+| `R3BL: Scroll Current Line to Top`         | `r3bl-semantic-config.scrollToTop`          | `Ctrl+M`       | Reveal active cursor line at top            |
+| `R3BL: Insert Rustdoc Link Definition`     | `r3bl-semantic-config.insertRustdocLinkDef` | `Ctrl+Shift+L` | Auto-insert link reference definitions      |
+| `R3BL: Switch Rust Target (rust-analyzer)` | `r3bl-semantic-config.switchRustTarget`     | -              | Switch active rust-analyzer cargo target    |
 
 ## Shared Infrastructure
 

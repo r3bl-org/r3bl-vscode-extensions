@@ -97,6 +97,15 @@ commands. `build.sh` compiles, runs tests, and packages the `.vsix` files. Runni
 directly only updates `dist/` but does not repackage the `.vsix`, so `./install.sh` will
 install a stale bundle.
 
+`build.sh` can build all extensions (default when run without arguments) or specific
+extensions for fast incremental builds:
+```bash
+./build.sh <extension-name> [extension-name...]
+# Examples:
+./build.sh r3bl-semantic-config
+./build.sh r3bl-semantic-config r3bl-extension-pack
+```
+
 ## Installing Extensions
 
 Always use `./install.sh` to install all built extensions locally. **Note on Antigravity
@@ -340,6 +349,10 @@ it includes the updated extension:
 ### 4. Build and Generate Artifacts
 
 ```bash
+# Build only the changed extension and the extension pack (fast):
+./build.sh extension-name r3bl-extension-pack
+
+# Or build all extensions in the monorepo:
 ./build.sh
 ```
 
