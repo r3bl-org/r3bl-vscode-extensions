@@ -3,14 +3,16 @@
 [![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-copy-selection-path-and-range?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-copy-selection-path-and-range)
 [![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-copy-selection-path-and-range)
 
-Quickly copy file paths with selected line ranges in formats optimized for AI coding
-agents (Claude Code, Gemini CLI, etc.) and IDE navigation. Perfect for sharing code
-references in prompts, documentation, or team communication.
+Quickly copy file paths with selected line ranges in standard compiler syntax (`path:line`
+or `path:start-end`). Perfect for sharing code references with AI coding agents (Claude
+Code, Gemini CLI, etc.), in prompts, documentation, or team communication.
 
 ## Features
 
-- **Coding Agent Format**: Multi-line selections use `@path#L<start>-<end>` format
-- **IDE Format**: Single-line selections use `path:<line>` format for IDE compatibility
+- **Standard Compiler Syntax**: Multi-line selections use `path:<start>-<end>` format
+- **Single-Line / Cursor**: Single-line selections use `path:<line>` format
+- **No `@` Prefix**: Clean relative or absolute paths directly usable by compilers, IDEs,
+  and tools
 - **Keyboard Shortcuts**: Quick copy with `Alt+O`, view history with `Alt+Shift+O`
 - **Copy History**: Session-based history of recent copies (last 20 items)
 - **Quick Navigation**: Select from history to jump to any previously copied location
@@ -26,27 +28,28 @@ references in prompts, documentation, or team communication.
 _Single-line selection with auto-dismissing notification_
 
 ![Multi-Line Copy](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-notification-multi-line.png)
-_Multi-line selection in Coding Agent format with @ prefix_
+_Multi-line selection in standard compiler syntax_
 
 ![Copy History](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-copy-selection-path-and-range/images/copy-history.png)
 _Copy history (Alt+Shift+O) showing recent copies with timestamps_
 
 ## Output Formats
 
-The extension automatically chooses the best format based on your selection:
+The extension produces standard compiler syntax based on your selection:
 
-### Multi-Line Selection (Coding Agent Format)
+### Multi-Line Selection
 
-When you select multiple lines, the output includes an `@` prefix for Coding Agents:
+When you select multiple lines, the output uses standard line coordinates
+(`path:start-end`):
 
 ```
-@packages/r3bl-copy-selection-path-and-range/src/extension.ts#L6-14
+packages/r3bl-copy-selection-path-and-range/src/extension.ts:6-14
 ```
 
-This format is optimized for use in Coding Agent prompts (Claude Code, Gemini CLI, etc.)
-where the `@` symbol tells the agent to reference that specific file and line range.
+This format is standard across compilers and tools, and is directly understood by coding
+agents.
 
-### Single-Line Selection (IDE Format)
+### Single-Line Selection
 
 When you have a single line selected or cursor on a line:
 
@@ -63,10 +66,10 @@ When you copy a path for a file outside of the VS Code workspace, the extension 
 the full absolute path:
 
 ```
-@/home/user/Downloads/script.py#L10-25
+/home/user/Downloads/script.py:10-25
 ```
 
-It still maintains the `@` prefix and line range formatting for consistency.
+It still maintains line range formatting without any `@` prefix.
 
 ## Requirements
 
@@ -101,7 +104,7 @@ It still maintains the `@` prefix and line range formatting for consistency.
 Share specific code sections in your prompts:
 
 ```
-Can you review the error handling in @src/services/api.ts#L45-67?
+Can you review the error handling in src/services/api.ts:45-67?
 ```
 
 The Coding Agent will automatically reference that exact section of your code.
@@ -119,7 +122,7 @@ Please check the logic in src/utils/parser.ts:123
 Reference specific implementations in your docs:
 
 ```
-See the authentication flow in @src/auth/oauth.ts#L15-42
+See the authentication flow in src/auth/oauth.ts:15-42
 ```
 
 ### Issue Tracking
@@ -153,8 +156,8 @@ You can customize these shortcuts in VS Code's Keyboard Shortcuts settings.
     - Falls back to full absolute path if file is outside workspace
 2. **Line Detection**: Determines if selection spans multiple lines
 3. **Format Selection**:
-    - Multi-line → Coding Agent format with `@` prefix
-    - Single-line → IDE format
+    - Multi-line → standard compiler range format (`path:start-end`)
+    - Single-line → standard compiler line format (`path:line`)
 4. **Clipboard**: Copies formatted string
 5. **History Storage**: Adds to in-memory session history (last 20 items)
 6. **Notification**: Shows confirmation (auto-dismisses)

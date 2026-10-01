@@ -1,7 +1,7 @@
 {
     "name": "r3bl-copy-selection-path-and-range",
     "displayName": "R3BL Copy Selection Path and Range",
-    "description": "Copy file path with selection ranges in Coding Agent format (@path#L<start>-<end>) or IDE format (path:<line>) for single/no selection",
+    "description": "Copy file path with selection ranges in standard compiler syntax (path:line or path:start-end)",
     "license": "MIT",
     "keywords": [
         "copy",
@@ -28,7 +28,7 @@
     },
     "publisher": "R3BL",
     "preview": false,
-    "version": "1.4.1",
+    "version": "1.5.0",
     "engines": {
         "vscode": "^1.95.0"
     },

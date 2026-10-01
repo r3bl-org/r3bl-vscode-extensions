@@ -56,13 +56,11 @@ async function handleCopyPathAndRange() {
     // Normalize path separators to forward slashes for consistency
     const normalizedPath = pathToShow.replace(/\\/g, "/")
 
-    // Calculate line range and determine if it's multi-line
-    const { lineRange, isMultiLine } = calculateLineRange(selection)
+    // Calculate line range in standard compiler syntax (:line or :start-end)
+    const lineRange = calculateLineRange(selection)
 
-    // Format the output (add @ prefix for multi-line selections)
-    const output = isMultiLine
-        ? `@${normalizedPath}${lineRange}`
-        : `${normalizedPath}${lineRange}`
+    // Format the output (standard compiler syntax, no @ prefix)
+    const output = `${normalizedPath}${lineRange}`
 
     // Copy to clipboard
     await vscode.env.clipboard.writeText(output)
@@ -130,18 +128,15 @@ function getRelativeTime(date: Date): string {
     return `${hours} hour${hours === 1 ? "" : "s"} ago`
 }
 
-function calculateLineRange(selection: vscode.Selection): {
-    lineRange: string
-    isMultiLine: boolean
-} {
+function calculateLineRange(selection: vscode.Selection): string {
     const startLine = selection.start.line + 1 // Convert to 1-based line numbers
     const endLine = selection.end.line + 1
 
-    // If selection spans multiple lines - use Coding Agent format
+    // If selection spans multiple lines - use standard compiler range syntax (:start-end)
     if (startLine !== endLine) {
-        return { lineRange: `#L${startLine}-${endLine}`, isMultiLine: true }
+        return `:${startLine}-${endLine}`
     }
 
-    // Single-line selection or no selection - use IDE-compatible format with line number
-    return { lineRange: `:${startLine}`, isMultiLine: false }
+    // Single-line selection or no selection - use standard compiler syntax with line number (:line)
+    return `:${startLine}`
 }

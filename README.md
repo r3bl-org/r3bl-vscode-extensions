@@ -65,7 +65,7 @@ zero configuration.
 | **R3BL Task Management**               | Task space management for context switching                          | [Docs][task_mgmt-readme] · [Open VSX][task_mgmt-ovsx] · [Microsoft][task_mgmt-msft]                                     |
 | **R3BL Fuzzy Search**                  | Interactive fuzzy search & Git Diff Search Editor                    | [Docs][fuzzy_search_and_git-readme] · [Open VSX][fuzzy_search_and_git-ovsx] · [Microsoft][fuzzy_search_and_git-msft]    |
 | **R3BL Opened Editors**                | Opened editors dropdown switcher & vertical sidebar panel navigation | [Docs][opened_editors-readme] · [Open VSX][opened_editors-ovsx] · [Microsoft][opened_editors-msft]                      |
-| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges for Coding Agents                   | [Docs][copy_selection-readme] · [Open VSX][copy_selection-ovsx] · [Microsoft][copy_selection-msft]                      |
+| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges in standard compiler syntax         | [Docs][copy_selection-readme] · [Open VSX][copy_selection-ovsx] · [Microsoft][copy_selection-msft]                      |
 | **R3BL Auto Insert Copyright**         | Automatic copyright header insertion                                 | [Docs][auto_insert_copyright-readme] · [Open VSX][auto_insert_copyright-ovsx] · [Microsoft][auto_insert_copyright-msft] |
 
 ### Infrastructure Packages

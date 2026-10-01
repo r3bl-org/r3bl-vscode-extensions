@@ -47,9 +47,9 @@ These extensions are required for full functionality and are automatically insta
 - **Instant Opened Editors Switcher**: Single-stroke switcher (`Alt+E` on Linux/Windows,
   `Cmd+E` on macOS) to instantly pop open a searchable list of all open files, or navigate
   active tabs vertically in the sidebar.
-- **AI-Ready Copying**: Quick file path copying with line ranges in `@path#L1-10` format
-  for AI assistant prompts. Supports both relative paths (within workspace) and absolute
-  paths (outside workspace).
+- **Compiler Syntax Copying**: Quick file path copying with line ranges in standard
+  compiler format (`path:1-10` or `path:5`) without `@` prefix. Supports both relative
+  paths (within workspace) and absolute paths (outside workspace).
 - **Automated Compliance**: Automatic copyright headers for new files with support for
   MIT, Apache 2.0, GPLv3, and more.
 - **Full Rust Support**: Official `rust-analyzer` integration out of the box.
@@ -87,7 +87,7 @@ Keyboard Shortcuts settings.
 | `Alt+Shift+D`   | Fuzzy Search    | Start interactive fuzzy search                     |
 | `Ctrl+Shift+G`  | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits)  |
 | `Ctrl+R`        | Fuzzy Search    | Refresh Git Diff Search Editor (while tab focused) |
-| `Alt+O`         | Copy Selection  | Copy file path with line range (AI-ready)          |
+| `Alt+O`         | Copy Selection  | Copy file path with line range (compiler syntax)   |
 | `Alt+Shift+O`   | Copy Selection  | Show session copy history and navigation           |
 | `Ctrl+Shift+Y`  | Semantic Config | Open Rustdoc Structure Navigator                   |
 | `Ctrl+R`        | Semantic Config | Run Flycheck (manual debounced `cargo check`)      |
@@ -155,7 +155,7 @@ Enhanced defaults for the R3BL Semantic Configuration.
 Optimized for working with Coding Agents (Claude Code, Gemini CLI, Cursor, etc.):
 
 - **Context Gathering**: Use `Alt+O` to quickly grab correctly formatted file references
-  (`@path#L10-20`) for your prompts.
+  in standard compiler syntax (`path:10-20` or `path:10`) for your prompts.
 - **Change Review**: Use `Ctrl+Shift+G` (Git Diff Search Editor) to review large numbers
   of changes Coding Agents make in a single turn. It's the most efficient way to be
   thorough without leaving your IDE.
