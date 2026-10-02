@@ -28,91 +28,127 @@ let statusBarItem: vscode.StatusBarItem | undefined
 // Constants
 const ROCKET_DISPLAY_DURATION_MS = 700
 
-const SEMANTIC_CONFIG = {
+const ITALIC_THEMES = ["R3BL Theme", "R3BL 2026 Theme"]
+const NO_ITALIC_THEMES = ["R3BL Theme (No Italic)", "R3BL 2026 Theme (No Italic)"]
+const ALL_R3BL_THEMES = [...ITALIC_THEMES, ...NO_ITALIC_THEMES]
+
+const BASE_SEMANTIC_RULES = {
+    function: {
+        foreground: "#4B8CDC",
+    },
+    method: {
+        foreground: "#4B8CDC",
+    },
+    unresolvedReference: {
+        foreground: "#ff6edb",
+        fontStyle: "strikethrough",
+    },
+    "*.deprecated": {
+        fontStyle: "strikethrough",
+    },
+    namespace: {
+        foreground: "#7b939d",
+    },
+    "method.static": "#4B8CDC",
+    "function.static": "#4B8CDC",
+    macro: "#4B8CDC",
+    struct: "#DDE86E",
+    enum: "#FCB141",
+    enumMember: {
+        foreground: "#FFCE66",
+    },
+    "*.mutable": {
+        fontStyle: "bold",
+    },
+    property: "#ad83da",
+    variable: "#E192EF",
+    parameter: "#7c86f4",
+    selfTypeKeyword: "#ce55b7",
+    selfKeyword: "#ce55b7",
+    lifetime: "#c56db599",
+    attributeBracket: "#2469ae",
+    angle: "#2469ae",
+    escapeSequence: "#2d78c2",
+    formatSpecifier: "#2d78c2",
+    typeAlias: "#ecc68e",
+    operator: {
+        fontStyle: "bold",
+        foreground: "#4d6a9f",
+    },
+    "operator.unsafe": "#e02b9d",
+    "function.unsafe": "#e02b9d",
+    "method.unsafe": "#e02b9d",
+    "*.controlFlow": {
+        fontStyle: "bold",
+        foreground: "#d14178",
+    },
+    "*.static": {
+        fontStyle: "bold",
+        foreground: "#6665c7",
+    },
+    constParameter: {
+        fontStyle: "bold",
+        foreground: "#6665c7",
+    },
+    "*.constant": {
+        fontStyle: "bold",
+        foreground: "#c465c7",
+    },
+    "*.trait": "#d1de73",
+}
+
+const SEMANTIC_CONFIG_ITALIC = {
     "editor.semanticHighlighting.enabled": true,
     "editor.semanticTokenColorCustomizations": {
         rules: {
-            function: {
-                foreground: "#4B8CDC",
-            },
-            method: {
-                foreground: "#4B8CDC",
-            },
-            unresolvedReference: {
-                foreground: "#ff6edb",
-                fontStyle: "strikethrough",
-            },
-            "*.deprecated": {
-                fontStyle: "strikethrough",
-            },
-            namespace: {
-                foreground: "#7b939d",
-            },
-            "method.static": "#4B8CDC",
-            "function.static": "#4B8CDC",
-            macro: "#4B8CDC",
-            struct: "#DDE86E",
-            enum: "#FCB141",
-            enumMember: {
-                foreground: "#FFCE66",
-            },
+            ...BASE_SEMANTIC_RULES,
             "*.reference": {
                 fontStyle: "italic",
-            },
-            "*.mutable": {
-                fontStyle: "bold",
             },
             "variable.mutable": {
                 fontStyle: "bold italic",
             },
-            property: "#ad83da",
-            variable: "#E192EF",
-            parameter: "#7c86f4",
-            selfTypeKeyword: "#ce55b7",
-            selfKeyword: "#ce55b7",
-            lifetime: "#c56db599",
-            attributeBracket: "#2469ae",
-            angle: "#2469ae",
-            escapeSequence: "#2d78c2",
-            formatSpecifier: "#2d78c2",
-            typeAlias: "#ecc68e",
-            operator: {
-                fontStyle: "bold",
-                foreground: "#4d6a9f",
-            },
-            "operator.unsafe": "#e02b9d",
-            "function.unsafe": "#e02b9d",
-            "method.unsafe": "#e02b9d",
             keyword: {
                 foreground: "#a8709e",
                 fontStyle: "italic bold",
             },
-            "*.controlFlow": {
-                fontStyle: "bold",
-                foreground: "#d14178",
-            },
-            "*.static": {
-                fontStyle: "bold",
-                foreground: "#6665c7",
-            },
-            constParameter: {
-                fontStyle: "bold",
-                foreground: "#6665c7",
-            },
-            "*.constant": {
-                fontStyle: "bold",
-                foreground: "#c465c7",
-            },
-            "*.trait": "#d1de73",
         },
     },
 }
 
+const SEMANTIC_CONFIG_NO_ITALIC = {
+    "editor.semanticHighlighting.enabled": true,
+    "editor.semanticTokenColorCustomizations": {
+        rules: {
+            ...BASE_SEMANTIC_RULES,
+            "*.reference": {
+                fontStyle: "",
+            },
+            "variable.mutable": {
+                fontStyle: "bold",
+            },
+            keyword: {
+                foreground: "#a8709e",
+                fontStyle: "bold",
+            },
+        },
+    },
+}
+
+function getSemanticConfigForTheme(theme?: string) {
+    if (theme && NO_ITALIC_THEMES.includes(theme)) {
+        return SEMANTIC_CONFIG_NO_ITALIC
+    }
+    return SEMANTIC_CONFIG_ITALIC
+}
+
 export function activate(context: vscode.ExtensionContext) {
     // Check if R3BL theme is active and auto-apply settings
-    const currentTheme = vscode.workspace.getConfiguration("workbench").get("colorTheme")
-    if (currentTheme === "R3BL Theme" || currentTheme === "R3BL 2026 Theme") {
-        applySemanticConfig()
+    const currentTheme = vscode.workspace
+        .getConfiguration("workbench")
+        .get<string>("colorTheme")
+    if (currentTheme && ALL_R3BL_THEMES.includes(currentTheme)) {
+        applySemanticConfig(currentTheme)
     }
 
     // Command to enable R3BL semantic highlighting
@@ -196,9 +232,11 @@ export function activate(context: vscode.ExtensionContext) {
     // Watch for theme changes and auto-apply semantic config
     const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration("workbench.colorTheme")) {
-            const theme = vscode.workspace.getConfiguration("workbench").get("colorTheme")
-            if (theme === "R3BL Theme" || theme === "R3BL 2026 Theme") {
-                applySemanticConfig()
+            const theme = vscode.workspace
+                .getConfiguration("workbench")
+                .get<string>("colorTheme")
+            if (theme && ALL_R3BL_THEMES.includes(theme)) {
+                applySemanticConfig(theme)
             }
         }
     })
@@ -556,8 +594,11 @@ function cancelDebounce() {
     }
 }
 
-async function applySemanticConfig() {
+async function applySemanticConfig(theme?: string) {
     const config = vscode.workspace.getConfiguration()
+    const activeTheme =
+        theme || vscode.workspace.getConfiguration("workbench").get<string>("colorTheme")
+    const semanticConfig = getSemanticConfigForTheme(activeTheme)
 
     try {
         // First clean existing token customizations to avoid pollution
@@ -573,7 +614,7 @@ async function applySemanticConfig() {
         )
 
         // Then apply fresh configuration
-        for (const [key, value] of Object.entries(SEMANTIC_CONFIG)) {
+        for (const [key, value] of Object.entries(semanticConfig)) {
             await config.update(key, value, vscode.ConfigurationTarget.Global)
         }
 
@@ -591,7 +632,7 @@ async function removeSemanticConfig() {
 
     try {
         // Reset to undefined (removes the setting)
-        for (const key of Object.keys(SEMANTIC_CONFIG)) {
+        for (const key of Object.keys(SEMANTIC_CONFIG_ITALIC)) {
             await config.update(key, undefined, vscode.ConfigurationTarget.Global)
         }
         showStatusBarMessage("R3BL semantic highlighting removed", "success")

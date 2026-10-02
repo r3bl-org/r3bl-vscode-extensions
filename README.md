@@ -58,15 +58,15 @@ zero configuration.
 
 ### Individual Extensions
 
-| Extension                              | Description                                                          | Links                                                                                                                   |
-| -------------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **R3BL Theme**                         | Dark theme optimized for Rust and Markdown                           | [Docs][dark_theme-readme] · [Open VSX][dark_theme-ovsx] · [Microsoft][dark_theme-msft]                                  |
-| **R3BL Semantic Configuration**        | Enhanced semantic highlighting, target switcher & tools for Rust     | [Docs][semantic_config-readme] · [Open VSX][semantic_config-ovsx] · [Microsoft][semantic_config-msft]                   |
-| **R3BL Task Management**               | Task space management for context switching                          | [Docs][task_mgmt-readme] · [Open VSX][task_mgmt-ovsx] · [Microsoft][task_mgmt-msft]                                     |
-| **R3BL Fuzzy Search**                  | Interactive fuzzy search & Git Diff Search Editor                    | [Docs][fuzzy_search_and_git-readme] · [Open VSX][fuzzy_search_and_git-ovsx] · [Microsoft][fuzzy_search_and_git-msft]    |
-| **R3BL Opened Editors**                | Opened editors dropdown switcher & vertical sidebar panel navigation | [Docs][opened_editors-readme] · [Open VSX][opened_editors-ovsx] · [Microsoft][opened_editors-msft]                      |
-| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges in standard compiler syntax         | [Docs][copy_selection-readme] · [Open VSX][copy_selection-ovsx] · [Microsoft][copy_selection-msft]                      |
-| **R3BL Auto Insert Copyright**         | Automatic copyright header insertion                                 | [Docs][auto_insert_copyright-readme] · [Open VSX][auto_insert_copyright-ovsx] · [Microsoft][auto_insert_copyright-msft] |
+| Extension                              | Description                                                                  | Links                                                                                                                   |
+| -------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **R3BL Theme**                         | Dark themes (4 variants including No Italic) optimized for Rust and Markdown | [Docs][dark_theme-readme] · [Open VSX][dark_theme-ovsx] · [Microsoft][dark_theme-msft]                                  |
+| **R3BL Semantic Configuration**        | Enhanced semantic highlighting, target switcher & tools for Rust             | [Docs][semantic_config-readme] · [Open VSX][semantic_config-ovsx] · [Microsoft][semantic_config-msft]                   |
+| **R3BL Task Management**               | Task space management for context switching                                  | [Docs][task_mgmt-readme] · [Open VSX][task_mgmt-ovsx] · [Microsoft][task_mgmt-msft]                                     |
+| **R3BL Fuzzy Search**                  | Interactive fuzzy search & Git Diff Search Editor                            | [Docs][fuzzy_search_and_git-readme] · [Open VSX][fuzzy_search_and_git-ovsx] · [Microsoft][fuzzy_search_and_git-msft]    |
+| **R3BL Opened Editors**                | Opened editors dropdown switcher & vertical sidebar panel navigation         | [Docs][opened_editors-readme] · [Open VSX][opened_editors-ovsx] · [Microsoft][opened_editors-msft]                      |
+| **R3BL Copy Selection Path and Range** | Copy file paths with line ranges in standard compiler syntax                 | [Docs][copy_selection-readme] · [Open VSX][copy_selection-ovsx] · [Microsoft][copy_selection-msft]                      |
+| **R3BL Auto Insert Copyright**         | Automatic copyright header insertion                                         | [Docs][auto_insert_copyright-readme] · [Open VSX][auto_insert_copyright-ovsx] · [Microsoft][auto_insert_copyright-msft] |
 
 ### Infrastructure Packages
 

@@ -1,8 +1,8 @@
 {
     "name": "r3bl-theme",
     "displayName": "R3BL Theme",
-    "description": "Dark themes (R3BL Theme and R3BL 2026 Theme) optimized for Rust and Markdown with enhanced semantic highlighting and eye comfort",
-    "version": "1.0.35",
+    "description": "Dark themes (R3BL Theme and R3BL 2026 Theme, with italic and non-italic variants) optimized for Rust and Markdown with enhanced semantic highlighting and eye comfort",
+    "version": "1.0.36",
     "publisher": "R3BL",
     "extensionDependencies": [
         "R3BL.r3bl-semantic-config"
@@ -43,9 +43,19 @@
                 "path": "./themes/r3bl-theme-color-theme.json"
             },
             {
+                "label": "R3BL Theme (No Italic)",
+                "uiTheme": "vs-dark",
+                "path": "./themes/r3bl-theme-no-italic-color-theme.json"
+            },
+            {
                 "label": "R3BL 2026 Theme",
                 "uiTheme": "vs-dark",
                 "path": "./themes/r3bl-2026-theme.json"
+            },
+            {
+                "label": "R3BL 2026 Theme (No Italic)",
+                "uiTheme": "vs-dark",
+                "path": "./themes/r3bl-2026-theme-no-italic.json"
             }
         ]
     }

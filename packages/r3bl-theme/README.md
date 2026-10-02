@@ -3,14 +3,26 @@
 [![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-theme?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-theme)
 [![VS Marketplace](https://img.shields.io/badge/VS%20Marketplace-blue?logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-theme)
 
-A pair of carefully crafted dark themes for VS Code—**R3BL Theme** and **R3BL 2026
-Theme**—optimized for Rust and Markdown development with enhanced readability and visual
-appeal.
+A suite of carefully crafted dark themes for VS Code—**R3BL Theme** and **R3BL 2026
+Theme**, available in both standard (italic) and **No Italic** variants—optimized for Rust
+and Markdown development with enhanced readability and visual appeal.
+
+### Available Themes
+
+1. **R3BL Theme** — Classic dark theme with italic styling for emphasis, markdown quotes,
+   and semantic keywords/references.
+2. **R3BL Theme (No Italic)** — Clean non-italic variant of the classic theme for
+   developers who prefer straight typography.
+3. **R3BL 2026 Theme** — Modernized 2026 dark palette with italic styling.
+4. **R3BL 2026 Theme (No Italic)** — Modernized 2026 dark palette with non-italic
+   typography.
 
 ## Features
 
 - **Rust-Optimized Colors**: Specially designed syntax highlighting for Rust code with
   distinct colors for keywords, types, functions, and macros
+- **Italic & Non-Italic Variants**: Choose the typography style that fits your workflow
+  and font preferences
 - **Dark Theme Excellence**: Professional dark color scheme that reduces eye strain during
   long coding sessions
 - **Rich Markdown Support**: Beautiful rendering of documentation comments and markdown
@@ -80,12 +92,16 @@ code --install-extension r3bl-theme-x.x.x.vsix
 1. Open Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
 2. Type "Color Theme"
 3. Select "Preferences: Color Theme"
-4. Choose "R3BL Theme" or "R3BL 2026 Theme"
+4. Choose any of the 4 R3BL themes:
+    - `R3BL Theme`
+    - `R3BL Theme (No Italic)`
+    - `R3BL 2026 Theme`
+    - `R3BL 2026 Theme (No Italic)`
 
 **Or use the keyboard shortcut:**
 
 - Press `Ctrl+K Ctrl+T` (or `Cmd+K Cmd+T` on macOS)
-- Select "R3BL Theme" or "R3BL 2026 Theme"
+- Select your preferred R3BL theme variant
 
 ### Enhanced Semantic Highlighting
 
@@ -95,13 +111,13 @@ color palette.
 
 The semantic configuration extension:
 
-- Automatically detects when either "R3BL Theme" or "R3BL 2026 Theme" is active
-- Applies optimized semantic highlighting for Rust (functions, methods, structs, enums,
-  etc.)
+- Automatically detects when any of the R3BL themes is active
+- Dynamically applies matching semantic highlighting (italic rules for standard themes,
+  non-italic rules for No Italic variants)
 - Can be enabled/disabled via commands: `R3BL: Enable/Disable Semantic Highlighting`
 
-**No additional setup required** - just activate either of the R3BL themes and enjoy
-enhanced syntax highlighting!
+**No additional setup required** - just activate any of the R3BL themes and enjoy enhanced
+syntax highlighting!
 
 ### Color Palette
 
@@ -189,7 +205,15 @@ Want to tweak the themes? Add to your `settings.json`:
             "editor.background": "#1e1e1e",
             "editor.foreground": "#d4d4d4"
         },
+        "[R3BL Theme (No Italic)]": {
+            "editor.background": "#1e1e1e",
+            "editor.foreground": "#d4d4d4"
+        },
         "[R3BL 2026 Theme]": {
+            "editor.background": "#1e1e1e",
+            "editor.foreground": "#d4d4d4"
+        },
+        "[R3BL 2026 Theme (No Italic)]": {
             "editor.background": "#1e1e1e",
             "editor.foreground": "#d4d4d4"
         }
@@ -205,7 +229,27 @@ Want to tweak the themes? Add to your `settings.json`:
                 }
             ]
         },
+        "[R3BL Theme (No Italic)]": {
+            "textMateRules": [
+                {
+                    "scope": "keyword.control.rust",
+                    "settings": {
+                        "foreground": "#YOUR_COLOR"
+                    }
+                }
+            ]
+        },
         "[R3BL 2026 Theme]": {
+            "textMateRules": [
+                {
+                    "scope": "keyword.control.rust",
+                    "settings": {
+                        "foreground": "#YOUR_COLOR"
+                    }
+                }
+            ]
+        },
+        "[R3BL 2026 Theme (No Italic)]": {
             "textMateRules": [
                 {
                     "scope": "keyword.control.rust",

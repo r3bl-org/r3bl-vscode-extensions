@@ -114,19 +114,21 @@ _Semantic highlighting in action_
 
 #### Auto-Activation
 
-When installed with one of the R3BL themes active, the extension automatically:
+When installed with any of the R3BL themes active, the extension automatically:
 
-1. Detects an R3BL theme is active
-2. Applies semantic highlighting to global configuration
+1. Detects an R3BL theme is active (`R3BL Theme`, `R3BL Theme (No Italic)`,
+   `R3BL 2026 Theme`, or `R3BL 2026 Theme (No Italic)`)
+2. Applies the matching semantic highlighting (with or without italics) to global
+   configuration
 3. Shows a success notification
 
 #### Theme Watcher
 
-Monitors theme changes. When you switch to an R3BL theme:
+Monitors theme changes. When you switch to any R3BL theme:
 
-1. Checks if settings need applying
-2. Prompts: "R3BL theme detected! Apply enhanced semantic highlighting?"
-3. Applies settings on confirmation
+1. Checks the active theme variant
+2. Applies the corresponding semantic rules (standard vs non-italic)
+3. Keeps your IDE styling synchronized
 
 #### Manual Control
 
@@ -137,26 +139,27 @@ Use commands in Command Palette (`Ctrl+Shift+P`):
 
 ### Semantic Token Rules
 
-| Token Type               | Color       | Style         | Description                      |
-| ------------------------ | ----------- | ------------- | -------------------------------- |
-| **Functions & Methods**  | `#4B8CDC`   | -             | Function and method names        |
-| **Structs**              | `#DDE86E`   | -             | Struct type names                |
-| **Enums**                | `#FCB141`   | -             | Enum type names                  |
-| **Enum Members**         | `#FFCE66`   | -             | Enum variant names               |
-| **Variables**            | `#E192EF`   | -             | Variable names                   |
-| **Mutable Variables**    | `#E192EF`   | Bold Italic   | Mutable variable names           |
-| **Parameters**           | `#7c86f4`   | -             | Function parameters              |
-| **Properties**           | `#ad83da`   | -             | Struct field access              |
-| **Lifetimes**            | `#c56db599` | -             | Lifetime annotations             |
-| **Keywords**             | `#a8709e`   | Italic Bold   | Rust keywords                    |
-| **Control Flow**         | `#d14178`   | Bold          | if, match, loop, etc.            |
-| **Type Aliases**         | `#ecc68e`   | -             | Type alias names                 |
-| **Traits**               | `#d1de73`   | -             | Trait names                      |
-| **Unsafe**               | `#e02b9d`   | -             | Unsafe functions/operators       |
-| **Self**                 | `#ce55b7`   | -             | self keyword                     |
-| **Operators**            | `#4d6a9f`   | Bold          | Arithmetic and logical operators |
-| **Deprecated**           | -           | Strikethrough | Deprecated items                 |
-| **Unresolved Reference** | `#ff6edb`   | Strikethrough | Unresolved references            |
+| Token Type               | Color       | Style (Standard) | Style (No Italic) | Description                      |
+| ------------------------ | ----------- | ---------------- | ----------------- | -------------------------------- |
+| **Functions & Methods**  | `#4B8CDC`   | -                | -                 | Function and method names        |
+| **Structs**              | `#DDE86E`   | -                | -                 | Struct type names                |
+| **Enums**                | `#FCB141`   | -                | -                 | Enum type names                  |
+| **Enum Members**         | `#FFCE66`   | -                | -                 | Enum variant names               |
+| **Variables**            | `#E192EF`   | -                | -                 | Variable names                   |
+| **Mutable Variables**    | `#E192EF`   | Bold Italic      | Bold              | Mutable variable names           |
+| **References (`*.ref`)** | -           | Italic           | -                 | Reference / dereference items    |
+| **Parameters**           | `#7c86f4`   | -                | -                 | Function parameters              |
+| **Properties**           | `#ad83da`   | -                | -                 | Struct field access              |
+| **Lifetimes**            | `#c56db599` | -                | -                 | Lifetime annotations             |
+| **Keywords**             | `#a8709e`   | Italic Bold      | Bold              | Rust keywords                    |
+| **Control Flow**         | `#d14178`   | Bold             | Bold              | if, match, loop, etc.            |
+| **Type Aliases**         | `#ecc68e`   | -                | -                 | Type alias names                 |
+| **Traits**               | `#d1de73`   | -                | -                 | Trait names                      |
+| **Unsafe**               | `#e02b9d`   | -                | -                 | Unsafe functions/operators       |
+| **Self**                 | `#ce55b7`   | -                | -                 | self keyword                     |
+| **Operators**            | `#4d6a9f`   | Bold             | Bold              | Arithmetic and logical operators |
+| **Deprecated**           | -           | Strikethrough    | Strikethrough     | Deprecated items                 |
+| **Unresolved Reference** | `#ff6edb`   | Strikethrough    | Strikethrough     | Unresolved references            |
 
 ---
 
