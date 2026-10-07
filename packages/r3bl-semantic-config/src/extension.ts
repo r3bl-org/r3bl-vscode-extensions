@@ -19,6 +19,10 @@ import {
     initializeRustTargetStatusBar,
     disposeRustTargetStatusBar,
 } from "./rustTargetSwitcher"
+import {
+    applyCommentBrightness,
+    showCommentBrightnessQuickPick,
+} from "./commentBrightness"
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined
@@ -205,6 +209,12 @@ export function activate(context: vscode.ExtensionContext) {
         switchRustTarget,
     )
 
+    // Command to set comment brightness
+    const setCommentBrightnessCommand = vscode.commands.registerCommand(
+        "r3bl-semantic-config.setCommentBrightness",
+        showCommentBrightnessQuickPick,
+    )
+
     // Register FoldingRangeProvider for rustdoc comments
     const rustdocFoldingProvider = vscode.languages.registerFoldingRangeProvider(
         { language: "rust" },
@@ -229,7 +239,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Initialize Rust target status bar item
     initializeRustTargetStatusBar(context)
 
-    // Watch for theme changes and auto-apply semantic config
+    // Watch for theme and comment brightness changes
     const themeWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration("workbench.colorTheme")) {
             const theme = vscode.workspace
@@ -238,6 +248,9 @@ export function activate(context: vscode.ExtensionContext) {
             if (theme && ALL_R3BL_THEMES.includes(theme)) {
                 applySemanticConfig(theme)
             }
+        }
+        if (e.affectsConfiguration("r3bl.commentBrightness")) {
+            applyCommentBrightness()
         }
     })
 
@@ -250,6 +263,7 @@ export function activate(context: vscode.ExtensionContext) {
         scrollToTopCommand,
         insertRustdocLinkDefCommand,
         switchRustTargetCommand,
+        setCommentBrightnessCommand,
         rustdocFoldingProvider,
         useStatementsFoldingProvider,
         themeWatcher,
@@ -601,12 +615,8 @@ async function applySemanticConfig(theme?: string) {
     const semanticConfig = getSemanticConfigForTheme(activeTheme)
 
     try {
-        // First clean existing token customizations to avoid pollution
-        await config.update(
-            "editor.tokenColorCustomizations",
-            undefined,
-            vscode.ConfigurationTarget.Global,
-        )
+        // Apply comment brightness customizations for all R3BL themes
+        await applyCommentBrightness()
         await config.update(
             "editor.semanticTokenColorCustomizations",
             undefined,

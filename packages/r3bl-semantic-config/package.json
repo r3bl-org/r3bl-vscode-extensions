@@ -2,7 +2,7 @@
     "name": "r3bl-semantic-config",
     "displayName": "R3BL Semantic Configuration",
     "description": "Companion to R3BL themes - automatically applies enhanced semantic highlighting for Rust development",
-    "version": "1.2.17",
+    "version": "1.2.18",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"
@@ -76,6 +76,11 @@
             {
                 "command": "r3bl-semantic-config.switchRustTarget",
                 "title": "Switch Rust Target (rust-analyzer)",
+                "category": "R3BL"
+            },
+            {
+                "command": "r3bl-semantic-config.setCommentBrightness",
+                "title": "Set Comment Brightness...",
                 "category": "R3BL"
             }
         ],
@@ -162,6 +167,21 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Show the active rust-analyzer cargo target in the status bar."
+                },
+                "r3bl.commentBrightness": {
+                    "type": "string",
+                    "enum": [
+                        "dim",
+                        "medium",
+                        "bright"
+                    ],
+                    "enumDescriptions": [
+                        "Dim: Cool slate gray (#8B949E) for maximum eye comfort (default)",
+                        "Medium: Neutral silver gray (#ABACAC) for balanced contrast",
+                        "Bright: Vibrant lavender (#E8DCF4) for high contrast"
+                    ],
+                    "default": "dim",
+                    "description": "Comment brightness level across all R3BL themes."
                 }
             }
         }

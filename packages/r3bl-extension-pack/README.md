@@ -34,8 +34,9 @@ These extensions are required for full functionality and are automatically insta
 
 ## What You Get
 
-- **Beautiful Dark Themes**: Carefully crafted themes optimized for long coding sessions
-  and high-contrast syntax highlighting (with italic and non-italic options).
+- **Beautiful Dark Themes**: Carefully crafted themes (R3BL Theme, R3BL 2026 Theme with
+  deep `#0e0f10` background, and No Italic options) with 3 selectable comment brightness
+  levels (`dim`, `medium`, `bright`).
 - **Enhanced Rust Experience**: Beyond syntax highlighting, get auto-folding for `use`
   statements and `rustdoc`, plus a dedicated Structure Navigator for large files.
 - **Task Space Management**: Organize multiple work contexts, save/restore open tabs, and
@@ -78,30 +79,39 @@ These extensions are required for full functionality and are automatically insta
 The most common shortcuts for the R3BL suite. All shortcuts can be customized in VS Code's
 Keyboard Shortcuts settings.
 
-| Shortcut        | Extension       | Action                                             |
-| :-------------- | :-------------- | :------------------------------------------------- |
-| `Alt+Shift+T`   | Task Management | Open task spaces dialog                            |
-| `Alt+Shift+F`   | Task Management | Finish current task (archive and jump to next)     |
-| `Alt+Shift+J`   | Task Management | Pause current task and jump to next in queue       |
-| `Alt+Shift+C`   | Task Management | Close current task space (save and close tabs)     |
-| `Alt+Shift+D`   | Fuzzy Search    | Start interactive fuzzy search                     |
-| `Ctrl+Shift+G`  | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits)  |
-| `Ctrl+R`        | Fuzzy Search    | Refresh Git Diff Search Editor (while tab focused) |
-| `Alt+O`         | Copy Selection  | Copy file path with line range (compiler syntax)   |
-| `Alt+Shift+O`   | Copy Selection  | Show session copy history and navigation           |
-| `Ctrl+Shift+Y`  | Semantic Config | Open Rustdoc Structure Navigator                   |
-| `Ctrl+R`        | Semantic Config | Run Flycheck (manual debounced `cargo check`)      |
-| `Ctrl+-`        | Semantic Config | Fold all Rustdocs in current file                  |
-| `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file                |
-| `Ctrl+M`        | Semantic Config | Scroll current line to top                         |
-| `Ctrl+Shift+L`  | Semantic Config | Insert Rustdoc Link Definition                     |
-| `Alt+E`         | Opened Editors  | Show dropdown of all open editors (Cmd+E on Mac)   |
-| `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                 |
+| Shortcut        | Extension       | Action                                                     |
+| :-------------- | :-------------- | :--------------------------------------------------------- |
+| `Alt+Shift+T`   | Task Management | Open task spaces dialog                                    |
+| `Alt+Shift+F`   | Task Management | Finish current task (archive and jump to next)             |
+| `Alt+Shift+J`   | Task Management | Pause current task and jump to next in queue               |
+| `Alt+Shift+C`   | Task Management | Close current task space (save and close tabs)             |
+| `Alt+Shift+D`   | Fuzzy Search    | Start interactive fuzzy search                             |
+| `Ctrl+Shift+G`  | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits)          |
+| `Ctrl+R`        | Fuzzy Search    | Refresh Git Diff Search Editor (while tab focused)         |
+| `Alt+O`         | Copy Selection  | Copy file path with line range (compiler syntax)           |
+| `Alt+Shift+O`   | Copy Selection  | Show session copy history and navigation                   |
+| `Ctrl+Shift+Y`  | Semantic Config | Open Rustdoc Structure Navigator                           |
+| `Ctrl+R`        | Semantic Config | Run Flycheck (manual debounced `cargo check`)              |
+| `Ctrl+-`        | Semantic Config | Fold all Rustdocs in current file                          |
+| `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file                        |
+| `Ctrl+M`        | Semantic Config | Scroll current line to top                                 |
+| `Ctrl+Shift+L`  | Semantic Config | Insert Rustdoc Link Definition                             |
+| `Alt+E`         | Opened Editors  | Show dropdown of all open editors (Cmd+E on Mac)           |
+| `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                         |
+| -               | Semantic Config | Set Comment Brightness (`R3BL: Set Comment Brightness...`) |
 
 ## Configuration Highlights
 
 Configure the R3BL suite to match your workflow. Open `settings.json` or use the Settings
 UI.
+
+### Theme & Highlighting
+
+```json
+{
+    "r3bl.commentBrightness": "dim" // "dim" (#8B949E, default), "medium" (#ABACAC), or "bright" (#E8DCF4)
+}
+```
 
 ### Feedback & UI (Shared)
 

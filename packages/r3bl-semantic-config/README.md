@@ -1,3 +1,72 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+**Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
+
+- [R3BL Semantic Configuration](#r3bl-semantic-configuration)
+    - [Table of Contents](#table-of-contents)
+    - [Feature 1: Semantic Highlighting](#feature-1-semantic-highlighting)
+        - [What It Does](#what-it-does)
+        - [Why This Feature Exists](#why-this-feature-exists)
+        - [Screenshots](#screenshots)
+        - [How It Works](#how-it-works)
+            - [Auto-Activation](#auto-activation)
+            - [Theme Watcher](#theme-watcher)
+            - [Manual Control](#manual-control)
+        - [Semantic Token Rules](#semantic-token-rules)
+    - [Feature 2: Debounced rust-analyzer Flycheck](#feature-2-debounced-rust-analyzer-flycheck)
+        - [The Problem: IDE Lag During Typing](#the-problem-ide-lag-during-typing)
+        - [The Solution: Intelligent Debouncing](#the-solution-intelligent-debouncing)
+        - [Configuration](#configuration)
+        - [How It Works](#how-it-works-1)
+        - [Keybinding for Manual Trigger](#keybinding-for-manual-trigger)
+        - [Auto-Disable checkOnSave](#auto-disable-checkonsave)
+    - [Feature 3: Rustdoc Folding](#feature-3-rustdoc-folding)
+        - [What It Does](#what-it-does-1)
+        - [Comment Types](#comment-types)
+        - [Keybindings](#keybindings)
+        - [Auto-Fold on File Open](#auto-fold-on-file-open)
+        - [How It Works](#how-it-works-2)
+        - [Manual Trigger](#manual-trigger)
+    - [Feature 4: Use Statement Folding](#feature-4-use-statement-folding)
+        - [What It Does](#what-it-does-2)
+        - [Configuration](#configuration-1)
+        - [How It Works](#how-it-works-3)
+        - [Integration with Fold/Unfold Commands](#integration-with-foldunfold-commands)
+        - [Scope](#scope)
+    - [Feature 5: Rustdoc Structure Navigator](#feature-5-rustdoc-structure-navigator)
+        - [What It Does](#what-it-does-3)
+        - [Two Modes](#two-modes)
+        - [Keybinding](#keybinding)
+        - [How It Works](#how-it-works-4)
+    - [Feature 6: Scroll Current Line to Top](#feature-6-scroll-current-line-to-top)
+        - [What It Does](#what-it-does-4)
+        - [Keybinding](#keybinding-1)
+    - [Feature 7: Rustdoc Link Auto-Insertion](#feature-7-rustdoc-link-auto-insertion)
+        - [What It Does](#what-it-does-5)
+        - [Keybinding](#keybinding-2)
+        - [How It Works](#how-it-works-5)
+        - [Configuration](#configuration-2)
+    - [Feature 8: Switch rust-analyzer Cargo Target](#feature-8-switch-rust-analyzer-cargo-target)
+        - [What It Does](#what-it-does-6)
+        - [Command & Keybinding](#command--keybinding)
+        - [Configuration](#configuration-3)
+        - [Project-Scoped Configuration & Safety](#project-scoped-configuration--safety)
+    - [Feature 9: Comment Brightness Levels](#feature-9-comment-brightness-levels)
+        - [What It Does](#what-it-does-7)
+        - [Supported Themes](#supported-themes)
+        - [Changing Comment Brightness](#changing-comment-brightness)
+    - [Requirements](#requirements)
+        - [Why rust-analyzer is Required](#why-rust-analyzer-is-required)
+    - [Recommended Settings](#recommended-settings)
+    - [Commands](#commands)
+    - [Shared Infrastructure](#shared-infrastructure)
+    - [Release Notes](#release-notes)
+    - [License](#license)
+    - [Contributing](#contributing)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # R3BL Semantic Configuration
 
 [![Open VSX](https://img.shields.io/open-vsx/v/R3BL/r3bl-semantic-config?label=Open%20VSX)](https://open-vsx.org/extension/R3BL/r3bl-semantic-config)
@@ -21,6 +90,8 @@ This extension provides powerful features for Rust development in VS Code:
    reference definitions in rustdoc comments
 8. **Switch rust-analyzer Cargo Target** - Quickly switch between common compilation
    targets from a dropdown or status bar item
+9. **Comment Brightness Levels** - Choose between 3 comment brightness levels (`dim`,
+   `medium`, `bright`) across all R3BL themes
 
 ## Table of Contents
 
@@ -598,6 +669,46 @@ project-scoped**:
 
 ---
 
+## Feature 9: Comment Brightness Levels
+
+### What It Does
+
+Allows developers to customize comment readability across all 4 R3BL themes by choosing
+between 3 brightness levels:
+
+| Level                 | Color     | Description                                                      |
+| :-------------------- | :-------- | :--------------------------------------------------------------- |
+| **`dim`** _(Default)_ | `#8B949E` | Cool slate gray for maximum eye comfort and low visual noise     |
+| **`medium`**          | `#ABACAC` | Neutral silver gray for balanced contrast in bright environments |
+| **`bright`**          | `#E8DCF4` | Vibrant lavender for high contrast and prominent comments        |
+
+### Supported Themes
+
+Customizations are dynamically scoped to only R3BL themes:
+
+1. `R3BL Theme`
+2. `R3BL Theme (No Italic)`
+3. `R3BL 2026 Theme`
+4. `R3BL 2026 Theme (No Italic)`
+
+Non-R3BL themes are never affected.
+
+### Changing Comment Brightness
+
+1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`).
+2. Run **`R3BL: Set Comment Brightness...`**.
+3. Select **Dim**, **Medium**, or **Bright** from the QuickPick menu.
+
+Or set it in your `settings.json`:
+
+```json
+{
+    "r3bl.commentBrightness": "dim"
+}
+```
+
+---
+
 ## Requirements
 
 - VS Code 1.60.0 or higher
@@ -648,17 +759,18 @@ control over `use` statement folding behavior:
 
 ## Commands
 
-| Command                                    | Command ID                                  | Keybinding     | Description                                 |
-| ------------------------------------------ | ------------------------------------------- | -------------- | ------------------------------------------- |
-| `R3BL: Enable R3BL Semantic Highlighting`  | `r3bl-semantic-config.enable`               | -              | Apply semantic highlighting settings        |
-| `R3BL: Disable R3BL Semantic Highlighting` | `r3bl-semantic-config.disable`              | -              | Remove semantic highlighting settings       |
-| `R3BL: Run Flycheck (Debounced)`           | `r3bl-semantic-config.runFlycheck`          | `Ctrl+R`       | Manually trigger flycheck, cancels pending  |
-| `R3BL: Fold All Rustdocs`                  | `r3bl-semantic-config.foldRustdocs`         | `Ctrl+-`       | Collapse all `///`, `//!`, and `use` blocks |
-| `R3BL: Unfold All Rustdocs`                | `r3bl-semantic-config.unfoldRustdocs`       | `Ctrl+=`       | Expand all rustdoc and `use` blocks         |
-| `R3BL: Navigate Rustdoc Structure`         | `r3bl-semantic-config.navigateRustdocs`     | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs      |
-| `R3BL: Scroll Current Line to Top`         | `r3bl-semantic-config.scrollToTop`          | `Ctrl+M`       | Reveal active cursor line at top            |
-| `R3BL: Insert Rustdoc Link Definition`     | `r3bl-semantic-config.insertRustdocLinkDef` | `Ctrl+Shift+L` | Auto-insert link reference definitions      |
-| `R3BL: Switch Rust Target (rust-analyzer)` | `r3bl-semantic-config.switchRustTarget`     | -              | Switch active rust-analyzer cargo target    |
+| Command                                    | Command ID                                  | Keybinding     | Description                                        |
+| ------------------------------------------ | ------------------------------------------- | -------------- | -------------------------------------------------- |
+| `R3BL: Enable R3BL Semantic Highlighting`  | `r3bl-semantic-config.enable`               | -              | Apply semantic highlighting settings               |
+| `R3BL: Disable R3BL Semantic Highlighting` | `r3bl-semantic-config.disable`              | -              | Remove semantic highlighting settings              |
+| `R3BL: Run Flycheck (Debounced)`           | `r3bl-semantic-config.runFlycheck`          | `Ctrl+R`       | Manually trigger flycheck, cancels pending         |
+| `R3BL: Fold All Rustdocs`                  | `r3bl-semantic-config.foldRustdocs`         | `Ctrl+-`       | Collapse all `///`, `//!`, and `use` blocks        |
+| `R3BL: Unfold All Rustdocs`                | `r3bl-semantic-config.unfoldRustdocs`       | `Ctrl+=`       | Expand all rustdoc and `use` blocks                |
+| `R3BL: Navigate Rustdoc Structure`         | `r3bl-semantic-config.navigateRustdocs`     | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs             |
+| `R3BL: Scroll Current Line to Top`         | `r3bl-semantic-config.scrollToTop`          | `Ctrl+M`       | Reveal active cursor line at top                   |
+| `R3BL: Insert Rustdoc Link Definition`     | `r3bl-semantic-config.insertRustdocLinkDef` | `Ctrl+Shift+L` | Auto-insert link reference definitions             |
+| `R3BL: Switch Rust Target (rust-analyzer)` | `r3bl-semantic-config.switchRustTarget`     | -              | Switch active rust-analyzer cargo target           |
+| `R3BL: Set Comment Brightness...`          | `r3bl-semantic-config.setCommentBrightness` | -              | Select comment brightness level (dim, med, bright) |
 
 ## Shared Infrastructure
 

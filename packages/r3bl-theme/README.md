@@ -13,12 +13,16 @@ and Markdown development with enhanced readability and visual appeal.
    and semantic keywords/references.
 2. **R3BL Theme (No Italic)** — Clean non-italic variant of the classic theme for
    developers who prefer straight typography.
-3. **R3BL 2026 Theme** — Modernized 2026 dark palette with italic styling.
-4. **R3BL 2026 Theme (No Italic)** — Modernized 2026 dark palette with non-italic
-   typography.
+3. **R3BL 2026 Theme** — Modernized 2026 dark palette with deep `#0e0f10` editor and
+   sidebar background and italic styling.
+4. **R3BL 2026 Theme (No Italic)** — Modernized 2026 dark palette with deep `#0e0f10`
+   editor and sidebar background and non-italic typography.
 
 ## Features
 
+- **Selectable Comment Brightness**: Choose between 3 comment brightness levels (`dim`,
+  `medium`, `bright`) via `R3BL: Set Comment Brightness...` (defaults to soft slate gray
+  `dim` out of the box)
 - **Rust-Optimized Colors**: Specially designed syntax highlighting for Rust code with
   distinct colors for keywords, types, functions, and macros
 - **Italic & Non-Italic Variants**: Choose the typography style that fits your workflow
@@ -123,15 +127,36 @@ syntax highlighting!
 
 The themes use a carefully selected color palette:
 
-| Element       | Color              | Usage                           |
-| ------------- | ------------------ | ------------------------------- |
-| **Keywords**  | Purple (`#c586c0`) | `fn`, `let`, `mut`, `pub`, etc. |
-| **Types**     | Teal (`#4ec9b0`)   | Struct names, type parameters   |
-| **Functions** | Yellow (`#dcdcaa`) | Function names and calls        |
-| **Strings**   | Orange (`#ce9178`) | String literals                 |
-| **Numbers**   | Green (`#b5cea8`)  | Numeric literals                |
-| **Comments**  | Gray (`#6a9955`)   | Single and multi-line comments  |
-| **Macros**    | Cyan (`#4fc1ff`)   | Rust macros like `println!`     |
+| Element       | Color                  | Usage                                        |
+| ------------- | ---------------------- | -------------------------------------------- |
+| **Keywords**  | Purple (`#c586c0`)     | `fn`, `let`, `mut`, `pub`, etc.              |
+| **Types**     | Teal (`#4ec9b0`)       | Struct names, type parameters                |
+| **Functions** | Yellow (`#dcdcaa`)     | Function names and calls                     |
+| **Strings**   | Orange (`#ce9178`)     | String literals                              |
+| **Numbers**   | Green (`#b5cea8`)      | Numeric literals                             |
+| **Comments**  | Slate Gray (`#8B949E`) | Single and multi-line comments (dim default) |
+| **Macros**    | Cyan (`#4fc1ff`)       | Rust macros like `println!`                  |
+
+### Comment Brightness Levels
+
+All 4 R3BL themes support 3 comment brightness levels managed dynamically via the
+companion
+[R3BL Semantic Configuration](https://marketplace.visualstudio.com/items?itemName=R3BL.r3bl-semantic-config)
+extension:
+
+| Level                 | Color     | Description                               |
+| :-------------------- | :-------- | :---------------------------------------- |
+| **`dim`** _(Default)_ | `#8B949E` | Cool slate gray for maximum eye comfort   |
+| **`medium`**          | `#ABACAC` | Neutral silver gray for balanced contrast |
+| **`bright`**          | `#E8DCF4` | Vibrant lavender for high contrast        |
+
+To change brightness at any time:
+
+1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`).
+2. Run `R3BL: Set Comment Brightness...`.
+3. Choose **Dim**, **Medium**, or **Bright**.
+
+Or set `"r3bl.commentBrightness": "dim"` in your `settings.json`.
 
 ### Recommended Settings
 
