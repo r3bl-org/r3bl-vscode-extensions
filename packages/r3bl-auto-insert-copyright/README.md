@@ -75,8 +75,8 @@ that appears in the header
 #### `copyrighter.license`
 
 **Type**: `string` **Default**: `"MIT"` **Options**: `"none"`, `"MIT"`, `"Apache2"`,
-`"Apache2OneLine"`, `"GPL3"` **Description**: The license type to use for the copyright
-header
+`"Apache2OneLine"`, `"GPL3"`, `"proprietary"` **Description**: The license type to use for
+the copyright header
 
 ```json
 "copyrighter.license": "MIT"

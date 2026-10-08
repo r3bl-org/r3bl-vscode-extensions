@@ -2,6 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
+  - [[2026-10-08] - Proprietary Closed Source License Option for Auto Insert Copyright](#2026-10-08---proprietary-closed-source-license-option-for-auto-insert-copyright)
+    - [Package Versions](#package-versions)
+    - [Changes](#changes)
   - [[2026-10-07] - Comment Brightness Levels and R3BL 2026 Darker Editor & Sidebar Background](#2026-10-07---comment-brightness-levels-and-r3bl-2026-darker-editor--sidebar-background)
     - [Package Versions](#package-versions)
     - [Changes](#changes)
@@ -210,6 +213,32 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2026-10-08] - Proprietary Closed Source License Option for Auto Insert Copyright
+
+### Package Versions
+
+- **R3BL Auto Insert Copyright**: 1.3.4 → 1.3.5
+- **R3BL Extension Pack**: 1.3.33 → 1.3.34
+
+### Changes
+
+- **R3BL Auto Insert Copyright 1.3.5**: Added Proprietary (Closed Source) License option
+    - Added `"proprietary"` option to `copyrighter.license` setting in `package.json` with display label `"Proprietary (Closed Source)"`.
+    - Updated `Proprietary` license header template to match the clean multi-line copyright format:
+      ```text
+      /*
+       * Copyright (c) <year> <author>. All rights reserved.
+       *
+       * This file is proprietary and confidential.
+       * Unauthorized copying of this file, via any medium is strictly prohibited.
+       */
+      ```
+    - Updated documentation in extension README.
+
+- **R3BL Extension Pack 1.3.34**: Pack update
+    - Updated extension pack to bundle `r3bl-auto-insert-copyright` 1.3.5.
+    - Updated extension pack README settings example with `proprietary` license option.
 
 ## [2026-10-07] - Comment Brightness Levels and R3BL 2026 Darker Editor & Sidebar Background
 

@@ -154,7 +154,7 @@ Enhanced defaults for the R3BL Semantic Configuration.
 {
     "r3blFuzzySearch.respectGitignore": true, // Skip gitignored files
     "copyrighter.author": "Your Name", // Copyright holder name
-    "copyrighter.license": "MIT" // MIT, Apache2, GPL3, or none
+    "copyrighter.license": "MIT" // MIT, Apache2, Apache2OneLine, GPL3, proprietary, or none
 }
 ```
 

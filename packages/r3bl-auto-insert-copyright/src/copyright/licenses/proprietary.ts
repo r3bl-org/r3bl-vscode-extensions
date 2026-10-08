@@ -11,13 +11,10 @@ export class Proprietary extends Copyright {
 
     public header(): string {
         let template = `/*
- * Copyright (c) ${this.year} ${this.author}
- * All rights reserved.
+ * Copyright (c) ${this.year} ${this.author}. All rights reserved.
  *
  * This file is proprietary and confidential.
  * Unauthorized copying of this file, via any medium is strictly prohibited.
- *
- * Proprietary and confidential.
  */
 \n`
         return template
