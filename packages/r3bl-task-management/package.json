@@ -141,20 +141,17 @@
         "watch": "webpack --watch",
         "build": "webpack --mode production --devtool hidden-source-map",
         "package": "vsce package --no-dependencies",
-        "compile-tests": "tsc -p . --outDir out",
-        "watch-tests": "tsc -p . -w --outDir out",
-        "pretest": "npm run compile-tests && npm run compile",
-        "test": "node ./out/test/runTest.js"
+        "test": "jest"
     },
     "dependencies": {
         "r3bl-common-code": "file:../r3bl-common-code"
     },
     "devDependencies": {
+        "@types/jest": "^29.5.14",
         "@types/node": "^18.0.0",
         "@types/vscode": "^1.70.0",
-        "@types/mocha": "^10.0.0",
-        "@vscode/test-electron": "^2.3.0",
-        "mocha": "^10.0.0",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.2.5",
         "typescript": "^5.0.0",
         "ts-loader": "^9.5.1",
         "webpack": "^5.95.0",
