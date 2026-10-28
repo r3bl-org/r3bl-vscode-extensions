@@ -48,8 +48,10 @@ install_extension() {
     fi
     if command -v antigravity-ide &> /dev/null; then
         local ext_name=$(basename "$vsix_path" .vsix)
+        local base_name=$(echo "$ext_name" | sed -E 's/-[0-9]+\.[0-9]+\.[0-9]+.*$//')
+        rm -rf "$HOME/.antigravity-ide/extensions/R3BL.${base_name}"-*
+        rm -rf "$HOME/.antigravity-ide/extensions/r3bl.${base_name}"-*
         local dest_dir="$HOME/.antigravity-ide/extensions/R3BL.${ext_name}"
-        rm -rf "$dest_dir"
         mkdir -p "$dest_dir"
         local tmp_dir=$(mktemp -d)
         unzip -q "$vsix_path" -d "$tmp_dir"
@@ -169,8 +171,10 @@ if command -v antigravity-ide &> /dev/null; then
     echo -e "${BLUE}Installing R3BL Extension Pack for Antigravity IDE...${NC}"
     vsix_path="packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix"
     ext_name=$(basename "$vsix_path" .vsix)
+    base_name=$(echo "$ext_name" | sed -E 's/-[0-9]+\.[0-9]+\.[0-9]+.*$//')
+    rm -rf "$HOME/.antigravity-ide/extensions/R3BL.${base_name}"-*
+    rm -rf "$HOME/.antigravity-ide/extensions/r3bl.${base_name}"-*
     dest_dir="$HOME/.antigravity-ide/extensions/R3BL.${ext_name}"
-    rm -rf "$dest_dir"
     mkdir -p "$dest_dir"
     tmp_dir=$(mktemp -d)
     

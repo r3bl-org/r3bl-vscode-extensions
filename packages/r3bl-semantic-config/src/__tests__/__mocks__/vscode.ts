@@ -30,6 +30,18 @@ export enum StatusBarAlignment {
     Right = 2,
 }
 
+export enum QuickPickItemKind {
+    Separator = -1,
+    Default = 0,
+}
+
+export class ThemeIcon {
+    id: string
+    constructor(id: string) {
+        this.id = id
+    }
+}
+
 export const window = {
     createStatusBarItem: () => ({
         text: "",

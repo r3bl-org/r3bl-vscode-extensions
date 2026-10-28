@@ -23,6 +23,7 @@ import {
     applyCommentBrightness,
     showCommentBrightnessQuickPick,
 } from "./commentBrightness"
+import { jumpAndRecord, showJumpPoints, journeyManager } from "./jumpPointNavigator"
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined
@@ -215,6 +216,19 @@ export function activate(context: vscode.ExtensionContext) {
         showCommentBrightnessQuickPick,
     )
 
+    // Commands for jump point navigation (definition journey stack)
+    journeyManager.initialize(context)
+
+    const jumpAndRecordCommand = vscode.commands.registerCommand(
+        "r3bl-semantic-config.jumpAndRecord",
+        jumpAndRecord,
+    )
+
+    const showJumpPointsCommand = vscode.commands.registerCommand(
+        "r3bl-semantic-config.showJumpPoints",
+        showJumpPoints,
+    )
+
     // Register FoldingRangeProvider for rustdoc comments
     const rustdocFoldingProvider = vscode.languages.registerFoldingRangeProvider(
         { language: "rust" },
@@ -264,6 +278,8 @@ export function activate(context: vscode.ExtensionContext) {
         insertRustdocLinkDefCommand,
         switchRustTargetCommand,
         setCommentBrightnessCommand,
+        jumpAndRecordCommand,
+        showJumpPointsCommand,
         rustdocFoldingProvider,
         useStatementsFoldingProvider,
         themeWatcher,

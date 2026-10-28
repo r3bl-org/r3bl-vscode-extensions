@@ -2,6 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Change Log](#change-log)
+  - [[2026-10-28] - Jump Point Navigation (Definition Journey Stack)](#2026-10-28---jump-point-navigation-definition-journey-stack)
+    - [Package Versions](#package-versions)
+    - [Changes](#changes)
   - [[2026-10-27] - Synchronize Cursor Colors for R3BL 2026 Themes](#2026-10-27---synchronize-cursor-colors-for-r3bl-2026-themes)
     - [Package Versions](#package-versions)
     - [Changes](#changes)
@@ -216,6 +219,33 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
+
+## [2026-10-28] - Jump Point Navigation (Definition Journey Stack)
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.2.18 → 1.3.0
+- **R3BL Extension Pack**: 1.3.35 → 1.4.0
+
+### Changes
+
+- **R3BL Semantic Configuration 1.3.0**: Added Jump Point Navigation (Definition Journey Stack)
+    - **Jump & Record (`Alt+U` / `r3bl-semantic-config.jumpAndRecord`)**: Jumps to
+      definition via `editor.action.revealDefinition` and appends the stop to an ordered
+      in-memory journey stack. Automatically captures both the starting origin (`#1`) and
+      destination (`#2`) on the first jump so you can backtrack all the way to where you
+      started.
+    - **Journey Navigator Popup (`Alt+Shift+U` / `r3bl-semantic-config.showJumpPoints`)**:
+      Displays all recorded jump points in chronological order (`1..N`), marks and
+      pre-selects the current step (`→`) for fast `Up`/`Down` + `Enter` backtracking and
+      forward-tracking, and includes per-item `[🗑️]` removal buttons.
+    - **Search Editor Export (`.code-search`) & Clear All**: Includes bottom action rows
+      in the QuickPick popup to dump all jump points (with surrounding context lines) into
+      a `/tmp/jump-journey-<timestamp>.code-search` Search Editor tab or clear the entire
+      journey stack.
+
+- **R3BL Extension Pack 1.4.0**: Pack and documentation update
+    - Updated dependencies and keyboard shortcut documentation to include `r3bl-semantic-config` 1.3.0 (`Alt+U` and `Alt+Shift+U`).
 
 ## [2026-10-27] - Synchronize Cursor Colors for R3BL 2026 Themes
 

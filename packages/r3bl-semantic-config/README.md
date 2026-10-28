@@ -56,6 +56,12 @@
         - [What It Does](#what-it-does-7)
         - [Supported Themes](#supported-themes)
         - [Changing Comment Brightness](#changing-comment-brightness)
+    - [Feature 10: Jump Point Navigation (Definition Journey Stack)](#feature-10-jump-point-navigation-definition-journey-stack)
+        - [What It Does](#what-it-does-8)
+        - [Keybindings](#keybindings-1)
+        - [How It Works](#how-it-works-6)
+        - [QuickPick Journey Popup](#quickpick-journey-popup)
+        - [Search Editor (.code-search) Export](#search-editor-code-search-export)
     - [Requirements](#requirements)
         - [Why rust-analyzer is Required](#why-rust-analyzer-is-required)
     - [Recommended Settings](#recommended-settings)
@@ -92,6 +98,9 @@ This extension provides powerful features for Rust development in VS Code:
    targets from a dropdown or status bar item
 9. **Comment Brightness Levels** - Choose between 3 comment brightness levels (`dim`,
    `medium`, `bright`) across all R3BL themes
+10. **Jump Point Navigation (Definition Journey Stack)** - Record your "Go to Definition"
+    journey (`Alt+U`), backtrack or forward-track (`Alt+Shift+U`), and export your journey
+    to a `.code-search` editor tab
 
 ## Table of Contents
 
@@ -137,6 +146,16 @@ This extension provides powerful features for Rust development in VS Code:
     - [Configuration](#configuration-3)
     - [Keybinding](#keybinding-2)
     - [How It Works](#how-it-works-5)
+- [Feature 9: Comment Brightness Levels](#feature-9-comment-brightness-levels)
+    - [What It Does](#what-it-does-7)
+    - [Supported Themes](#supported-themes)
+    - [Changing Comment Brightness](#changing-comment-brightness)
+- [Feature 10: Jump Point Navigation (Definition Journey Stack)](#feature-10-jump-point-navigation-definition-journey-stack)
+    - [What It Does](#what-it-does-8)
+    - [Keybindings](#keybindings-1)
+    - [How It Works](#how-it-works-6)
+    - [QuickPick Journey Popup](#quickpick-journey-popup)
+    - [Search Editor (.code-search) Export](#search-editor-code-search-export)
 - [Requirements](#requirements)
     - [Why rust-analyzer is Required](#why-rust-analyzer-is-required)
 - [Recommended Settings](#recommended-settings)
@@ -709,6 +728,99 @@ Or set it in your `settings.json`:
 
 ---
 
+## Feature 10: Jump Point Navigation (Definition Journey Stack)
+
+### What It Does
+
+When exploring a codebase, you often drill down into a function, method, or type using "Go
+to Definition", then from that definition drill down into another type or function, and so
+forth. **Jump Point Navigation** records your exploration path as an ordered journey stack
+so you can visualize your trail, backtrack to earlier steps, forward-track again, or dump
+the entire path into a `.code-search` editor tab.
+
+### Keybindings
+
+| Keybinding    | Command                                          | Description                                              |
+| :------------ | :----------------------------------------------- | :------------------------------------------------------- |
+| `Alt+U`       | `R3BL: Jump to Definition and Record Jump Point` | Record jump point and jump to definition                 |
+| `Alt+Shift+U` | `R3BL: Show Jump Points`                         | Open the Jump Journey popup to navigate or manage points |
+
+These shortcuts work across **all languages** (Rust, TypeScript, Markdown, etc.) whenever
+a definition provider is available.
+
+#### Customizing Keybindings
+
+Both shortcuts can be customized in VS Code / Antigravity IDE via the Keyboard Shortcuts
+UI (`Ctrl+K Ctrl+S` / `Cmd+K Cmd+S`) or by adding custom entries to your
+`keybindings.json` (Command Palette → `Preferences: Open Keyboard Shortcuts (JSON)`):
+
+```json
+{
+    "key": "alt+u",
+    "command": "r3bl-semantic-config.jumpAndRecord",
+    "when": "editorTextFocus"
+},
+{
+    "key": "alt+shift+u",
+    "command": "r3bl-semantic-config.showJumpPoints"
+}
+```
+
+- **`r3bl-semantic-config.jumpAndRecord`**: Bound by default to `Alt+U` with
+  `"when": "editorTextFocus"`.
+- **`r3bl-semantic-config.showJumpPoints`**: Bound by default to `Alt+Shift+U` globally
+  (accessible whether an editor or another panel has focus).
+
+### How It Works
+
+1. **Automatic Origin Capture**: On your very first `Alt+U` jump (or when jumping from a
+   new file that isn't part of your current stop), the extension records **both** where
+   you jumped _from_ (`#1`) and the definition you landed _on_ (`#2`). This ensures you
+   can always backtrack all the way to your starting call site.
+2. **Seamless Drill-Down**: When you are inside the file you just jumped to and press
+   `Alt+U` on a field, parameter, or function call to drill deeper, only the new
+   destination is appended to the bottom of the stack (`#3`, `#4`, etc.).
+3. **Current Position Tracking**: The journey remembers which step you are currently on
+   (`currentIndex`).
+
+### QuickPick Journey Popup
+
+Pressing `Alt+Shift+U` opens an interactive popup showing your recorded journey from first
+jump (`1`) at the top to most recent jump at the bottom:
+
+```text
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Navigate jump journey                                                    │
+├──────────────────────────────────────────────────────────────────────────┤
+│   1. fn apply_event                    src/editor_engine.rs:142     [🗑️] │
+│      let buffer = DialogBuffer::new();                                   │
+│   2. struct DialogBuffer               src/dialog_buffer.rs:18      [🗑️] │
+│      pub struct DialogBuffer {                                           │
+│ ▶ 3. → struct ColorWheel               src/color_wheel.rs:45        [🗑️] │
+│      pub struct ColorWheel {                                             │
+├──────────────────────────────────────────────────────────────────────────┤
+│   🔍 Open Journey in Search Editor (.code-search)                        │
+│   🧹 Clear All Jump Points                                               │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+- **`→` ("You Are Here" Marker)**: Highlights the step you are currently visiting and
+  automatically pre-selects that row so pressing `Up` + `Enter` immediately backtracks,
+  and `Down` + `Enter` forward-tracks.
+- **`[🗑️]` Remove Jump Point**: Click the trash icon on any row to remove that single stop
+  in-place without closing the popup.
+- **🧹 Clear All Jump Points**: Select the bottom row to wipe the journey stack and start
+  fresh.
+
+### Search Editor (.code-search) Export
+
+Selecting **🔍 Open Journey in Search Editor (.code-search)** writes all recorded jump
+points—along with surrounding context lines—to `/tmp/jump-journey-<timestamp>.code-search`
+and opens it in a VS Code Search Editor tab. Every line is syntax-highlighted and
+clickable, giving you a persistent multi-file reference view of your entire code trace.
+
+---
+
 ## Requirements
 
 - VS Code 1.60.0 or higher
@@ -759,18 +871,20 @@ control over `use` statement folding behavior:
 
 ## Commands
 
-| Command                                    | Command ID                                  | Keybinding     | Description                                        |
-| ------------------------------------------ | ------------------------------------------- | -------------- | -------------------------------------------------- |
-| `R3BL: Enable R3BL Semantic Highlighting`  | `r3bl-semantic-config.enable`               | -              | Apply semantic highlighting settings               |
-| `R3BL: Disable R3BL Semantic Highlighting` | `r3bl-semantic-config.disable`              | -              | Remove semantic highlighting settings              |
-| `R3BL: Run Flycheck (Debounced)`           | `r3bl-semantic-config.runFlycheck`          | `Ctrl+R`       | Manually trigger flycheck, cancels pending         |
-| `R3BL: Fold All Rustdocs`                  | `r3bl-semantic-config.foldRustdocs`         | `Ctrl+-`       | Collapse all `///`, `//!`, and `use` blocks        |
-| `R3BL: Unfold All Rustdocs`                | `r3bl-semantic-config.unfoldRustdocs`       | `Ctrl+=`       | Expand all rustdoc and `use` blocks                |
-| `R3BL: Navigate Rustdoc Structure`         | `r3bl-semantic-config.navigateRustdocs`     | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs             |
-| `R3BL: Scroll Current Line to Top`         | `r3bl-semantic-config.scrollToTop`          | `Ctrl+M`       | Reveal active cursor line at top                   |
-| `R3BL: Insert Rustdoc Link Definition`     | `r3bl-semantic-config.insertRustdocLinkDef` | `Ctrl+Shift+L` | Auto-insert link reference definitions             |
-| `R3BL: Switch Rust Target (rust-analyzer)` | `r3bl-semantic-config.switchRustTarget`     | -              | Switch active rust-analyzer cargo target           |
-| `R3BL: Set Comment Brightness...`          | `r3bl-semantic-config.setCommentBrightness` | -              | Select comment brightness level (dim, med, bright) |
+| Command                                          | Command ID                                  | Keybinding     | Description                                        |
+| ------------------------------------------------ | ------------------------------------------- | -------------- | -------------------------------------------------- |
+| `R3BL: Enable R3BL Semantic Highlighting`        | `r3bl-semantic-config.enable`               | -              | Apply semantic highlighting settings               |
+| `R3BL: Disable R3BL Semantic Highlighting`       | `r3bl-semantic-config.disable`              | -              | Remove semantic highlighting settings              |
+| `R3BL: Run Flycheck (Debounced)`                 | `r3bl-semantic-config.runFlycheck`          | `Ctrl+R`       | Manually trigger flycheck, cancels pending         |
+| `R3BL: Fold All Rustdocs`                        | `r3bl-semantic-config.foldRustdocs`         | `Ctrl+-`       | Collapse all `///`, `//!`, and `use` blocks        |
+| `R3BL: Unfold All Rustdocs`                      | `r3bl-semantic-config.unfoldRustdocs`       | `Ctrl+=`       | Expand all rustdoc and `use` blocks                |
+| `R3BL: Navigate Rustdoc Structure`               | `r3bl-semantic-config.navigateRustdocs`     | `Ctrl+Shift+Y` | Jump to headings or blocks in rustdocs             |
+| `R3BL: Scroll Current Line to Top`               | `r3bl-semantic-config.scrollToTop`          | `Ctrl+M`       | Reveal active cursor line at top                   |
+| `R3BL: Insert Rustdoc Link Definition`           | `r3bl-semantic-config.insertRustdocLinkDef` | `Ctrl+Shift+L` | Auto-insert link reference definitions             |
+| `R3BL: Switch Rust Target (rust-analyzer)`       | `r3bl-semantic-config.switchRustTarget`     | -              | Switch active rust-analyzer cargo target           |
+| `R3BL: Set Comment Brightness...`                | `r3bl-semantic-config.setCommentBrightness` | -              | Select comment brightness level (dim, med, bright) |
+| `R3BL: Jump to Definition and Record Jump Point` | `r3bl-semantic-config.jumpAndRecord`        | `Alt+U`        | Jump to definition and append to journey stack     |
+| `R3BL: Show Jump Points`                         | `r3bl-semantic-config.showJumpPoints`       | `Alt+Shift+U`  | Show jump journey popup to navigate or export      |
 
 ## Shared Infrastructure
 

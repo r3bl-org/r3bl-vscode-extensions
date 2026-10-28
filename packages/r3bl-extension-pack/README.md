@@ -16,7 +16,7 @@ These extensions are maintained and published by R3BL.
 | Extension                                                                                                                                          | Description                                                                                                        |
 | :------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
 | **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark themes (R3BL Theme, R3BL 2026 Theme, and No Italic variants) optimized for Rust and Markdown with eye comfort |
-| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, and structure navigation                                                 |
+| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, structure navigation, and jump point journey tracking                    |
 | **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization                                           |
 | **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes                                                 |
 | **[R3BL Opened Editors](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-opened-editors)**                               | Fast opened editors dropdown switcher (`Alt+E`) and vertical sidebar panel navigation                              |
@@ -38,7 +38,9 @@ These extensions are required for full functionality and are automatically insta
   deep `#0e0f10` background, and No Italic options) with 3 selectable comment brightness
   levels (`dim`, `medium`, `bright`).
 - **Enhanced Rust Experience**: Beyond syntax highlighting, get auto-folding for `use`
-  statements and `rustdoc`, plus a dedicated Structure Navigator for large files.
+  statements and `rustdoc`, a dedicated Structure Navigator for large files, and Jump
+  Point Navigation (`Alt+U` / `Alt+Shift+U`) to trace and backtrack through "Go to
+  Definition" journeys.
 - **Task Space Management**: Organize multiple work contexts, save/restore open tabs, and
   integrate with Coding Agents via a custom slash command.
 - **High-Efficiency Code Review**: Use the Git Diff Search Editor to review uncommitted
@@ -96,6 +98,8 @@ Keyboard Shortcuts settings.
 | `Ctrl+=`        | Semantic Config | Unfold all Rustdocs in current file                        |
 | `Ctrl+M`        | Semantic Config | Scroll current line to top                                 |
 | `Ctrl+Shift+L`  | Semantic Config | Insert Rustdoc Link Definition                             |
+| `Alt+U`         | Semantic Config | Jump to definition and record jump point in journey stack  |
+| `Alt+Shift+U`   | Semantic Config | Show jump journey popup (backtrack, forward-track, export) |
 | `Alt+E`         | Opened Editors  | Show dropdown of all open editors (Cmd+E on Mac)           |
 | `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                         |
 | -               | Semantic Config | Set Comment Brightness (`R3BL: Set Comment Brightness...`) |
@@ -180,6 +184,9 @@ The pack is a power-user's dream for Rust. It enhances `rust-analyzer` with:
 - **Intelligent Folding**: Auto-hiding long `use` blocks and `rustdoc` to focus on logic.
 - **Structure Navigator**: Use `Ctrl+Shift+Y` to jump between functions, traits, and impl
   blocks in large files.
+- **Jump Point Journey Stack**: Use `Alt+U` to drill down into definitions while recording
+  your trail, and `Alt+Shift+U` to backtrack, forward-track, or dump the journey into a
+  `.code-search` tab.
 - **Live Diagnostics**: Debounced Flycheck runs `cargo check` in the background after you
   stop typing, without the "save to check" friction.
 - **Target Switcher**: Switch `rust-analyzer.cargo.target` on the fly from a curated
