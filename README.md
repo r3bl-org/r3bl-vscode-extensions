@@ -10,32 +10,6 @@
 A monorepo containing R3BL VSCode extensions for Rust development, task management, and
 productivity.
 
-Table of contents:
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-- [Quick Start](#quick-start)
-- [Extensions](#extensions)
-    - [R3BL Extension Pack (Recommended)](#r3bl-extension-pack-recommended)
-    - [Individual Extensions](#individual-extensions)
-    - [Infrastructure Packages](#infrastructure-packages)
-        - [Architecture Overview](#architecture-overview)
-- [Installation](#installation)
-    - [From Marketplace (Recommended)](#from-marketplace-recommended)
-    - [From Source](#from-source)
-- [Development](#development)
-    - [Setup](#setup)
-    - [Modifying Extensions](#modifying-extensions)
-    - [Creating New Extensions](#creating-new-extensions)
-    - [Building](#building)
-    - [For Maintainers](#for-maintainers)
-- [Structure](#structure)
-- [Changelog](#changelog)
-- [License](#license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Quick Start
 
 **Install the complete R3BL development experience:**

@@ -74,50 +74,6 @@ good at. Let your machine buddies augment you with what they are good at.
   all the history in `task/done/`, and the info in `task/` will help guide them too in
   their predictions and pattern matching (if you are using LLM based agents).
 
-## Table of Contents
-
-- [The Dashboard Workflow - Designed for Humans & Fit for Purpose](#the-dashboard-workflow---designed-for-humans--fit-for-purpose)
-    - [Core Principles](#core-principles)
-    - [How it differs from Scrum, Agile, and Ticket Systems](#how-it-differs-from-scrum-agile-and-ticket-systems)
-- [Use Cases](#use-cases)
-    - [Context Preservation](#context-preservation)
-    - [Coding Agent Collaboration](#coding-agent-collaboration)
-    - [Multiple Concurrent Workflows (Same Branch)](#multiple-concurrent-workflows-same-branch)
-    - [Multi-IDE Workflows (Different Task Spaces Per IDE)](#multi-ide-workflows-different-task-spaces-per-ide)
-- [What It Does](#what-it-does)
-- [Getting Started](#getting-started)
-    - [Requirements](#requirements)
-    - [Quick Start](#quick-start)
-- [Screenshots](#screenshots)
-- [Workflows](#workflows)
-    - [Basic Workflow](#basic-workflow)
-    - [Coding Agent Workflow](#coding-agent-workflow)
-    - [Coding Agent Integration](#coding-agent-integration)
-        - [Install Coding Agent Integration](#install-coding-agent-integration)
-        - [Create Task Space from Task File](#create-task-space-from-task-file)
-        - [Smart Prompting](#smart-prompting)
-    - [Power User: Multiple Coding Agent Instances](#power-user-multiple-coding-agent-instances)
-- [Important: How It Works](#important-how-it-works)
-    - [Task Spaces Are WITHIN One Branch](#task-spaces-are-within-one-branch)
-    - [Filesystem-Based Memory](#filesystem-based-memory)
-    - [Should You Commit `.vscode/task-spaces.json`?](#should-you-commit-vscodetask-spacesjson)
-        - [Recommended: Add to .gitignore](#recommended-add-to-gitignore)
-        - [Alternative: Commit It (Team Collaboration)](#alternative-commit-it-team-collaboration)
-- [Reference](#reference)
-    - [Commands](#commands)
-    - [Keyboard Shortcuts](#keyboard-shortcuts)
-    - [Extension Settings](#extension-settings)
-    - [Status Bar](#status-bar)
-    - [File Format](#file-format)
-        - [.vscode/task-spaces.json (Shared File)](#vscodetask-spacesjson-shared-file)
-        - [VSCode Workspace State (Per-Instance)](#vscode-workspace-state-per-instance)
-        - [Multi-Instance Behavior](#multi-instance-behavior)
-    - [When Does the File Get Saved?](#when-does-the-file-get-saved)
-- [Shared Infrastructure](#shared-infrastructure)
-- [Release Notes](#release-notes)
-- [License](#license)
-- [Contributing](#contributing)
-
 ## Use Cases
 
 ### Context Preservation

@@ -13,19 +13,6 @@ Part of the
 
 ---
 
-## Table of Contents
-
-- [The Problem It Solves](#the-problem-it-solves)
-- [Features](#features)
-    - [1. Rapid Keyboard Switcher (Alt+E / Cmd+E)](#1-rapid-keyboard-switcher-alte--cmde)
-    - [2. Vertical Open Editors Sidebar Panel Navigation](#2-vertical-open-editors-sidebar-panel-navigation)
-- [Security, Privacy & Performance Guarantees](#security-privacy--performance-guarantees)
-- [Keyboard Shortcuts & Commands](#keyboard-shortcuts--commands)
-- [Part of the R3BL Suite](#part-of-the-r3bl-suite)
-- [License](#license)
-
----
-
 ## The Problem It Solves
 
 Modern development workflows often involve keeping dozens of files open simultaneously

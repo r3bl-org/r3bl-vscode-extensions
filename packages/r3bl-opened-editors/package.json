@@ -2,7 +2,7 @@
     "name": "r3bl-opened-editors",
     "displayName": "R3BL Opened Editors",
     "description": "Fast opened editors dropdown switcher with Alt+E / Cmd+E and vertical sidebar navigation",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "R3BL",
     "license": "MIT",
     "engines": {

@@ -484,10 +484,10 @@ In `packages/r3bl-extension-pack/package.json`, add to the `extensionPack` array
 
 ### 6. Update README.md
 
-- Add the new extension to the table of contents
 - Add a section under "Individual Extensions"
 - Update the "Extension Pack" description
 - Update the "Structure" section
+- **Do NOT add a Table of Contents** (never use `doctoc` or `mktoc` in `README.md` or `CHANGELOG.md` files)
 
 ### 7. Update `script_lib.sh`
 
@@ -660,6 +660,7 @@ Update CHANGELOG.md when:
 - ✅ Include clear descriptions of what changed and why
 - ✅ Be user-focused: explain benefits, not just technical details
 - ✅ Update changelog BEFORE committing
+- ✅ **No Table of Contents**: Never add a Table of Contents or run `doctoc` / `mktoc` on `README.md` or `CHANGELOG.md` files; TOCs push actual content below the fold in VS Code Marketplace and Open VSX listings.
 
 ## R3BL Shared Architecture
 
