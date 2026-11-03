@@ -5,6 +5,20 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-11-03] - Refine Inlay Hint Colors (15% Brighter Backgrounds)
+
+### Package Versions
+
+- **R3BL Theme**: 1.0.39 → 1.0.43
+- **R3BL Extension Pack**: 1.4.1 → 1.4.5
+
+### Changes
+
+- **R3BL Theme 1.0.43**: Inlay hint color refinements across all 4 themes
+    - Preserved pale, desaturated foreground colors for readability against syntax tokens
+    - Brightened background colors by 15% so inlay hint pills have balanced definition against dark canvases without glowing
+    - Updated all 4 variants: R3BL Theme, R3BL Theme (No Italic), R3BL 2026 Theme, and R3BL 2026 Theme (No Italic)
+
 ## [2026-10-28] - Remove Table of Contents from Extension READMEs
 
 ### Package Versions
