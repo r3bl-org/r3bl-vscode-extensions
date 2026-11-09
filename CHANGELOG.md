@@ -5,6 +5,22 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-11-09] - Toggle Inlay Hints Command
+
+### Package Versions
+
+- **R3BL Semantic Configuration**: 1.3.1 → 1.3.2
+- **R3BL Extension Pack**: 1.4.5 → 1.4.6
+
+### Changes
+
+- **R3BL Semantic Configuration 1.3.2**: Added Toggle Inlay Hints command
+    - **Toggle Inlay Hints (`Ctrl+Alt+I` / `r3bl-semantic-config.toggleInlayHints`)**: Quickly toggle editor inlay hints (`editor.inlayHints.enabled`) globally between `"on"` and `"off"`.
+    - Automatically transitions `"off"`, `false`, and modifier states (`"offUnlessPressed"` / `"onUnlessPressed"`) to `"on"`, and `"on"` or `true` to `"off"`.
+    - Displays a transient status bar notification displaying the new state.
+
+- **R3BL Extension Pack 1.4.6**: Pack and documentation update
+
 ## [2026-11-03] - Refine Inlay Hint Colors (15% Brighter Backgrounds)
 
 ### Package Versions

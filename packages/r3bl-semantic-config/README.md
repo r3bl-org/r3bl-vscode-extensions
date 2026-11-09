@@ -26,6 +26,8 @@ This extension provides powerful features for Rust development in VS Code:
 10. **Jump Point Navigation (Definition Journey Stack)** - Record your "Go to Definition"
     journey (`Alt+U`), backtrack or forward-track (`Alt+Shift+U`), and export your journey
     to a `.code-search` editor tab
+11. **Toggle Inlay Hints** - Toggle editor inlay hints globally on and off with
+    `Ctrl+Alt+I`
 
 ---
 
@@ -683,6 +685,33 @@ clickable, giving you a persistent multi-file reference view of your entire code
 
 ---
 
+## Feature 11: Toggle Inlay Hints
+
+### What It Does
+
+Quickly toggle editor inlay hints globally between `"on"` and `"off"` with a single
+keystroke: `Ctrl+Alt+I`.
+
+### Why This Feature Exists
+
+VS Code does not provide a native built-in command to toggle editor inlay hints
+(`editor.inlayHints.enabled`) on and off with a single keypress. By default, users either
+have to hold down modifier keys (`offUnlessPressed`) or install third-party
+settings-cycler extensions. This feature provides a first-class toggle command and
+keybinding.
+
+### How It Works
+
+- Press `Ctrl+Alt+I` while editing in any file.
+- The command inspects your current `editor.inlayHints.enabled` setting and switches it:
+    - If `"on"` (or `true`) $\rightarrow$ turns them `"off"`.
+    - If `"off"` (or `false`, `"offUnlessPressed"`, `"onUnlessPressed"`) $\rightarrow$
+      turns them `"on"`.
+- Updates your global configuration and displays a brief status bar notification
+  (`Inlay hints: on` / `Inlay hints: off`).
+
+---
+
 ## Requirements
 
 - VS Code 1.60.0 or higher
@@ -747,6 +776,7 @@ control over `use` statement folding behavior:
 | `R3BL: Set Comment Brightness...`                | `r3bl-semantic-config.setCommentBrightness` | -              | Select comment brightness level (dim, med, bright) |
 | `R3BL: Jump to Definition and Record Jump Point` | `r3bl-semantic-config.jumpAndRecord`        | `Alt+U`        | Jump to definition and append to journey stack     |
 | `R3BL: Show Jump Points`                         | `r3bl-semantic-config.showJumpPoints`       | `Alt+Shift+U`  | Show jump journey popup to navigate or export      |
+| `R3BL: Toggle Inlay Hints`                       | `r3bl-semantic-config.toggleInlayHints`     | `Ctrl+Alt+I`   | Toggle editor inlay hints on and off               |
 
 ## Shared Infrastructure
 

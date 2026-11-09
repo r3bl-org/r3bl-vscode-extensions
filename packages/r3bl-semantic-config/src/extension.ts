@@ -24,6 +24,7 @@ import {
     showCommentBrightnessQuickPick,
 } from "./commentBrightness"
 import { jumpAndRecord, showJumpPoints, journeyManager } from "./jumpPointNavigator"
+import { toggleInlayHints } from "./inlayHints"
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined
@@ -198,6 +199,12 @@ export function activate(context: vscode.ExtensionContext) {
         scrollToTop,
     )
 
+    // Command to toggle inlay hints
+    const toggleInlayHintsCommand = vscode.commands.registerCommand(
+        "r3bl-semantic-config.toggleInlayHints",
+        toggleInlayHints,
+    )
+
     // Command to insert rustdoc link reference definition
     const insertRustdocLinkDefCommand = vscode.commands.registerCommand(
         "r3bl-semantic-config.insertRustdocLinkDef",
@@ -275,6 +282,7 @@ export function activate(context: vscode.ExtensionContext) {
         unfoldRustdocsCommand,
         navigateRustdocsCommand,
         scrollToTopCommand,
+        toggleInlayHintsCommand,
         insertRustdocLinkDefCommand,
         switchRustTargetCommand,
         setCommentBrightnessCommand,
