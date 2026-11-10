@@ -71,10 +71,13 @@ _Semantic highlighting in action_
 When installed with any of the R3BL themes active, the extension automatically:
 
 1. Detects an R3BL theme is active (`R3BL Theme`, `R3BL Theme (No Italic)`,
-   `R3BL 2026 Theme`, or `R3BL 2026 Theme (No Italic)`)
+   `R3BL 2026 Theme`, `R3BL 2026 Theme (No Italic)`, `R3BL 2027 Theme`, or
+   `R3BL 2027 Theme (No Italic)`)
 2. Applies the matching semantic highlighting (with or without italics) to global
    configuration
-3. Shows a success notification
+3. When `R3BL 2027 Theme` or `R3BL 2027 Theme (No Italic)` is active, automatically sets
+   `workbench.iconTheme` to `R3BL 2027 Icons` (`r3bl-2027-icons`)
+4. Shows a success notification
 
 #### Theme Watcher
 
@@ -82,7 +85,9 @@ Monitors theme changes. When you switch to any R3BL theme:
 
 1. Checks the active theme variant
 2. Applies the corresponding semantic rules (standard vs non-italic)
-3. Keeps your IDE styling synchronized
+3. Switches `workbench.iconTheme` to `r3bl-2027-icons` when selecting an R3BL 2027 Theme
+   (and leaves `workbench.iconTheme` untouched when switching away to any other theme)
+4. Keeps your IDE styling synchronized
 
 #### Manual Control
 
@@ -556,7 +561,7 @@ project-scoped**:
 
 ### What It Does
 
-Allows developers to customize comment readability across all 4 R3BL themes by choosing
+Allows developers to customize comment readability across all 6 R3BL themes by choosing
 between 3 brightness levels:
 
 | Level                 | Color     | Description                                                      |
@@ -573,6 +578,8 @@ Customizations are dynamically scoped to only R3BL themes:
 2. `R3BL Theme (No Italic)`
 3. `R3BL 2026 Theme`
 4. `R3BL 2026 Theme (No Italic)`
+5. `R3BL 2027 Theme`
+6. `R3BL 2027 Theme (No Italic)`
 
 Non-R3BL themes are never affected.
 

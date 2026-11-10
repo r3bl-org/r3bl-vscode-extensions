@@ -1,37 +1,22 @@
 // Copyright (c) 2024-2026 R3BL LLC. Licensed under MIT License.
 
 import * as vscode from "vscode"
-import { showStatusBarMessage } from "r3bl-common-code"
+import {
+    ALL_R3BL_THEMES,
+    COMMENT_COLORS,
+    COMMENT_DESCRIPTIONS,
+    COMMENT_SCOPES,
+    CommentBrightnessLevel,
+    showStatusBarMessage,
+} from "r3bl-common-code"
 
-export type CommentBrightnessLevel = "dim" | "medium" | "bright"
-
-export const COMMENT_COLORS: Record<CommentBrightnessLevel, string> = {
-    dim: "#8B949E",
-    medium: "#ABACAC",
-    bright: "#E8DCF4",
+export {
+    ALL_R3BL_THEMES,
+    COMMENT_COLORS,
+    COMMENT_DESCRIPTIONS,
+    COMMENT_SCOPES,
+    CommentBrightnessLevel,
 }
-
-export const COMMENT_DESCRIPTIONS: Record<CommentBrightnessLevel, string> = {
-    dim: "Cool slate gray for maximum eye comfort (Default)",
-    medium: "Neutral silver gray for balanced contrast",
-    bright: "Vibrant lavender for high contrast",
-}
-
-export const ALL_R3BL_THEMES = [
-    "R3BL Theme",
-    "R3BL 2026 Theme",
-    "R3BL Theme (No Italic)",
-    "R3BL 2026 Theme (No Italic)",
-] as const
-
-export const COMMENT_SCOPES = [
-    "comment",
-    "punctuation.definition.comment",
-    "unused.comment",
-    "wildcard.comment",
-    "comment.line.graphql",
-    "string.block.description.graphql.DOCSTRING",
-]
 
 /**
  * Builds the updated `editor.tokenColorCustomizations` object, preserving any

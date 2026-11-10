@@ -15,7 +15,7 @@ These extensions are maintained and published by R3BL.
 
 | Extension                                                                                                                                          | Description                                                                                                          |
 | :------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark themes (R3BL Theme, R3BL 2026 Theme, and No Italic variants) optimized for Rust and Markdown with eye comfort   |
+| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark themes (R3BL Theme, R3BL 2026 Theme, R3BL 2027 Theme, and No Italic variants) plus bundled R3BL 2027 Icons      |
 | **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, structure navigation, jump point journey tracking, and inlay hint toggling |
 | **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization                                             |
 | **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes                                                   |
@@ -34,9 +34,11 @@ These extensions are required for full functionality and are automatically insta
 
 ## What You Get
 
-- **Beautiful Dark Themes**: Carefully crafted themes (R3BL Theme, R3BL 2026 Theme with
-  deep `#0e0f10` background, and No Italic options) with 3 selectable comment brightness
-  levels (`dim`, `medium`, `bright`).
+- **Beautiful Dark Themes & Bundled Icons**: Carefully crafted themes (`R3BL Theme`,
+  `R3BL 2026 Theme` with deep `#0e0f10` background, `R3BL 2027 Theme` combining Catppuccin
+  Mocha workbench/TextMate/rainbow brackets with R3BL semantic tokens, and `No Italic`
+  options), bundled `R3BL 2027 Icons` (from Catppuccin Icons, auto-activated with 2027
+  themes), and 3 selectable comment brightness levels (`dim`, `medium`, `bright`).
 - **Enhanced Rust Experience**: Beyond syntax highlighting, get auto-folding for `use`
   statements and `rustdoc`, a dedicated Structure Navigator for large files, Jump Point
   Navigation (`Alt+U` / `Alt+Shift+U`) to trace and backtrack through "Go to Definition"
@@ -71,8 +73,10 @@ These extensions are required for full functionality and are automatically insta
 
 ## Quick Start
 
-1. **Activate the theme**: Press `Ctrl+K Ctrl+T` → Select "R3BL Theme", "R3BL Theme (No
-   Italic)", "R3BL 2026 Theme", or "R3BL 2026 Theme (No Italic)"
+1. **Activate the theme**: Press `Ctrl+K Ctrl+T` → Select `R3BL 2027 Theme`,
+   `R3BL 2027 Theme (No Italic)`, `R3BL 2026 Theme`, `R3BL 2026 Theme (No Italic)`,
+   `R3BL Theme`, or `R3BL Theme (No Italic)` (selecting a 2027 variant also activates
+   `R3BL 2027 Icons` automatically)
 2. **Enable semantic highlighting**: Automatically applied or enabled on prompt
 3. Start coding with the full R3BL experience!
 

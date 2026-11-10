@@ -5,6 +5,43 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-11-10] - R3BL 2027 Theme, Bundled R3BL 2027 Icons & Shared Theme Pipeline
+
+### Package Versions
+
+- **R3BL Theme**: 1.0.43 → 1.1.0
+- **R3BL Semantic Configuration**: 1.3.2 → 1.4.0
+- **R3BL Extension Pack**: 1.4.6 → 1.5.0
+- **r3bl-common-code**: 1.0.0 → 1.1.0
+
+### Changes
+
+- **R3BL Theme 1.1.0**: Added `R3BL 2027 Theme`, `R3BL 2027 Theme (No Italic)`, and
+  bundled `R3BL 2027 Icons`
+    - **R3BL 2027 Theme & No Italic Variant**: Combines the Catppuccin Mocha
+      (workbench colors, TextMate grammar, and Neovim rainbow bracket colors)
+      with R3BL semantic token rules, pill-tinted inlay hints, and ErrorLens
+      diagnostic foregrounds.
+    - **Bundled `R3BL 2027 Icons` (`r3bl-2027-icons`)**: Self-contained file and folder
+      icon theme (from Catppuccin Icons) bundled directly inside `r3bl-theme` for
+      convenience (with no external extension dependencies).
+    - **Unified Cross-Theme Overlays & Build Generator**: Centralized shared inlay hint
+      colors, ErrorLens colors, default `dim` (`#8B949E`) comment rules, and semantic
+      token rules across all 6 R3BL theme files via a deterministic build-time theme file
+      generator and Jest test suite.
+
+- **R3BL Semantic Configuration 1.4.0**: R3BL 2027 Theme integration & automatic icon
+  switching
+    - **Automatic `R3BL 2027 Icons` Activation**: Selecting `R3BL 2027 Theme` or
+      `R3BL 2027 Theme (No Italic)` automatically switches `workbench.iconTheme` to
+      `r3bl-2027-icons` (while leaving `workbench.iconTheme` untouched when switching away
+      to other themes).
+    - **6-Theme Comment Brightness & Semantic Sync**: Extended `r3bl.commentBrightness`
+      (`dim`, `medium`, `bright`), `R3BL: Set Comment Brightness...`, and
+      italic/non-italic semantic rule synchronization across all 6 R3BL themes.
+
+- **R3BL Extension Pack 1.5.0**: Pack and documentation update
+
 ## [2026-11-09] - Toggle Inlay Hints Command
 
 ### Package Versions

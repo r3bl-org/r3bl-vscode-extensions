@@ -2,7 +2,13 @@
 
 import * as vscode from "vscode"
 import * as fs from "fs/promises"
-import { showStatusBarMessage } from "r3bl-common-code"
+import {
+    ALL_R3BL_THEMES,
+    NO_ITALIC_THEMES,
+    SEMANTIC_RULES_ITALIC,
+    SEMANTIC_RULES_NO_ITALIC,
+    showStatusBarMessage,
+} from "r3bl-common-code"
 import {
     foldAllRustdocs,
     unfoldAllRustdocs,
@@ -25,6 +31,7 @@ import {
 } from "./commentBrightness"
 import { jumpAndRecord, showJumpPoints, journeyManager } from "./jumpPointNavigator"
 import { toggleInlayHints } from "./inlayHints"
+import { applyIconThemeForColorTheme } from "./iconThemeSwitch"
 
 // Debounced Flycheck state
 let debounceTimeout: NodeJS.Timeout | undefined
@@ -34,90 +41,11 @@ let statusBarItem: vscode.StatusBarItem | undefined
 // Constants
 const ROCKET_DISPLAY_DURATION_MS = 700
 
-const ITALIC_THEMES = ["R3BL Theme", "R3BL 2026 Theme"]
-const NO_ITALIC_THEMES = ["R3BL Theme (No Italic)", "R3BL 2026 Theme (No Italic)"]
-const ALL_R3BL_THEMES = [...ITALIC_THEMES, ...NO_ITALIC_THEMES]
-
-const BASE_SEMANTIC_RULES = {
-    function: {
-        foreground: "#4B8CDC",
-    },
-    method: {
-        foreground: "#4B8CDC",
-    },
-    unresolvedReference: {
-        foreground: "#ff6edb",
-        fontStyle: "strikethrough",
-    },
-    "*.deprecated": {
-        fontStyle: "strikethrough",
-    },
-    namespace: {
-        foreground: "#7b939d",
-    },
-    "method.static": "#4B8CDC",
-    "function.static": "#4B8CDC",
-    macro: "#4B8CDC",
-    struct: "#DDE86E",
-    enum: "#FCB141",
-    enumMember: {
-        foreground: "#FFCE66",
-    },
-    "*.mutable": {
-        fontStyle: "bold",
-    },
-    property: "#ad83da",
-    variable: "#E192EF",
-    parameter: "#7c86f4",
-    selfTypeKeyword: "#ce55b7",
-    selfKeyword: "#ce55b7",
-    lifetime: "#c56db599",
-    attributeBracket: "#2469ae",
-    angle: "#2469ae",
-    escapeSequence: "#2d78c2",
-    formatSpecifier: "#2d78c2",
-    typeAlias: "#ecc68e",
-    operator: {
-        fontStyle: "bold",
-        foreground: "#4d6a9f",
-    },
-    "operator.unsafe": "#e02b9d",
-    "function.unsafe": "#e02b9d",
-    "method.unsafe": "#e02b9d",
-    "*.controlFlow": {
-        fontStyle: "bold",
-        foreground: "#d14178",
-    },
-    "*.static": {
-        fontStyle: "bold",
-        foreground: "#6665c7",
-    },
-    constParameter: {
-        fontStyle: "bold",
-        foreground: "#6665c7",
-    },
-    "*.constant": {
-        fontStyle: "bold",
-        foreground: "#c465c7",
-    },
-    "*.trait": "#d1de73",
-}
-
 const SEMANTIC_CONFIG_ITALIC = {
     "editor.semanticHighlighting.enabled": true,
     "editor.semanticTokenColorCustomizations": {
         rules: {
-            ...BASE_SEMANTIC_RULES,
-            "*.reference": {
-                fontStyle: "italic",
-            },
-            "variable.mutable": {
-                fontStyle: "bold italic",
-            },
-            keyword: {
-                foreground: "#a8709e",
-                fontStyle: "italic bold",
-            },
+            ...SEMANTIC_RULES_ITALIC,
         },
     },
 }
@@ -126,23 +54,13 @@ const SEMANTIC_CONFIG_NO_ITALIC = {
     "editor.semanticHighlighting.enabled": true,
     "editor.semanticTokenColorCustomizations": {
         rules: {
-            ...BASE_SEMANTIC_RULES,
-            "*.reference": {
-                fontStyle: "",
-            },
-            "variable.mutable": {
-                fontStyle: "bold",
-            },
-            keyword: {
-                foreground: "#a8709e",
-                fontStyle: "bold",
-            },
+            ...SEMANTIC_RULES_NO_ITALIC,
         },
     },
 }
 
 function getSemanticConfigForTheme(theme?: string) {
-    if (theme && NO_ITALIC_THEMES.includes(theme)) {
+    if (theme && (NO_ITALIC_THEMES as readonly string[]).includes(theme)) {
         return SEMANTIC_CONFIG_NO_ITALIC
     }
     return SEMANTIC_CONFIG_ITALIC
@@ -153,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
     const currentTheme = vscode.workspace
         .getConfiguration("workbench")
         .get<string>("colorTheme")
-    if (currentTheme && ALL_R3BL_THEMES.includes(currentTheme)) {
+    if (currentTheme && (ALL_R3BL_THEMES as readonly string[]).includes(currentTheme)) {
         applySemanticConfig(currentTheme)
     }
 
@@ -266,7 +184,7 @@ export function activate(context: vscode.ExtensionContext) {
             const theme = vscode.workspace
                 .getConfiguration("workbench")
                 .get<string>("colorTheme")
-            if (theme && ALL_R3BL_THEMES.includes(theme)) {
+            if (theme && (ALL_R3BL_THEMES as readonly string[]).includes(theme)) {
                 applySemanticConfig(theme)
             }
         }
@@ -651,6 +569,9 @@ async function applySemanticConfig(theme?: string) {
         for (const [key, value] of Object.entries(semanticConfig)) {
             await config.update(key, value, vscode.ConfigurationTarget.Global)
         }
+
+        // Programmatically switch to R3BL 2027 Icons if an R3BL 2027 Theme is selected
+        await applyIconThemeForColorTheme(activeTheme)
 
         // Check for duplicate settings after successful application
         await checkForDuplicateSettings()

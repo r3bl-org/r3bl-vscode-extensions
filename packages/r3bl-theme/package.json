@@ -1,8 +1,8 @@
 {
     "name": "r3bl-theme",
     "displayName": "R3BL Theme",
-    "description": "Dark themes (R3BL Theme and R3BL 2026 Theme, with italic and non-italic variants) optimized for Rust and Markdown with enhanced semantic highlighting and eye comfort",
-    "version": "1.0.43",
+    "description": "Dark themes (R3BL Theme, R3BL 2026 Theme, and R3BL 2027 Theme, with italic and non-italic variants) and R3BL 2027 Icons optimized for Rust and Markdown with enhanced semantic highlighting and eye comfort",
+    "version": "1.1.0",
     "publisher": "R3BL",
     "extensionDependencies": [
         "R3BL.r3bl-semantic-config"
@@ -16,7 +16,10 @@
     "keywords": [
         "theme",
         "color theme",
+        "icon theme",
         "dark theme",
+        "catppuccin",
+        "mocha",
         "rust",
         "rust theme",
         "markdown",
@@ -33,7 +36,19 @@
         "directory": "packages/r3bl-theme"
     },
     "scripts": {
-        "package": "vsce package --no-dependencies"
+        "compile": "tsc",
+        "build": "tsc && node dist/generateThemes.js && npx prettier --write themes/*.json",
+        "package": "vsce package --no-dependencies",
+        "test": "jest"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/node": "20.x",
+        "jest": "^30.3.0",
+        "prettier": "^3.6.2",
+        "r3bl-common-code": "file:../r3bl-common-code",
+        "ts-jest": "^29.4.6",
+        "typescript": "^5.6.3"
     },
     "contributes": {
         "themes": [
@@ -56,6 +71,23 @@
                 "label": "R3BL 2026 Theme (No Italic)",
                 "uiTheme": "vs-dark",
                 "path": "./themes/r3bl-2026-theme-no-italic.json"
+            },
+            {
+                "label": "R3BL 2027 Theme",
+                "uiTheme": "vs-dark",
+                "path": "./themes/r3bl-2027-theme.json"
+            },
+            {
+                "label": "R3BL 2027 Theme (No Italic)",
+                "uiTheme": "vs-dark",
+                "path": "./themes/r3bl-2027-theme-no-italic.json"
+            }
+        ],
+        "iconThemes": [
+            {
+                "id": "r3bl-2027-icons",
+                "label": "R3BL 2027 Icons",
+                "path": "./icons/r3bl-2027-icons/theme.json"
             }
         ]
     }

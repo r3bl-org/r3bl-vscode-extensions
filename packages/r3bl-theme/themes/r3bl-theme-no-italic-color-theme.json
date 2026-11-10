@@ -1,25 +1,9 @@
-// ----------------
-// My dark theme customizations.
-// https://stackoverflow.com/a/64880534/2085356
-// ----------------
-// Chlorophonia palette from: <https://ebird.org/species/gobchl1>
-// "#0CBFF9cc"
-// "#076DEBcc"
-// "#E9C940cc"
-// "#F9CF01cc"
-// "#DDE86Ecc"
-// "#8DEF5Ccc"
-// "#57D117cc"
-// "#392411cc"
-// "#37D9CAcc"
-// "#B6C4FFcc"
 {
     "$schema": "vscode://schemas/color-theme",
+    "name": "R3BL Theme (No Italic)",
     "type": "dark",
     "colors": {
-        // The following seletion background in popup dialogs (Copilot Chat, Ctrl+P, Alt+Enter)
         "selection.background": "#094771",
-
         "activityBar.background": "#253340",
         "activityBar.border": "#253340",
         "activityBar.foreground": "#f8f8f2",
@@ -137,11 +121,8 @@
         "inputValidation.errorBorder": "#ff5555",
         "inputValidation.infoBorder": "#ff79c6",
         "inputValidation.warningBorder": "#ffb86c",
-
-        // Selection fg color in quick actions popup
         "list.activeSelectionBackground": "#563044",
         "list.activeSelectionForeground": "#ddd",
-
         "list.dropBackground": "#44475a",
         "list.focusBackground": "#634a54",
         "list.focusForeground": "#ddd",
@@ -183,7 +164,6 @@
         "pickerGroup.border": "#bd93f9",
         "pickerGroup.foreground": "#8be9fd",
         "progressBar.background": "#ff79c6",
-
         "sideBar.background": "#121c26",
         "sideBar.foreground": "#aaa",
         "sideBarTitle.foreground": "#ddd",
@@ -249,8 +229,6 @@
         "titleBar.inactiveBackground": "#1a1f26",
         "titleBar.inactiveForeground": "#6272a4",
         "walkThrough.embeddedEditorBackground": "#253340",
-
-        // Formatting for the copilot chat window
         "chat.slashCommandBackground": "#094771",
         "chat.slashCommandForeground": "#d7b98e",
         "interactive.activeCodeBorder": "#ff6edb",
@@ -260,41 +238,108 @@
         "textCodeBlock.background": "#1a1a2e",
         "textPreformat.foreground": "#d7b98e",
         "textSeparator.foreground": "#ff6edb",
-
-        // Contrast color for selected items (subtle)
         "contrastActiveBorder": "#00000000",
-
-        // Tree indent guide colors
         "tree.indentGuidesStroke": "#b58fa399",
-
-        // Widget, Dialog & Popup borders
         "widget.border": "#6272a4",
         "quickInput.border": "#6272a4",
         "menu.border": "#6272a4",
         "menu.selectionBorder": "#6272a4",
         "commandCenter.border": "#253340",
         "commandCenter.activeBorder": "#6272a4",
-
-        // Form controls & inputs
         "checkbox.border": "#6272a4",
         "button.border": "#6272a4",
         "button.secondaryBorder": "#253340",
         "settings.dropdownBorder": "#6272a4",
         "panelInput.border": "#253340",
-
-        // AI / Agent / Chat Widgets
         "agentsPanel.border": "#253340",
         "agentsChatInput.border": "#253340",
         "agentsChatInput.focusBorder": "#6272a4",
         "agentsNewSessionButton.border": "#6272a4",
-
-        // Structural & Section borders
         "sideBar.border": "#253340",
         "sideBarSectionHeader.border": "#253340",
         "titleBar.border": "#253340",
         "terminal.border": "#253340",
         "editorStickyScroll.border": "#253340",
-        "tab.lastPinnedBorder": "#253340"
+        "tab.lastPinnedBorder": "#253340",
+        "errorLens.errorForeground": "#febbf3",
+        "errorLens.warningForeground": "#f4d29f",
+        "errorLens.infoForeground": "#96dcff",
+        "errorLens.hintForeground": "#c1ffc1"
+    },
+    "semanticHighlighting": true,
+    "semanticTokenColors": {
+        "function": {
+            "foreground": "#4B8CDC"
+        },
+        "method": {
+            "foreground": "#4B8CDC"
+        },
+        "unresolvedReference": {
+            "foreground": "#ff6edb",
+            "fontStyle": "strikethrough"
+        },
+        "*.deprecated": {
+            "fontStyle": "strikethrough"
+        },
+        "namespace": {
+            "foreground": "#7b939d"
+        },
+        "method.static": "#4B8CDC",
+        "function.static": "#4B8CDC",
+        "macro": "#4B8CDC",
+        "struct": "#DDE86E",
+        "enum": "#FCB141",
+        "enumMember": {
+            "foreground": "#FFCE66"
+        },
+        "*.mutable": {
+            "fontStyle": "bold"
+        },
+        "property": "#ad83da",
+        "variable": "#E192EF",
+        "parameter": "#7c86f4",
+        "selfTypeKeyword": "#ce55b7",
+        "selfKeyword": "#ce55b7",
+        "lifetime": "#c56db599",
+        "attributeBracket": "#2469ae",
+        "angle": "#2469ae",
+        "escapeSequence": "#2d78c2",
+        "formatSpecifier": "#2d78c2",
+        "typeAlias": "#ecc68e",
+        "operator": {
+            "fontStyle": "bold",
+            "foreground": "#4d6a9f"
+        },
+        "operator.unsafe": "#e02b9d",
+        "function.unsafe": "#e02b9d",
+        "method.unsafe": "#e02b9d",
+        "*.controlFlow": {
+            "fontStyle": "bold",
+            "foreground": "#d14178"
+        },
+        "*.static": {
+            "fontStyle": "bold",
+            "foreground": "#6665c7"
+        },
+        "constParameter": {
+            "fontStyle": "bold",
+            "foreground": "#6665c7"
+        },
+        "*.constant": {
+            "fontStyle": "bold",
+            "foreground": "#c465c7"
+        },
+        "*.trait": "#d1de73",
+        "*.reference": {
+            "fontStyle": ""
+        },
+        "variable.mutable": {
+            "fontStyle": "bold"
+        },
+        "keyword": {
+            "foreground": "#a8709e",
+            "fontStyle": "bold"
+        }
     },
     "tokenColors": [
         {
@@ -347,17 +392,6 @@
             "scope": ["support.class.builtin"],
             "settings": {
                 "foreground": "#50FA7B"
-            }
-        },
-        {
-            "scope": [
-                "comment",
-                "punctuation.definition.comment",
-                "unused.comment",
-                "wildcard.comment"
-            ],
-            "settings": {
-                "foreground": "#8B949E"
             }
         },
         {
@@ -782,18 +816,6 @@
             ],
             "settings": {
                 "foreground": "#FFB86C"
-            }
-        },
-        {
-            "scope": ["comment.line.graphql"],
-            "settings": {
-                "foreground": "#8B949E"
-            }
-        },
-        {
-            "scope": ["string.block.description.graphql.DOCSTRING"],
-            "settings": {
-                "foreground": "#8B949E"
             }
         },
         {
@@ -1589,24 +1611,6 @@
             }
         },
         {
-            "scope": "comment",
-            "settings": {
-                "foreground": "#8B949E"
-            }
-        },
-        {
-            "scope": "punctuation.definition.comment",
-            "settings": {
-                "foreground": "#8B949E"
-            }
-        },
-        {
-            "scope": ["comment", "punctuation.definition.comment"],
-            "settings": {
-                "fontStyle": ""
-            }
-        },
-        {
             "scope": "token.info-token",
             "settings": {
                 "foreground": "#6796E6"
@@ -1628,6 +1632,21 @@
             "scope": "token.debug-token",
             "settings": {
                 "foreground": "#B267E6"
+            }
+        },
+        {
+            "name": "R3BL Default Comments",
+            "scope": [
+                "comment",
+                "punctuation.definition.comment",
+                "unused.comment",
+                "wildcard.comment",
+                "comment.line.graphql",
+                "string.block.description.graphql.DOCSTRING"
+            ],
+            "settings": {
+                "foreground": "#8B949E",
+                "fontStyle": ""
             }
         }
     ]

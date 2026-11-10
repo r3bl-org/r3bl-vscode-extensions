@@ -24,12 +24,14 @@ describe("commentBrightness", () => {
             expect(COMMENT_COLORS.bright).toBe("#E8DCF4")
         })
 
-        it("covers all 4 R3BL themes", () => {
-            expect(ALL_R3BL_THEMES).toHaveLength(4)
+        it("covers all 6 R3BL themes", () => {
+            expect(ALL_R3BL_THEMES).toHaveLength(6)
             expect(ALL_R3BL_THEMES).toContain("R3BL Theme")
             expect(ALL_R3BL_THEMES).toContain("R3BL 2026 Theme")
+            expect(ALL_R3BL_THEMES).toContain("R3BL 2027 Theme")
             expect(ALL_R3BL_THEMES).toContain("R3BL Theme (No Italic)")
             expect(ALL_R3BL_THEMES).toContain("R3BL 2026 Theme (No Italic)")
+            expect(ALL_R3BL_THEMES).toContain("R3BL 2027 Theme (No Italic)")
         })
 
         it("defines helpful descriptions for each level", () => {
@@ -42,7 +44,7 @@ describe("commentBrightness", () => {
     })
 
     describe("buildTokenColorCustomizations", () => {
-        it("creates customizations for all 4 R3BL themes from empty object", () => {
+        it("creates customizations for all 6 R3BL themes from empty object", () => {
             const result = buildTokenColorCustomizations("dim")
 
             for (const theme of ALL_R3BL_THEMES) {
@@ -72,6 +74,8 @@ describe("commentBrightness", () => {
             expect(
                 brightResult["[R3BL Theme]"].textMateRules[0].settings.foreground,
             ).toBe("#E8DCF4")
+            expect(brightResult["[R3BL 2027 Theme]"].comments).toBe("#E8DCF4")
+            expect(brightResult["[R3BL 2027 Theme (No Italic)]"].comments).toBe("#E8DCF4")
         })
 
         it("preserves non-R3BL theme blocks", () => {

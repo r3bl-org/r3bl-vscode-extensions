@@ -2,10 +2,16 @@
 !package.json
 !themes/
 !themes/**
+!icons/
+!icons/**
 !r3bl-cube-logo.png
 !r3bl-cube-logo.svg
 !LICENSE
 !README.md
+src/
+dist/
+tsconfig.json
+jest.config.js
 .claude/
 .git/
 node_modules/

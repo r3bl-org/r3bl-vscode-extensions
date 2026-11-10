@@ -64,3 +64,5 @@ export function showStatusBarMessage(
 ): void {
     callSharedAPI("showStatusBarMessage", message, type)
 }
+
+export * from "./themeConstants"

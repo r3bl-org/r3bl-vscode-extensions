@@ -99,6 +99,9 @@ build_extension() {
         r3bl-theme)
             echo -e "${BLUE}Building R3BL Theme...${NC}"
             cd packages/r3bl-theme
+            [ ! -d "node_modules" ] && npm install
+            npm run build
+            npm test
             npx --no vsce package --no-dependencies --skip-license
             cleanup_old_versions "r3bl-theme" "$ver" "."
             cd ../..
@@ -187,6 +190,13 @@ else
         npx prettier --write "packages/${ext}/**/*.{ts,js,json,md}" 2>/dev/null || true
     done
 fi
+
+# Compile shared common code package first so dist/ is always fresh
+echo -e "${BLUE}Compiling R3BL Common Code...${NC}"
+cd packages/r3bl-common-code
+[ ! -d "node_modules" ] && npm install
+npm run compile
+cd ../..
 
 # Build target extensions
 echo ""
