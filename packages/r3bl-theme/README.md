@@ -54,32 +54,30 @@ Markdown development with enhanced readability and visual appeal.
 
 ## Screenshots
 
-![Editor Overview](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/editor-overview.png)
-_Full editor view with sidebar, tabs, and Rust code highlighting_
+All three themes are shown below on the same Rust file for direct visual comparison. Each
+theme also includes a matching **`(No Italic)`** variant (`R3BL 2027 Theme (No Italic)`,
+`R3BL 2026 Theme (No Italic)`, and `R3BL Theme (No Italic)`) with identical colors and
+straight, non-italic typography.
 
-![Rust Syntax Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/rust-syntax-highlighting.png)
-_Rust-specific syntax highlighting with distinct keyword, type, and function colors_
+### R3BL 2027 Theme
 
-![Documentation Comments](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/documentation-comments.png)
-_Beautiful rendering of documentation comments with code examples_
+![R3BL 2027 Theme](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/r3bl-2027-theme.jpg)
+_Catppuccin Mocha workbench (`#1e1e2e` / `#181825`), bundled **R3BL 2027 Icons**, rainbow
+bracket guides, R3BL semantic tokens, and pill-tinted inlay hints. Also available as
+`R3BL 2027 Theme (No Italic)`._
 
-![Markdown Tables](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/markdown-tables.png)
-_Markdown-style tables in comments with clear formatting_
+### R3BL 2026 Theme
 
-![Test Functions](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/test-functions.png)
-_Rust-specific syntax highlighting with distinct keyword, type, and function colors_
+![R3BL 2026 Theme](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/r3bl-2026-theme.jpg)
+_Modernized 2026 dark palette with deep `#0e0f10` editor and sidebar background, R3BL
+semantic tokens, and pill-tinted inlay hints. Also available as
+`R3BL 2026 Theme (No Italic)`._
 
-![Variable Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/variable-highlighting.png)
-_Clear variable and parameter highlighting_
+### R3BL Theme
 
-![Async Functions](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/async-functions.png)
-_Async function highlighting with type parameters and trait bounds_
-
-![Type Annotations](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/type-annotations.png)
-_Complex type annotations with clear visual hierarchy_
-
-![Selection Highlighting](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/selection-highlighting.png)
-_Selection highlighting with bracket pair colorization_
+![R3BL Theme](https://raw.githubusercontent.com/r3bl-org/r3bl-vscode-extensions/main/packages/r3bl-theme/images/r3bl-theme.jpg)
+_Classic R3BL dark palette (`#0e1419` editor / `#121c26` sidebar) with R3BL semantic
+tokens and pill-tinted inlay hints. Also available as `R3BL Theme (No Italic)`._
 
 ## Installation
 

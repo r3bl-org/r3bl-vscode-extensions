@@ -5,6 +5,24 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-11-11] - Streamlined Theme Screenshots Across All 3 R3BL Themes
+
+### Package Versions
+
+- **R3BL Theme**: 1.1.0 → 1.1.1
+- **R3BL Extension Pack**: 1.5.0 → 1.5.1
+
+### Changes
+
+- **R3BL Theme 1.1.1**: Updated and streamlined theme screenshots
+    - Replaced the 9 outdated single-theme screenshots with 3 side-by-side comparison hero
+      screenshots covering **R3BL 2027 Theme** (with bundled **R3BL 2027 Icons**), **R3BL
+      2026 Theme**, and **R3BL Theme** on the same Rust file (showcasing rustdoc comments,
+      semantic highlighting, rainbow bracket guides, and pill-tinted inlay hints)
+    - Documented the matching `(No Italic)` variants alongside each theme preview
+
+- **R3BL Extension Pack 1.5.1**: Pack version update for `r3bl-theme` 1.1.1
+
 ## [2026-11-10] - R3BL 2027 Theme, Bundled R3BL 2027 Icons & Shared Theme Pipeline
 
 ### Package Versions
@@ -18,10 +36,9 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 - **R3BL Theme 1.1.0**: Added `R3BL 2027 Theme`, `R3BL 2027 Theme (No Italic)`, and
   bundled `R3BL 2027 Icons`
-    - **R3BL 2027 Theme & No Italic Variant**: Combines the Catppuccin Mocha
-      (workbench colors, TextMate grammar, and Neovim rainbow bracket colors)
-      with R3BL semantic token rules, pill-tinted inlay hints, and ErrorLens
-      diagnostic foregrounds.
+    - **R3BL 2027 Theme & No Italic Variant**: Combines the Catppuccin Mocha (workbench
+      colors, TextMate grammar, and Neovim rainbow bracket colors) with R3BL semantic
+      token rules, pill-tinted inlay hints, and ErrorLens diagnostic foregrounds.
     - **Bundled `R3BL 2027 Icons` (`r3bl-2027-icons`)**: Self-contained file and folder
       icon theme (from Catppuccin Icons) bundled directly inside `r3bl-theme` for
       convenience (with no external extension dependencies).
@@ -52,8 +69,12 @@ adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - **R3BL Semantic Configuration 1.3.2**: Added Toggle Inlay Hints command
-    - **Toggle Inlay Hints (`Ctrl+Alt+I` / `r3bl-semantic-config.toggleInlayHints`)**: Quickly toggle editor inlay hints (`editor.inlayHints.enabled`) globally between `"on"` and `"off"`.
-    - Automatically transitions `"off"`, `false`, and modifier states (`"offUnlessPressed"` / `"onUnlessPressed"`) to `"on"`, and `"on"` or `true` to `"off"`.
+    - **Toggle Inlay Hints (`Ctrl+Alt+I` / `r3bl-semantic-config.toggleInlayHints`)**:
+      Quickly toggle editor inlay hints (`editor.inlayHints.enabled`) globally between
+      `"on"` and `"off"`.
+    - Automatically transitions `"off"`, `false`, and modifier states
+      (`"offUnlessPressed"` / `"onUnlessPressed"`) to `"on"`, and `"on"` or `true` to
+      `"off"`.
     - Displays a transient status bar notification displaying the new state.
 
 - **R3BL Extension Pack 1.4.6**: Pack and documentation update
@@ -69,8 +90,10 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 - **R3BL Theme 1.0.43**: Inlay hint color refinements across all 4 themes
     - Preserved pale, desaturated foreground colors for readability against syntax tokens
-    - Brightened background colors by 15% so inlay hint pills have balanced definition against dark canvases without glowing
-    - Updated all 4 variants: R3BL Theme, R3BL Theme (No Italic), R3BL 2026 Theme, and R3BL 2026 Theme (No Italic)
+    - Brightened background colors by 15% so inlay hint pills have balanced definition
+      against dark canvases without glowing
+    - Updated all 4 variants: R3BL Theme, R3BL Theme (No Italic), R3BL 2026 Theme, and
+      R3BL 2026 Theme (No Italic)
 
 ## [2026-10-28] - Remove Table of Contents from Extension READMEs
 
@@ -83,8 +106,11 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 
-- **R3BL Semantic Configuration 1.3.1, R3BL Task Management 1.4.3, R3BL Opened Editors 1.0.1**: Cleaned up README documentation
-    - Removed bulky Table of Contents sections and `DocToc` blocks from READMEs and `CHANGELOG.md` so extension content and features appear immediately above the fold in VS Code Marketplace and Open VSX listings
+- **R3BL Semantic Configuration 1.3.1, R3BL Task Management 1.4.3, R3BL Opened Editors
+  1.0.1**: Cleaned up README documentation
+    - Removed bulky Table of Contents sections and `DocToc` blocks from READMEs and
+      `CHANGELOG.md` so extension content and features appear immediately above the fold
+      in VS Code Marketplace and Open VSX listings
 
 ## [2026-10-28] - Jump Point Navigation (Definition Journey Stack)
 
@@ -95,7 +121,8 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 
-- **R3BL Semantic Configuration 1.3.0**: Added Jump Point Navigation (Definition Journey Stack)
+- **R3BL Semantic Configuration 1.3.0**: Added Jump Point Navigation (Definition Journey
+  Stack)
     - **Jump & Record (`Alt+U` / `r3bl-semantic-config.jumpAndRecord`)**: Jumps to
       definition via `editor.action.revealDefinition` and appends the stop to an ordered
       in-memory journey stack. Automatically captures both the starting origin (`#1`) and
@@ -111,7 +138,8 @@ adheres to [Semantic Versioning](http://semver.org/).
       journey stack.
 
 - **R3BL Extension Pack 1.4.0**: Pack and documentation update
-    - Updated dependencies and keyboard shortcut documentation to include `r3bl-semantic-config` 1.3.0 (`Alt+U` and `Alt+Shift+U`).
+    - Updated dependencies and keyboard shortcut documentation to include
+      `r3bl-semantic-config` 1.3.0 (`Alt+U` and `Alt+Shift+U`).
 
 ## [2026-10-27] - Synchronize Cursor Colors for R3BL 2026 Themes
 
@@ -133,9 +161,13 @@ adheres to [Semantic Versioning](http://semver.org/).
     - Updated dependencies to include `r3bl-theme` 1.0.39.
 
 - **Internal / Tooling**:
-    - Replaced legacy `@vscode/test-electron` test runner with lightweight headless Jest tests in `r3bl-task-management`.
-    - Removed unused `@vscode/test-electron` configuration from `r3bl-auto-insert-copyright`, reclaiming ~350MB of disk space.
-    - Updated root `package.json` test script to `"npm run test --workspaces --if-present"` to run all unit tests in parallel headlessly without launching Electron desktop windows.
+    - Replaced legacy `@vscode/test-electron` test runner with lightweight headless Jest
+      tests in `r3bl-task-management`.
+    - Removed unused `@vscode/test-electron` configuration from
+      `r3bl-auto-insert-copyright`, reclaiming ~350MB of disk space.
+    - Updated root `package.json` test script to
+      `"npm run test --workspaces --if-present"` to run all unit tests in parallel
+      headlessly without launching Electron desktop windows.
 
 ## [2026-10-08] - Proprietary Closed Source License Option for Auto Insert Copyright
 
