@@ -99,6 +99,7 @@ install a stale bundle.
 
 `build.sh` can build all extensions (default when run without arguments) or specific
 extensions for fast incremental builds:
+
 ```bash
 ./build.sh <extension-name> [extension-name...]
 # Examples:
@@ -138,13 +139,14 @@ These are installable extensions published to the VSCode Marketplace:
 
 ```
 packages/
-├── r3bl-extension-pack/              # Extension pack (installs all R3BL extensions)
-├── r3bl-theme/                       # Theme extension
-├── r3bl-auto-insert-copyright/       # Copyright insertion extension
-├── r3bl-semantic-config/             # Semantic highlighting configuration
-├── r3bl-task-management/             # Task space management extension
+├── r3bl-extension-pack/                # Extension pack (installs all R3BL extensions)
+├── r3bl-theme/                         # Dark themes (R3BL, 2026, 2027 + No Italic) & R3BL 2027 Icons
+├── r3bl-auto-insert-copyright/         # Copyright insertion extension
+├── r3bl-semantic-config/               # Semantic highlighting, rustdoc tools & theme sync
+├── r3bl-task-management/               # Task space management extension
 ├── r3bl-copy-selection-path-and-range/ # Copy file paths with selection ranges extension
-└── r3bl-fuzzy-search/                # Fuzzy file search extension
+├── r3bl-fuzzy-search/                  # Fuzzy file search extension
+└── r3bl-opened-editors/                # Opened editors sidebar view extension
 ```
 
 ### Infrastructure Packages (Internal)
@@ -198,10 +200,12 @@ User Installs Extension Pack
     - Accessed via extension API: `vscode.extensions.getExtension('R3BL.r3bl-shared')`
     - Auto-installed via `extensionDependencies` in each extension's package.json
 - **r3bl-common-code**: NPM package with compile-time utilities (wrapper functions, type
-  definitions)
-    - Bundled into each extension at build time via webpack
+  definitions, and shared theme constants)
+    - Bundled into runtime extensions via webpack and imported at build time by
+      `r3bl-theme`'s static theme generator
     - Used as local dependency: `"r3bl-common-code": "file:../r3bl-common-code"`
-    - Provides simplified API wrappers that call r3bl-shared services
+    - Provides simplified API wrappers that call r3bl-shared services plus shared theme
+      constants (`themeConstants.ts`)
 
 ## Using R3BL Shared Extension API
 
@@ -296,22 +300,70 @@ showStatusBarMessage("Please check your settings", "warning")
 
 ### Available Utilities
 
-The r3bl-common-code package exports:
+The `r3bl-common-code` package exports:
 
-- `showStatusBarMessage(message: string, type: StatusBarMessageType)` - Type-safe wrapper
-  for status bar messages
-- `callSharedAPI(apiMethod: string, ...args: any[])` - Generic API caller for
-  extensibility
-- `StatusBarMessageType` - Type definition for message types
+- **Runtime API Wrappers (`src/index.ts`)**:
+    - `showStatusBarMessage(message: string, type: StatusBarMessageType)` - Type-safe
+      wrapper for status bar messages
+    - `callSharedAPI(apiMethod: string, ...args: any[])` - Generic API caller for
+      extensibility
+    - `StatusBarMessageType` - Type definition for message types
+- **Shared Theme Constants (`src/themeConstants.ts`)**:
+    - Theme & icon identifiers (`ITALIC_THEMES`, `NO_ITALIC_THEMES`, `ALL_R3BL_THEMES`,
+      `R3BL_2027_THEMES`, `R3BL_2027_ICON_THEME_ID`)
+    - Cross-theme static workbench/editor color overlays (`SHARED_INLAY_HINT_COLORS`,
+      `SHARED_ERROR_LENS_COLORS`, `SHARED_LINE_HIGHLIGHT_COLORS`)
+    - Comment brightness palettes and scopes (`COMMENT_COLORS`, `COMMENT_DESCRIPTIONS`,
+      `COMMENT_SCOPES`)
+    - Semantic token rules (`BASE_SEMANTIC_RULES`, `SEMANTIC_RULES_ITALIC`,
+      `SEMANTIC_RULES_NO_ITALIC`)
+
+> **Important:** Keep `packages/r3bl-common-code/src/themeConstants.ts` completely free of
+> `vscode` runtime imports so plain Node.js build scripts (`generateThemes.ts`) and Jest
+> unit tests can import `r3bl-common-code/dist/themeConstants` directly.
 
 ### Architecture
 
-The r3bl-common-code package:
+The `r3bl-common-code` package:
 
-- Is compiled with TypeScript compiler (tsc) to separate .js and .d.ts files
+- Is compiled automatically by `./build.sh` with `tsc` to separate `.js` and `.d.ts` files
+  in `dist/` before any target extension is built
 - Provides proper type definitions for TypeScript intellisense
 - Includes complete error handling with marketplace link fallback
-- Works seamlessly with r3bl-shared extension via runtime API calls
+- Works seamlessly with `r3bl-shared` extension via runtime API calls and acts as the
+  single source of truth for theme rules shared between `r3bl-theme` and
+  `r3bl-semantic-config`
+
+## Theme Generation Pipeline (`r3bl-theme`)
+
+All 6 color theme files in `packages/r3bl-theme/themes/` (`R3BL Theme`, `R3BL 2026 Theme`,
+`R3BL 2027 Theme`, and their `(No Italic)` variants) are **generated artifacts**—**never
+hand-edit `packages/r3bl-theme/themes/*.json` directly**.
+
+- **Edition Sources (`packages/r3bl-theme/src/editions/`)**:
+    - `r3bl-theme.edition.jsonc` — Classic R3BL dark palette
+    - `r3bl-2026.edition.json` — Modernized 2026 deep `#0e0f10` dark palette
+    - `r3bl-2027.edition.json` — Upstream Catppuccin Mocha workbench, TextMate, and Neovim
+      rainbow bracket base
+- **Bundled Icon Theme (`packages/r3bl-theme/icons/r3bl-2027-icons/`)**:
+    - Contributed as `r3bl-2027-icons` (`R3BL 2027 Icons`) and automatically activated by
+      `r3bl-semantic-config` when selecting either `R3BL 2027 Theme` variant
+- **Static Generator (`packages/r3bl-theme/src/generateThemes.ts`)**:
+    - Merges shared color overlays (`SHARED_INLAY_HINT_COLORS`,
+      `SHARED_ERROR_LENS_COLORS`, `SHARED_LINE_HIGHLIGHT_COLORS`) from
+      `r3bl-common-code/src/themeConstants.ts` over each edition's `colors`
+    - Normalizes generic comment scopes to the default `dim` (`#8B949E`) non-italic rule
+    - Applies `SEMANTIC_RULES_ITALIC` / `SEMANTIC_RULES_NO_ITALIC` and strips all `italic`
+      `fontStyle` modifiers from `(No Italic)` variants
+- **Modifying Themes**:
+    - For **cross-theme rules** (shared across all 6 themes), edit
+      `packages/r3bl-common-code/src/themeConstants.ts` (and `generateThemes.ts` if adding
+      a new constant)
+    - For **edition-specific palette colors**, edit the corresponding file in
+      `packages/r3bl-theme/src/editions/`
+    - Run `./build.sh r3bl-theme`, which compiles `r3bl-common-code`, regenerates all 6
+      files in `themes/`, formats them with Prettier, and runs Jest zero-drift
+      verification (`packages/r3bl-theme/src/__tests__/generateThemes.test.ts`)
 
 ## Modifying Existing Extensions
 
@@ -487,7 +539,8 @@ In `packages/r3bl-extension-pack/package.json`, add to the `extensionPack` array
 - Add a section under "Individual Extensions"
 - Update the "Extension Pack" description
 - Update the "Structure" section
-- **Do NOT add a Table of Contents** (never use `doctoc` or `mktoc` in `README.md` or `CHANGELOG.md` files)
+- **Do NOT add a Table of Contents** (never use `doctoc` or `mktoc` in `README.md` or
+  `CHANGELOG.md` files)
 
 ### 7. Update `script_lib.sh`
 
@@ -559,10 +612,10 @@ git commit -m "[extension-name] Add r3bl-new-extension"
 
 This generates all .vsix files with your latest changes. The build script:
 
-- Compiles TypeScript extensions (r3bl-auto-insert-copyright, r3bl-semantic-config,
-  r3bl-copy-selection-path-and-range)
-- Runs unit tests for extensions that have them (r3bl-semantic-config) — test failures
-  block packaging
+- Compiles `r3bl-common-code` first so shared `dist/` artifacts are always fresh
+- Compiles TypeScript extensions and generates all 6 static `r3bl-theme` JSON files
+- Runs unit tests for extensions that have them (`r3bl-theme`, `r3bl-semantic-config`) —
+  test failures block packaging
 - Packages all individual extensions
 - Builds the extension pack
 - Creates all .vsix artifacts in their respective directories
@@ -578,21 +631,18 @@ is crucial for:
 ## Build and Package Commands
 
 ```bash
-# Generate all extension .vsix artifacts
+# Build and package all extension .vsix artifacts:
 ./build.sh
 
-# Or build specific extensions manually:
-npm run build:theme
-npm run build:copyright
-npm run build:semantic-config
+# Build and package specific extensions (fast incremental build):
+./build.sh r3bl-theme r3bl-extension-pack
+./build.sh r3bl-semantic-config r3bl-extension-pack
 
-# Package specific extensions:
-npm run package:theme
-npm run package:copyright
-npm run package:semantic-config
-npm run package:extension-pack
+# Run unit tests across all workspaces that define them:
+npm test
 
-# Run unit tests (for extensions that have them):
+# Or run unit tests in a specific extension directory:
+cd packages/r3bl-theme && npm test
 cd packages/r3bl-semantic-config && npm test
 ```
 
@@ -660,7 +710,9 @@ Update CHANGELOG.md when:
 - ✅ Include clear descriptions of what changed and why
 - ✅ Be user-focused: explain benefits, not just technical details
 - ✅ Update changelog BEFORE committing
-- ✅ **No Table of Contents**: Never add a Table of Contents or run `doctoc` / `mktoc` on `README.md` or `CHANGELOG.md` files; TOCs push actual content below the fold in VS Code Marketplace and Open VSX listings.
+- ✅ **No Table of Contents**: Never add a Table of Contents or run `doctoc` / `mktoc` on
+  `README.md` or `CHANGELOG.md` files; TOCs push actual content below the fold in VS Code
+  Marketplace and Open VSX listings.
 
 ## R3BL Shared Architecture
 
@@ -742,7 +794,7 @@ if (sharedExt?.isActive && sharedExt.exports?.myServiceDoSomething) {
 **4. Document:**
 
 - Update `packages/r3bl-shared/README.md` with new API details
-- Add to this section in CLAUDE.md
+- Add to this section in `AGENTS.md`
 
 ### Current Shared APIs
 
@@ -838,7 +890,7 @@ When modifying an extension:
 - [ ] Update CHANGELOG.md with changes and new versions
 - [ ] **If shortcuts or settings changed**: Update
       `packages/r3bl-extension-pack/README.md`
-- [ ] **If README.md has a TOC**: Verify TOC matches actual headings after any changes
+- [ ] **No Table of Contents**: Verify no TOC was added to `README.md` or `CHANGELOG.md`
 - [ ] Run `npm test` in the extension directory (if tests exist)
 - [ ] Run `./build.sh` to generate artifacts (also runs tests automatically)
 - [ ] Run `./install.sh` to test locally (optional)
