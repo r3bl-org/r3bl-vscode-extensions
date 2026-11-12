@@ -11,6 +11,7 @@ import {
     SEMANTIC_RULES_NO_ITALIC,
     SHARED_ERROR_LENS_COLORS,
     SHARED_INLAY_HINT_COLORS,
+    SHARED_LINE_HIGHLIGHT_COLORS,
 } from "r3bl-common-code/dist/themeConstants"
 import {
     EDITIONS,
@@ -112,12 +113,18 @@ describe("generateThemes", () => {
                     expect(diskNoItalic).toEqual(expectedNoItalic)
                 })
 
-                it("applies shared inlay hint and ErrorLens colors identically", () => {
+                it("applies shared inlay hint, ErrorLens, and current-line highlight colors identically", () => {
                     for (const [key, hex] of Object.entries(SHARED_INLAY_HINT_COLORS)) {
                         expect(diskItalic.colors[key]).toBe(hex)
                         expect(diskNoItalic.colors[key]).toBe(hex)
                     }
                     for (const [key, hex] of Object.entries(SHARED_ERROR_LENS_COLORS)) {
+                        expect(diskItalic.colors[key]).toBe(hex)
+                        expect(diskNoItalic.colors[key]).toBe(hex)
+                    }
+                    for (const [key, hex] of Object.entries(
+                        SHARED_LINE_HIGHLIGHT_COLORS,
+                    )) {
                         expect(diskItalic.colors[key]).toBe(hex)
                         expect(diskNoItalic.colors[key]).toBe(hex)
                     }

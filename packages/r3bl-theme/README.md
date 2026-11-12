@@ -233,15 +233,6 @@ language server's understanding of your code, not just regex patterns.
 - Consistent darkness across all UI elements
 - Reduced blue light in the color palette
 
-## Comparison with Other Themes
-
-| Feature              | R3BL Theme       | Generic Dark Themes |
-| -------------------- | ---------------- | ------------------- |
-| Rust Optimization    | ✅ Purpose-built | ❌ Generic patterns |
-| Semantic Support     | ✅ Full support  | ⚠️ Varies           |
-| Markdown in Comments | ✅ Rendered      | ⚠️ Basic            |
-| Eye Comfort          | ✅ Optimized     | ⚠️ Varies           |
-
 ## Customization
 
 Want to tweak the themes? Add to your `settings.json`:

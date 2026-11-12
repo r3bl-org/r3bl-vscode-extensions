@@ -5,6 +5,26 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-11-12] - Unified Current-Line Highlight Across All R3BL Themes
+
+### Package Versions
+
+- **R3BL Theme**: 1.1.1 → 1.1.2
+- **R3BL Extension Pack**: 1.5.1 → 1.5.2
+- **r3bl-common-code**: 1.1.0 → 1.1.1
+
+### Changes
+
+- **R3BL Theme 1.1.2**: Unified current-line highlight across all 6 R3BL theme variants
+    - Moved `editor.lineHighlightBackground` (`#37d9ca30`) and
+      `editor.lineHighlightBorder` (`#f9cf0140`) into the shared static overlay
+      (`SHARED_LINE_HIGHLIGHT_COLORS`) applied during theme generation
+    - Updated `R3BL 2027 Theme` and `R3BL 2027 Theme (No Italic)` from the Catppuccin
+      Mocha default current-line style to match `R3BL Theme` and `R3BL 2026 Theme`
+    - Removed redundant "Comparison with Other Themes" section from `r3bl-theme` README
+
+- **R3BL Extension Pack 1.5.2**: Pack version update for `r3bl-theme` 1.1.2
+
 ## [2026-11-11] - Streamlined Theme Screenshots Across All 3 R3BL Themes
 
 ### Package Versions

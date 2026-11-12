@@ -8,11 +8,7 @@
  * build scripts and unit tests can import it directly.
  */
 
-export const ITALIC_THEMES = [
-    "R3BL Theme",
-    "R3BL 2026 Theme",
-    "R3BL 2027 Theme",
-] as const
+export const ITALIC_THEMES = ["R3BL Theme", "R3BL 2026 Theme", "R3BL 2027 Theme"] as const
 
 export const NO_ITALIC_THEMES = [
     "R3BL Theme (No Italic)",
@@ -43,6 +39,11 @@ export const SHARED_ERROR_LENS_COLORS = {
     "errorLens.warningForeground": "#f4d29f",
     "errorLens.infoForeground": "#96dcff",
     "errorLens.hintForeground": "#c1ffc1",
+} as const
+
+export const SHARED_LINE_HIGHLIGHT_COLORS = {
+    "editor.lineHighlightBackground": "#37d9ca30",
+    "editor.lineHighlightBorder": "#f9cf0140",
 } as const
 
 export type CommentBrightnessLevel = "dim" | "medium" | "bright"

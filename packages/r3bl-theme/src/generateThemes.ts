@@ -9,6 +9,7 @@ import {
     SEMANTIC_RULES_NO_ITALIC,
     SHARED_ERROR_LENS_COLORS,
     SHARED_INLAY_HINT_COLORS,
+    SHARED_LINE_HIGHLIGHT_COLORS,
 } from "r3bl-common-code/dist/themeConstants"
 
 export interface TokenColorRule {
@@ -279,6 +280,7 @@ export function buildEditionPair(
         ...source.colors,
         ...SHARED_INLAY_HINT_COLORS,
         ...SHARED_ERROR_LENS_COLORS,
+        ...SHARED_LINE_HIGHLIGHT_COLORS,
     }
 
     const normalizedTokenColors = normalizeCommentTokenRules(source.tokenColors || [])
