@@ -6,4 +6,8 @@ module.exports = {
     testEnvironment: "node",
     roots: ["<rootDir>/src"],
     testMatch: ["**/__tests__/**/*.test.ts"],
+    moduleNameMapper: {
+        "^vscode$": "<rootDir>/src/__tests__/__mocks__/vscode.ts",
+        "^r3bl-common-code$": "<rootDir>/src/__tests__/__mocks__/r3bl-common-code.ts",
+    },
 }

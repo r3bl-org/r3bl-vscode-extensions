@@ -5,6 +5,55 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-11-15] - Explicit Task Stack, Per-Task Jump Point Navigation, & Spatial Context
+
+### Package Versions
+
+- **R3BL Task Management**: 1.4.3 → 1.5.0
+- **R3BL Semantic Configuration**: 1.4.0 → 1.5.0
+- **R3BL Extension Pack**: 1.5.2 → 1.6.0
+
+### Changes
+
+- **R3BL Task Management 1.5.0**: Added an explicit workspace **Task Stack** with a pure
+  typestate control plane and adopted per-task **Jump Point Navigation** to preserve full
+  **Spatial Context** across tasks
+    - **Explicit Task Stack (`task-spaces.json` `v6.0`) & Typestate Control Plane**:
+      Retired `nextQueueIds` and replaced implicit stack pushes on switch with an explicit
+      workspace-wide LIFO call stack (`taskSpaceStackIds`, ordered bottom-to-head)
+      governed by a pure 4-state machine (`taskStackStateMachine.ts`: `EmptyStackState`,
+      `OnStackState`, `BrowsingStackState`, `ParkedStackState`)
+    - **Non-Destructive Stack Browsing & Parked Stack Heads**: Flat-switching (`Enter` in
+      `Alt+Shift+T`) never pops or mutates the stack—selecting a paused caller lets you
+      browse stack frames freely (`browsing-stack`), while switching to an unrelated task
+      parks the stack with its `[Head]` intact (`parked`); `Alt+Shift+J` (`popTaskSpace`)
+      returns to `[Head]` when browsing/parked and pops only when at `[HEAD]` (`on-stack`)
+    - **Actions-First `Alt+Shift+T` Dashboard & Explicit Push/Finish Commands**: Placed
+      `Actions` (`Create New Task Space`, `Push New Subtask` for clean detours with only
+      `task/<name>.md`, `Pop Task Stack` / `Resume`, `Finish Current Task`,
+      `Close Current Task Space`) at the top of `Alt+Shift+T`, added inline
+      `Push onto Stack` buttons and `Task Management: Push Task onto Stack...`, and
+      updated `Finish Current Task` (`Alt+Shift+F`) to pop back to stacked callers or
+      close cleanly to `No Task Space`
+    - **Per-Task Jump Point Navigation (`Alt+U` / `Alt+Shift+U`)**: Moved
+      `jumpPointNavigator.ts` (`JumpPointsManager`) and unit tests from
+      `r3bl-semantic-config` to `r3bl-task-management`, persisting isolated jump points
+      per `taskSpaceId` in `.vscode/jump-points.json` (`v3.0`, with automatic
+      `v1.0`/`v2.0` migration, cross-IDE `FileSystemWatcher` + SHA-256 checksum
+      deduplication, workspace-relative URI resolution, active-task warning guard, and
+      automatic pruning on task finish/delete)
+    - **Standardized Terminology & Documentation**: Standardized **Spatial Context**
+      (Opened Tabs + Jump Point Navigation) and **Jump Point Navigation** across QuickPick
+      UI, `.code-search` export, `package.json`, `AGENTS.md`, module JSDoc, and
+      reorganized `README.md`, and ignored `.vscode/task-spaces.json` &
+      `.vscode/jump-points.json` in `.gitignore`
+
+- **R3BL Semantic Configuration 1.5.0**: Removed Jump Point Navigation commands and
+  keybindings (moved to `r3bl-task-management`)
+
+- **R3BL Extension Pack 1.6.0**: Pack version and README update for `r3bl-task-management`
+  1.5.0 and `r3bl-semantic-config` 1.5.0
+
 ## [2026-11-12] - Unified Current-Line Highlight Across All R3BL Themes
 
 ### Package Versions
@@ -132,7 +181,7 @@ adheres to [Semantic Versioning](http://semver.org/).
       `CHANGELOG.md` so extension content and features appear immediately above the fold
       in VS Code Marketplace and Open VSX listings
 
-## [2026-10-28] - Jump Point Navigation (Definition Journey Stack)
+## [2026-10-28] - Jump Point Navigation
 
 ### Package Versions
 
@@ -141,21 +190,20 @@ adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 
-- **R3BL Semantic Configuration 1.3.0**: Added Jump Point Navigation (Definition Journey
-  Stack)
+- **R3BL Semantic Configuration 1.3.0**: Added Jump Point Navigation
     - **Jump & Record (`Alt+U` / `r3bl-semantic-config.jumpAndRecord`)**: Jumps to
       definition via `editor.action.revealDefinition` and appends the stop to an ordered
-      in-memory journey stack. Automatically captures both the starting origin (`#1`) and
-      destination (`#2`) on the first jump so you can backtrack all the way to where you
-      started.
-    - **Journey Navigator Popup (`Alt+Shift+U` / `r3bl-semantic-config.showJumpPoints`)**:
-      Displays all recorded jump points in chronological order (`1..N`), marks and
-      pre-selects the current step (`→`) for fast `Up`/`Down` + `Enter` backtracking and
-      forward-tracking, and includes per-item `[🗑️]` removal buttons.
+      in-memory jump point stack. Automatically captures both the starting origin (`#1`)
+      and destination (`#2`) on the first jump so you can backtrack all the way to where
+      you started.
+    - **Jump Point Navigation Popup (`Alt+Shift+U` /
+      `r3bl-semantic-config.showJumpPoints`)**: Displays all recorded jump points in
+      chronological order (`1..N`), marks and pre-selects the current step (`→`) for fast
+      `Up`/`Down` + `Enter` backtracking and forward-tracking, and includes per-item
+      `[🗑️]` removal buttons.
     - **Search Editor Export (`.code-search`) & Clear All**: Includes bottom action rows
       in the QuickPick popup to dump all jump points (with surrounding context lines) into
-      a `/tmp/jump-journey-<timestamp>.code-search` Search Editor tab or clear the entire
-      journey stack.
+      a `.code-search` Search Editor tab or clear all jump points.
 
 - **R3BL Extension Pack 1.4.0**: Pack and documentation update
     - Updated dependencies and keyboard shortcut documentation to include

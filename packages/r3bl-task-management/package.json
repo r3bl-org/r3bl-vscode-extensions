@@ -1,8 +1,8 @@
 {
     "name": "r3bl-task-management",
     "displayName": "R3BL Task Management",
-    "description": "Manage task spaces - collections of open tabs for different work contexts",
-    "version": "1.4.3",
+    "description": "Preserve spatial context per task with Task Spaces, an explicit Task Stack, and Jump Point Navigation",
+    "version": "1.5.0",
     "publisher": "R3BL",
     "license": "MIT",
     "engines": {
@@ -18,6 +18,9 @@
         "context switching",
         "workflow",
         "task spaces",
+        "task stack",
+        "jump points",
+        "code navigation",
         "claude code",
         "gemini cli",
         "coding agent",
@@ -65,8 +68,13 @@
                 "category": "R3BL"
             },
             {
-                "command": "r3bl-task-management.pauseAndJumpToNext",
-                "title": "Task Management: Pause and Jump to Next Task",
+                "command": "r3bl-task-management.popTaskSpace",
+                "title": "Task Management: Pop Task from Stack",
+                "category": "R3BL"
+            },
+            {
+                "command": "r3bl-task-management.pushTaskSpace",
+                "title": "Task Management: Push Task onto Stack...",
                 "category": "R3BL"
             },
             {
@@ -77,6 +85,16 @@
             {
                 "command": "r3bl-task-management.closeCurrentTaskSpace",
                 "title": "Task Management: Close Current Task Space",
+                "category": "R3BL"
+            },
+            {
+                "command": "r3bl-task-management.jumpAndRecord",
+                "title": "Jump to Definition and Record Jump Point",
+                "category": "R3BL"
+            },
+            {
+                "command": "r3bl-task-management.showJumpPoints",
+                "title": "Show Jump Points",
                 "category": "R3BL"
             }
         ],
@@ -92,7 +110,7 @@
                 "when": "!terminalFocus"
             },
             {
-                "command": "r3bl-task-management.pauseAndJumpToNext",
+                "command": "r3bl-task-management.popTaskSpace",
                 "key": "alt+shift+j",
                 "when": "!terminalFocus"
             },
@@ -100,6 +118,15 @@
                 "command": "r3bl-task-management.closeCurrentTaskSpace",
                 "key": "alt+shift+c",
                 "when": "!terminalFocus"
+            },
+            {
+                "command": "r3bl-task-management.jumpAndRecord",
+                "key": "alt+u",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "r3bl-task-management.showJumpPoints",
+                "key": "alt+shift+u"
             }
         ],
         "configuration": {

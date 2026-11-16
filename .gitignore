@@ -16,6 +16,8 @@ Thumbs.db
 .vscode/settings.json
 .vscode/launch.json
 .vscode/tasks.json
+.vscode/task-spaces.json
+.vscode/jump-points.json
 *.swp
 *.swo
 

@@ -2,7 +2,7 @@
     "name": "r3bl-semantic-config",
     "displayName": "R3BL Semantic Configuration",
     "description": "Companion to R3BL themes - automatically applies enhanced semantic highlighting for Rust development",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "publisher": "R3BL",
     "engines": {
         "vscode": "^1.60.0"
@@ -84,16 +84,6 @@
                 "category": "R3BL"
             },
             {
-                "command": "r3bl-semantic-config.jumpAndRecord",
-                "title": "Jump to Definition and Record Jump Point",
-                "category": "R3BL"
-            },
-            {
-                "command": "r3bl-semantic-config.showJumpPoints",
-                "title": "Show Jump Points",
-                "category": "R3BL"
-            },
-            {
                 "command": "r3bl-semantic-config.toggleInlayHints",
                 "title": "Toggle Inlay Hints",
                 "category": "R3BL"
@@ -129,15 +119,6 @@
                 "command": "r3bl-semantic-config.insertRustdocLinkDef",
                 "key": "ctrl+shift+l",
                 "when": "editorTextFocus && editorLangId == rust"
-            },
-            {
-                "command": "r3bl-semantic-config.jumpAndRecord",
-                "key": "alt+u",
-                "when": "editorTextFocus"
-            },
-            {
-                "command": "r3bl-semantic-config.showJumpPoints",
-                "key": "alt+shift+u"
             },
             {
                 "command": "r3bl-semantic-config.toggleInlayHints",

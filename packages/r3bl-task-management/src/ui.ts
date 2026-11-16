@@ -9,7 +9,7 @@ import { promptToInstallCodingAgentIntegration } from "./codingAgentIntegration"
 
 interface TaskSpaceQuickPickItem extends vscode.QuickPickItem {
     taskSpace?: TaskSpace
-    action?: "create" | "switch" | "finish" | "close"
+    action?: "create" | "push-new" | "switch" | "finish" | "pop" | "close"
 }
 
 /**
@@ -21,7 +21,7 @@ export async function showTaskSpacesDialog(
     context?: vscode.ExtensionContext,
 ): Promise<void> {
     const quickPick = vscode.window.createQuickPick<TaskSpaceQuickPickItem>()
-    quickPick.placeholder = "Dashboard: Select a task or create a new one"
+    quickPick.placeholder = "Dashboard: Select a task (Enter = switch) or push onto stack"
     quickPick.matchOnDescription = true
     quickPick.matchOnDetail = true
 
@@ -29,84 +29,329 @@ export async function showTaskSpacesDialog(
     const items: TaskSpaceQuickPickItem[] = []
 
     const activeTaskSpace = manager.getActiveTaskSpace()
+    const stackState = manager.getStackState()
+    const excludedIds = new Set<string>()
+    if (activeTaskSpace) excludedIds.add(activeTaskSpace.id)
 
-    // 1. [Action] Finish Current Task & Close Current Task Space
-    if (activeTaskSpace) {
-        items.push({
-            label: `$(check) Finish Current Task: ${activeTaskSpace.name}`,
-            description: "Archive current task and jump to next",
-            action: "finish",
-        })
-        items.push({
-            label: `$(close) Close Current Task Space: ${activeTaskSpace.name}`,
-            description: "Save and close current task space tabs",
-            action: "close",
-        })
-        items.push({
-            label: "",
-            kind: vscode.QuickPickItemKind.Separator,
-        })
-    }
+    // 1 & 2: Project Actions (top) + Current Context (middle) from Typestate (`empty` | `on-stack` | `browsing-stack` | `parked`)
+    switch (stackState.mode) {
+        case "on-stack": {
+            const headSpace = manager.getTaskSpaceById(stackState.headTaskSpaceId)
+            const parentId =
+                stackState.pausedTaskSpaceIds[stackState.pausedTaskSpaceIds.length - 1]
+            const parentSpace = manager.getTaskSpaceById(parentId)
+            const headName = headSpace?.name ?? "current task"
+            const parentName = parentSpace?.name ?? "parent task"
 
-    // 2. [Action] Create New
-    items.push({
-        label: "$(add) Create New Task Space",
-        description: "Every task space gets an .md file",
-        action: "create",
-    })
+            items.push({
+                label: "Actions",
+                kind: vscode.QuickPickItemKind.Separator,
+            })
+            items.push({
+                label: "$(add) Create New Task Space",
+                description: "Clone current tabs into a new task space (parks stack)",
+                action: "create",
+            })
+            items.push({
+                label: "$(layers) Push New Subtask",
+                description: `Start clean (only new .md) & push "${headName}" onto stack`,
+                action: "push-new",
+            })
+            items.push({
+                label: "$(reply) Pop Task Stack",
+                description: `Pause "${headName}" & return to "${parentName}" (Alt+Shift+J)`,
+                action: "pop",
+            })
+            items.push({
+                label: `$(check) Finish Current Task: ${headName}`,
+                description: `Archive task & pop back to "${parentName}" (Alt+Shift+F)`,
+                action: "finish",
+            })
+            items.push({
+                label: `$(close) Close Current Task Space: ${headName}`,
+                description: "Save and close tabs (parks stack) (Alt+Shift+C)",
+                action: "close",
+            })
 
-    // 3. [Section] Next Queue
-    const nextQueue = manager.getNextQueue()
-    if (nextQueue.length > 0) {
-        items.push({
-            label: "Next Queue",
-            kind: vscode.QuickPickItemKind.Separator,
-        })
-        for (const ts of nextQueue) {
-            items.push(createTaskItem(ts, manager, false, "next"))
+            items.push({
+                label: "Active Task Stack",
+                kind: vscode.QuickPickItemKind.Separator,
+            })
+            if (headSpace) {
+                excludedIds.add(headSpace.id)
+                items.push(
+                    createStackOrActiveItem(
+                        headSpace,
+                        "$(arrow-right) [HEAD] ",
+                        "Current active head of Task Stack",
+                        false,
+                    ),
+                )
+            }
+            const reversedPaused = [...stackState.pausedTaskSpaceIds].reverse()
+            reversedPaused.forEach((pausedId, idx) => {
+                excludedIds.add(pausedId)
+                const ts = manager.getTaskSpaceById(pausedId)
+                if (!ts) return
+                const depth = idx + 1
+                const indent = "  ".repeat(Math.min(depth, 3))
+                items.push(
+                    createStackOrActiveItem(
+                        ts,
+                        `${indent}↳ `,
+                        `Paused on stack · ${depth} level${depth === 1 ? "" : "s"} down · Enter = browse frame`,
+                        true,
+                    ),
+                )
+            })
+            break
+        }
+
+        case "browsing-stack": {
+            const headSpace = manager.getTaskSpaceById(stackState.headTaskSpaceId)
+            const headName = headSpace?.name ?? "stack head"
+
+            items.push({
+                label: "Actions",
+                kind: vscode.QuickPickItemKind.Separator,
+            })
+            items.push({
+                label: "$(add) Create New Task Space",
+                description: "Clone current tabs into a new task space (parks stack)",
+                action: "create",
+            })
+            items.push({
+                label: "$(layers) Push New Subtask",
+                description: `Start clean (only new .md) & push above "${headName}"`,
+                action: "push-new",
+            })
+            if (headSpace) {
+                items.push({
+                    label: `$(layers) Resume Stack Head: ${headSpace.name}`,
+                    description: activeTaskSpace
+                        ? `Save "${activeTaskSpace.name}" & return to stack head (Alt+Shift+J)`
+                        : "Return to stack head (Alt+Shift+J)",
+                    action: "pop",
+                })
+            }
+            if (activeTaskSpace) {
+                items.push({
+                    label: `$(check) Finish Current Task: ${activeTaskSpace.name}`,
+                    description: `Archive frame & return to "${headName}" (Alt+Shift+F)`,
+                    action: "finish",
+                })
+                items.push({
+                    label: `$(close) Close Current Task Space: ${activeTaskSpace.name}`,
+                    description: "Save and close tabs (parks stack) (Alt+Shift+C)",
+                    action: "close",
+                })
+            }
+
+            items.push({
+                label: "Active Task Stack (Browsing)",
+                kind: vscode.QuickPickItemKind.Separator,
+            })
+            if (headSpace) {
+                excludedIds.add(headSpace.id)
+                items.push(
+                    createStackOrActiveItem(
+                        headSpace,
+                        "$(reply) [Head] ",
+                        "Stack Head · Enter or Alt+Shift+J = return to head",
+                        true,
+                    ),
+                )
+            }
+            const reversedPaused = [...stackState.pausedTaskSpaceIds].reverse()
+            reversedPaused.forEach((pausedId, idx) => {
+                excludedIds.add(pausedId)
+                const ts = manager.getTaskSpaceById(pausedId)
+                if (!ts) return
+                const depth = idx + 1
+                const indent = "  ".repeat(Math.min(depth, 3))
+                const isBrowsedActive = pausedId === stackState.activeTaskSpaceId
+                items.push(
+                    createStackOrActiveItem(
+                        ts,
+                        isBrowsedActive
+                            ? `${indent}$(arrow-right) ↳ [Active] `
+                            : `${indent}↳ `,
+                        isBrowsedActive
+                            ? `Viewing stack frame · ${depth} level${depth === 1 ? "" : "s"} below "${headName}" (stack preserved)`
+                            : `Paused on stack · ${depth} level${depth === 1 ? "" : "s"} down · Enter = browse frame`,
+                        true,
+                    ),
+                )
+            })
+            break
+        }
+
+        case "parked": {
+            const headSpace = manager.getTaskSpaceById(stackState.headTaskSpaceId)
+            const headName = headSpace?.name ?? "stack head"
+
+            items.push({
+                label: "Actions",
+                kind: vscode.QuickPickItemKind.Separator,
+            })
+            items.push({
+                label: "$(add) Create New Task Space",
+                description: "Clone current tabs into a new task space",
+                action: "create",
+            })
+            items.push({
+                label: "$(layers) Push New Subtask",
+                description: activeTaskSpace
+                    ? `Start clean & push "${activeTaskSpace.name}" onto stack above "${headName}"`
+                    : `Start clean & push onto parked stack above "${headName}"`,
+                action: "push-new",
+            })
+            if (headSpace) {
+                items.push({
+                    label: `$(layers) Resume Parked Stack: ${headSpace.name}`,
+                    description: activeTaskSpace
+                        ? `Save "${activeTaskSpace.name}" & jump back to stack head (Alt+Shift+J)`
+                        : "Jump back to parked stack head (Alt+Shift+J)",
+                    action: "pop",
+                })
+            }
+            if (activeTaskSpace) {
+                items.push({
+                    label: `$(check) Finish Current Task: ${activeTaskSpace.name}`,
+                    description:
+                        "Archive task & close tabs (parked stack preserved) (Alt+Shift+F)",
+                    action: "finish",
+                })
+                items.push({
+                    label: `$(close) Close Current Task Space: ${activeTaskSpace.name}`,
+                    description: "Save and close current task space tabs (Alt+Shift+C)",
+                    action: "close",
+                })
+            }
+
+            if (activeTaskSpace) {
+                items.push({
+                    label: "Active Task (Off-Stack)",
+                    kind: vscode.QuickPickItemKind.Separator,
+                })
+                items.push(
+                    createStackOrActiveItem(
+                        activeTaskSpace,
+                        "$(circle-filled) [Active] ",
+                        "Working off-stack (parked stack preserved below)",
+                        false,
+                    ),
+                )
+            }
+
+            items.push({
+                label: "Parked Task Stack",
+                kind: vscode.QuickPickItemKind.Separator,
+            })
+            if (headSpace) {
+                excludedIds.add(headSpace.id)
+                items.push(
+                    createStackOrActiveItem(
+                        headSpace,
+                        "$(reply) [Head] ",
+                        "Parked Stack Head · Enter = resume stack here",
+                        true,
+                    ),
+                )
+            }
+            const reversedPaused = [...stackState.pausedTaskSpaceIds].reverse()
+            reversedPaused.forEach((pausedId, idx) => {
+                excludedIds.add(pausedId)
+                const ts = manager.getTaskSpaceById(pausedId)
+                if (!ts) return
+                const indent = "  ".repeat(Math.min(idx + 1, 3))
+                items.push(
+                    createStackOrActiveItem(
+                        ts,
+                        `${indent}↳ `,
+                        `Paused beneath "${headName}" · Enter = browse frame`,
+                        true,
+                    ),
+                )
+            })
+            break
+        }
+
+        case "empty": {
+            items.push({
+                label: "Actions",
+                kind: vscode.QuickPickItemKind.Separator,
+            })
+            items.push({
+                label: "$(add) Create New Task Space",
+                description: "Clone current tabs into a new task space",
+                action: "create",
+            })
+            if (activeTaskSpace) {
+                items.push({
+                    label: "$(layers) Push New Subtask",
+                    description: `Start clean (only new .md) & push "${activeTaskSpace.name}" onto stack`,
+                    action: "push-new",
+                })
+                items.push({
+                    label: `$(check) Finish Current Task: ${activeTaskSpace.name}`,
+                    description: "Archive task & close tabs (Alt+Shift+F)",
+                    action: "finish",
+                })
+                items.push({
+                    label: `$(close) Close Current Task Space: ${activeTaskSpace.name}`,
+                    description: "Save and close current task space tabs (Alt+Shift+C)",
+                    action: "close",
+                })
+            }
+
+            if (activeTaskSpace) {
+                items.push({
+                    label: "Active Task",
+                    kind: vscode.QuickPickItemKind.Separator,
+                })
+                items.push(
+                    createStackOrActiveItem(
+                        activeTaskSpace,
+                        "$(arrow-right) [Active] ",
+                        "Current active task space",
+                        false,
+                    ),
+                )
+            }
+            break
+        }
+
+        default: {
+            const _exhaustive: never = stackState
+            return _exhaustive
         }
     }
 
-    // 4. [Section] Previous Stack (Paused)
-    const previousStack = manager.getPreviousStack()
-    if (previousStack.length > 0) {
-        items.push({
-            label: "Previous Stack (Paused)",
-            kind: vscode.QuickPickItemKind.Separator,
-        })
-        // Reverse because it's a stack (top is most recent)
-        for (const ts of [...previousStack].reverse()) {
-            items.push(createTaskItem(ts, manager, false, "previous"))
-        }
-    }
-
-    // 5. [Section] Other Tasks
+    // 3. [Bottom Section] Available Task Spaces
     const allTaskSpaces = manager.getTaskSpaces()
-    const queuedIds = new Set([
-        ...nextQueue.map((ts) => ts.id),
-        ...previousStack.map((ts) => ts.id),
-    ])
-    if (activeTaskSpace) queuedIds.add(activeTaskSpace.id)
+    const availableTasks = allTaskSpaces.filter((ts) => !excludedIds.has(ts.id))
+    const canPushFromCurrentContext = !!activeTaskSpace || stackState.mode !== "empty"
 
-    const otherTasks = allTaskSpaces.filter((ts) => !queuedIds.has(ts.id))
-
-    if (otherTasks.length > 0) {
+    if (availableTasks.length > 0) {
         items.push({
-            label: "Other Task Spaces",
+            label: "Available Task Spaces",
             kind: vscode.QuickPickItemKind.Separator,
         })
 
         // Fetch lastAccessed timestamps for sorting
         const lastAccessedMap = await manager.getAllLastAccessed()
-        const sortedOther = [...otherTasks].sort((a, b) => {
+        const sortedAvailable = [...availableTasks].sort((a, b) => {
             const aTime = lastAccessedMap[a.id] || 0
             const bTime = lastAccessedMap[b.id] || 0
             return bTime - aTime
         })
 
-        for (const ts of sortedOther) {
+        for (const ts of sortedAvailable) {
             const lastAccessed = lastAccessedMap[ts.id] || ts.createdAt
-            items.push(createTaskItem(ts, manager, false, "other", lastAccessed))
+            items.push(
+                createAvailableTaskItem(ts, lastAccessed, canPushFromCurrentContext),
+            )
         }
     }
 
@@ -121,14 +366,18 @@ export async function showTaskSpacesDialog(
 
         if (selected.action === "create") {
             await handleCreateTaskSpace(manager, statusBar, context)
+        } else if (selected.action === "push-new") {
+            await handlePushNewSubtask(manager, statusBar, context)
         } else if (selected.action === "finish") {
             await vscode.commands.executeCommand("r3bl-task-management.finishCurrentTask")
+        } else if (selected.action === "pop") {
+            await vscode.commands.executeCommand("r3bl-task-management.popTaskSpace")
         } else if (selected.action === "close") {
             await vscode.commands.executeCommand(
                 "r3bl-task-management.closeCurrentTaskSpace",
             )
         } else if (selected.taskSpace) {
-            await handleJumpToTask(manager, selected.taskSpace, statusBar)
+            await handleSwitchTaskSpace(manager, selected.taskSpace, statusBar)
         }
     })
 
@@ -140,7 +389,10 @@ export async function showTaskSpacesDialog(
         const button = e.button
         const ts = item.taskSpace
 
-        if (button.tooltip === "Rename") {
+        if (button.tooltip === "Push onto Stack") {
+            quickPick.hide()
+            await handlePushTaskSpace(manager, ts, statusBar)
+        } else if (button.tooltip === "Rename") {
             quickPick.hide()
             await handleRenameTaskSpace(manager, ts, statusBar)
             await showTaskSpacesDialog(manager, statusBar, context)
@@ -148,23 +400,20 @@ export async function showTaskSpacesDialog(
             quickPick.hide()
             await handleDeleteTaskSpace(manager, ts, statusBar)
             await showTaskSpacesDialog(manager, statusBar, context)
-        } else if (button.tooltip === "Add to Next Queue") {
-            await manager.addToNextQueue(ts.id)
-            await showTaskSpacesDialog(manager, statusBar, context)
-        } else if (button.tooltip === "Remove from Queue") {
-            await manager.removeFromNextQueue(ts.id)
-            await manager.removeFromPreviousStack(ts.id)
+        } else if (button.tooltip === "Remove from Stack") {
+            quickPick.hide()
+            await manager.removeFromTaskStack(ts.id)
+            updateStatusBar(statusBar, manager)
             await showTaskSpacesDialog(manager, statusBar, context)
         } else if (button.tooltip === "Move to Backlog") {
             quickPick.hide()
-            // Call internal method directly if it's the active task, or move the file manually?
-            // For simplicity, let's just trigger the command if it's the active one
             if (ts.id === activeTaskSpace?.id) {
                 await vscode.commands.executeCommand(
                     "r3bl-task-management.moveTaskToBacklog",
                 )
             } else {
                 await manager.moveToBacklog(ts.id)
+                updateStatusBar(statusBar, manager)
                 showStatusBarMessage(`Moved "${ts.name}" to backlog`, "success")
                 await showTaskSpacesDialog(manager, statusBar, context)
             }
@@ -176,32 +425,58 @@ export async function showTaskSpacesDialog(
 }
 
 /**
- * Helper to create QuickPick items for task spaces
+ * Show QuickPick to explicitly push an existing task space or a clean new subtask onto the stack.
  */
-function createTaskItem(
-    ts: TaskSpace,
+export async function showPushTaskSpacePicker(
     manager: TaskSpaceManager,
-    isActive: boolean,
-    location: "next" | "previous" | "other",
-    lastAccessed?: number,
-): TaskSpaceQuickPickItem {
-    const buttons: vscode.QuickInputButton[] = []
+    statusBar: vscode.StatusBarItem,
+    context?: vscode.ExtensionContext,
+): Promise<void> {
+    const activeTaskSpace = manager.getActiveTaskSpace()
+    const lastAccessedMap = await manager.getAllLastAccessed()
 
-    // Queue button
-    if (location === "other") {
-        buttons.push({
-            iconPath: new vscode.ThemeIcon("add"),
-            tooltip: "Add to Next Queue",
-        })
-    } else {
-        buttons.push({
-            iconPath: new vscode.ThemeIcon("close"),
-            tooltip: "Remove from Queue",
-        })
+    const candidates = manager
+        .getTaskSpaces()
+        .filter((ts) => ts.id !== activeTaskSpace?.id)
+        .sort((a, b) => (lastAccessedMap[b.id] || 0) - (lastAccessedMap[a.id] || 0))
+
+    interface PushOption extends vscode.QuickPickItem {
+        taskSpace?: TaskSpace
+        isNewSubtask?: boolean
     }
 
-    // Standard buttons
-    buttons.push(
+    const items: PushOption[] = [
+        {
+            label: "$(layers) Push New Subtask",
+            description:
+                "Create a clean task space (only new .md file) & push onto stack",
+            isNewSubtask: true,
+        },
+        ...candidates.map((ts) => ({
+            label: `$(book) ${ts.name}`,
+            description: `${ts.tabs.length} tabs | ${ts.taskFile ? path.basename(ts.taskFile) : "No file linked"}`,
+            taskSpace: ts,
+        })),
+    ]
+
+    const selected = await vscode.window.showQuickPick(items, {
+        placeHolder: activeTaskSpace
+            ? `Push onto stack (pausing "${activeTaskSpace.name}")`
+            : "Select a task space to open",
+        matchOnDescription: true,
+    })
+
+    if (!selected) return
+
+    if (selected.isNewSubtask) {
+        await handlePushNewSubtask(manager, statusBar, context)
+    } else if (selected.taskSpace) {
+        await handlePushTaskSpace(manager, selected.taskSpace, statusBar)
+    }
+}
+
+function standardTaskButtons(): vscode.QuickInputButton[] {
+    return [
         {
             iconPath: new vscode.ThemeIcon("archive"),
             tooltip: "Move to Backlog",
@@ -214,19 +489,26 @@ function createTaskItem(
             iconPath: new vscode.ThemeIcon("trash"),
             tooltip: "Delete",
         },
-    )
+    ]
+}
 
-    let detail = ""
-    if (location === "other") {
-        detail = `Last accessed: ${formatRelativeTime(lastAccessed || ts.createdAt)}`
-    } else if (location === "next") {
-        detail = "Waiting in Next Queue"
-    } else {
-        detail = "Paused in Previous Stack"
+function createStackOrActiveItem(
+    ts: TaskSpace,
+    prefix: string,
+    detail: string,
+    canRemoveFromStack: boolean,
+): TaskSpaceQuickPickItem {
+    const buttons: vscode.QuickInputButton[] = []
+    if (canRemoveFromStack) {
+        buttons.push({
+            iconPath: new vscode.ThemeIcon("close"),
+            tooltip: "Remove from Stack",
+        })
     }
+    buttons.push(...standardTaskButtons())
 
     return {
-        label: `${isActive ? "$(arrow-right) " : "$(book) "}${ts.name}`,
+        label: `${prefix}${ts.name}`,
         description: `${ts.tabs.length} tabs | ${ts.taskFile ? path.basename(ts.taskFile) : "No file linked"}`,
         detail,
         taskSpace: ts,
@@ -234,15 +516,47 @@ function createTaskItem(
     }
 }
 
+function createAvailableTaskItem(
+    ts: TaskSpace,
+    lastAccessed: number | undefined,
+    canPush: boolean,
+): TaskSpaceQuickPickItem {
+    const buttons: vscode.QuickInputButton[] = []
+    if (canPush) {
+        buttons.push({
+            iconPath: new vscode.ThemeIcon("layers"),
+            tooltip: "Push onto Stack",
+        })
+    }
+    buttons.push(...standardTaskButtons())
+
+    return {
+        label: `$(book) ${ts.name}`,
+        description: `${ts.tabs.length} tabs | ${ts.taskFile ? path.basename(ts.taskFile) : "No file linked"}`,
+        detail: `Last accessed: ${formatRelativeTime(lastAccessed || ts.createdAt)}`,
+        taskSpace: ts,
+        buttons,
+    }
+}
+
+function getPausedCount(manager: TaskSpaceManager): number {
+    const state = manager.getStackState()
+    return state.mode === "empty" ? 0 : state.pausedTaskSpaceIds.length
+}
+
 /**
- * Handle jumping to a task (Dashboard Workflow logic)
+ * Handle explicitly pushing an existing task space onto the stack
  */
-async function handleJumpToTask(
+async function handlePushTaskSpace(
     manager: TaskSpaceManager,
     taskSpace: TaskSpace,
     statusBar: vscode.StatusBarItem,
 ): Promise<void> {
-    if (manager.getActiveTaskSpaceId() === taskSpace.id) {
+    const isJoiningParkedStack =
+        manager.getStackState().mode === "parked" &&
+        manager.getActiveTaskSpaceId() === taskSpace.id
+
+    if (!isJoiningParkedStack && manager.getActiveTaskSpaceId() === taskSpace.id) {
         showStatusBarMessage(`Already in "${taskSpace.name}"`, "info")
         return
     }
@@ -250,39 +564,41 @@ async function handleJumpToTask(
     await vscode.window.withProgress(
         {
             location: vscode.ProgressLocation.Notification,
-            title: `Jumping to "${taskSpace.name}"...`,
+            title: `Pushing "${taskSpace.name}" onto stack...`,
             cancellable: false,
         },
-        async (progress) => {
+        async () => {
             try {
-                await manager.jumpToTask(taskSpace.id)
+                await manager.pushTaskSpace(taskSpace.id)
                 updateStatusBar(statusBar, manager)
-                showStatusBarMessage(`Jumped to context: ${taskSpace.name}`, "success")
+                showStatusBarMessage(
+                    isJoiningParkedStack
+                        ? `Pushed "${taskSpace.name}" onto parked stack (stack depth: ${getPausedCount(manager)})`
+                        : `Pushed to "${taskSpace.name}" (stack depth: ${getPausedCount(manager)})`,
+                    "success",
+                )
             } catch (error) {
-                showStatusBarMessage(`Failed to jump: ${error}`, "error")
+                showStatusBarMessage(`Failed to push task space: ${error}`, "error")
             }
         },
     )
 }
 
 /**
- * Handle creating a new task space
+ * Shared prompt helper for collecting a unique task space name and optional task/*.md link.
  */
-async function handleCreateTaskSpace(
+async function promptTaskSpaceDetails(
     manager: TaskSpaceManager,
-    statusBar: vscode.StatusBarItem,
-    context?: vscode.ExtensionContext,
-): Promise<void> {
-    // Step 1: Get task space name
+    namePrompt: string,
+): Promise<{ name: string; taskFile?: string } | undefined> {
     const name = await vscode.window.showInputBox({
-        prompt: "Enter task space name",
+        prompt: namePrompt,
         placeHolder: "e.g., Feature: User Authentication",
         validateInput: (value) => {
             if (!value || value.trim().length === 0) {
                 return "Task space name cannot be empty"
             }
 
-            // Check for duplicate names
             const taskSpaces = manager.getTaskSpaces()
             if (taskSpaces.some((ts) => ts.name === value)) {
                 return `Task space "${value}" already exists`
@@ -293,22 +609,20 @@ async function handleCreateTaskSpace(
     })
 
     if (!name) {
-        return // User cancelled
+        return undefined
     }
 
-    // Step 2: Optionally link a task file
     const linkTaskFile = await vscode.window.showQuickPick(
         [
             { label: "Yes", description: "Link a task/*.md file" },
-            { label: "No", description: "Create without task file" },
+            { label: "No", description: "Create new task/*.md file automatically" },
         ],
-        { placeHolder: "Link a task file?" },
+        { placeHolder: "Link an existing task file?" },
     )
 
     let taskFile: string | undefined
 
     if (linkTaskFile?.label === "Yes") {
-        // Show files from task/ directory
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0]
         if (workspaceFolder) {
             const taskDir = vscode.Uri.joinPath(workspaceFolder.uri, "task")
@@ -317,17 +631,20 @@ async function handleCreateTaskSpace(
                 const files = await vscode.workspace.fs.readDirectory(taskDir)
                 const mdFiles = files
                     .filter(
-                        ([name, type]) =>
-                            type === vscode.FileType.File && name.endsWith(".md"),
+                        ([fileName, type]) =>
+                            type === vscode.FileType.File && fileName.endsWith(".md"),
                     )
-                    .map(([name]) => ({
-                        label: name,
-                        description: "task/" + name,
+                    .map(([fileName]) => ({
+                        label: fileName,
+                        description: "task/" + fileName,
                     }))
 
                 if (mdFiles.length > 0) {
                     const selected = await vscode.window.showQuickPick(
-                        [{ label: "None", description: "No task file" }, ...mdFiles],
+                        [
+                            { label: "None", description: "Auto-create task file" },
+                            ...mdFiles,
+                        ],
                         { placeHolder: "Select a task file" },
                     )
 
@@ -338,30 +655,36 @@ async function handleCreateTaskSpace(
                     showStatusBarMessage("No .md files in task/ directory", "info")
                 }
             } catch {
-                // task/ directory doesn't exist
                 showStatusBarMessage("task/ directory not found", "info")
             }
         }
     }
 
-    // Step 3: Create task space with current tabs
+    return { name, taskFile }
+}
+
+/**
+ * Handle creating a new task space (clones currently open tabs)
+ */
+async function handleCreateTaskSpace(
+    manager: TaskSpaceManager,
+    statusBar: vscode.StatusBarItem,
+    context?: vscode.ExtensionContext,
+): Promise<void> {
+    const details = await promptTaskSpaceDetails(manager, "Enter task space name")
+    if (!details) return
+
     try {
-        const taskSpace = await manager.createTaskSpace(name, taskFile)
-
-        // Switch to the new task space
-        await manager.switchToTaskSpaceFromUserAction(taskSpace.id)
-
-        // Update status bar
+        const taskSpace = await manager.createTaskSpace(details.name, details.taskFile)
+        await manager.switchTaskSpace(taskSpace.id)
         updateStatusBar(statusBar, manager)
 
-        // Show confirmation
         showStatusBarMessage(
-            `Task space "${name}" created (${taskSpace.tabs.length} tabs)`,
+            `Task space "${details.name}" created (${taskSpace.tabs.length} tabs)`,
             "success",
         )
 
-        // Prompt to install Coding Agent integration if task file is linked
-        if (taskFile && context) {
+        if (details.taskFile && context) {
             await promptToInstallCodingAgentIntegration(context)
         }
     } catch (error) {
@@ -370,7 +693,35 @@ async function handleCreateTaskSpace(
 }
 
 /**
- * Handle switching to a task space
+ * Handle pushing a clean new subtask onto the Task Stack (only its task/*.md file open)
+ */
+async function handlePushNewSubtask(
+    manager: TaskSpaceManager,
+    statusBar: vscode.StatusBarItem,
+    context?: vscode.ExtensionContext,
+): Promise<void> {
+    const details = await promptTaskSpaceDetails(manager, "Enter subtask name")
+    if (!details) return
+
+    try {
+        const subtask = await manager.pushNewSubtask(details.name, details.taskFile)
+        updateStatusBar(statusBar, manager)
+
+        showStatusBarMessage(
+            `Pushed clean subtask "${subtask.name}" (stack depth: ${getPausedCount(manager)})`,
+            "success",
+        )
+
+        if (details.taskFile && context) {
+            await promptToInstallCodingAgentIntegration(context)
+        }
+    } catch (error) {
+        showStatusBarMessage(`Failed to push subtask: ${error}`, "error")
+    }
+}
+
+/**
+ * Handle flat switching to a task space (without pushing current task onto the stack)
  */
 async function handleSwitchTaskSpace(
     manager: TaskSpaceManager,
@@ -412,8 +763,8 @@ async function handleSwitchTaskSpace(
             try {
                 progress.report({ increment: 0 })
 
-                // Switch task space
-                await manager.switchToTaskSpaceFromUserAction(taskSpace.id)
+                // Flat switch task space (or resume parked stack if selecting stack head)
+                const outcome = await manager.switchTaskSpace(taskSpace.id)
 
                 progress.report({ increment: 100 })
 
@@ -421,8 +772,14 @@ async function handleSwitchTaskSpace(
                 updateStatusBar(statusBar, manager)
 
                 // Show confirmation
+                const actionVerb =
+                    outcome === "resumed-stack"
+                        ? "Resumed stack head"
+                        : outcome === "browsed-stack"
+                          ? "Browsing stack frame"
+                          : "Switched to"
                 showStatusBarMessage(
-                    `Switched to "${taskSpace.name}" (${taskSpace.tabs.length} tabs)`,
+                    `${actionVerb} "${taskSpace.name}" (${taskSpace.tabs.length} tabs)`,
                     "success",
                 )
             } catch (error) {
@@ -547,17 +904,72 @@ export function updateStatusBar(
     }
 
     const activeTaskSpace = manager.getActiveTaskSpace()
+    const stackState = manager.getStackState()
+    const stackChain = manager
+        .getTaskStackSpaces()
+        .map((ts) => ts.name)
+        .join(" → ")
 
-    if (activeTaskSpace) {
-        statusBarItem.text = `$(book) ${activeTaskSpace.name} (${activeTaskSpace.tabs.length})`
-        statusBarItem.backgroundColor = undefined // Default background
-        statusBarItem.show()
-    } else {
-        statusBarItem.text = "$(book) No Task Space"
-        statusBarItem.backgroundColor = new vscode.ThemeColor(
-            "statusBarItem.warningBackground",
-        )
-        statusBarItem.show()
+    switch (stackState.mode) {
+        case "on-stack": {
+            const pausedCount = stackState.pausedTaskSpaceIds.length
+            const name = activeTaskSpace?.name ?? "Task"
+            const tabCount = activeTaskSpace?.tabs.length ?? 0
+            statusBarItem.text = `$(layers) ${name} (${tabCount}) [stack: ${pausedCount}]`
+            statusBarItem.backgroundColor = undefined
+            statusBarItem.tooltip = `Active (Stack Head): ${name}\nTask Stack (bottom → head): ${stackChain}\nPress Alt+Shift+J to pop · Click to manage (Alt+Shift+T)`
+            statusBarItem.show()
+            return
+        }
+        case "browsing-stack": {
+            const headSpace = manager.getTaskSpaceById(stackState.headTaskSpaceId)
+            const headName = headSpace?.name ?? "head"
+            const name = activeTaskSpace?.name ?? "Task"
+            const tabCount = activeTaskSpace?.tabs.length ?? 0
+            statusBarItem.text = `$(layers) ${name} (${tabCount}) [in stack · head: ${headName}]`
+            statusBarItem.backgroundColor = undefined
+            statusBarItem.tooltip = `Active (Browsing Stack Frame): ${name}\nTask Stack (bottom → head): ${stackChain}\nPress Alt+Shift+J to return to stack head "${headName}" · Click to manage (Alt+Shift+T)`
+            statusBarItem.show()
+            return
+        }
+        case "parked": {
+            const headSpace = manager.getTaskSpaceById(stackState.headTaskSpaceId)
+            const parkedSuffix = headSpace ? ` [parked: ${headSpace.name}]` : ""
+            const parkedTooltip = `\nParked Stack (bottom → head): ${stackChain}\nPress Alt+Shift+J to resume stack head`
+            if (activeTaskSpace) {
+                statusBarItem.text = `$(book) ${activeTaskSpace.name} (${activeTaskSpace.tabs.length})${parkedSuffix}`
+                statusBarItem.backgroundColor = undefined
+                statusBarItem.tooltip = `Active (off-stack): ${activeTaskSpace.name}${parkedTooltip}\nClick to manage task spaces (Alt+Shift+T)`
+            } else {
+                statusBarItem.text = `$(book) No Task Space${parkedSuffix}`
+                statusBarItem.backgroundColor = new vscode.ThemeColor(
+                    "statusBarItem.warningBackground",
+                )
+                statusBarItem.tooltip = `No active task space${parkedTooltip}\nClick to manage task spaces (Alt+Shift+T)`
+            }
+            statusBarItem.show()
+            return
+        }
+        case "empty": {
+            if (activeTaskSpace) {
+                statusBarItem.text = `$(book) ${activeTaskSpace.name} (${activeTaskSpace.tabs.length})`
+                statusBarItem.backgroundColor = undefined
+                statusBarItem.tooltip = `Active: ${activeTaskSpace.name}\nClick to manage task spaces (Alt+Shift+T)`
+            } else {
+                statusBarItem.text = "$(book) No Task Space"
+                statusBarItem.backgroundColor = new vscode.ThemeColor(
+                    "statusBarItem.warningBackground",
+                )
+                statusBarItem.tooltip =
+                    "No active task space\nClick to manage task spaces (Alt+Shift+T)"
+            }
+            statusBarItem.show()
+            return
+        }
+        default: {
+            const _exhaustive: never = stackState
+            return _exhaustive
+        }
     }
 }
 

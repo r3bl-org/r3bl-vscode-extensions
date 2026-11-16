@@ -109,11 +109,8 @@ extensions for fast incremental builds:
 
 ## Installing Extensions
 
-Always use `./install.sh` to install all built extensions locally. **Note on Antigravity
-IDE**: The standard `antigravity-ide --install-extension` command does not work correctly
-(it launches the IDE instead of installing headlessly). To bypass this, `install.sh` is
-customized to manually unzip the `.vsix` files and copy their contents directly into
-`~/.antigravity-ide/extensions/`.
+Always use `./install.sh` to install all built extensions locally across all detected
+editors (`code`, `code-insiders`, `codium`, `codium-insiders`, and `antigravity-ide`).
 
 ## Context Guardrail
 

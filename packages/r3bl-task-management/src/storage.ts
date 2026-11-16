@@ -4,7 +4,7 @@ import * as vscode from "vscode"
 import { TabInfo, TaskSpaceStorage } from "./types"
 
 const STORAGE_FILE = ".vscode/task-spaces.json"
-const CURRENT_VERSION = "4.0"
+const CURRENT_VERSION = "6.0"
 
 /**
  * Manages task space storage using a split architecture:
@@ -182,6 +182,7 @@ export class Storage {
         return {
             version: CURRENT_VERSION,
             taskSpaces: [],
+            taskSpaceStackIds: [],
         }
     }
 
@@ -235,17 +236,52 @@ export class Storage {
 
         // Migrate from 3.0 to 4.0: Initialize Dashboard Workflow queues and enforce 1:1 mapping
         if (data.version === "3.0") {
-            if (!data.nextQueueIds) {
-                data.nextQueueIds = []
+            const legacyData = data as TaskSpaceStorage & {
+                nextQueueIds?: string[]
+                previousStackIds?: string[]
             }
-            if (!data.previousStackIds) {
-                data.previousStackIds = []
+            if (!legacyData.nextQueueIds) {
+                legacyData.nextQueueIds = []
+            }
+            if (!legacyData.previousStackIds) {
+                legacyData.previousStackIds = []
             }
 
             // Ensure 1:1 mapping: generate .md files for tasks that don't have one
             await this.ensureTaskFilesExist(data.taskSpaces)
 
             data.version = "4.0"
+        }
+
+        // Migrate from 4.0 to 5.0: Retire nextQueueIds; keep explicit previousStackIds
+        if (data.version === "4.0") {
+            const legacyData = data as TaskSpaceStorage & {
+                nextQueueIds?: string[]
+                previousStackIds?: string[]
+            }
+            delete legacyData.nextQueueIds
+
+            if (!Array.isArray(legacyData.previousStackIds)) {
+                legacyData.previousStackIds = []
+            }
+
+            data.version = "5.0"
+        }
+
+        // Migrate from 5.0 to 6.0: Rename previousStackIds -> taskSpaceStackIds (bottom-to-head)
+        if (data.version === "5.0") {
+            const legacyData = data as TaskSpaceStorage & {
+                previousStackIds?: string[]
+            }
+            const migratedStack = Array.isArray(legacyData.previousStackIds)
+                ? legacyData.previousStackIds
+                : []
+            delete legacyData.previousStackIds
+            data.taskSpaceStackIds = Array.isArray(data.taskSpaceStackIds)
+                ? data.taskSpaceStackIds
+                : migratedStack
+
+            data.version = "6.0"
         }
 
         if (data.version !== originalVersion) {

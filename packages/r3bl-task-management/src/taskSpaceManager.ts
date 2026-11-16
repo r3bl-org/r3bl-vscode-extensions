@@ -1,8 +1,12 @@
 // Copyright (c) 2024-2025 R3BL LLC. Licensed under MIT License.
 
 /**
- * Task Space Switching Architecture
- * ==================================
+ * Task Space & Spatial Context Switching Architecture
+ * ====================================================
+ *
+ * Each Task Space preserves the user's **Spatial Context** across two dimensions:
+ * - **Opened Tabs (Breadth):** Managed here (`TaskSpaceManager` + `.vscode/task-spaces.json`)
+ * - **Jump Point Navigation (Depth):** Scoped by `activeTaskSpaceId` in `jumpPointNavigator.ts`
  *
  * All task space switching uses diff-based restore for minimal UI disruption.
  * The core implementation is private, with two public entry points named by trigger:
@@ -112,7 +116,21 @@ import * as path from "path"
 import { showStatusBarMessage } from "r3bl-common-code"
 import { TabInfo, TaskSpace, TaskSpaceStorage } from "./types"
 import { Storage } from "./storage"
+import {
+    TaskStackState,
+    StackTransition,
+    StackTransitionOutcome,
+    getActiveTaskSpaceIdFromState,
+    hydrateStackState,
+    transitionStack,
+} from "./taskStackStateMachine"
 import { randomUUID, createHash } from "crypto"
+
+export interface PopOrResumeResult {
+    readonly outcome: StackTransitionOutcome
+    readonly poppedFrom?: TaskSpace
+    readonly returnedTo?: TaskSpace
+}
 
 export class TaskSpaceManager {
     private storage: Storage
@@ -139,14 +157,18 @@ export class TaskSpaceManager {
      * This allows multiple VSCode windows to have different task spaces active.
      */
     private activeTaskSpaceId: string | undefined
+    private onTaskSpaceDeleted?: (id: string) => Promise<void>
 
-    constructor(context: vscode.ExtensionContext) {
+    constructor(
+        context: vscode.ExtensionContext,
+        onTaskSpaceDeleted?: (id: string) => Promise<void>,
+    ) {
         this.storage = new Storage(context)
+        this.onTaskSpaceDeleted = onTaskSpaceDeleted
         this.data = {
-            version: "4.0",
+            version: "6.0",
             taskSpaces: [],
-            nextQueueIds: [],
-            previousStackIds: [],
+            taskSpaceStackIds: [],
         }
     }
 
@@ -256,18 +278,50 @@ export class TaskSpaceManager {
     }
 
     /**
+     * Get task space by ID
+     */
+    getTaskSpaceById(id: string | undefined): TaskSpace | undefined {
+        if (!id) return undefined
+        return this.data.taskSpaces.find((ts) => ts.id === id)
+    }
+
+    /**
+     * Get the current Typestate view of the workspace Task Stack (`empty`, `on-stack`, or `parked`).
+     */
+    getStackState(): TaskStackState {
+        return hydrateStackState(
+            {
+                activeTaskSpaceId: this.activeTaskSpaceId,
+                taskSpaceStackIds: this.data.taskSpaceStackIds ?? [],
+            },
+            this.getValidTaskSpaceIds(),
+        )
+    }
+
+    private getValidTaskSpaceIds(): Set<string> {
+        return new Set(this.data.taskSpaces.map((ts) => ts.id))
+    }
+
+    /**
      * Clear activeTaskSpaceId if the task space was deleted externally.
      * Called by file watcher when detecting external changes.
      */
     async clearActiveIfDeleted(): Promise<void> {
-        if (this.activeTaskSpaceId) {
-            const exists = this.data.taskSpaces.some(
-                (ts) => ts.id === this.activeTaskSpaceId,
-            )
-            if (!exists) {
-                this.activeTaskSpaceId = undefined
-                await this.storage.setActiveTaskSpaceId(undefined)
-            }
+        const tr = transitionStack(
+            { mode: "empty", activeTaskSpaceId: this.activeTaskSpaceId },
+            {
+                type: "EXTERNAL_SYNC",
+                snapshot: {
+                    activeTaskSpaceId: this.activeTaskSpaceId,
+                    taskSpaceStackIds: this.data.taskSpaceStackIds ?? [],
+                },
+            },
+            this.getValidTaskSpaceIds(),
+        )
+        const nextActiveId = getActiveTaskSpaceIdFromState(tr.state)
+        if (nextActiveId !== this.activeTaskSpaceId) {
+            this.activeTaskSpaceId = nextActiveId
+            await this.storage.setActiveTaskSpaceId(nextActiveId)
         }
     }
 
@@ -322,6 +376,10 @@ export class TaskSpaceManager {
         const finalTabs = tabs ?? (await this.getCurrentOpenTabs())
         const activeTab = tabs ? undefined : this.getActiveTab()
 
+        if (setAsActive && this.activeTaskSpaceId) {
+            await this.captureOutgoingActiveTabs()
+        }
+
         const taskSpace: TaskSpace = {
             name,
             id: randomUUID(),
@@ -333,16 +391,16 @@ export class TaskSpaceManager {
 
         this.data.taskSpaces.push(taskSpace)
 
-        // Set as active if requested (atomically with creation)
+        // Set as active if requested via state machine SWITCH (parks any active stack cleanly)
         if (setAsActive) {
-            // Push previous active to Previous Stack
-            const previousActiveId = this.getActiveTaskSpaceId()
-            if (previousActiveId) {
-                await this.addToPreviousStack(previousActiveId, false) // Don't save yet
-            }
-
-            this.activeTaskSpaceId = taskSpace.id
-            await this.storage.setActiveTaskSpaceId(taskSpace.id)
+            const tr = transitionStack(
+                this.getStackState(),
+                { type: "SWITCH", targetTaskSpaceId: taskSpace.id },
+                this.getValidTaskSpaceIds(),
+            )
+            this.data.taskSpaceStackIds = [...tr.snapshot.taskSpaceStackIds]
+            this.activeTaskSpaceId = tr.snapshot.activeTaskSpaceId
+            await this.storage.setActiveTaskSpaceId(this.activeTaskSpaceId)
         }
 
         // Set lastAccessed in workspace state (stored separately to avoid git noise)
@@ -362,35 +420,43 @@ export class TaskSpaceManager {
             throw new Error("Task space not found")
         }
 
+        const tr = transitionStack(
+            this.getStackState(),
+            { type: "DELETE_TASK_SPACE", targetTaskSpaceId: id },
+            this.getValidTaskSpaceIds(),
+        )
+
+        await this.archiveAndRemoveTaskSpaceRecord(index, moveTaskFile)
+
+        this.data.taskSpaceStackIds = [...tr.snapshot.taskSpaceStackIds]
+        this.activeTaskSpaceId = tr.snapshot.activeTaskSpaceId
+        await this.storage.setActiveTaskSpaceId(this.activeTaskSpaceId)
+
+        if (tr.closeAllTabs) {
+            await this.closeAllOpenTabsSuppressed()
+        }
+
+        await this.save()
+    }
+
+    private async archiveAndRemoveTaskSpaceRecord(
+        index: number,
+        moveTaskFile: boolean,
+    ): Promise<TaskSpace> {
         const taskSpace = this.data.taskSpaces[index]
 
-        // Move associated task file if it exists and moveTaskFile is true
         if (taskSpace.taskFile && moveTaskFile) {
             await this.moveTaskFileToDone(taskSpace.taskFile)
         }
 
         this.data.taskSpaces.splice(index, 1)
+        await this.storage.removeLastAccessed(taskSpace.id)
 
-        // Remove from queues
-        if (this.data.nextQueueIds) {
-            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id)
-        }
-        if (this.data.previousStackIds) {
-            this.data.previousStackIds = this.data.previousStackIds.filter(
-                (sid) => sid !== id,
-            )
+        if (this.onTaskSpaceDeleted) {
+            await this.onTaskSpaceDeleted(taskSpace.id)
         }
 
-        // Clear active if we deleted the active task space
-        if (this.activeTaskSpaceId === id) {
-            this.activeTaskSpaceId = undefined
-            await this.storage.setActiveTaskSpaceId(undefined)
-        }
-
-        // Clean up lastAccessed metadata from workspace state to prevent memory leaks
-        await this.storage.removeLastAccessed(id)
-
-        await this.save()
+        return taskSpace
     }
 
     /**
@@ -481,152 +547,222 @@ export class TaskSpaceManager {
     }
 
     /**
-     * Add a task space to the Next Queue
+     * Save the specified (or currently active) task space's open tabs into `this.data`
+     * before switching away (without triggering a separate disk write).
      */
-    async addToNextQueue(id: string): Promise<void> {
-        if (!this.data.nextQueueIds) {
-            this.data.nextQueueIds = []
-        }
-        if (!this.data.nextQueueIds.includes(id)) {
-            this.data.nextQueueIds.push(id)
-            // Move from Previous Stack if it's there
-            if (this.data.previousStackIds) {
-                this.data.previousStackIds = this.data.previousStackIds.filter(
-                    (sid) => sid !== id,
-                )
-            }
-            await this.save()
-        }
+    private async captureOutgoingActiveTabs(targetId?: string): Promise<void> {
+        const space = targetId
+            ? this.getTaskSpaceById(targetId)
+            : this.getActiveTaskSpace()
+        if (!space) return
+
+        const config = vscode.workspace.getConfiguration("r3bl-task-management")
+        const autoSave = config.get<boolean>("autoSaveCurrentTaskSpace", true)
+        if (!autoSave) return
+
+        space.tabs = await this.getCurrentOpenTabs()
+        space.activeTab = this.getActiveTab()
     }
 
     /**
-     * Remove from Next Queue
+     * Seed empty task spaces with their linked task file so there's something to open.
      */
-    async removeFromNextQueue(id: string): Promise<void> {
-        if (!this.data.nextQueueIds) return
-        this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id)
-        await this.save()
-    }
-
-    /**
-     * Add a task space to the Previous Stack
-     * @param id The task space ID
-     * @param shouldSave Whether to save to disk immediately (default: true)
-     */
-    async addToPreviousStack(id: string, shouldSave: boolean = true): Promise<void> {
-        if (!this.data.previousStackIds) {
-            this.data.previousStackIds = []
-        }
-        // Move to top (end of array)
-        this.data.previousStackIds = this.data.previousStackIds.filter(
-            (sid) => sid !== id,
-        )
-        this.data.previousStackIds.push(id)
-
-        // Remove from Next Queue if it's there
-        if (this.data.nextQueueIds) {
-            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id)
-        }
-
-        if (shouldSave) {
-            await this.save()
-        }
-    }
-
-    /**
-     * Remove from Previous Stack
-     */
-    async removeFromPreviousStack(id: string): Promise<void> {
-        if (!this.data.previousStackIds) return
-        this.data.previousStackIds = this.data.previousStackIds.filter(
-            (sid) => sid !== id,
-        )
-        await this.save()
-    }
-
-    /**
-     * Get task spaces in the Next Queue
-     */
-    getNextQueue(): TaskSpace[] {
-        if (!this.data.nextQueueIds) return []
-        return this.data.nextQueueIds
-            .map((id) => this.data.taskSpaces.find((ts) => ts.id === id))
-            .filter((ts): ts is TaskSpace => !!ts)
-    }
-
-    /**
-     * Get task spaces in the Previous Stack
-     */
-    getPreviousStack(): TaskSpace[] {
-        if (!this.data.previousStackIds) return []
-        return this.data.previousStackIds
-            .map((id) => this.data.taskSpaces.find((ts) => ts.id === id))
-            .filter((ts): ts is TaskSpace => !!ts)
-    }
-
-    /**
-     * Jump to a specific task space.
-     * Automatically pushes current active task to Previous Stack.
-     * Removes target task from Next Queue if present.
-     */
-    async jumpToTask(id: string): Promise<void> {
-        const activeId = this.getActiveTaskSpaceId()
-        // Use getActiveTaskSpace() to check existence, not just the raw ID —
-        // workspaceState can hold a stale ID that no longer maps to a task space
-        const comingFromNoTask = !this.getActiveTaskSpace()
-
-        if (activeId && activeId !== id) {
-            await this.addToPreviousStack(activeId, false) // Don't save yet
-        }
-
-        // Remove target from all queues (it's becoming active)
-        if (this.data.nextQueueIds) {
-            this.data.nextQueueIds = this.data.nextQueueIds.filter((qid) => qid !== id)
-        }
-        if (this.data.previousStackIds) {
-            this.data.previousStackIds = this.data.previousStackIds.filter(
-                (sid) => sid !== id,
-            )
-        }
-
-        // Seed empty task spaces with their task file so there's something to open
+    private seedEmptyTaskSpaceTabs(id: string): void {
         const taskSpace = this.data.taskSpaces.find((ts) => ts.id === id)
         if (taskSpace && taskSpace.tabs.length === 0 && taskSpace.taskFile) {
             taskSpace.tabs = [{ path: taskSpace.taskFile, isPinned: true }]
         }
-
-        // If coming from no task space, don't close pre-existing tabs (additive switch)
-        await this.switchToTaskSpaceFromUserAction(id, comingFromNoTask)
     }
 
     /**
-     * Finish current task: archive it and jump to next available task.
-     * Priority: 1. Next from Next Queue, 2. Top from Previous Stack.
+     * Execute the side effects (tab capture, stack persistence, tab diff-switch / close)
+     * described by a pure `StackTransition`.
      */
-    async finishCurrentTask(): Promise<void> {
-        const activeId = this.getActiveTaskSpaceId()
-        if (!activeId) return
-
-        // Archive and delete current
-        await this.deleteTaskSpace(activeId, true)
-
-        // Find next task
-        let nextId: string | undefined
-        if (this.data.nextQueueIds && this.data.nextQueueIds.length > 0) {
-            nextId = this.data.nextQueueIds.shift()
-        } else if (this.data.previousStackIds && this.data.previousStackIds.length > 0) {
-            nextId = this.data.previousStackIds.pop()
+    private async executeStackTransition(tr: StackTransition): Promise<void> {
+        if (tr.outcome === "noop") {
+            return
         }
 
-        if (nextId) {
-            await this.switchToTaskSpaceFromUserAction(nextId)
-        } else {
-            await this.save()
+        if (tr.saveOutgoingTaskSpaceId) {
+            await this.captureOutgoingActiveTabs(tr.saveOutgoingTaskSpaceId)
+        }
+
+        this.data.taskSpaceStackIds = [...tr.snapshot.taskSpaceStackIds]
+
+        if (tr.openTargetTaskSpaceId) {
+            const additive = !tr.saveOutgoingTaskSpaceId
+            this.seedEmptyTaskSpaceTabs(tr.openTargetTaskSpaceId)
+            await this.switchToTaskSpaceFromUserAction(tr.openTargetTaskSpaceId, additive)
+            return
+        }
+
+        this.activeTaskSpaceId = tr.snapshot.activeTaskSpaceId
+        await this.storage.setActiveTaskSpaceId(this.activeTaskSpaceId)
+
+        if (tr.closeAllTabs) {
+            await this.closeAllOpenTabsSuppressed()
+        }
+
+        await this.save()
+    }
+
+    /**
+     * Remove a task space from the Task Stack (`[Remove from Stack]` button).
+     */
+    async removeFromTaskStack(id: string): Promise<void> {
+        const tr = transitionStack(
+            this.getStackState(),
+            { type: "REMOVE_FROM_STACK", targetTaskSpaceId: id },
+            this.getValidTaskSpaceIds(),
+        )
+        if (tr.outcome === "noop") return
+        this.data.taskSpaceStackIds = [...tr.snapshot.taskSpaceStackIds]
+        await this.save()
+    }
+
+    /**
+     * Get the ordered TaskSpaces currently stored in the workspace Task Stack (bottom-to-head).
+     */
+    getTaskStackSpaces(): TaskSpace[] {
+        const state = this.getStackState()
+        switch (state.mode) {
+            case "empty":
+                return []
+            case "on-stack":
+            case "browsing-stack":
+            case "parked":
+                return [...state.pausedTaskSpaceIds, state.headTaskSpaceId]
+                    .map((id) => this.getTaskSpaceById(id))
+                    .filter((ts): ts is TaskSpace => !!ts)
+            default: {
+                const _exhaustive: never = state
+                return _exhaustive
+            }
         }
     }
 
     /**
-     * Close current task space (if active): saves current tabs, clears active task space state, and closes open editor tabs.
+     * Flat switch to a task space (`Enter` in Dashboard) — NEVER mutates or pops the stack:
+     * - Selecting the Stack Head from `parked` or `browsing-stack` resumes the stack head.
+     * - Selecting an interior paused caller enters `browsing-stack` without popping!
+     * - Selecting an off-stack task parks the stack with its Head preserved.
+     */
+    async switchTaskSpace(id: string): Promise<StackTransitionOutcome> {
+        const tr = transitionStack(
+            this.getStackState(),
+            { type: "SWITCH", targetTaskSpaceId: id },
+            this.getValidTaskSpaceIds(),
+        )
+        await this.executeStackTransition(tr)
+        return tr.outcome
+    }
+
+    /**
+     * Explicitly push `id` onto the Task Stack (allowed from empty, on-stack, or off-stack).
+     */
+    async pushTaskSpace(id: string): Promise<StackTransitionOutcome> {
+        const tr = transitionStack(
+            this.getStackState(),
+            { type: "PUSH", targetTaskSpaceId: id },
+            this.getValidTaskSpaceIds(),
+        )
+        await this.executeStackTransition(tr)
+        return tr.outcome
+    }
+
+    /**
+     * Explicitly push the current active task space onto the Task Stack and start a clean
+     * new subtask containing only its `task/*.md` file (no tab bleed from the caller).
+     */
+    async pushNewSubtask(name: string, taskFile?: string): Promise<TaskSpace> {
+        if (this.data.taskSpaces.some((ts) => ts.name === name)) {
+            throw new Error(`Task space "${name}" already exists`)
+        }
+
+        const newSpace = await this.createTaskSpace(name, taskFile, false, [])
+        if (newSpace.taskFile) {
+            newSpace.tabs = [{ path: newSpace.taskFile, isPinned: true }]
+        }
+
+        const tr = transitionStack(
+            this.getStackState(),
+            { type: "PUSH", targetTaskSpaceId: newSpace.id },
+            this.getValidTaskSpaceIds(),
+        )
+        await this.executeStackTransition(tr)
+        return newSpace
+    }
+
+    /**
+     * Pop or Resume the Task Stack (`Alt+Shift+J`):
+     * - When `on-stack`: saves head's tabs, pops head, and switches back to parent.
+     * - When `parked` (off-stack or No Task Space): saves outgoing tabs and jumps back to
+     *   the Parked Stack Head without popping its callers.
+     * - When `empty`: saves and closes active task to `No Task Space`.
+     */
+    async popTaskSpace(): Promise<PopOrResumeResult | undefined> {
+        const outgoingSpace = this.getActiveTaskSpace()
+        const tr = transitionStack(
+            this.getStackState(),
+            { type: "POP_OR_RESUME" },
+            this.getValidTaskSpaceIds(),
+        )
+
+        if (tr.outcome === "noop") {
+            return undefined
+        }
+
+        const targetSpace = this.getTaskSpaceById(tr.openTargetTaskSpaceId)
+        await this.executeStackTransition(tr)
+        return {
+            outcome: tr.outcome,
+            poppedFrom: outgoingSpace,
+            returnedTo: targetSpace,
+        }
+    }
+
+    /**
+     * Finish current task (`Alt+Shift+F`):
+     * - Archives linked `.md` file to `task/done/` and prunes its jump points.
+     * - If `on-stack`: pops back to the stacked parent task.
+     * - If `parked` (off-stack) or `empty`: closes all open tabs (`No Task Space`) while
+     *   preserving any parked stack intact.
+     * Returns the parent task returned to, if any.
+     */
+    async finishCurrentTask(): Promise<TaskSpace | undefined> {
+        const activeId = this.getActiveTaskSpaceId()
+        if (!activeId) return undefined
+
+        const index = this.data.taskSpaces.findIndex((ts) => ts.id === activeId)
+        if (index === -1) return undefined
+
+        const tr = transitionStack(
+            this.getStackState(),
+            { type: "FINISH_ACTIVE" },
+            this.getValidTaskSpaceIds(),
+        )
+
+        await this.archiveAndRemoveTaskSpaceRecord(index, true)
+        await this.executeStackTransition(tr)
+
+        return this.getTaskSpaceById(tr.openTargetTaskSpaceId)
+    }
+
+    private async closeAllOpenTabsSuppressed(): Promise<void> {
+        this.pendingFileWatcherSyncs++
+        try {
+            const allTabs = vscode.window.tabGroups.all.flatMap((group) => group.tabs)
+            if (allTabs.length > 0) {
+                await vscode.window.tabGroups.close(allTabs)
+            }
+        } finally {
+            this.pendingFileWatcherSyncs--
+        }
+    }
+
+    /**
+     * Close current task space (`Alt+Shift+C`): saves current tabs, clears active task
+     * space state (parking the stack if currently on-stack), and closes open editor tabs.
      */
     async closeCurrentTaskSpace(): Promise<TaskSpace | undefined> {
         const activeTaskSpace = this.getActiveTaskSpace()
@@ -634,20 +770,12 @@ export class TaskSpaceManager {
             return undefined
         }
 
-        // Save current open tabs for the active task space before closing
-        const currentTabs = await this.getCurrentOpenTabs()
-        await this.updateTaskSpaceTabs(activeTaskSpace.id, currentTabs)
-
-        // Clear active task space ID
-        this.activeTaskSpaceId = undefined
-        await this.storage.setActiveTaskSpaceId(undefined)
-
-        // Close all open editor tabs (including pinned tabs)
-        const allTabs = vscode.window.tabGroups.all.flatMap((group) => group.tabs)
-        if (allTabs.length > 0) {
-            await vscode.window.tabGroups.close(allTabs)
-        }
-
+        const tr = transitionStack(
+            this.getStackState(),
+            { type: "CLOSE_ACTIVE" },
+            this.getValidTaskSpaceIds(),
+        )
+        await this.executeStackTransition(tr)
         return activeTaskSpace
     }
 
@@ -693,11 +821,8 @@ export class TaskSpaceManager {
         const fileName = path.basename(taskFile, ".md")
         const name = fileName.replace(/^task_/, "").replace(/_/g, " ")
 
-        // Create the task space with NO tabs (empty)
-        const taskSpace = await this.createTaskSpace(name, taskFile, false, [])
-
-        // Add to Next Queue
-        await this.addToNextQueue(taskSpace.id)
+        // Create the task space with NO tabs (empty) so it appears in Available Task Spaces
+        await this.createTaskSpace(name, taskFile, false, [])
     }
 
     /**

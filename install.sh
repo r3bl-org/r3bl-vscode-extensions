@@ -31,51 +31,36 @@ check_requirements
 # Get all extension versions
 get_all_versions
 
-# Helper function to install extension to all available editors
+# Supported CLI editors
+EDITORS=(
+    "code:VSCode"
+    "code-insiders:VSCode Insiders"
+    "codium:VSCodium"
+    "codium-insiders:VSCodium Insiders"
+    "antigravity-ide:Antigravity IDE"
+)
+
+# Helper function to install extension to all available CLI editors
 install_extension() {
     local vsix_path="$1"
-    if command -v code &> /dev/null; then
-        code --install-extension "$vsix_path" --force
-    fi
-    if command -v code-insiders &> /dev/null; then
-        code-insiders --install-extension "$vsix_path" --force
-    fi
-    if command -v codium &> /dev/null; then
-        codium --install-extension "$vsix_path" --force
-    fi
-    if command -v codium-insiders &> /dev/null; then
-        codium-insiders --install-extension "$vsix_path" --force
-    fi
-    if command -v antigravity-ide &> /dev/null; then
-        local ext_name=$(basename "$vsix_path" .vsix)
-        local base_name=$(echo "$ext_name" | sed -E 's/-[0-9]+\.[0-9]+\.[0-9]+.*$//')
-        rm -rf "$HOME/.antigravity-ide/extensions/R3BL.${base_name}"-*
-        rm -rf "$HOME/.antigravity-ide/extensions/r3bl.${base_name}"-*
-        local dest_dir="$HOME/.antigravity-ide/extensions/R3BL.${ext_name}"
-        mkdir -p "$dest_dir"
-        local tmp_dir=$(mktemp -d)
-        unzip -q "$vsix_path" -d "$tmp_dir"
-        cp -a "$tmp_dir/extension/." "$dest_dir/"
-        rm -rf "$tmp_dir"
-    fi
+    for entry in "${EDITORS[@]}"; do
+        local cmd="${entry%%:*}"
+        if command -v "$cmd" &> /dev/null; then
+            "$cmd" --install-extension "$vsix_path" --force
+        fi
+    done
 }
 
 # Helper function to purge untrusted extensions from all available editors
 purge_untrusted_extension() {
     local ext_id="$1"
     echo -e "${YELLOW}Purging untrusted extension ${ext_id}...${NC}"
-    if command -v code &> /dev/null; then
-        code --uninstall-extension "$ext_id" 2>/dev/null || true
-    fi
-    if command -v code-insiders &> /dev/null; then
-        code-insiders --uninstall-extension "$ext_id" 2>/dev/null || true
-    fi
-    if command -v codium &> /dev/null; then
-        codium --uninstall-extension "$ext_id" 2>/dev/null || true
-    fi
-    if command -v codium-insiders &> /dev/null; then
-        codium-insiders --uninstall-extension "$ext_id" 2>/dev/null || true
-    fi
+    for entry in "${EDITORS[@]}"; do
+        local cmd="${entry%%:*}"
+        if command -v "$cmd" &> /dev/null; then
+            "$cmd" --uninstall-extension "$ext_id" 2>/dev/null || true
+        fi
+    done
     # Wipe leftover directories from local extension directories
     rm -rf "$HOME/.vscode/extensions/${ext_id}"* 2>/dev/null || true
     rm -rf "$HOME/.vscode-insiders/extensions/${ext_id}"* 2>/dev/null || true
@@ -118,76 +103,21 @@ install_extension "packages/r3bl-opened-editors/r3bl-opened-editors-${OPENED_EDI
 echo ""
 echo -e "${BLUE}Installing R3BL Extension Pack...${NC}"
 
-# Install for regular VSCode
-if command -v code &> /dev/null; then
-    echo -e "${BLUE}Installing R3BL Extension Pack for VSCode...${NC}"
-    if code --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
-        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCode!${NC}"
+EXTENSION_PACK_VSIX="packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix"
+for entry in "${EDITORS[@]}"; do
+    cmd="${entry%%:*}"
+    name="${entry#*:}"
+    if command -v "$cmd" &> /dev/null; then
+        echo -e "${BLUE}Installing R3BL Extension Pack for ${name}...${NC}"
+        if "$cmd" --install-extension "$EXTENSION_PACK_VSIX" --force; then
+            echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for ${name}!${NC}"
+        else
+            echo -e "${RED}✗ Failed to install R3BL Extension Pack for ${name}${NC}"
+        fi
     else
-        echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCode${NC}"
+        echo -e "${YELLOW}${name} not found, skipping installation for ${name}${NC}"
     fi
-else
-    echo -e "${YELLOW}VSCode not found, skipping installation for VSCode${NC}"
-fi
-
-# Install for VSCode Insiders
-if command -v code-insiders &> /dev/null; then
-    echo -e "${BLUE}Installing R3BL Extension Pack for VSCode Insiders...${NC}"
-    if code-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
-        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCode Insiders!${NC}"
-    else
-        echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCode Insiders${NC}"
-    fi
-else
-    echo -e "${YELLOW}VSCode Insiders not found, skipping installation for VSCode Insiders${NC}"
-fi
-
-# Install for VSCodium
-if command -v codium &> /dev/null; then
-    echo -e "${BLUE}Installing R3BL Extension Pack for VSCodium...${NC}"
-    if codium --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
-        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCodium!${NC}"
-    else
-        echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCodium${NC}"
-    fi
-else
-    echo -e "${YELLOW}VSCodium not found, skipping installation for VSCodium${NC}"
-fi
-
-# Install for VSCodium Insiders
-if command -v codium-insiders &> /dev/null; then
-    echo -e "${BLUE}Installing R3BL Extension Pack for VSCodium Insiders...${NC}"
-    if codium-insiders --install-extension packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix --force; then
-        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for VSCodium Insiders!${NC}"
-    else
-        echo -e "${RED}✗ Failed to install R3BL Extension Pack for VSCodium Insiders${NC}"
-    fi
-else
-    echo -e "${YELLOW}VSCodium Insiders not found, skipping installation for VSCodium Insiders${NC}"
-fi
-
-# Install for Antigravity IDE
-if command -v antigravity-ide &> /dev/null; then
-    echo -e "${BLUE}Installing R3BL Extension Pack for Antigravity IDE...${NC}"
-    vsix_path="packages/r3bl-extension-pack/r3bl-extension-pack-${EXTENSION_PACK_VERSION}.vsix"
-    ext_name=$(basename "$vsix_path" .vsix)
-    base_name=$(echo "$ext_name" | sed -E 's/-[0-9]+\.[0-9]+\.[0-9]+.*$//')
-    rm -rf "$HOME/.antigravity-ide/extensions/R3BL.${base_name}"-*
-    rm -rf "$HOME/.antigravity-ide/extensions/r3bl.${base_name}"-*
-    dest_dir="$HOME/.antigravity-ide/extensions/R3BL.${ext_name}"
-    mkdir -p "$dest_dir"
-    tmp_dir=$(mktemp -d)
-    
-    if unzip -q "$vsix_path" -d "$tmp_dir"; then
-        cp -a "$tmp_dir/extension/." "$dest_dir/"
-        echo -e "${GREEN}✓ R3BL Extension Pack installed successfully for Antigravity IDE!${NC}"
-    else
-        echo -e "${RED}✗ Failed to install R3BL Extension Pack for Antigravity IDE${NC}"
-    fi
-    rm -rf "$tmp_dir"
-else
-    echo -e "${YELLOW}Antigravity IDE not found, skipping installation for Antigravity IDE${NC}"
-fi
+done
 
 echo ""
 echo -e "${GREEN}🎉 Installation complete!${NC}"

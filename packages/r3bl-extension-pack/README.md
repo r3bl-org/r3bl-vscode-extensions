@@ -13,16 +13,16 @@ configured to work together seamlessly.
 
 These extensions are maintained and published by R3BL.
 
-| Extension                                                                                                                                          | Description                                                                                                          |
-| :------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark themes (R3BL Theme, R3BL 2026 Theme, R3BL 2027 Theme, and No Italic variants) plus bundled R3BL 2027 Icons      |
-| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, structure navigation, jump point journey tracking, and inlay hint toggling |
-| **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management with Coding Agent integration and tab organization                                             |
-| **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes                                                   |
-| **[R3BL Opened Editors](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-opened-editors)**                               | Fast opened editors dropdown switcher (`Alt+E`) and vertical sidebar panel navigation                                |
-| **[R3BL Copy Selection Path and Range](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Coding Agents                                                                   |
-| **[R3BL Auto Insert Copyright](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates                                                 |
-| **[R3BL Shared](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)                                                        |
+| Extension                                                                                                                                          | Description                                                                                                     |
+| :------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| **[R3BL Theme](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-theme)**                                                 | Dark themes (R3BL Theme, R3BL 2026 Theme, R3BL 2027 Theme, and No Italic variants) plus bundled R3BL 2027 Icons |
+| **[R3BL Semantic Configuration](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-semantic-config)**                      | Enhanced Rust highlighting, auto-folding, structure navigation, and inlay hint toggling                         |
+| **[R3BL Task Management](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-task-management)**                             | Task space management, Task Stack, Jump Point Navigation, Coding Agent integration, and tab organization        |
+| **[R3BL Fuzzy Search](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-fuzzy-search)**                                   | Fast fuzzy search and Git Diff Search Editor for reviewing changes                                              |
+| **[R3BL Opened Editors](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-opened-editors)**                               | Fast opened editors dropdown switcher (`Alt+E`) and vertical sidebar panel navigation                           |
+| **[R3BL Copy Selection Path and Range](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-copy-selection-path-and-range)** | Copy file paths with line ranges for Coding Agents                                                              |
+| **[R3BL Auto Insert Copyright](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-auto-insert-copyright)**                 | Automatic copyright header insertion with multiple license templates                                            |
+| **[R3BL Shared](https://github.com/r3bl-org/r3bl-vscode-extensions/tree/main/packages/r3bl-shared)**                                               | Shared services for R3BL extensions (automatically installed)                                                   |
 
 ### Third-Party Dependencies
 
@@ -40,11 +40,13 @@ These extensions are required for full functionality and are automatically insta
   options), bundled `R3BL 2027 Icons` (from Catppuccin Icons, auto-activated with 2027
   themes), and 3 selectable comment brightness levels (`dim`, `medium`, `bright`).
 - **Enhanced Rust Experience**: Beyond syntax highlighting, get auto-folding for `use`
-  statements and `rustdoc`, a dedicated Structure Navigator for large files, Jump Point
-  Navigation (`Alt+U` / `Alt+Shift+U`) to trace and backtrack through "Go to Definition"
-  journeys, and quick inlay hint toggling (`Ctrl+Alt+I`).
-- **Task Space Management**: Organize multiple work contexts, save/restore open tabs, and
-  integrate with Coding Agents via a custom slash command.
+  statements and `rustdoc`, a dedicated Structure Navigator for large files, and quick
+  inlay hint toggling (`Ctrl+Alt+I`).
+- **Task Space & Spatial Context Management**: Organize multiple tasks on one branch while
+  preserving each task's **spatial context**—saving/restoring opened tabs, tracking
+  per-task Jump Point Navigation (`Alt+U` / `Alt+Shift+U`) across IDEs via
+  `.vscode/jump-points.json`, managing detours on an explicit Task Stack, and integrating
+  with Coding Agents via a custom slash command.
 - **High-Efficiency Code Review**: Use the Git Diff Search Editor to review uncommitted
   changes or recent commits in a single, searchable tab—perfect for AI-generated diffs.
 - **Fast Fuzzy Search**: Lightning-fast file content search powered by `rg` and `fzf` with
@@ -88,8 +90,8 @@ Keyboard Shortcuts settings.
 | Shortcut        | Extension       | Action                                                     |
 | :-------------- | :-------------- | :--------------------------------------------------------- |
 | `Alt+Shift+T`   | Task Management | Open task spaces dialog                                    |
-| `Alt+Shift+F`   | Task Management | Finish current task (archive and jump to next)             |
-| `Alt+Shift+J`   | Task Management | Pause current task and jump to next in queue               |
+| `Alt+Shift+F`   | Task Management | Finish current task (archive and pop parent / close tabs)  |
+| `Alt+Shift+J`   | Task Management | Pop top task from Task Stack (or close tabs if empty)      |
 | `Alt+Shift+C`   | Task Management | Close current task space (save and close tabs)             |
 | `Alt+Shift+D`   | Fuzzy Search    | Start interactive fuzzy search                             |
 | `Ctrl+Shift+G`  | Fuzzy Search    | Open Git Diff Search Editor (Uncommitted/Commits)          |
@@ -103,8 +105,8 @@ Keyboard Shortcuts settings.
 | `Ctrl+M`        | Semantic Config | Scroll current line to top                                 |
 | `Ctrl+Shift+L`  | Semantic Config | Insert Rustdoc Link Definition                             |
 | `Ctrl+Alt+I`    | Semantic Config | Toggle editor inlay hints on and off                       |
-| `Alt+U`         | Semantic Config | Jump to definition and record jump point in journey stack  |
-| `Alt+Shift+U`   | Semantic Config | Show jump journey popup (backtrack, forward-track, export) |
+| `Alt+U`         | Task Management | Jump to definition and record jump point                   |
+| `Alt+Shift+U`   | Task Management | Show Jump Point Navigation popup (backtrack, export)       |
 | `Alt+E`         | Opened Editors  | Show dropdown of all open editors (Cmd+E on Mac)           |
 | `Ctrl+K Ctrl+T` | Theme           | Change Color Theme                                         |
 | -               | Semantic Config | Set Comment Brightness (`R3BL: Set Comment Brightness...`) |
@@ -189,9 +191,6 @@ The pack is a power-user's dream for Rust. It enhances `rust-analyzer` with:
 - **Intelligent Folding**: Auto-hiding long `use` blocks and `rustdoc` to focus on logic.
 - **Structure Navigator**: Use `Ctrl+Shift+Y` to jump between functions, traits, and impl
   blocks in large files.
-- **Jump Point Journey Stack**: Use `Alt+U` to drill down into definitions while recording
-  your trail, and `Alt+Shift+U` to backtrack, forward-track, or dump the journey into a
-  `.code-search` tab.
 - **Live Diagnostics**: Debounced Flycheck runs `cargo check` in the background after you
   stop typing, without the "save to check" friction.
 - **Target Switcher**: Switch `rust-analyzer.cargo.target` on the fly from a curated
@@ -199,11 +198,15 @@ The pack is a power-user's dream for Rust. It enhances `rust-analyzer` with:
   🌐 Wasm). Strictly project-scoped to `.vscode/settings.json` to prevent global setting
   leakage.
 
-### Multi-Task Workflows (Context Switching)
+### Multi-Task Workflows (Spatial Context & Task Stack)
 
 Use task spaces to manage multiple features or bug fixes simultaneously on the same
-branch. Switch contexts instantly with `Alt+Shift+T`—the extension remembers exactly which
-files you had open (and their pinned state) for each task.
+branch. Switch tasks cleanly with `Alt+Shift+T` (flat switch on `Enter`, including
+non-destructive browsing of stack frames), or explicitly **Push** / **Push New Subtask**
+onto the workspace **Task Stack** and **Pop** back to the parent task with
+`Alt+Shift+J`—preserving each task's **spatial context** (opened tabs and task-scoped
+**Jump Point Navigation** via `.vscode/jump-points.json` `v3.0`) with zero cross-task
+overlap.
 
 ### Multi-IDE Workflows (Side-by-Side)
 

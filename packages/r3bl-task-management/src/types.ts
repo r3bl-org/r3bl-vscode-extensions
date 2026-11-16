@@ -5,6 +5,11 @@ export interface TabInfo {
     isPinned: boolean // Whether the tab is pinned
 }
 
+/**
+ * A Task Space (1:1 with `task/<name>.md`) owns a task's **Spatial Context**:
+ * - **Opened Tabs (Breadth):** `tabs` + `activeTab` persisted here in `.vscode/task-spaces.json`
+ * - **Jump Point Navigation (Depth):** per-task `JumpPoint[]` persisted in `.vscode/jump-points.json`
+ */
 export interface TaskSpace {
     name: string
     id: string
@@ -18,6 +23,5 @@ export interface TaskSpace {
 export interface TaskSpaceStorage {
     version: string // For future schema migrations
     taskSpaces: TaskSpace[]
-    nextQueueIds?: string[] // IDs of task spaces in the next queue (Dashboard Workflow)
-    previousStackIds?: string[] // IDs of task spaces in the previous stack (Dashboard Workflow)
+    taskSpaceStackIds?: string[] // Explicit Task Stack (bottom-to-head, workspace-wide)
 }

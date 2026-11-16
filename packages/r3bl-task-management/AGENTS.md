@@ -6,20 +6,29 @@ assistants and developers working on this codebase.
 
 ## Overview
 
-R3BL Task Management allows users to manage "task spaces" - named collections of open tabs
-that can be saved and restored. The extension supports multiple VSCode instances having
+R3BL Task Management manages **Task Spaces**—1:1 units tied to `task/<name>.md` that
+preserve a developer's **Spatial Context** across two dimensions:
+
+- **Opened Tabs (Breadth):** Open files, tab order, active tab, and pinned state
+  (`.vscode/task-spaces.json`)
+- **Jump Point Navigation (Depth):** Per-task ordered symbol definition stops
+  (`.vscode/jump-points.json`)
+
+Tasks can be switched flat (`Enter`) or pushed/popped/browsed/parked on an explicit
+workspace **Task Stack** (`taskSpaceStackIds`), and multiple IDE instances can keep
 different task spaces active simultaneously on the same project folder.
 
 ## File Structure
 
 ```
 src/
-├── extension.ts        # Extension activation, command registration, event handlers
-├── taskSpaceManager.ts # Core business logic, tab operations, switching logic
-├── storage.ts          # File I/O, migration logic, workspace state management
-├── types.ts            # TypeScript interfaces
-├── ui.ts               # QuickPick dialogs, status bar updates
-└── claudeCodeIntegration.ts  # /r3bl-task slash command installation
+├── extension.ts          # Extension activation, command registration, event handlers
+├── taskSpaceManager.ts   # Core business logic, tab operations, switching logic
+├── storage.ts            # File I/O, migration logic, workspace state management
+├── types.ts              # TypeScript interfaces
+├── ui.ts                 # QuickPick dialogs, status bar updates
+├── jumpPointNavigator.ts # Per-task Jump Point Navigation & .vscode/jump-points.json sync
+└── codingAgentIntegration.ts  # /r3bl-task slash command installation
 ```
 
 ## Data Storage Architecture
@@ -249,6 +258,17 @@ async switchToTaskSpaceFromUserAction(id: string): Promise<void> {
 | 1.0     | Original: `tabs` as `string[]`                                       |
 | 2.0     | `tabs` as `TabInfo[]` with `isPinned`, `activeTaskSpaceId` in JSON   |
 | 3.0     | `activeTaskSpaceId` moved to workspaceState (multi-instance support) |
+| 4.0     | Added `taskFile`, `nextQueueIds`, and `previousStackIds`             |
+| 5.0     | Retired `nextQueueIds`; `previousStackIds` is explicit Task Stack    |
+| 6.0     | `taskSpaceStackIds` (bottom → head) + typestate control plane        |
+
+### Per-Task Jump Point Navigation (`.vscode/jump-points.json`)
+
+- Schema `v3.0` stores `tasks: Record<taskSpaceId, { points, currentIndex }>` so each task
+  space keeps an isolated Jump Point Navigation trail (`Alt+U` / `Alt+Shift+U`).
+- Automatically migrates `v1.0` flat `{ points, currentIndex }` and `v2.0` per-task maps
+  into `v3.0` on load.
+- Pruned automatically via `onTaskSpaceDeleted` when a task space is finished or deleted.
 
 ### Migration Code Location
 

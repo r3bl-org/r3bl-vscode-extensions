@@ -41,19 +41,17 @@ describe("Types Test Suite", () => {
 
     test("TaskSpaceStorage interface structure", () => {
         const storage: TaskSpaceStorage = {
-            version: "4.0",
+            version: "6.0",
             taskSpaces: [],
-            nextQueueIds: [],
-            previousStackIds: [],
+            taskSpaceStackIds: [],
         }
 
-        assert.strictEqual(storage.version, "4.0")
+        assert.strictEqual(storage.version, "6.0")
         assert.strictEqual(storage.taskSpaces.length, 0)
-        assert.strictEqual(storage.nextQueueIds?.length, 0)
-        assert.strictEqual(storage.previousStackIds?.length, 0)
+        assert.strictEqual(storage.taskSpaceStackIds?.length, 0)
     })
 
-    test("TaskSpaceStorage with task space and queue IDs", () => {
+    test("TaskSpaceStorage with task space and stack IDs", () => {
         const taskSpace: TaskSpace = {
             name: "Test",
             id: "id-1",
@@ -62,15 +60,14 @@ describe("Types Test Suite", () => {
         }
 
         const storage: TaskSpaceStorage = {
-            version: "4.0",
+            version: "6.0",
             taskSpaces: [taskSpace],
-            nextQueueIds: ["id-1"],
-            previousStackIds: [],
+            taskSpaceStackIds: ["id-1"],
         }
 
         assert.strictEqual(storage.taskSpaces.length, 1)
         assert.strictEqual(storage.taskSpaces[0].id, "id-1")
-        assert.deepStrictEqual(storage.nextQueueIds, ["id-1"])
+        assert.deepStrictEqual(storage.taskSpaceStackIds, ["id-1"])
     })
 
     test("Empty tabs array is valid", () => {

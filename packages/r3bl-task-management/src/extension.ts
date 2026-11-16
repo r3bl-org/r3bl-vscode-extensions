@@ -3,11 +3,22 @@
 import * as vscode from "vscode"
 import { showStatusBarMessage } from "r3bl-common-code"
 import { TaskSpaceManager } from "./taskSpaceManager"
-import { showTaskSpacesDialog, updateStatusBar, createStatusBarItem } from "./ui"
+import {
+    showTaskSpacesDialog,
+    showPushTaskSpacePicker,
+    updateStatusBar,
+    createStatusBarItem,
+} from "./ui"
 import {
     installCodingAgentIntegration,
     checkAndUpgradeCodingAgentCommand,
 } from "./codingAgentIntegration"
+import {
+    jumpAndRecord,
+    showJumpPoints,
+    jumpPointsManager,
+    JUMP_POINTS_STORAGE_FILE,
+} from "./jumpPointNavigator"
 import * as path from "path"
 
 /** Default debounce delay for auto-save (milliseconds) */
@@ -118,9 +129,14 @@ async function createTaskSpaceFromFile(
 export async function activate(context: vscode.ExtensionContext) {
     console.log("R3BL Task Management extension is now active")
 
-    // Initialize manager
-    manager = new TaskSpaceManager(context)
+    // Initialize manager (prune task-scoped jump points whenever a task space is deleted/finished)
+    manager = new TaskSpaceManager(context, async (id) => {
+        await jumpPointsManager.deleteJumpPointsForTask(id)
+    })
     await manager.initialize()
+
+    // Initialize Jump Point Navigation manager (.vscode/jump-points.json or workspaceState fallback)
+    await jumpPointsManager.initialize(context, () => manager.getActiveTaskSpace())
 
     // Check and auto-upgrade Coding Agent command if needed
     await checkAndUpgradeCodingAgentCommand(context)
@@ -211,9 +227,16 @@ export async function activate(context: vscode.ExtensionContext) {
 
             if (result === "Finish and Move") {
                 try {
-                    await manager.finishCurrentTask()
+                    const returnedTo = await manager.finishCurrentTask()
                     updateStatusBar(statusBarItem, manager)
-                    showStatusBarMessage("Task finished and archived", "success")
+                    if (returnedTo) {
+                        showStatusBarMessage(
+                            `Finished task & returned to "${returnedTo.name}"`,
+                            "success",
+                        )
+                    } else {
+                        showStatusBarMessage("Task finished and archived", "success")
+                    }
                 } catch (error) {
                     showStatusBarMessage(`Failed to finish task: ${error}`, "error")
                 }
@@ -222,27 +245,57 @@ export async function activate(context: vscode.ExtensionContext) {
     )
     context.subscriptions.push(finishCommand)
 
-    // Register Pause and Jump to Next command
-    const pauseAndJumpCommand = vscode.commands.registerCommand(
-        "r3bl-task-management.pauseAndJumpToNext",
+    // Register Pop Task from Stack command (Alt+Shift+J)
+    const popTaskCommand = vscode.commands.registerCommand(
+        "r3bl-task-management.popTaskSpace",
         async () => {
-            const nextQueue = manager.getNextQueue()
-            if (nextQueue.length === 0) {
-                showStatusBarMessage("Next Queue is empty", "warning")
-                return
-            }
-
-            const nextTask = nextQueue[0]
             try {
-                await manager.jumpToTask(nextTask.id)
+                const result = await manager.popTaskSpace()
                 updateStatusBar(statusBarItem, manager)
-                showStatusBarMessage(`Jumped to next task: ${nextTask.name}`, "success")
+                if (!result) {
+                    showStatusBarMessage(
+                        "Task Stack is empty and no active task",
+                        "warning",
+                    )
+                    return
+                }
+                if (result.outcome === "resumed-stack" && result.returnedTo) {
+                    const prefix = result.poppedFrom
+                        ? `Saved "${result.poppedFrom.name}" & resumed stack head`
+                        : "Resumed stack head"
+                    showStatusBarMessage(
+                        `${prefix} "${result.returnedTo.name}"`,
+                        "success",
+                    )
+                } else if (result.returnedTo) {
+                    const prefix = result.poppedFrom
+                        ? `Paused "${result.poppedFrom.name}" & returned to`
+                        : "Popped to"
+                    showStatusBarMessage(
+                        `${prefix} "${result.returnedTo.name}"`,
+                        "success",
+                    )
+                } else if (result.poppedFrom) {
+                    showStatusBarMessage(
+                        `Paused "${result.poppedFrom.name}" (Task Stack empty)`,
+                        "info",
+                    )
+                }
             } catch (error) {
-                showStatusBarMessage(`Failed to jump to next task: ${error}`, "error")
+                showStatusBarMessage(`Failed to pop task: ${error}`, "error")
             }
         },
     )
-    context.subscriptions.push(pauseAndJumpCommand)
+    context.subscriptions.push(popTaskCommand)
+
+    // Register Push Task onto Stack command
+    const pushTaskCommand = vscode.commands.registerCommand(
+        "r3bl-task-management.pushTaskSpace",
+        async () => {
+            await showPushTaskSpacePicker(manager, statusBarItem, context)
+        },
+    )
+    context.subscriptions.push(pushTaskCommand)
 
     // Register Move Task to Backlog command
     const moveTaskToBacklogCommand = vscode.commands.registerCommand(
@@ -297,6 +350,19 @@ export async function activate(context: vscode.ExtensionContext) {
         },
     )
     context.subscriptions.push(closeTaskSpaceCommand)
+
+    // Register Jump Point Navigation commands
+    const jumpAndRecordCommand = vscode.commands.registerCommand(
+        "r3bl-task-management.jumpAndRecord",
+        jumpAndRecord,
+    )
+    context.subscriptions.push(jumpAndRecordCommand)
+
+    const showJumpPointsCommand = vscode.commands.registerCommand(
+        "r3bl-task-management.showJumpPoints",
+        showJumpPoints,
+    )
+    context.subscriptions.push(showJumpPointsCommand)
 
     // Register auto-save listener
     const tabChangeDisposable = vscode.window.tabGroups.onDidChangeTabs(async () => {
@@ -408,6 +474,28 @@ export async function activate(context: vscode.ExtensionContext) {
         })
 
         context.subscriptions.push(taskFileWatcher)
+
+        // 3. Watch for jump-points.json changes across IDEs (VS Code, Antigravity IDE, etc.)
+        const jumpPointsPattern = new vscode.RelativePattern(
+            workspaceFolders[0],
+            JUMP_POINTS_STORAGE_FILE,
+        )
+        const jumpPointsWatcher =
+            vscode.workspace.createFileSystemWatcher(jumpPointsPattern)
+
+        jumpPointsWatcher.onDidChange(async () => {
+            await jumpPointsManager.reloadFromDisk()
+        })
+
+        jumpPointsWatcher.onDidCreate(async () => {
+            await jumpPointsManager.reloadFromDisk()
+        })
+
+        jumpPointsWatcher.onDidDelete(() => {
+            jumpPointsManager.handleExternalFileDelete()
+        })
+
+        context.subscriptions.push(jumpPointsWatcher)
     }
 }
 
