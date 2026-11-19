@@ -5,6 +5,28 @@ All notable changes to the R3BL VSCode Extensions will be documented in this fil
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project
 adheres to [Semantic Versioning](http://semver.org/).
 
+## [2026-11-19] - Unified Editor & Terminal Cursor Colors Across All R3BL Themes
+
+### Package Versions
+
+- **R3BL Theme**: 1.1.2 → 1.1.3
+- **R3BL Extension Pack**: 1.6.0 → 1.6.1
+- **r3bl-common-code**: 1.1.1 → 1.1.2
+
+### Changes
+
+- **R3BL Theme 1.1.3**: Unified editor and terminal cursor foreground/background colors
+  across all 6 R3BL theme variants
+    - Moved `editorCursor.background` (`#ffffff`), `editorCursor.foreground` (`#fc40d9`),
+      `terminalCursor.background` (`#f70b6a`), and `terminalCursor.foreground` (`#dc8add`)
+      into the shared static overlay (`SHARED_CURSOR_COLORS`) in `r3bl-common-code`
+      applied during theme generation
+    - Updated `R3BL 2027 Theme` and `R3BL 2027 Theme (No Italic)` from the Catppuccin
+      Mocha cursor defaults (`#1e1e2e` / `#f5e0dc`) to match `R3BL Theme` and `R3BL 2026
+      Theme`
+
+- **R3BL Extension Pack 1.6.1**: Pack version update for `r3bl-theme` 1.1.3
+
 ## [2026-11-15] - Explicit Task Stack, Per-Task Jump Point Navigation, & Spatial Context
 
 ### Package Versions

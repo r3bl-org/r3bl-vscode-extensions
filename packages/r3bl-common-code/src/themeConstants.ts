@@ -46,6 +46,13 @@ export const SHARED_LINE_HIGHLIGHT_COLORS = {
     "editor.lineHighlightBorder": "#f9cf0140",
 } as const
 
+export const SHARED_CURSOR_COLORS = {
+    "editorCursor.background": "#ffffff",
+    "editorCursor.foreground": "#fc40d9",
+    "terminalCursor.background": "#f70b6a",
+    "terminalCursor.foreground": "#dc8add",
+} as const
+
 export type CommentBrightnessLevel = "dim" | "medium" | "bright"
 
 export const COMMENT_COLORS: Record<CommentBrightnessLevel, string> = {

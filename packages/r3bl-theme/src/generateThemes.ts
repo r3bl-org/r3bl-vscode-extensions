@@ -7,6 +7,7 @@ import {
     COMMENT_SCOPES,
     SEMANTIC_RULES_ITALIC,
     SEMANTIC_RULES_NO_ITALIC,
+    SHARED_CURSOR_COLORS,
     SHARED_ERROR_LENS_COLORS,
     SHARED_INLAY_HINT_COLORS,
     SHARED_LINE_HIGHLIGHT_COLORS,
@@ -281,6 +282,7 @@ export function buildEditionPair(
         ...SHARED_INLAY_HINT_COLORS,
         ...SHARED_ERROR_LENS_COLORS,
         ...SHARED_LINE_HIGHLIGHT_COLORS,
+        ...SHARED_CURSOR_COLORS,
     }
 
     const normalizedTokenColors = normalizeCommentTokenRules(source.tokenColors || [])

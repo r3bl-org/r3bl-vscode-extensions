@@ -9,6 +9,7 @@ import {
     R3BL_2027_ICON_THEME_ID,
     SEMANTIC_RULES_ITALIC,
     SEMANTIC_RULES_NO_ITALIC,
+    SHARED_CURSOR_COLORS,
     SHARED_ERROR_LENS_COLORS,
     SHARED_INLAY_HINT_COLORS,
     SHARED_LINE_HIGHLIGHT_COLORS,
@@ -113,7 +114,7 @@ describe("generateThemes", () => {
                     expect(diskNoItalic).toEqual(expectedNoItalic)
                 })
 
-                it("applies shared inlay hint, ErrorLens, and current-line highlight colors identically", () => {
+                it("applies shared inlay hint, ErrorLens, current-line highlight, and cursor colors identically", () => {
                     for (const [key, hex] of Object.entries(SHARED_INLAY_HINT_COLORS)) {
                         expect(diskItalic.colors[key]).toBe(hex)
                         expect(diskNoItalic.colors[key]).toBe(hex)
@@ -125,6 +126,10 @@ describe("generateThemes", () => {
                     for (const [key, hex] of Object.entries(
                         SHARED_LINE_HIGHLIGHT_COLORS,
                     )) {
+                        expect(diskItalic.colors[key]).toBe(hex)
+                        expect(diskNoItalic.colors[key]).toBe(hex)
+                    }
+                    for (const [key, hex] of Object.entries(SHARED_CURSOR_COLORS)) {
                         expect(diskItalic.colors[key]).toBe(hex)
                         expect(diskNoItalic.colors[key]).toBe(hex)
                     }

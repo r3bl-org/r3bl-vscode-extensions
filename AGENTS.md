@@ -309,7 +309,7 @@ The `r3bl-common-code` package exports:
     - Theme & icon identifiers (`ITALIC_THEMES`, `NO_ITALIC_THEMES`, `ALL_R3BL_THEMES`,
       `R3BL_2027_THEMES`, `R3BL_2027_ICON_THEME_ID`)
     - Cross-theme static workbench/editor color overlays (`SHARED_INLAY_HINT_COLORS`,
-      `SHARED_ERROR_LENS_COLORS`, `SHARED_LINE_HIGHLIGHT_COLORS`)
+      `SHARED_ERROR_LENS_COLORS`, `SHARED_LINE_HIGHLIGHT_COLORS`, `SHARED_CURSOR_COLORS`)
     - Comment brightness palettes and scopes (`COMMENT_COLORS`, `COMMENT_DESCRIPTIONS`,
       `COMMENT_SCOPES`)
     - Semantic token rules (`BASE_SEMANTIC_RULES`, `SEMANTIC_RULES_ITALIC`,
@@ -347,8 +347,8 @@ hand-edit `packages/r3bl-theme/themes/*.json` directly**.
       `r3bl-semantic-config` when selecting either `R3BL 2027 Theme` variant
 - **Static Generator (`packages/r3bl-theme/src/generateThemes.ts`)**:
     - Merges shared color overlays (`SHARED_INLAY_HINT_COLORS`,
-      `SHARED_ERROR_LENS_COLORS`, `SHARED_LINE_HIGHLIGHT_COLORS`) from
-      `r3bl-common-code/src/themeConstants.ts` over each edition's `colors`
+      `SHARED_ERROR_LENS_COLORS`, `SHARED_LINE_HIGHLIGHT_COLORS`, `SHARED_CURSOR_COLORS`)
+      from `r3bl-common-code/src/themeConstants.ts` over each edition's `colors`
     - Normalizes generic comment scopes to the default `dim` (`#8B949E`) non-italic rule
     - Applies `SEMANTIC_RULES_ITALIC` / `SEMANTIC_RULES_NO_ITALIC` and strips all `italic`
       `fontStyle` modifiers from `(No Italic)` variants
