@@ -65,6 +65,8 @@ purge_untrusted_extension() {
     rm -rf "$HOME/.vscode/extensions/${ext_id}"* 2>/dev/null || true
     rm -rf "$HOME/.vscode-insiders/extensions/${ext_id}"* 2>/dev/null || true
     rm -rf "$HOME/.vscode-oss/extensions/${ext_id}"* 2>/dev/null || true
+    rm -rf "$HOME/.vscode-oss-insiders/extensions/${ext_id}"* 2>/dev/null || true
+    rm -rf "$HOME/.vscodium-insiders/extensions/${ext_id}"* 2>/dev/null || true
     rm -rf "$HOME/.antigravity-ide/extensions/${ext_id}"* 2>/dev/null || true
 }
 
